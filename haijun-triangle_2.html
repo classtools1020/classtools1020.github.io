@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>海鈞的三角形闖關 🌙</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Microsoft JhengHei","Noto Sans TC","PingFang TC",sans-serif;background:linear-gradient(135deg,#cfe0f5 0%,#e0d4f0 50%,#f0d9e6 100%);min-height:100vh;color:#2c3e50;font-size:18px;line-height:1.6}
+body{padding:16px;padding-bottom:40px}
+.container{max-width:720px;margin:0 auto}
+.screen{display:none;background:rgba(255,255,255,.95);border-radius:24px;padding:24px 20px;box-shadow:0 8px 32px rgba(80,90,150,.15);margin-bottom:16px}
+.screen.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.moon{font-size:72px;text-align:center;margin:8px 0}
+h1{font-size:32px;text-align:center;color:#2c3e50;margin-bottom:12px}
+h2{font-size:24px;text-align:center;margin-bottom:8px;color:#2c3e50}
+.subtitle{text-align:center;font-size:18px;color:#5a6c7d;margin-bottom:24px;line-height:1.7}
+.tip{text-align:center;color:#888;margin-top:16px;font-size:14px}
+
+/* buttons */
+.btn{display:block;width:100%;padding:18px 20px;font-size:20px;font-weight:bold;border:none;border-radius:14px;cursor:pointer;transition:transform .15s,box-shadow .15s;font-family:inherit;margin:10px 0;text-align:center}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:linear-gradient(135deg,#5b8def,#7c6df0);color:#fff;box-shadow:0 4px 14px rgba(91,141,239,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(91,141,239,.45)}
+.btn-secondary{background:#fff8e1;color:#5d4e37;border:2px solid #ffc107}
+.btn-secondary:hover{background:#fff3c4}
+.btn-ghost{background:#f0f4fa;color:#5a6c7d;border:2px solid #d0d8e0}
+.btn-success{background:linear-gradient(135deg,#66bb6a,#4caf50);color:#fff}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-row .btn{margin:0}
+
+/* map */
+.stamp-row{display:flex;justify-content:center;gap:14px;margin:18px 0}
+.stamp{width:54px;height:54px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:26px;border:3px dashed #ccc;transition:all .3s}
+.stamp.earned{background:linear-gradient(135deg,#ffd54f,#ff8a65);border:3px solid #ff6f00;color:#fff;transform:rotate(-8deg) scale(1.1);box-shadow:0 4px 12px rgba(255,111,0,.35)}
+.map-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+.unit-card{background:#fff;border:3px solid #e0e6f0;border-radius:18px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.unit-card:hover{border-color:#5b8def;transform:translateY(-3px);box-shadow:0 6px 14px rgba(91,141,239,.2)}
+.unit-card.complete{background:linear-gradient(135deg,#fff9c4,#ffe0b2);border-color:#ffc107}
+.unit-emoji{font-size:42px;margin-bottom:6px}
+.unit-title{font-size:17px;font-weight:bold;margin-bottom:4px;color:#2c3e50}
+.unit-desc{font-size:13px;color:#666;line-height:1.4;min-height:36px}
+.unit-meta{margin-top:8px;font-size:14px;color:#5b8def;font-weight:bold}
+.complete-badge{position:absolute;top:-10px;right:-10px;background:#ffc107;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+
+/* question */
+.progress-bar{background:#e0e6f0;height:14px;border-radius:7px;overflow:hidden;margin-bottom:14px}
+.progress-fill{background:linear-gradient(90deg,#5b8def,#66bb6a);height:100%;transition:width .4s ease;border-radius:7px}
+.q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:14px;color:#666;flex-wrap:wrap;gap:6px}
+.q-card{background:linear-gradient(135deg,#f0f7ff,#fff);border-radius:18px;padding:22px 20px;border-left:6px solid #5b8def;margin-bottom:16px}
+.q-emoji{font-size:36px;margin-bottom:8px}
+.q-text{font-size:21px;line-height:1.8;color:#2c3e50}
+.hint-box{background:#fff8e1;border-left:4px solid #ffc107;padding:14px 16px;border-radius:10px;margin-top:14px;font-size:18px;line-height:1.6}
+.hint-box.hidden{display:none}
+
+/* answer area */
+.answer-area{margin:18px 0}
+.answer-input{width:100%;padding:16px 18px;font-size:22px;border:3px solid #d0d8e0;border-radius:12px;text-align:center;font-family:inherit;background:#fff}
+.answer-input:focus{outline:none;border-color:#5b8def;box-shadow:0 0 0 3px rgba(91,141,239,.15)}
+.input-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.input-row .answer-input{flex:1;min-width:80px}
+.input-sep{font-size:22px;color:#5a6c7d;font-weight:bold}
+.input-grid{display:grid;gap:10px}
+.input-grid label{font-weight:bold;color:#5a6c7d;display:flex;align-items:center;gap:8px}
+.input-grid label .answer-input{flex:1}
+
+/* choices */
+.choices{display:grid;gap:10px}
+.choice-btn{background:#fff;border:3px solid #d0d8e0;padding:16px 18px;font-size:19px;border-radius:12px;cursor:pointer;text-align:left;transition:all .15s;font-family:inherit;line-height:1.5;width:100%}
+.choice-btn:hover{border-color:#5b8def;background:#f0f7ff}
+.choice-btn.selected{border-color:#5b8def;background:#5b8def;color:#fff;font-weight:bold}
+
+/* feedback overlay */
+.feedback{position:fixed;inset:0;background:rgba(20,30,50,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.feedback.active{display:flex;animation:fadeIn .2s}
+.fb-card{background:#fff;border-radius:24px;padding:28px 24px;max-width:480px;width:100%;text-align:center;animation:pop .35s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto}
+@keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+.fb-emoji{font-size:72px;margin-bottom:8px}
+.fb-title{font-size:26px;font-weight:bold;margin-bottom:10px}
+.fb-msg{font-size:18px;color:#5a6c7d;margin-bottom:14px;line-height:1.6}
+.correct .fb-title{color:#4caf50}
+.wrong .fb-title{color:#f57c00}
+.solution-box{background:#e8f5e9;border-left:4px solid #4caf50;padding:16px;border-radius:10px;margin:14px 0;text-align:left;white-space:pre-line;font-size:17px;line-height:1.8;color:#2e4d2f}
+
+/* result */
+.score-display{text-align:center;padding:24px 16px;background:linear-gradient(135deg,#fff9c4,#ffe0b2);border-radius:20px;margin:20px 0}
+.score-num{font-size:64px;font-weight:bold;color:#f57c00;line-height:1}
+.score-total{font-size:22px;color:#888;margin-top:6px}
+.result-msg{text-align:center;font-size:20px;margin:18px 0;color:#2c3e50;line-height:1.6}
+
+/* small tweaks */
+.note{font-size:14px;color:#888;text-align:center;margin-top:6px}
+@media (max-width:480px){
+  body{padding:10px}
+  .screen{padding:18px 14px}
+  .moon{font-size:60px}
+  h1{font-size:26px}
+  .q-text{font-size:19px}
+  .answer-input{font-size:20px;padding:14px 16px}
+  .map-grid{grid-template-columns:1fr}
+  .unit-desc{min-height:0}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Welcome -->
+<div id="s-welcome" class="screen active">
+  <div class="moon">🌙</div>
+  <h1>海鈞的三角形闖關</h1>
+  <p class="subtitle">慢慢做、可以看提示<br>不會也沒關係，我們一起練習！</p>
+  <button class="btn btn-primary" onclick="goToMap()">開始闖關 🚀</button>
+  <p class="tip">範圍：3-1 ~ 3-4 三角形的基本性質</p>
+</div>
+
+<!-- Map -->
+<div id="s-map" class="screen">
+  <h2>挑一關開始 🗺️</h2>
+  <p class="note">過關會得到星星徽章 ⭐</p>
+  <div class="stamp-row">
+    <div class="stamp" id="stamp1">📐</div>
+    <div class="stamp" id="stamp2">📏</div>
+    <div class="stamp" id="stamp3">🔁</div>
+    <div class="stamp" id="stamp4">⭐</div>
+  </div>
+  <div class="map-grid" id="unitGrid"></div>
+  <button class="btn btn-ghost" onclick="showScreen('s-welcome')">⬅ 返回首頁</button>
+</div>
+
+<!-- Question -->
+<div id="s-question" class="screen">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="q-header">
+    <span id="unitTag"></span>
+    <span id="qCounter"></span>
+  </div>
+  <div class="q-card">
+    <div class="q-emoji" id="qEmoji">📐</div>
+    <div class="q-text" id="qText"></div>
+    <div class="hint-box hidden" id="hintBox">
+      <strong>💡 提示：</strong> <span id="hintText"></span>
+    </div>
+  </div>
+  <div class="answer-area" id="answerArea"></div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="toggleHint()">💡 看提示</button>
+    <button class="btn btn-primary" onclick="submitAnswer()">✏️ 我寫好了</button>
+  </div>
+  <button class="btn btn-ghost" onclick="goToMap()">⬅ 回到地圖</button>
+</div>
+
+<!-- Result -->
+<div id="s-result" class="screen">
+  <div class="moon">🌟</div>
+  <h2>海鈞，你完成了！</h2>
+  <div class="score-display">
+    <div class="score-num" id="finalScore">0</div>
+    <div class="score-total">/ <span id="finalTotal">100</span> 分</div>
+  </div>
+  <div class="result-msg" id="resultMsg"></div>
+  <button class="btn btn-primary" onclick="restart()">🔁 再來一次</button>
+  <button class="btn btn-ghost" onclick="goToMap()">⬅ 回到地圖</button>
+</div>
+
+</div>
+
+<!-- Feedback overlay -->
+<div id="feedback" class="feedback">
+  <div class="fb-card" id="fbCard">
+    <div class="fb-emoji" id="fbEmoji"></div>
+    <div class="fb-title" id="fbTitle"></div>
+    <div class="fb-msg" id="fbMsg"></div>
+    <div class="solution-box" id="solutionBox" style="display:none"></div>
+    <button class="btn btn-primary" onclick="nextQuestion()">繼續 →</button>
+  </div>
+</div>
+
+<script>
+// ============ Question Data ============
+const units = [
+  {
+    id:1, emoji:"📐", name:"三角形的內角與外角", short:"內角與外角",
+    questions:[
+      {qEmoji:"🎮", text:"△ABC 中：<br>∠A = 3x<br>∠B = 2x + 10°<br>∠C = x + 50°<br>求 x = ?",
+       hint:"三個角加起來 = 180°",
+       type:"input", answer:["20","20°"], placeholder:"答案",
+       solution:"三角形內角和 = 180°\n3x + (2x+10) + (x+50) = 180\n6x + 60 = 180\n6x = 120\nx = 20", points:5},
+      {qEmoji:"🚦", text:"△ABC 中：∠A = 70°，∠B = 50°<br>求外角 ∠ACD = ?",
+       hint:"外角 = 不相鄰的兩個內角加起來",
+       type:"input", answer:["120","120°"], placeholder:"度數",
+       solution:"外角 = 不相鄰兩內角的和\n∠ACD = ∠A + ∠B\n  = 70° + 50°\n  = 120°", points:5},
+      {qEmoji:"⏰", text:"三角形其中一個外角 = 110°<br>與它「相鄰」的內角 = ?",
+       hint:"內角 + 外角 = 180°（合起來是一直線）",
+       type:"input", answer:["70","70°"], placeholder:"度數",
+       solution:"內角 + 外角 = 180°\n內角 = 180° − 110° = 70°", points:5},
+      {qEmoji:"🤔", text:"下列敘述何者「正確」？",
+       hint:"三角形內角和 = 180°，外角和 = 360°",
+       type:"choice",
+       choices:[
+         {label:"(A) 三角形所有內角和 = 360°", value:"A"},
+         {label:"(B) 三角形所有外角和 = 360°", value:"B"},
+         {label:"(C) 三角形可以有兩個直角", value:"C"}],
+       answer:["B"],
+       solution:"✅ (B) 對！外角和一定是 360°\n❌ (A) 內角和應該是 180°\n❌ (C) 兩個直角加起來就 180° 了，不可能", points:5},
+      {qEmoji:"🐧", text:"△ABC 三個外角分別為 ∠1, ∠2, ∠3<br>已知 ∠1 = 130°，∠2 = 110°<br>求 ∠3 = ?",
+       hint:"三角形外角和 = 360°",
+       type:"input", answer:["120","120°"], placeholder:"度數",
+       solution:"外角和 = 360°\n∠3 = 360° − 130° − 110°\n  = 120°", points:5}
+    ]
+  },
+  {
+    id:2, emoji:"📏", name:"三角形邊角關係", short:"邊角關係",
+    questions:[
+      {qEmoji:"🏀", text:"△ABC 中：<br>AB = 5，BC = 9，AC = 7<br>三個角由「大到小」排序為？",
+       hint:"大邊對大角！BC 最大 → ∠A 最大",
+       type:"choice",
+       choices:[
+         {label:"(A) ∠A > ∠B > ∠C", value:"A"},
+         {label:"(B) ∠B > ∠A > ∠C", value:"B"},
+         {label:"(C) ∠C > ∠B > ∠A", value:"C"}],
+       answer:["A"],
+       solution:"大邊對大角！\nBC = 9 最大 → ∠A 最大\nAC = 7 第二 → ∠B 第二\nAB = 5 最小 → ∠C 最小\n→ ∠A > ∠B > ∠C", points:5},
+      {qEmoji:"⛺", text:"三角形兩邊長為 3 和 7<br>第三邊長 x 的範圍：<br>____ < x < ____",
+       hint:"兩邊之差 < 第三邊 < 兩邊之和",
+       type:"input2", answer:[["4","10"]],
+       placeholder1:"下限", placeholder2:"上限",
+       solution:"兩邊之差 < x < 兩邊之和\n7 − 3 < x < 7 + 3\n4 < x < 10", points:5}
+    ]
+  },
+  {
+    id:3, emoji:"🔁", name:"全等三角形", short:"全等三角形",
+    questions:[
+      {qEmoji:"🔠", text:"「三邊都相等」的全等性質縮寫是？",
+       hint:"Side-Side-Side（三個 S）",
+       type:"choice",
+       choices:[{label:"SSS",value:"SSS"},{label:"SAS",value:"SAS"},{label:"ASA",value:"ASA"},{label:"RHS",value:"RHS"}],
+       answer:["SSS"],
+       solution:"三個邊 (Side) 都相等\n→ SSS", points:5},
+      {qEmoji:"🔠", text:"「兩邊夾一角」的全等性質縮寫是？",
+       hint:"Side-Angle-Side",
+       type:"choice",
+       choices:[{label:"SSS",value:"SSS"},{label:"SAS",value:"SAS"},{label:"ASA",value:"ASA"},{label:"RHS",value:"RHS"}],
+       answer:["SAS"],
+       solution:"邊 - 角 - 邊\n(Side - Angle - Side)\n→ SAS", points:5},
+      {qEmoji:"🏠", text:"如圖：AB = AC，AD 平分 ∠BAC<br>△ABD ≅ △ACD 用哪個全等性質？",
+       hint:"AB = AC（一邊）、∠BAD = ∠CAD（一角）、AD 共用（一邊）→ 邊角邊",
+       type:"choice",
+       choices:[{label:"(A) SSS",value:"SSS"},{label:"(B) SAS",value:"SAS"},{label:"(C) ASA",value:"ASA"}],
+       answer:["SAS"],
+       solution:"AB = AC（一邊 ✓）\n∠BAD = ∠CAD（夾的角 ✓）\nAD = AD（共用邊 ✓）\n→ 邊角邊 → SAS", points:5},
+      {qEmoji:"📦", text:"△ABC ≅ △DEF<br>已知 AB = 8，BC = 10，AC = 6<br>請填出 DE、EF、DF 的長度",
+       hint:"對應頂點：A→D，B→E，C→F。對應的邊長度相等",
+       type:"input3", answer:[["8","10","6"]],
+       label1:"DE = ", label2:"EF = ", label3:"DF = ",
+       solution:"對應頂點 → 對應邊\nDE 對應 AB = 8\nEF 對應 BC = 10\nDF 對應 AC = 6", points:5}
+    ]
+  },
+  {
+    id:4, emoji:"⭐", name:"中垂線、角平分線、等腰／正三角形", short:"中垂線與等腰",
+    questions:[
+      {qEmoji:"🏰", text:"線段 AB 的中垂線上有一點 P<br>已知 PA = 7<br>則 PB = ?",
+       hint:"中垂線上的點 → 到兩端的距離一樣",
+       type:"input", answer:["7"], placeholder:"PB =",
+       solution:"中垂線上的點到兩端等距\nPA = PB = 7", points:5},
+      {qEmoji:"💡", text:"∠ABC 的角平分線上有一點 Q<br>Q 到 BA 的距離 = 5<br>則 Q 到 BC 的距離 = ?",
+       hint:"角平分線上的點 → 到兩邊的距離一樣",
+       type:"input", answer:["5"], placeholder:"距離 =",
+       solution:"角平分線上的點到兩邊等距\nQ 到 BA = Q 到 BC = 5", points:5},
+      {qEmoji:"🎄", text:"等腰三角形 △ABC<br>AB = AC，∠A = 80°<br>求 ∠B = ?",
+       hint:"兩底角相等：∠B = ∠C，兩個底角加起來 = 180° − 80°",
+       type:"input", answer:["50","50°"], placeholder:"度數",
+       solution:"等腰底角相等\n∠B = ∠C\n∠B = (180° − 80°) ÷ 2\n  = 100° ÷ 2\n  = 50°", points:5},
+      {qEmoji:"📐", text:"等腰 △ABC<br>AB = AC = 25，BC = 14<br>AD ⊥ BC<br>求高 AD = ?",
+       hint:"BD = 7（中點），用畢氏：7² + AD² = 25²",
+       type:"input", answer:["24"], placeholder:"AD =",
+       solution:"BD = 14 ÷ 2 = 7\n畢氏定理：\n7² + AD² = 25²\n49 + AD² = 625\nAD² = 576\nAD = 24", points:5},
+      {qEmoji:"📐", text:"承上題：<br>底 BC = 14，高 AD = 24<br>求 △ABC 的「面積」= ?",
+       hint:"面積 = 底 × 高 ÷ 2",
+       type:"input", answer:["168"], placeholder:"面積 =",
+       solution:"面積 = 底 × 高 ÷ 2\n  = 14 × 24 ÷ 2\n  = 336 ÷ 2\n  = 168", points:5},
+      {qEmoji:"🎯", text:"△ABC 中：∠B = 57°，∠C = 66°<br>哪兩條邊「一定相等」？",
+       hint:"先算 ∠A，再看哪兩個角相等。等角對等邊",
+       type:"choice",
+       choices:[
+         {label:"(A) AB = AC", value:"A"},
+         {label:"(B) AB = BC", value:"B"},
+         {label:"(C) AC = BC", value:"C"}],
+       answer:["C"],
+       solution:"先算 ∠A：\n∠A = 180° − 57° − 66° = 57°\n∠A = ∠B = 57°（兩角相等）\n等角對等邊：\n∠A 對應 BC，∠B 對應 AC\n→ AC = BC ✅", points:5},
+      {qEmoji:"🍫", text:"正三角形 △ABC<br>邊長 = 6，AD ⊥ BC<br>求高 AD = ?<br><span style='font-size:15px;color:#888'>提示：答案用「3√3」這種寫法</span>",
+       hint:"BD = 3，畢氏：3² + AD² = 6²",
+       type:"input", answer:["3√3","3根號3"], placeholder:"AD =",
+       solution:"BD = 6 ÷ 2 = 3\n畢氏：3² + AD² = 6²\n9 + AD² = 36\nAD² = 27\nAD = √27 = 3√3", points:5},
+      {qEmoji:"🍫", text:"承上題：<br>正三角形邊長 = 6，高 = 3√3<br>求面積 = ?<br><span style='font-size:15px;color:#888'>提示：答案用 √ 寫</span>",
+       hint:"面積 = 底 × 高 ÷ 2 = 6 × 3√3 ÷ 2",
+       type:"input", answer:["9√3","9根號3"], placeholder:"面積 =",
+       solution:"面積 = 底 × 高 ÷ 2\n  = 6 × 3√3 ÷ 2\n  = 18√3 ÷ 2\n  = 9√3", points:10}
+    ]
+  }
+];
+
+// ============ State ============
+let state = {currentUnit:null, currentQuestion:0, score:0, totalPoints:0, attempted:{}, completed:{1:false,2:false,3:false,4:false}, currentChoice:null};
+units.forEach(u => u.questions.forEach(q => state.totalPoints += q.points));
+
+// ============ Helpers ============
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function goToMap(){ renderMap(); showScreen('s-map'); }
+
+function renderMap(){
+  const grid = document.getElementById('unitGrid');
+  grid.innerHTML = '';
+  units.forEach(u => {
+    const completed = state.completed[u.id];
+    const points = u.questions.reduce((a,q)=>a+q.points,0);
+    const card = document.createElement('div');
+    card.className = 'unit-card' + (completed ? ' complete' : '');
+    card.innerHTML = `
+      ${completed ? '<div class="complete-badge">⭐</div>' : ''}
+      <div class="unit-emoji">${u.emoji}</div>
+      <div class="unit-title">第 ${u.id} 關</div>
+      <div class="unit-desc">${u.short}</div>
+      <div class="unit-meta">${u.questions.length} 題 · ${points} 分</div>
+    `;
+    card.onclick = () => startUnit(u.id);
+    grid.appendChild(card);
+  });
+  for (let i=1; i<=4; i++){
+    const stamp = document.getElementById('stamp'+i);
+    if (state.completed[i]) stamp.classList.add('earned'); else stamp.classList.remove('earned');
+  }
+}
+
+function startUnit(unitId){
+  state.currentUnit = unitId;
+  state.currentQuestion = 0;
+  showQuestion();
+  showScreen('s-question');
+}
+
+function getUnit(){ return units.find(u => u.id === state.currentUnit); }
+function getQ(){ return getUnit().questions[state.currentQuestion]; }
+
+function showQuestion(){
+  const unit = getUnit();
+  const q = getQ();
+  const total = unit.questions.length;
+  document.getElementById('progressFill').style.width = (((state.currentQuestion) / total) * 100) + '%';
+  document.getElementById('unitTag').textContent = `${unit.emoji} 第${unit.id}關 · ${unit.short}`;
+  document.getElementById('qCounter').textContent = `第 ${state.currentQuestion + 1} 題 / 共 ${total} 題`;
+  document.getElementById('qEmoji').textContent = q.qEmoji;
+  document.getElementById('qText').innerHTML = q.text;
+  document.getElementById('hintText').textContent = q.hint;
+  document.getElementById('hintBox').classList.add('hidden');
+
+  const area = document.getElementById('answerArea');
+  area.innerHTML = '';
+  state.currentChoice = null;
+
+  if (q.type === 'input'){
+    area.innerHTML = `<input type="text" id="ans1" class="answer-input" placeholder="${q.placeholder||'答案'}" autocomplete="off" inputmode="text">`;
+    setTimeout(()=>document.getElementById('ans1')?.focus(), 200);
+  } else if (q.type === 'input2'){
+    area.innerHTML = `<div class="input-row">
+      <input type="text" id="ans1" class="answer-input" placeholder="${q.placeholder1}" autocomplete="off">
+      <span class="input-sep">&lt; x &lt;</span>
+      <input type="text" id="ans2" class="answer-input" placeholder="${q.placeholder2}" autocomplete="off">
+    </div>`;
+  } else if (q.type === 'input3'){
+    area.innerHTML = `<div class="input-grid">
+      <label>${q.label1}<input type="text" id="ans1" class="answer-input" autocomplete="off"></label>
+      <label>${q.label2}<input type="text" id="ans2" class="answer-input" autocomplete="off"></label>
+      <label>${q.label3}<input type="text" id="ans3" class="answer-input" autocomplete="off"></label>
+    </div>`;
+  } else if (q.type === 'choice'){
+    const cw = document.createElement('div');
+    cw.className = 'choices';
+    q.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = c.label;
+      btn.onclick = () => selectChoice(c.value, btn);
+      cw.appendChild(btn);
+    });
+    area.appendChild(cw);
+  }
+}
+
+function selectChoice(value, btn){
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.currentChoice = value;
+}
+
+function toggleHint(){
+  document.getElementById('hintBox').classList.toggle('hidden');
+}
+
+function normalize(s){
+  return String(s).trim().replace(/\s+/g,'').replace(/°/g,'').toLowerCase();
+}
+
+function submitAnswer(){
+  const q = getQ();
+  let correct = false;
+
+  if (q.type === 'input'){
+    const v = document.getElementById('ans1').value;
+    if (!v.trim()){ alert('請輸入答案 ✏️'); return; }
+    correct = q.answer.some(a => normalize(a) === normalize(v));
+  } else if (q.type === 'input2'){
+    const v1 = document.getElementById('ans1').value;
+    const v2 = document.getElementById('ans2').value;
+    if (!v1.trim() || !v2.trim()){ alert('請填兩個數字 ✏️'); return; }
+    const exp = q.answer[0];
+    correct = normalize(v1)===normalize(exp[0]) && normalize(v2)===normalize(exp[1]);
+  } else if (q.type === 'input3'){
+    const v1 = document.getElementById('ans1').value;
+    const v2 = document.getElementById('ans2').value;
+    const v3 = document.getElementById('ans3').value;
+    if (!v1.trim() || !v2.trim() || !v3.trim()){ alert('請填三個答案 ✏️'); return; }
+    const exp = q.answer[0];
+    correct = normalize(v1)===normalize(exp[0]) && normalize(v2)===normalize(exp[1]) && normalize(v3)===normalize(exp[2]);
+  } else if (q.type === 'choice'){
+    if (!state.currentChoice){ alert('請選一個答案 👆'); return; }
+    correct = q.answer.includes(state.currentChoice);
+  }
+
+  const key = `${state.currentUnit}-${state.currentQuestion}`;
+  if (!state.attempted[key]){
+    state.attempted[key] = true;
+    if (correct) state.score += q.points;
+  }
+  showFeedback(correct, q);
+}
+
+function showFeedback(correct, q){
+  const fb = document.getElementById('feedback');
+  const card = document.getElementById('fbCard');
+  card.className = 'fb-card ' + (correct ? 'correct' : 'wrong');
+  if (correct){
+    const cheers = ['🎉 答對了！','✨ 太棒了！','🌟 你好厲害！','👏 完美！','💪 海鈞 GET！'];
+    const msgs = [
+      '你的腦袋在發光 ✨',
+      '繼續保持這個感覺！',
+      '海鈞，你做得很好！',
+      '答對！下一題～',
+      '你比你想的還厲害 💪'
+    ];
+    document.getElementById('fbEmoji').textContent = '🎉';
+    document.getElementById('fbTitle').textContent = cheers[Math.floor(Math.random()*cheers.length)];
+    document.getElementById('fbMsg').textContent = msgs[Math.floor(Math.random()*msgs.length)];
+    document.getElementById('solutionBox').style.display = 'none';
+  } else {
+    document.getElementById('fbEmoji').textContent = '💪';
+    document.getElementById('fbTitle').textContent = '差一點點～';
+    document.getElementById('fbMsg').textContent = '沒關係，看一下解法，下次就會了！';
+    document.getElementById('solutionBox').style.display = 'block';
+    document.getElementById('solutionBox').textContent = q.solution;
+  }
+  fb.classList.add('active');
+}
+
+function nextQuestion(){
+  document.getElementById('feedback').classList.remove('active');
+  const unit = getUnit();
+  state.currentQuestion++;
+  if (state.currentQuestion >= unit.questions.length){
+    state.completed[unit.id] = true;
+    if (Object.values(state.completed).every(v => v)){
+      showResult();
+    } else {
+      showUnitComplete(unit);
+    }
+  } else {
+    showQuestion();
+  }
+}
+
+function showUnitComplete(unit){
+  const fb = document.getElementById('feedback');
+  const card = document.getElementById('fbCard');
+  card.className = 'fb-card correct';
+  document.getElementById('fbEmoji').textContent = '⭐';
+  document.getElementById('fbTitle').textContent = `第 ${unit.id} 關過關！`;
+  document.getElementById('fbMsg').textContent = `${unit.short} 章節完成！\n獲得一個星星徽章 ⭐`;
+  document.getElementById('solutionBox').style.display = 'none';
+  fb.classList.add('active');
+  // Override the next button behavior
+  setTimeout(()=>{
+    const btn = card.querySelector('.btn-primary');
+    btn.onclick = () => { fb.classList.remove('active'); btn.onclick = nextQuestion; goToMap(); };
+  }, 100);
+}
+
+function showResult(){
+  document.getElementById('finalScore').textContent = state.score;
+  document.getElementById('finalTotal').textContent = state.totalPoints;
+  const pct = state.score / state.totalPoints;
+  let msg;
+  if (pct >= 0.9) msg = '🏆 海鈞太強了！全部過關！';
+  else if (pct >= 0.7) msg = '🌟 表現很棒！繼續加油！';
+  else if (pct >= 0.5) msg = '💪 進步中！再多練幾次就更熟了！';
+  else msg = '🌱 沒關係，慢慢來，每次都會更厲害！';
+  document.getElementById('resultMsg').textContent = msg;
+  showScreen('s-result');
+}
+
+function restart(){
+  state = {currentUnit:null, currentQuestion:0, score:0, totalPoints:state.totalPoints, attempted:{}, completed:{1:false,2:false,3:false,4:false}, currentChoice:null};
+  goToMap();
+}
+
+// keyboard: enter submits
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('s-question').classList.contains('active')){
+    submitAnswer();
+  }
+});
+</script>
+</body>
+</html>
