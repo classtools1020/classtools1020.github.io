@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>15 群科探索護照 ｜ 暑假生涯小任務</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#fbf6ee;
+  --card:#ffffff;
+  --ink:#3a3a3a;
+  --soft:#7a756c;
+  --line:#efe6d8;
+  --brand:#f6a35c;
+  --brand-deep:#e88539;
+  --brand-soft:#fff1e3;
+  --green:#7cc08a;
+  --green-soft:#e9f6ec;
+  --blue:#7ab6e0;
+  --blue-soft:#e8f3fb;
+  --purple:#b79ce0;
+  --purple-soft:#f1ebfb;
+  --shadow:0 6px 20px rgba(180,140,90,.12);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--ink);
+  font-size:19px;line-height:1.85;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:90px;
+}
+.wrap{max-width:680px;margin:0 auto;padding:0 18px}
+img,iframe{max-width:100%}
+button{font-family:inherit;cursor:pointer;border:none}
+
+/* ===== 頂列 ===== */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(251,246,238,.94);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  padding:12px 18px;
+}
+.topbar-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.back-btn{
+  display:none;align-items:center;gap:6px;
+  background:var(--card);border:1.5px solid var(--line);
+  border-radius:30px;padding:8px 18px;font-size:1em;font-weight:800;color:var(--brand-deep);
+}
+.topbar h1{font-size:1.05em;font-weight:900;color:var(--brand-deep);flex:1}
+.show-back .back-btn{display:inline-flex}
+
+/* ===== 通用 ===== */
+.view{display:none;animation:fade .25s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.big-emoji{font-size:1.4em;line-height:1}
+
+/* ===== 首頁門檻說明 ===== */
+.hero{
+  margin:18px 0 8px;
+  background:linear-gradient(160deg,var(--brand-soft),#fff8f0);
+  border:2px solid #ffe2c4;border-radius:24px;
+  padding:24px 22px;box-shadow:var(--shadow);
+}
+.hero .badge{
+  display:inline-block;background:var(--brand);color:#fff;
+  font-weight:900;font-size:.82em;padding:5px 16px;border-radius:20px;margin-bottom:12px;letter-spacing:.5px;
+}
+.hero h2{font-size:1.5em;font-weight:900;color:var(--brand-deep);line-height:1.5;margin-bottom:10px}
+.hero p{font-size:1.05em;color:#8a6a4a;line-height:1.8}
+.hero .star{color:var(--brand-deep);font-weight:900}
+
+/* 總覽影片小卡 */
+.overview-card{
+  margin:14px 0;background:var(--card);border:1.5px solid var(--line);
+  border-radius:18px;padding:14px 16px;box-shadow:var(--shadow);
+}
+.overview-card .ov-title{font-weight:800;font-size:1em;margin-bottom:10px;color:var(--ink)}
+.overview-card .ov-title small{color:var(--soft);font-weight:600}
+.ratio{position:relative;width:100%;padding-top:56.25%;border-radius:14px;overflow:hidden;background:#000}
+.ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+.section-hint{
+  text-align:center;color:var(--soft);font-size:1em;font-weight:700;
+  margin:26px 0 14px;display:flex;align-items:center;gap:10px;justify-content:center;
+}
+.section-hint::before,.section-hint::after{content:'';height:2px;width:36px;background:var(--line);border-radius:2px}
+
+/* ===== 群科卡片總覽 ===== */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{
+  background:var(--card);border:2px solid var(--line);border-radius:22px;
+  padding:22px 12px;text-align:center;box-shadow:var(--shadow);
+  transition:transform .15s,border-color .15s;position:relative;
+}
+.card:active{transform:scale(.96)}
+.card .emoji{font-size:3em;display:block;line-height:1;margin-bottom:10px}
+.card .name{font-size:1.18em;font-weight:900;color:var(--ink)}
+.card .seen{
+  position:absolute;top:10px;right:10px;font-size:1.15em;
+  opacity:0;transition:opacity .2s;
+}
+.card.done{border-color:var(--green)}
+.card.done .seen{opacity:1}
+@media(min-width:560px){.grid{grid-template-columns:1fr 1fr 1fr}}
+
+/* ===== 群科詳細頁 ===== */
+.detail-head{
+  display:flex;align-items:center;gap:12px;margin:18px 0 14px;
+}
+.detail-head .emoji{font-size:2.6em;line-height:1}
+.detail-head h2{font-size:1.55em;font-weight:900;color:var(--brand-deep)}
+
+.task-intro{
+  background:var(--brand-soft);border-radius:16px;padding:14px 18px;margin:18px 0;
+  font-weight:800;color:#8a6a4a;font-size:1.02em;text-align:center;
+}
+
+.task{
+  background:var(--card);border:2px solid var(--line);border-radius:20px;
+  padding:18px 18px;margin-bottom:16px;box-shadow:var(--shadow);
+}
+.task .t-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.task .t-icon{font-size:1.6em;line-height:1}
+.task .t-title{font-size:1.15em;font-weight:900}
+.task .t-tag{
+  margin-left:auto;font-size:.72em;font-weight:800;padding:3px 12px;border-radius:14px;
+}
+.task.lv1{border-top:6px solid var(--brand)}
+.task.lv1 .t-tag{background:var(--brand-soft);color:var(--brand-deep)}
+.task.lv2{border-top:6px solid var(--blue)}
+.task.lv2 .t-tag{background:var(--blue-soft);color:#3a7bb0}
+.task.lv3{border-top:6px solid var(--purple)}
+.task.lv3 .t-tag{background:var(--purple-soft);color:#7d5bb0}
+.task .t-desc{color:var(--soft);font-size:.95em;margin-bottom:14px}
+
+/* 表情評分 */
+.rate{display:flex;gap:10px}
+.rate button{
+  flex:1;background:#faf6ef;border:2px solid var(--line);border-radius:16px;
+  padding:14px 6px;font-size:1em;font-weight:800;color:var(--soft);
+  display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .15s;
+}
+.rate button .e{font-size:2em;line-height:1}
+.rate button.sel{border-color:var(--brand);background:var(--brand-soft);color:var(--brand-deep);transform:scale(1.03)}
+
+textarea{
+  width:100%;border:2px solid var(--line);border-radius:14px;
+  padding:13px 15px;font-family:inherit;font-size:1.02em;line-height:1.7;color:var(--ink);
+  background:#fffdf9;resize:vertical;min-height:64px;
+}
+textarea:focus{outline:none;border-color:var(--brand)}
+.field-label{font-weight:800;margin:14px 0 8px;font-size:1.02em}
+.field-label:first-child{margin-top:0}
+
+.saved-tip{
+  text-align:center;color:var(--green);font-weight:800;font-size:.95em;
+  margin:10px 0 0;opacity:0;transition:opacity .3s;
+}
+.saved-tip.show{opacity:1}
+
+/* ===== 我的探索結果 ===== */
+.result-intro{
+  background:linear-gradient(160deg,var(--green-soft),#fff);
+  border:2px solid #cdeccf;border-radius:22px;padding:22px;margin:18px 0;box-shadow:var(--shadow);
+}
+.result-intro h2{font-size:1.4em;font-weight:900;color:#3f9a52;margin-bottom:8px}
+.result-intro p{color:#5a7d61;font-size:1.02em}
+
+.fav-empty{
+  background:var(--card);border:2px dashed var(--line);border-radius:18px;
+  padding:26px 18px;text-align:center;color:var(--soft);font-weight:700;
+}
+.fav-list{display:flex;flex-direction:column;gap:12px;margin:16px 0}
+.fav-chip{
+  display:flex;align-items:center;gap:12px;background:var(--card);
+  border:2px solid var(--line);border-radius:18px;padding:14px 16px;
+  font-size:1.1em;font-weight:800;transition:all .15s;box-shadow:var(--shadow);
+}
+.fav-chip .emoji{font-size:1.8em}
+.fav-chip .pick{margin-left:auto;font-size:1.5em;color:var(--line)}
+.fav-chip.picked{border-color:var(--brand);background:var(--brand-soft)}
+.fav-chip.picked .pick{color:var(--brand-deep)}
+
+.form-block{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:18px;margin:16px 0;box-shadow:var(--shadow)}
+input.txt{
+  width:100%;border:2px solid var(--line);border-radius:14px;padding:13px 15px;
+  font-family:inherit;font-size:1.05em;background:#fffdf9;color:var(--ink);
+}
+input.txt:focus{outline:none;border-color:var(--brand)}
+
+.submit-btn{
+  width:100%;background:var(--brand);color:#fff;font-size:1.25em;font-weight:900;
+  border-radius:18px;padding:18px;margin-top:8px;box-shadow:0 6px 16px rgba(232,133,57,.35);
+  transition:transform .12s;
+}
+.submit-btn:active{transform:scale(.97)}
+.submit-btn:disabled{background:#d8cdbd;box-shadow:none}
+
+.note{text-align:center;color:var(--soft);font-size:.9em;margin-top:14px;line-height:1.7}
+
+/* ===== 底部導覽 ===== */
+.bottomnav{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);
+  display:flex;padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+}
+.bottomnav button{
+  flex:1;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-size:.82em;font-weight:800;color:var(--soft);padding:6px 0;border-radius:14px;
+}
+.bottomnav button .ic{font-size:1.5em;line-height:1}
+.bottomnav button.active{color:var(--brand-deep)}
+.progress-mini{font-size:.7em;color:var(--brand-deep);font-weight:800}
+
+.fab-result{
+  display:block;width:100%;text-align:center;background:var(--green);color:#fff;
+  font-size:1.15em;font-weight:900;border-radius:18px;padding:16px;margin:22px 0 8px;
+  box-shadow:0 6px 16px rgba(124,192,138,.35);
+}
+.fab-result:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+
+<!-- 頂列 -->
+<div class="topbar">
+  <div class="topbar-inner" id="topbarInner">
+    <button class="back-btn" id="backBtn">‹ 回總覽</button>
+    <h1 id="topTitle">🧭 15 群科探索護照</h1>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ 首頁 ============ -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <span class="badge">☀️ 暑假任務</span>
+      <h2>先逛一圈，挑出 <span class="star">2～3 個</span><br>你最好奇的群科點進去看，<br>做完就超棒！</h2>
+      <p>👉 不用看完全部 15 個，挑你有興趣的就好。</p>
+    </div>
+
+    <div class="overview-card">
+      <div class="ov-title">🎬 想先快速看全部？<small>（這支是 1 分鐘總覽，可看可不看）</small></div>
+      <div class="ratio" id="ovHolder"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;background:#222;cursor:pointer" id="ovPlay">▶ 點我播放總覽影片</div></div>
+    </div>
+
+    <div class="section-hint">點下面任一個群科，進去看影片</div>
+    <div class="grid" id="grid"></div>
+
+    <a class="fab-result" id="goResult">🌟 我逛得差不多了 → 看我的探索結果</a>
+  </section>
+
+  <!-- ============ 群科詳細 ============ -->
+  <section class="view" id="view-detail">
+    <div class="detail-head">
+      <span class="emoji" id="dEmoji">⚙️</span>
+      <h2 id="dName">機械群</h2>
+    </div>
+
+    <div class="ratio" id="dVideo"></div>
+
+    <div class="task-intro">📝 下面三關，<u>挑一關做就好</u>（想多做也歡迎！）</div>
+
+    <!-- 基礎 -->
+    <div class="task lv1">
+      <div class="t-head">
+        <span class="t-icon">⭐</span><span class="t-title">基礎</span>
+        <span class="t-tag">最簡單</span>
+      </div>
+      <div class="t-desc">用表情幫這個群科打分：</div>
+      <div class="rate" id="rate">
+        <button data-v="😍"><span class="e">😍</span>有興趣</button>
+        <button data-v="🤔"><span class="e">🤔</span>還好</button>
+        <button data-v="😴"><span class="e">😴</span>沒興趣</button>
+      </div>
+    </div>
+
+    <!-- 中階 -->
+    <div class="task lv2">
+      <div class="t-head">
+        <span class="t-icon">🌙</span><span class="t-title">中階</span>
+        <span class="t-tag">再加一句</span>
+      </div>
+      <div class="field-label">這個群科在學什麼？</div>
+      <textarea id="dLearn" placeholder="用一句話寫下來就好～"></textarea>
+    </div>
+
+    <!-- 挑戰 -->
+    <div class="task lv3">
+      <div class="t-head">
+        <span class="t-icon">☀️</span><span class="t-title">挑戰</span>
+        <span class="t-tag">高手版</span>
+      </div>
+      <div class="field-label">以後可以做什麼工作？</div>
+      <textarea id="dJob" placeholder="例如：修車師傅、設計師…"></textarea>
+      <div class="field-label">我想再了解什麼？</div>
+      <textarea id="dCurious" placeholder="還想知道的事情～"></textarea>
+    </div>
+
+    <div class="saved-tip" id="savedTip">✓ 已自動幫你存起來</div>
+    <a class="fab-result" id="goResult2">🌟 看我的探索結果</a>
+  </section>
+
+  <!-- ============ 我的探索結果 ============ -->
+  <section class="view" id="view-result">
+    <div class="result-intro">
+      <h2>🌟 我的探索結果</h2>
+      <p>下面是你標 😍「有興趣」的群科。<br>從裡面圈出最想深入的 <b>2～3 個</b>，寫下原因，再按送出！</p>
+    </div>
+
+    <div id="favWrap"></div>
+
+    <div class="form-block">
+      <div class="field-label">你的姓名</div>
+      <input class="txt" id="rName" placeholder="王小明" autocomplete="off">
+      <div class="field-label">你的班級</div>
+      <input class="txt" id="rClass" placeholder="九年 1 班" autocomplete="off">
+      <div class="field-label">為什麼對這些群科有興趣？</div>
+      <textarea id="rReason" placeholder="寫一點點就可以，例如：我喜歡動手做東西…"></textarea>
+    </div>
+
+    <button class="submit-btn" id="submitBtn">📨 送出我的探索結果</button>
+    <p class="note" id="submitNote">按下後會幫你開好「已填好的表單」，<br>你只要再確認一次、按表單上的「提交」就完成囉！</p>
+  </section>
+
+</div>
+
+<!-- 底部導覽 -->
+<div class="bottomnav">
+  <button id="navHome" class="active"><span class="ic">🏠</span>總覽</button>
+  <button id="navProg"><span class="ic">📊</span><span class="progress-mini" id="progText">0 / 15</span></button>
+  <button id="navResult"><span class="ic">🌟</span>我的結果</button>
+</div>
+
+<script>
+/* =================================================================
+   ★★★ 老師後台設定區（建立 Google 表單後填這裡）★★★
+   prefillBase：表單的「預先填寫」網址，到 ?usp=pp_url 為止
+   entry：四個欄位的 entry ID
+   ================================================================= */
+const FORM_CONFIG = {
+  prefillBase: "https://docs.google.com/forms/d/e/1FAIpQLSdiMImQU-9HiEeb0CLQ7ziOMompG01GotK4JeuA6U65l4_waw/viewform?usp=pp_url",
+  formViewUrl: "https://docs.google.com/forms/d/e/1FAIpQLSdiMImQU-9HiEeb0CLQ7ziOMompG01GotK4JeuA6U65l4_waw/viewform",
+  entry: {
+    name:   "entry.2013688789",
+    klass:  "entry.1029386317",
+    groups: "entry.582520972",
+    reason: "entry.122699056"
+  }
+};
+
+/* ===== 15 群科資料 ===== */
+const GROUPS = [
+  {id:"machine",   name:"機械群",      emoji:"⚙️",  vid:"qS9FnmZwOio"},
+  {id:"power",     name:"動力機械群",  emoji:"🏍️",  vid:"qy3hyHfw0UA"},
+  {id:"electric",  name:"電機與電子群",emoji:"💡",  vid:"Ys7U2vB1VNQ"},
+  {id:"chem",      name:"化工群",      emoji:"🧪",  vid:"YH8K6aaRM2g"},
+  {id:"civil",     name:"土木與建築群",emoji:"🏗️",  vid:"aQwB6hpX5pE"},
+  {id:"business",  name:"商業與管理群",emoji:"💼",  vid:"eOLtRs6I7t8"},
+  {id:"design",    name:"設計群",      emoji:"🎨",  vid:"mBG0MBugtxk"},
+  {id:"agri",      name:"農業群",      emoji:"🌱",  vid:"Y-5inCufJ2I"},
+  {id:"food",      name:"食品群",      emoji:"🍞",  vid:"EJkGJFmQTh4"},
+  {id:"home",      name:"家政群",      emoji:"🧵",  vid:"vUbGzEwSwEw"},
+  {id:"hospi",     name:"餐旅群",      emoji:"🍽️",  vid:"65t21weIi30"},
+  {id:"marine",    name:"水產群",      emoji:"🐟",  vid:"mW6uZNv1sqo"},
+  {id:"sea",       name:"海事群",      emoji:"⚓",  vid:"umfwtmAjpoY"},
+  {id:"art",       name:"藝術群",      emoji:"🎭",  vid:"n0WUHuNRq3M"},
+  {id:"lang",      name:"外語群",      emoji:"🗣️",  vid:"QDvFTRm6-A0"}
+];
+const OVERVIEW_VID = "RgQwhG6JX0M";
+const STORE_KEY = "qunke15_v1";
+
+/* ===== 資料存取 ===== */
+function loadAll(){ try{return JSON.parse(localStorage.getItem(STORE_KEY))||{};}catch(e){return {};} }
+function saveAll(d){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+let DATA = loadAll();           // { groupId: {rating, learn, job, curious}, _picks:[], _name, _class, _reason }
+
+function getG(id){ return DATA[id] || {}; }
+function setG(id, patch){
+  DATA[id] = Object.assign({}, DATA[id], patch);
+  saveAll(DATA); flashSaved(); renderProgress();
+}
+
+/* ===== 導覽 ===== */
+function show(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  const back = document.getElementById('backBtn');
+  document.querySelector('.topbar-inner').classList.toggle('show-back', view==='detail');
+  // 底部 nav
+  document.getElementById('navHome').classList.toggle('active', view==='home');
+  document.getElementById('navResult').classList.toggle('active', view==='result');
+  window.scrollTo(0,0);
+}
+
+/* ===== 首頁卡片 ===== */
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  GROUPS.forEach(g=>{
+    const done = !!(getG(g.id).rating || getG(g.id).learn || getG(g.id).job);
+    const div = document.createElement('button');
+    div.className = 'card' + (done?' done':'');
+    div.innerHTML = `<span class="seen">✅</span><span class="emoji">${g.emoji}</span><span class="name">${g.name}</span>`;
+    div.onclick = ()=>openDetail(g.id);
+    grid.appendChild(div);
+  });
+}
+function renderProgress(){
+  const n = GROUPS.filter(g=>{const x=getG(g.id);return x.rating||x.learn||x.job||x.curious;}).length;
+  document.getElementById('progText').textContent = n + ' / 15';
+  renderGrid();
+}
+
+/* ===== 群科詳細 ===== */
+let curId = null;
+function openDetail(id){
+  curId = id;
+  const g = GROUPS.find(x=>x.id===id);
+  document.getElementById('dEmoji').textContent = g.emoji;
+  document.getElementById('dName').textContent = g.name;
+  document.getElementById('topTitle').textContent = g.emoji + ' ' + g.name;
+  // 影片
+  document.getElementById('dVideo').innerHTML =
+    `<iframe src="https://www.youtube-nocookie.com/embed/${g.vid}?rel=0" title="${g.name}簡介" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
+  // 回填作答
+  const d = getG(id);
+  document.querySelectorAll('#rate button').forEach(b=>b.classList.toggle('sel', b.dataset.v===d.rating));
+  document.getElementById('dLearn').value   = d.learn   || '';
+  document.getElementById('dJob').value     = d.job     || '';
+  document.getElementById('dCurious').value = d.curious || '';
+  show('detail');
+}
+
+let savedTimer=null;
+function flashSaved(){
+  const t = document.getElementById('savedTip');
+  if(document.getElementById('view-detail').classList.contains('active')){
+    t.classList.add('show');
+    clearTimeout(savedTimer);
+    savedTimer = setTimeout(()=>t.classList.remove('show'), 1500);
+  }
+}
+
+/* ===== 我的探索結果 ===== */
+function renderResult(){
+  const favs = GROUPS.filter(g=>getG(g.id).rating==='😍');
+  const wrap = document.getElementById('favWrap');
+  const picks = DATA._picks || [];
+  if(favs.length===0){
+    wrap.innerHTML = `<div class="fav-empty">你還沒有標 😍「有興趣」的群科喔～<br>回去逛逛，挑幾個喜歡的點 😍 吧！</div>`;
+  } else {
+    wrap.innerHTML = '';
+    favs.forEach(g=>{
+      const picked = picks.includes(g.id);
+      const chip = document.createElement('button');
+      chip.className = 'fav-chip' + (picked?' picked':'');
+      chip.innerHTML = `<span class="emoji">${g.emoji}</span><span>${g.name}</span><span class="pick">${picked?'✓':'○'}</span>`;
+      chip.onclick = ()=>togglePick(g.id);
+      wrap.appendChild(chip);
+    });
+  }
+  document.getElementById('rName').value   = DATA._name   || '';
+  document.getElementById('rClass').value  = DATA._class  || '';
+  document.getElementById('rReason').value = DATA._reason || '';
+}
+function togglePick(id){
+  let picks = DATA._picks || [];
+  if(picks.includes(id)) picks = picks.filter(x=>x!==id);
+  else picks.push(id);
+  DATA._picks = picks; saveAll(DATA); renderResult();
+}
+
+/* ===== 送出（開啟預先填好的表單）===== */
+function buildPrefillUrl(){
+  const e = FORM_CONFIG.entry;
+  const picks = (DATA._picks||[]).map(id=>GROUPS.find(g=>g.id===id).name);
+  const params = [];
+  params.push(e.name + '=' + encodeURIComponent(DATA._name||''));
+  params.push(e.klass + '=' + encodeURIComponent(DATA._class||''));
+  picks.forEach(p=> params.push(e.groups + '=' + encodeURIComponent(p)));
+  params.push(e.reason + '=' + encodeURIComponent(DATA._reason||''));
+  return FORM_CONFIG.prefillBase + '&' + params.join('&');
+}
+function submit(){
+  DATA._name   = document.getElementById('rName').value.trim();
+  DATA._class  = document.getElementById('rClass').value.trim();
+  DATA._reason = document.getElementById('rReason').value.trim();
+  saveAll(DATA);
+  const picks = DATA._picks||[];
+  if(picks.length===0){ alert('先在上面圈出 1～3 個最有興趣的群科喔！'); return; }
+  if(!DATA._name || !DATA._class){ alert('請填一下姓名和班級～'); return; }
+  if(FORM_CONFIG.prefillBase.indexOf('__')===0){
+    alert('（測試中）表單尚未設定完成。\n你的答案已存好，老師設定好表單後就能送出。');
+    return;
+  }
+  const url = buildPrefillUrl();
+  window.open(url, '_blank');
+}
+
+/* ===== 綁定 ===== */
+document.querySelectorAll('#rate button').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('#rate button').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel');
+    setG(curId, {rating: b.dataset.v});
+  };
+});
+document.getElementById('dLearn').oninput   = e=>setG(curId,{learn:e.target.value});
+document.getElementById('dJob').oninput     = e=>setG(curId,{job:e.target.value});
+document.getElementById('dCurious').oninput = e=>setG(curId,{curious:e.target.value});
+
+document.getElementById('backBtn').onclick  = ()=>{ show('home'); document.getElementById('topTitle').textContent='🧭 15 群科探索護照'; };
+document.getElementById('navHome').onclick  = ()=>{ show('home'); document.getElementById('topTitle').textContent='🧭 15 群科探索護照'; };
+document.getElementById('navProg').onclick  = ()=>{ show('home'); document.getElementById('topTitle').textContent='🧭 15 群科探索護照'; };
+document.getElementById('navResult').onclick= ()=>{ renderResult(); show('result'); };
+document.getElementById('goResult').onclick = ()=>{ renderResult(); show('result'); };
+document.getElementById('goResult2').onclick= ()=>{ renderResult(); show('result'); };
+document.getElementById('submitBtn').onclick= submit;
+['rName','rClass','rReason'].forEach(id=>{
+  document.getElementById(id).onblur = ()=>{
+    DATA._name=document.getElementById('rName').value.trim();
+    DATA._class=document.getElementById('rClass').value.trim();
+    DATA._reason=document.getElementById('rReason').value.trim();
+    saveAll(DATA);
+  };
+});
+
+/* 總覽影片 lazy 播放 */
+document.getElementById('ovPlay').onclick = function(){
+  document.getElementById('ovHolder').innerHTML =
+    `<iframe src="https://www.youtube-nocookie.com/embed/${OVERVIEW_VID}?rel=0&autoplay=1" title="15群科總覽" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>`;
+};
+
+/* 啟動 */
+renderGrid();
+renderProgress();
+</script>
+</body>
+</html>
