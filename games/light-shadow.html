@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#8fd0f7">
+<title>光之國大富翁：光走直線．影子出現</title>
+</head>
+<body>
+<style>
+  :root{
+    --sky1:#8fd0f7; --sky2:#d7f0ff; --sun:#ffc93c; --sun2:#ff9f1c;
+    --path:#f6d99b; --pathedge:#e3b866; --grass:#8ed081; --grass2:#6fbf6b;
+    --ink:#123a5a; --ink2:#2b5f86; --card:#ffffff; --train:#2e86de;
+    --ok:#2fb968; --hint:#ff7b5a; --gold:#ffcf3f;
+    --shadow:rgba(20,60,95,.18);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{
+    font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 62%,var(--grass) 62%,var(--grass2) 100%);
+    min-height:100vh;overflow-x:hidden;user-select:none;
+  }
+  #app{max-width:1040px;margin:0 auto;padding:16px;position:relative;z-index:2}
+  .hidden{display:none!important}
+  .btn{
+    font-family:inherit;font-weight:900;border:none;border-radius:20px;cursor:pointer;
+    padding:18px 30px;font-size:30px;color:#0b2e12;background:var(--sun);
+    box-shadow:0 7px 0 var(--sun2);transition:transform .06s;
+  }
+  .btn:active{transform:translateY(5px);box-shadow:0 2px 0 var(--sun2)}
+  .btn.blue{background:#5fb0ee;box-shadow:0 7px 0 #2e7fc4;color:#052440}
+  .btn.small{font-size:22px;padding:12px 20px;border-radius:16px}
+  .home{position:fixed;top:14px;right:14px;z-index:20}
+  .sound{position:fixed;top:14px;left:14px;z-index:20}
+
+  /* ---- START ---- */
+  #start{text-align:center;padding-top:5vh}
+  .bigtitle{font-size:64px;font-weight:900;letter-spacing:2px;margin:6px 0;text-shadow:0 3px 0 #fff}
+  .subtitle{font-size:30px;color:var(--ink2);font-weight:800;margin-bottom:6px}
+  .en{font-size:22px;color:#4a7fa6;font-weight:700}
+  .traincar{font-size:120px;margin:18px 0;animation:chug 1.4s ease-in-out infinite}
+  @keyframes chug{0%,100%{transform:translateX(-10px) rotate(-2deg)}50%{transform:translateX(10px) rotate(2deg)}}
+
+  /* ---- BOARD ---- */
+  .topbar{display:flex;align-items:center;justify-content:center;gap:14px;margin:6px 0 10px;flex-wrap:wrap}
+  .pill{background:#fff;border-radius:999px;padding:8px 18px;font-size:24px;font-weight:900;box-shadow:0 4px 0 var(--shadow)}
+  .board{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:10px 0 4px;
+  }
+  .tile{
+    position:relative;background:var(--card);border-radius:20px;min-height:104px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    box-shadow:0 6px 0 var(--shadow);border:4px solid #fff;overflow:hidden;
+  }
+  .tile .emo{font-size:46px;line-height:1}
+  .tile .lab{font-size:19px;font-weight:900;margin-top:2px;color:var(--ink2)}
+  .tile.q{background:#fff}
+  .tile.bonus{background:linear-gradient(160deg,#fff3c9,#ffe08a)}
+  .tile.end{background:linear-gradient(160deg,#ffe6a3,#ffc93c);border-color:#fff}
+  .tile.start{background:linear-gradient(160deg,#d6f5c9,#a8e79a)}
+  .tile.done{opacity:.55}
+  .tile.here{border-color:var(--train);box-shadow:0 0 0 4px #bfe0ff,0 6px 0 var(--shadow);transform:translateY(-3px)}
+  .token{position:absolute;top:-8px;font-size:40px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.25));transition:none}
+  .dicewrap{text-align:center;margin:10px 0 4px}
+  .dice{font-size:70px;display:inline-block}
+  .rolling{animation:spin .6s linear}
+  @keyframes spin{100%{transform:rotate(360deg)}}
+  .say{font-size:26px;font-weight:900;color:var(--ink);min-height:34px;text-align:center;margin:4px 0}
+
+  /* ---- QUESTION ---- */
+  #modal{position:fixed;inset:0;background:rgba(10,40,65,.55);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px}
+  .qcard{background:#fff;border-radius:28px;max-width:760px;width:100%;padding:26px 22px 30px;box-shadow:0 18px 40px rgba(0,0,0,.3);text-align:center}
+  .qtag{display:inline-block;background:var(--sky1);color:#083b5e;font-weight:900;font-size:22px;padding:6px 18px;border-radius:999px;margin-bottom:8px}
+  .qzh{font-size:40px;font-weight:900;margin:6px 0 2px}
+  .qen{font-size:24px;color:#5b86a8;font-weight:800;margin-bottom:16px}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .opts.three{grid-template-columns:1fr 1fr 1fr}
+  .opt{
+    background:#f4faff;border:4px solid #cfe6f8;border-radius:22px;padding:18px 8px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .06s;
+  }
+  .opt:active{transform:scale(.96)}
+  .opt .oe{font-size:64px;line-height:1}
+  .opt .ol{font-size:26px;font-weight:900;color:var(--ink)}
+  .opt.right{border-color:var(--ok);background:#e7fbef;animation:pop .4s}
+  .opt.wrong{border-color:var(--hint);background:#fff0ec;animation:shake .4s}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .fb{font-size:28px;font-weight:900;min-height:36px;margin-top:14px}
+  .fb.ok{color:var(--ok)} .fb.no{color:var(--hint)}
+  .readbtn{margin-top:6px}
+
+  /* ---- WIN ---- */
+  #win{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:linear-gradient(180deg,#8fd0f7,#ffe6a3);text-align:center;padding:20px}
+  .castle{font-size:130px;animation:chug 1.6s ease-in-out infinite}
+  .winbig{font-size:70px;font-weight:900;color:#0b3a5c;text-shadow:0 3px 0 #fff;letter-spacing:3px}
+
+  canvas#fx{position:fixed;inset:0;z-index:15;pointer-events:none}
+  .clouds{position:fixed;top:0;left:0;width:100%;z-index:1;font-size:60px;opacity:.9;pointer-events:none}
+  .c1{position:absolute;left:6%;top:60px;animation:float 9s ease-in-out infinite}
+  .c2{position:absolute;right:8%;top:110px;animation:float 11s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateX(0)}50%{transform:translateX(24px)}}
+  @media (max-width:560px){
+    .board{grid-template-columns:repeat(3,1fr)}
+    .bigtitle{font-size:46px}.traincar{font-size:90px}
+    .qzh{font-size:32px}.opt .oe{font-size:52px}.opt .ol{font-size:22px}
+  }
+</style>
+
+<canvas id="fx"></canvas>
+<div class="clouds"><span class="c1">☁️</span><span class="c2">⛅</span></div>
+
+<button class="btn small blue sound" id="soundBtn">🔊 聲音</button>
+
+<div id="app">
+
+  <!-- START -->
+  <section id="start">
+    <div class="traincar">🚂</div>
+    <div class="bigtitle">光之國大富翁</div>
+    <div class="subtitle">光走直線・影子出現</div>
+    <div class="en">Light Land · Light travels straight, shadows appear</div>
+    <div style="margin-top:26px">
+      <button class="btn" id="goBtn">▶ 開始任務 Start</button>
+    </div>
+    <div style="margin-top:16px;font-size:20px;color:#4a7fa6;font-weight:700">用 🎲 骰子前進，每一格闖一關。答錯不扣分，慢慢玩！</div>
+  </section>
+
+  <!-- BOARD -->
+  <section id="board" class="hidden">
+    <button class="btn small blue home" id="homeBtn">🏠 首頁</button>
+    <div class="topbar">
+      <div class="pill">🚂 第 <span id="posNum">1</span> 格</div>
+      <div class="pill">⭐ <span id="starNum">0</span></div>
+    </div>
+
+    <div class="board" id="grid"></div>
+
+    <div class="dicewrap">
+      <div class="dice" id="dice">🎲</div>
+      <div class="say" id="say">按骰子出發！ Roll the dice!</div>
+      <button class="btn" id="rollBtn">🎲 擲骰子 Roll</button>
+    </div>
+  </section>
+</div>
+
+<!-- QUESTION MODAL -->
+<div id="modal" class="hidden">
+  <div class="qcard">
+    <div class="qtag" id="qtag">第 1 關</div>
+    <div class="qzh" id="qzh"></div>
+    <div class="qen" id="qen"></div>
+    <button class="btn small blue readbtn" id="readBtn">🔈 唸給我聽 Read</button>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb"></div>
+  </div>
+</div>
+
+<!-- WIN -->
+<div id="win" class="hidden">
+  <div class="castle">🏰</div>
+  <div class="winbig">🎉 過關！LEVEL UP 🎉</div>
+  <div style="font-size:30px;font-weight:900;color:#0b3a5c;margin:10px 0">你把光和影子的祕密都破解了！</div>
+  <div class="en" style="margin-bottom:20px">You solved all the light &amp; shadow secrets!</div>
+  <div style="font-size:24px;font-weight:800;color:#0b3a5c;max-width:640px">🟠 說一句話：「因為光被＿＿擋住，所以牆上有影子。」</div>
+  <div style="margin-top:24px"><button class="btn" id="againBtn">🔁 再玩一次 Play again</button></div>
+</div>
+
+<script>
+(function(){
+  // ---------- data ----------
+  var tiles = [
+    {type:'start', emo:'🚦', lab:'出發'},
+    {type:'q', emo:'🔦', lab:'第1關', tag:'第 1 關',
+      zh:'哪一個會發光？', en:'Which one gives light?',
+      opts:[{e:'🔦',l:'手電筒'},{e:'🪨',l:'石頭'}], ans:0,
+      hint:'手電筒會亮，會發光的叫「光源」。',
+      okzh:'對！手電筒是光源，會發光。', oken:'Yes! The flashlight is a light source.'},
+    {type:'bonus', emo:'⭐', lab:'金幣格'},
+    {type:'q', emo:'➡️', lab:'第2關', tag:'第 2 關',
+      zh:'光會怎麼走？', en:'How does light travel?',
+      opts:[{e:'➡️',l:'直直的'},{e:'🌀',l:'彎彎的'}], ans:0,
+      hint:'光只會走直線，不會轉彎喔。',
+      okzh:'對！光沿著直線前進。', oken:'Yes! Light travels in a straight line.'},
+    {type:'q', emo:'✋', lab:'第3關', tag:'第 3 關',
+      zh:'誰能擋住光？', en:'What can block the light?',
+      opts:[{e:'🚂',l:'小火車'},{e:'💨',l:'空氣'}], ans:0,
+      hint:'不透明的東西（像小火車）才擋得住光。',
+      okzh:'對！不透明的火車擋住了光。', oken:'Yes! The train blocks the light.'},
+    {type:'bonus', emo:'🌸', lab:'灑花格'},
+    {type:'q', emo:'👤', lab:'第4關', tag:'第 4 關',
+      zh:'光被擋住，牆上出現什麼？', en:'What appears on the wall?',
+      opts:[{e:'👤',l:'影子'},{e:'🌈',l:'彩虹'}], ans:0,
+      hint:'光被擋住，後面變暗暗的，那就是影子。',
+      okzh:'對！那是影子。', oken:'Yes! That is a shadow.'},
+    {type:'q', emo:'📖', lab:'第5關', tag:'第 5 關',
+      zh:'哪一個影子最清楚？', en:'Which makes a clear shadow?',
+      opts:[{e:'📖',l:'書'},{e:'🥛',l:'玻璃杯'}], ans:0,
+      hint:'書不透明，影子清楚；玻璃杯透明，光穿過去。',
+      okzh:'對！不透明的書，影子最清楚。', oken:'Yes! The book makes a clear shadow.'},
+    {type:'end', emo:'🏰', lab:'終點'}
+  ];
+
+  var pos=0, stars=0, rolling=false, audioOn=true, actx=null;
+
+  // ---------- audio ----------
+  function ensureAudio(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx&&actx.state==='suspended') actx.resume(); }
+  function tone(freq,dur,type,vol,when){
+    if(!audioOn||!actx) return;
+    var t=actx.currentTime+(when||0);
+    var o=actx.createOscillator(), g=actx.createGain();
+    o.type=type||'sine'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(vol||0.25,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+dur+0.02);
+  }
+  function sDing(){ tone(660,0.12,'triangle',0.3,0); tone(990,0.18,'triangle',0.3,0.1); tone(1320,0.25,'sine',0.25,0.2);}
+  function sBuzz(){ tone(200,0.18,'sawtooth',0.18,0); }
+  function sDice(){ for(var i=0;i<5;i++) tone(300+Math.random()*400,0.05,'square',0.12,i*0.06); }
+  function sCoin(){ tone(880,0.08,'square',0.2,0); tone(1180,0.12,'square',0.2,0.08); }
+  function sFanfare(){ var n=[523,659,784,1047]; n.forEach(function(f,i){ tone(f,0.28,'triangle',0.3,i*0.14); }); }
+
+  // ---------- speech ----------
+  function speak(zh,en){
+    if(!('speechSynthesis' in window)) return;
+    try{
+      speechSynthesis.cancel();
+      var u1=new SpeechSynthesisUtterance(zh); u1.lang='zh-TW'; u1.rate=0.9;
+      var u2=new SpeechSynthesisUtterance(en); u2.lang='en-US'; u2.rate=0.85;
+      speechSynthesis.speak(u1); speechSynthesis.speak(u2);
+    }catch(e){}
+  }
+
+  // ---------- confetti ----------
+  var cvs=document.getElementById('fx'), cx=cvs.getContext('2d'), parts=[], raf=null;
+  function fit(){ cvs.width=innerWidth; cvs.height=innerHeight; }
+  addEventListener('resize',fit); fit();
+  var COLORS=['#ffc93c','#ff7b5a','#2fb968','#5fb0ee','#e15fd0','#ffffff'];
+  function burst(n,opt){
+    opt=opt||{};
+    for(var i=0;i<n;i++){
+      parts.push({
+        x:opt.x!=null?opt.x:innerWidth/2, y:opt.y!=null?opt.y:innerHeight*0.3,
+        vx:(Math.random()-0.5)*(opt.spread||10), vy:(Math.random()*-1-0.5)*(opt.up||8),
+        g:0.25+Math.random()*0.15, s:8+Math.random()*10, r:Math.random()*6,
+        vr:(Math.random()-0.5)*0.4, col:COLORS[(Math.random()*COLORS.length)|0],
+        coin:opt.coin&&Math.random()<0.5, life:120
+      });
+    }
+    if(!raf) loop();
+  }
+  function loop(){
+    cx.clearRect(0,0,cvs.width,cvs.height);
+    for(var i=parts.length-1;i>=0;i--){
+      var p=parts[i]; p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; p.life--;
+      if(p.y>cvs.height+30||p.life<0){ parts.splice(i,1); continue; }
+      cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r);
+      if(p.coin){ cx.font=p.s*2+'px sans-serif'; cx.fillText('🪙',0,0); }
+      else { cx.fillStyle=p.col; cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6); }
+      cx.restore();
+    }
+    if(parts.length){ raf=requestAnimationFrame(loop); } else { raf=null; cx.clearRect(0,0,cvs.width,cvs.height); }
+  }
+
+  // ---------- board render ----------
+  var grid=document.getElementById('grid');
+  function renderBoard(){
+    grid.innerHTML='';
+    tiles.forEach(function(t,i){
+      var d=document.createElement('div');
+      d.className='tile '+t.type+(i<pos?' done':'')+(i===pos?' here':'');
+      d.innerHTML='<div class="emo">'+t.emo+'</div><div class="lab">'+t.lab+'</div>';
+      if(i===pos){ var tk=document.createElement('div'); tk.className='token'; tk.textContent='🚂'; d.appendChild(tk); }
+      grid.appendChild(d);
+    });
+    document.getElementById('posNum').textContent=(pos+1);
+    document.getElementById('starNum').textContent=stars;
+  }
+
+  // ---------- flow ----------
+  var say=document.getElementById('say');
+  function show(id){ ['start','board'].forEach(function(s){ document.getElementById(s).classList.toggle('hidden',s!==id); }); }
+
+  document.getElementById('goBtn').onclick=function(){ ensureAudio(); sDing(); show('board'); renderBoard(); };
+  document.getElementById('homeBtn').onclick=function(){ show('start'); };
+  document.getElementById('soundBtn').onclick=function(){ audioOn=!audioOn; ensureAudio(); this.textContent=audioOn?'🔊 聲音':'🔇 靜音'; if(audioOn) sCoin(); };
+
+  var diceEl=document.getElementById('dice'), rollBtn=document.getElementById('rollBtn');
+  rollBtn.onclick=function(){
+    if(rolling) return; if(pos>=tiles.length-1){ return; }
+    ensureAudio(); rolling=true; sDice();
+    diceEl.classList.add('rolling');
+    var faces=['⚀','⚁','⚂','⚃','⚄','⚅']; var ticks=0;
+    var iv=setInterval(function(){ diceEl.textContent=faces[(Math.random()*6)|0]; ticks++; if(ticks>8){ clearInterval(iv); done(); } },70);
+    function done(){
+      var step=1+((Math.random()*2)|0); // 1 or 2
+      diceEl.classList.remove('rolling');
+      diceEl.textContent=['⚀','⚁'][step-1];
+      var target=Math.min(pos+step, tiles.length-1);
+      say.textContent='前進 '+step+' 格！';
+      stepMove(target);
+    }
+  };
+
+  function stepMove(target){
+    if(pos<target){
+      pos++; renderBoard(); tone(520,0.06,'square',0.15,0);
+      setTimeout(function(){ stepMove(target); },260);
+    } else {
+      rolling=false; resolveTile();
+    }
+  }
+
+  function resolveTile(){
+    var t=tiles[pos];
+    if(t.type==='bonus'){
+      stars++; renderBoard();
+      say.textContent=(t.lab==='灑花格'?'🌸 灑花！好棒！':'⭐ 得到金幣！');
+      sCoin(); burst(60,{coin:t.lab!=='灑花格'});
+    } else if(t.type==='end'){
+      winGame();
+    } else if(t.type==='q'){
+      openQuestion(t);
+    } else {
+      say.textContent='再擲一次骰子！';
+    }
+  }
+
+  // ---------- question ----------
+  var modal=document.getElementById('modal');
+  var curQ=null;
+  function openQuestion(t){
+    curQ=t;
+    document.getElementById('qtag').textContent=t.tag;
+    document.getElementById('qzh').textContent=t.zh;
+    document.getElementById('qen').textContent=t.en;
+    var fb=document.getElementById('fb'); fb.textContent=''; fb.className='fb';
+    var opts=document.getElementById('opts');
+    opts.className='opts'+(t.opts.length===3?' three':'');
+    opts.innerHTML='';
+    t.opts.forEach(function(o,idx){
+      var b=document.createElement('div'); b.className='opt';
+      b.innerHTML='<div class="oe">'+o.e+'</div><div class="ol">'+o.l+'</div>';
+      b.onclick=function(){ answer(idx,b); };
+      opts.appendChild(b);
+    });
+    modal.classList.remove('hidden');
+    setTimeout(function(){ speak(t.zh,t.en); },350);
+  }
+  document.getElementById('readBtn').onclick=function(){ if(curQ) speak(curQ.zh,curQ.en); };
+
+  function answer(idx,el){
+    var t=curQ, fb=document.getElementById('fb');
+    if(idx===t.ans){
+      el.classList.add('right'); sDing(); burst(90,{});
+      fb.className='fb ok'; fb.textContent='✅ '+t.okzh;
+      speak(t.okzh, t.oken||'');
+      setTimeout(function(){
+        modal.classList.add('hidden');
+        if(pos>=tiles.length-1){ winGame(); }
+        else { say.textContent='答對了！再擲骰子前進 🎲'; }
+      },1500);
+    } else {
+      el.classList.add('wrong'); sBuzz();
+      fb.className='fb no'; fb.textContent='💡 '+t.hint+'（再試一次，不扣分！）';
+      setTimeout(function(){ el.classList.remove('wrong'); },500);
+    }
+  }
+
+  // ---------- win ----------
+  function winGame(){
+    document.getElementById('win').classList.remove('hidden');
+    sFanfare();
+    var i=0; var iv=setInterval(function(){
+      burst(70,{x:(0.2+Math.random()*0.6)*innerWidth,y:innerHeight*0.2,coin:Math.random()<0.4,spread:14});
+      if(++i>6) clearInterval(iv);
+    },350);
+  }
+  document.getElementById('againBtn').onclick=function(){
+    pos=0; stars=0; document.getElementById('win').classList.add('hidden');
+    diceEl.textContent='🎲'; say.textContent='按骰子出發！ Roll the dice!';
+    renderBoard();
+  };
+
+  renderBoard();
+})();
+</script>
+</body>
+</html>
