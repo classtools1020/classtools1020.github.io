@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#8fd0f7">
+<title>光與影子・第1節｜總入口</title>
+<style>
+  :root{
+    --sky1:#8fd0f7; --sky2:#dff2ff; --sun:#ffc93c; --sun2:#ff9f1c;
+    --ink:#123a5a; --ink2:#2b5f86; --card:#ffffff; --train:#2e86de;
+    --grass:#8ed081; --line:#d6e6f4; --shadow:rgba(20,60,95,.14);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 40%,#f4fbff 100%);
+    min-height:100vh;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 18px 60px}
+  header.hero{text-align:center;padding:22px 10px 8px}
+  .train{font-size:76px;line-height:1;filter:drop-shadow(0 4px 3px rgba(0,0,0,.18))}
+  h1{font-size:44px;margin:6px 0 2px;letter-spacing:1px;text-shadow:0 2px 0 #fff}
+  .sub{font-size:22px;color:var(--ink2);font-weight:800}
+  .en{font-size:16px;color:#5a86a8;font-weight:600;margin-top:2px}
+
+  h2.sec{font-size:26px;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
+  h2.sec::after{content:"";flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--sun),transparent)}
+
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    background:var(--card);border-radius:22px;padding:26px 16px;text-decoration:none;color:var(--ink);
+    box-shadow:0 7px 0 var(--shadow);border:3px solid #fff;transition:transform .08s, box-shadow .08s;
+    min-height:170px;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:0 11px 0 var(--shadow)}
+  .card .ico{font-size:56px;line-height:1;margin-bottom:8px}
+  .card .t{font-size:26px;font-weight:900}
+  .card .d{font-size:16px;color:var(--ink2);font-weight:600;margin-top:4px}
+  .card.play{background:linear-gradient(160deg,#fff5da,#ffe08a)}
+  .card.quiz{background:linear-gradient(160deg,#e7f6ff,#c8e9ff)}
+  .card.ppt{background:linear-gradient(160deg,#eafbe9,#c9edc2)}
+
+  .files{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .file{
+    display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--line);
+    border-radius:16px;padding:16px 18px;text-decoration:none;color:var(--ink);box-shadow:0 4px 0 var(--shadow);
+  }
+  .file:hover{border-color:var(--train)}
+  .file .fi{font-size:38px}
+  .file .ft{font-size:20px;font-weight:900}
+  .file .fd{font-size:14px;color:var(--ink2);font-weight:600}
+
+  .videos{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  .vid{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 6px 0 var(--shadow);border:3px solid #fff}
+  .vframe{position:relative;width:100%;padding-top:56.25%;background:#0c1424}
+  .vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .vcap{padding:12px 14px;font-size:18px;font-weight:800}
+  .vcap .vsrc{display:block;font-size:14px;color:var(--ink2);font-weight:600;margin-top:2px}
+  .langtag{display:inline-block;font-size:13px;font-weight:800;color:#fff;background:var(--train);border-radius:999px;padding:2px 10px;margin-right:6px}
+  .langtag.en{background:#e0872b}
+
+  footer{text-align:center;margin-top:44px;font-size:15px;color:var(--ink2)}
+  @media (max-width:720px){
+    .cards{grid-template-columns:1fr}
+    .files{grid-template-columns:1fr}
+    .videos{grid-template-columns:1fr}
+    h1{font-size:34px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="train">🚂☀️</div>
+    <h1>光與影子・第 1 節</h1>
+    <div class="sub">光走直線，影子出現</div>
+    <div class="en">一頁直達：簡報・遊戲・搶答・教案・影片</div>
+  </header>
+
+  <h2 class="sec">🎯 上課一鍵直達</h2>
+  <div class="cards">
+    <a class="card ppt" href="https://gamma.app/docs/a79isgxappxaqy2" target="_blank" rel="noopener">
+      <div class="ico">🖼️</div><div class="t">簡報</div><div class="d">Gamma・全幅照片</div>
+    </a>
+    <a class="card play" href="../games/light-shadow.html" target="_blank" rel="noopener">
+      <div class="ico">🎮</div><div class="t">光之國度</div><div class="d">大富翁闖關・音效灑花</div>
+    </a>
+    <a class="card quiz" href="https://www.baamboozle.com/game/4734426" target="_blank" rel="noopener">
+      <div class="ico">🙋</div><div class="t">全班搶答</div><div class="d">Baamboozle・7 題</div>
+    </a>
+  </div>
+
+  <h2 class="sec">📄 教學資料</h2>
+  <div class="files">
+    <a class="file" href="lesson1-plan.docx">
+      <div class="fi">📘</div>
+      <div><div class="ft">教案（含逐字台詞）</div><div class="fd">三段流程・迷思・提示層級・評量表・Word 下載</div></div>
+    </a>
+    <a class="file" href="lesson1-worksheet.docx">
+      <div class="fi">📝</div>
+      <div><div class="ft">學習單（A4 一頁）</div><div class="fd">🔵貼貼紙圈選　🟠語詞庫＋因果句・Word 下載</div></div>
+    </a>
+  </div>
+
+  <h2 class="sec">📺 看影片（學生最愛）</h2>
+  <div class="videos">
+    <div class="vid">
+      <div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/oOe_oUqdqmI" title="影子形成的科學原理" loading="lazy" allowfullscreen></iframe></div>
+      <div class="vcap"><span class="langtag">中文</span>影子形成的科學原理<span class="vsrc">大愛電視・生活裡的科學</span></div>
+    </div>
+    <div class="vid">
+      <div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/7DZ1FV_wI0I" title="魔幻手影" loading="lazy" allowfullscreen></iframe></div>
+      <div class="vcap"><span class="langtag">中文</span>魔幻手影・張正龍<span class="vsrc">手影遊戲・動機超吸睛</span></div>
+    </div>
+    <div class="vid">
+      <div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/fs0magjHxYQ" title="Shadow Science for Kids" loading="lazy" allowfullscreen></iframe></div>
+      <div class="vcap"><span class="langtag en">EN</span>Shadow｜Science for Kids<span class="vsrc">Little School・畫面簡單好懂</span></div>
+    </div>
+    <div class="vid">
+      <div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/lA1KAhJHFYc" title="How Shadows Are Formed" loading="lazy" allowfullscreen></iframe></div>
+      <div class="vcap"><span class="langtag en">EN</span>How Shadows Are Formed<span class="vsrc">Fun Science for Kids・彩色動畫</span></div>
+    </div>
+  </div>
+
+  <footer>
+    🚂 光與影子・第 1 節　｜　竹東國中自然科　｜　一頁直達所有教材
+  </footer>
+
+</div>
+</body>
+</html>
