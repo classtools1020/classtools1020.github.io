@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a1626">
+<title>光線特勤隊・任務一｜光走直線．影子出現</title>
+<style>
+  :root{
+    --bg:#0a1626; --bg2:#0f1f38; --panel:#12233c; --panel2:#1a3358;
+    --ink:#eaf3ff; --dim:#9fc0e6; --beam:#ffd24a; --beam2:#ffb63f;
+    --teal:#35d0c0; --line:#284a76; --danger:#ff6b6b; --ok:#48d18a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{
+    font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;
+    background:radial-gradient(120% 100% at 50% -10%,#173056 0%,var(--bg) 55%);
+    color:var(--ink);overflow:hidden;
+  }
+  #stage{position:relative;width:100vw;height:100vh;overflow:hidden}
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+    padding:5vh 6vw 12vh;text-align:center;animation:fade .35s ease;
+  }
+  .slide.on{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .eyebrow{font-size:clamp(15px,2vw,22px);letter-spacing:4px;color:var(--teal);font-weight:800;margin-bottom:10px}
+  h1{font-size:clamp(34px,7vw,74px);margin:0;line-height:1.1;letter-spacing:2px;text-shadow:0 0 30px rgba(255,210,74,.25)}
+  h2{font-size:clamp(28px,5.4vw,58px);margin:0 0 6px;line-height:1.15}
+  .big{font-size:clamp(40px,9vw,110px);line-height:1;margin:10px 0}
+  .lead{font-size:clamp(18px,2.6vw,30px);color:var(--dim);font-weight:700;max-width:22ch}
+  .en{font-size:clamp(13px,1.6vw,18px);color:#6f97c4;font-weight:600;letter-spacing:1px;margin-top:8px}
+  .beambadge{font-size:80px;filter:drop-shadow(0 0 20px var(--beam))}
+
+  .keywords{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .kw{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:14px 22px;font-size:clamp(20px,3vw,34px);font-weight:900}
+  .kw .k-en{display:block;font-size:14px;color:var(--dim);font-weight:600;letter-spacing:1px}
+
+  .lab{width:min(88vw,880px);height:min(46vh,380px);background:#0b1526;border:2px solid var(--line);border-radius:20px;overflow:hidden;position:relative}
+  .lab canvas{display:block;width:100%;height:100%}
+  .labctrl{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  button.ctl{font-family:inherit;font-weight:800;font-size:clamp(15px,2vw,20px);border:none;border-radius:14px;padding:12px 20px;cursor:pointer;color:#07202f;background:var(--beam);box-shadow:0 5px 0 var(--beam2)}
+  button.ctl:active{transform:translateY(3px);box-shadow:0 2px 0 var(--beam2)}
+  button.ctl.alt{background:var(--panel2);color:var(--ink);box-shadow:0 5px 0 #0d2340}
+  .labctrl label{display:flex;align-items:center;gap:8px;font-size:16px;color:var(--dim);font-weight:700;background:var(--panel);padding:8px 14px;border-radius:12px}
+  input[type=range]{accent-color:var(--beam)}
+
+  .cards3{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+  .c3{background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:18px 20px;min-width:150px}
+  .c3 .ce{font-size:60px}
+  .c3 .cl{font-size:22px;font-weight:900;margin-top:4px}
+  .c3 .ct{font-size:15px;color:var(--dim);font-weight:600}
+  .c3.win{border-color:var(--ok)}
+
+  .safety{margin-top:14px;background:rgba(255,107,107,.12);border:2px solid var(--danger);border-radius:16px;padding:14px 20px;font-size:clamp(16px,2.2vw,22px);font-weight:800;color:#ffd0d0;max-width:32ch}
+
+  .status{display:flex;gap:18px;justify-content:center;margin-top:6px}
+  .st{background:var(--panel);border:3px solid var(--line);border-radius:18px;padding:16px 22px;font-size:22px;font-weight:900}
+  .st .d{font-size:46px}
+  .st.g{border-color:var(--ok)} .st.y{border-color:var(--beam)} .st.r{border-color:var(--danger)}
+
+  /* nav */
+  .nav{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;gap:14px;padding:12px 18px;
+       background:linear-gradient(0deg,rgba(6,15,28,.95),transparent);z-index:30}
+  .nav button{font-family:inherit;font-weight:800;font-size:18px;border:none;border-radius:12px;padding:12px 18px;cursor:pointer;
+       background:var(--panel2);color:var(--ink);box-shadow:0 4px 0 #0d2340}
+  .nav button:active{transform:translateY(2px)}
+  .dots{display:flex;gap:7px;flex:1;justify-content:center;flex-wrap:wrap}
+  .dot{width:12px;height:12px;border-radius:50%;background:var(--line);cursor:pointer}
+  .dot.on{background:var(--beam);box-shadow:0 0 8px var(--beam)}
+  .counter{font-size:15px;color:var(--dim);font-weight:700;min-width:52px;text-align:right}
+
+  /* teacher script drawer */
+  .drawer-toggle{position:fixed;top:14px;right:14px;z-index:40;font-family:inherit;font-weight:800;font-size:16px;
+       border:none;border-radius:12px;padding:10px 16px;cursor:pointer;background:var(--teal);color:#062a26;box-shadow:0 4px 0 #1f9c8e}
+  .drawer{position:fixed;top:0;right:-460px;width:440px;max-width:92vw;height:100vh;z-index:39;
+       background:var(--panel);border-left:3px solid var(--teal);box-shadow:-10px 0 40px rgba(0,0,0,.5);
+       transition:right .28s ease;overflow-y:auto;padding:64px 20px 30px}
+  .drawer.open{right:0}
+  .drawer h3{color:var(--teal);font-size:22px;margin:0 0 4px}
+  .drawer .dsub{color:var(--dim);font-size:14px;margin-bottom:14px}
+  .say{border-left:4px solid var(--beam);padding:8px 12px;margin:10px 0;font-size:17px;line-height:1.5;background:rgba(255,210,74,.06);border-radius:6px}
+  .say b{color:var(--beam)}
+  .track{font-size:15px;margin:6px 0;line-height:1.5}
+  .track .b{color:#7fd4ff;font-weight:800}
+  .track .o{color:var(--beam);font-weight:800}
+  .sel{font-size:15px;color:var(--teal);font-weight:700;margin:6px 0}
+  .wait{font-size:14px;color:#ffd98a;font-weight:700}
+  .drawer .close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:24px;cursor:pointer}
+
+  @media (max-width:640px){ .drawer{width:100vw} }
+</style>
+</head>
+<body>
+
+<button class="drawer-toggle" id="drawerBtn">🎙 教師口白</button>
+<div class="drawer" id="drawer">
+  <button class="close" id="drawerClose">✕</button>
+  <h3 id="dTitle">教師口白</h3>
+  <div class="dsub">🔵操作層　🟠推理層　💚SEL　⏱等待</div>
+  <div id="dBody"></div>
+</div>
+
+<div id="stage"></div>
+
+<div class="nav">
+  <button id="prev">◀ 上一頁</button>
+  <div class="dots" id="dots"></div>
+  <button id="next">下一頁 ▶</button>
+  <div class="counter" id="counter"></div>
+</div>
+
+<script>
+// ---------- slides ----------
+var slides = [
+  { html:
+    '<div class="eyebrow">LIGHT FORCE · MISSION 01</div>'+
+    '<div class="beambadge">🔦</div>'+
+    '<h1>光線特勤隊<br>任務一</h1>'+
+    '<div class="lead">光走直線，影子出現</div>'+
+    '<div class="en">Light travels straight · Shadows appear</div>',
+    script:{ title:'開場・任務啟動',
+      say:['各位光線探員，任務一，開始。'],
+      note:'固定開場手勢＋出示任務流程條（簽到→找光→擋光→看影→回報）。',
+      sel:'建立可預測的開場儀式（自我管理）。' } },
+
+  { html:
+    '<div class="eyebrow">STEP 1 · 任務簽到</div>'+
+    '<h2>先簽到，照顧自己</h2>'+
+    '<div class="lead">指出你現在的狀態燈</div>'+
+    '<div class="status"><div class="st g"><div class="d">🟢</div>可以出任務</div>'+
+      '<div class="st y"><div class="d">🟡</div>普通</div>'+
+      '<div class="st r"><div class="d">🔴</div>需要支援</div></div>',
+    script:{ title:'任務簽到（SEL・自我覺察）',
+      say:['任務開始前，先照顧自己。看狀態燈，指出你現在的狀態：綠色可以出任務、黃色普通、紅色需要支援。你指出來，我就知道今天怎麼陪你。'],
+      wait:'等待 5 秒',
+      track:['指認狀態燈即可（無口語也能簽到）。','','可加一句：現在的心情，用一個詞形容。'],
+      sel:'情緒定錨，讓每位探員被看見。' } },
+
+  { html:
+    '<div class="eyebrow">情報 · INTEL</div>'+
+    '<h2>那個一直跟著你的黑影</h2>'+
+    '<div class="big">🧍‍♂️➡️⬛</div>'+
+    '<div class="lead">它是什麼？從哪裡來？</div>'+
+    '<div class="en">What is it? Where does it come from?</div>',
+    script:{ title:'動機・真實提問',
+      say:['各位探員，你們用手機手電筒照過牆嗎？或走在球場燈光下，看過一個黑影一直跟著你？這個黑影是什麼？從哪裡來？今天的任務，就是把它查清楚。',
+           '先講清楚：任務裡猜錯很正常。真正的探員都是一直試、一直修正，才找到答案。'],
+      wait:'提問後等待 10 秒',
+      sel:'成長心態＋安全嘗試（自我管理）。這個問題結尾會由探員自己回答。' } },
+
+  { html:
+    '<div class="eyebrow">任務 · 用探照燈做出影子</div>'+
+    '<h2>開燈 → 擋光 → 看影</h2>'+
+    '<div class="lab"><canvas id="cv1"></canvas></div>'+
+    '<div class="labctrl">'+
+      '<button class="ctl" id="lampBtn">💡 開／關 探照燈</button>'+
+      '<label>移動物體 <input type="range" id="objPos" min="0" max="100" value="50"></label>'+
+    '</div>',
+    script:{ title:'探索・兩人合作操作',
+      say:['兩位探員一組。出發前先講好誰先拿探照燈，我們輪流，不用搶。','任務來了：用你的探照燈，讓桌上出現那個黑影。找到以後，指給你的隊友看。'],
+      wait:'等待 10 秒（每人都操作到）',
+      track:['指出影子位置（指認即通過）。','','說因果句：光被物體擋住，後面變暗，出現影子。'],
+      sel:'先約定輪流順序（人際技巧）。⭐增強：你自己調整角度才照出來，這就是科學方法。' } },
+
+  { html:
+    '<div class="eyebrow">情報 · 光的特性</div>'+
+    '<h2>光，只走直線</h2>'+
+    '<div class="lab"><canvas id="cv2"></canvas></div>'+
+    '<div class="lead">三個洞排成一直線，光才穿得過</div>',
+    script:{ title:'建構・光走直線',
+      say:['探員注意，光有一個很重要的情報：它只走直線，不會轉彎。三個洞排成一直線，光就直接穿過去。','如果把中間那張移歪呢？光就過不去了——因為光不會轉彎繞過去。'],
+      track:['把移歪的卡片推回直線，讓光再穿過。','','說出：排成直線，光才過得去。'],
+      sel:'看看隔壁組怎麼排的，一樣嗎？（社會覺察）' } },
+
+  { html:
+    '<div class="eyebrow">關鍵詞 · KEY TERMS</div>'+
+    '<h2>用真正的科學名詞</h2>'+
+    '<div class="keywords">'+
+      '<div class="kw">光源<span class="k-en">light source</span></div>'+
+      '<div class="kw">不透明<span class="k-en">opaque</span></div>'+
+      '<div class="kw">直線前進<span class="k-en">travels straight</span></div>'+
+      '<div class="kw">影子<span class="k-en">shadow</span></div>'+
+    '</div>',
+    script:{ title:'建構・關鍵詞（視覺化）',
+      say:['我們用真正的科學名詞：會發光的是光源；擋得住光的是不透明的東西；光是直線前進；被擋住就出現影子。'],
+      track:['配對圖卡與名詞。','','讀出名詞並各造一個短句。'],
+      sel:'尊重每位探員不同的表達方式（社會覺察）。' } },
+
+  { html:
+    '<div class="eyebrow">破解迷思 · MYTH BUSTED</div>'+
+    '<h2>把光源移走…</h2>'+
+    '<div class="big">🔦❌ → 👻…沒有影子</div>'+
+    '<div class="lead">影子不是一個東西，是光被擋住的結果</div>',
+    script:{ title:'建構・破解迷思',
+      say:['那把光源移走呢？看——影子不見了。所以影子不是一個東西，它是光被擋住的結果。'],
+      track:['看老師移走光源，指出影子不見了。','','說出：沒有光源，就沒有影子。'] } },
+
+  { html:
+    '<div class="eyebrow">任務升級 · LEVEL UP</div>'+
+    '<h2>誰的影子最清楚？</h2>'+
+    '<div class="cards3">'+
+      '<div class="c3"><div class="ce">📖</div><div class="cl">書</div><div class="ct">不透明</div></div>'+
+      '<div class="c3"><div class="ce">🥛</div><div class="cl">玻璃杯</div><div class="ct">透明</div></div>'+
+      '<div class="c3"><div class="ce">✋</div><div class="cl">手</div><div class="ct">不透明</div></div>'+
+    '</div>'+
+    '<div class="lead">先預測，再用探照燈驗證</div>',
+    script:{ title:'應用・變因分析',
+      say:['任務升級：書、玻璃杯、手，哪一個擋得住光、影子最清楚？先預測，再用探照燈驗證。','玻璃杯是透明的，光穿過去、影子很淡；書不透明，影子最清楚。關鍵是透不透光，對嗎？'],
+      wait:'等待 10 秒',
+      track:['從三樣中選一樣做出影子。','','先預測再驗證，說出理由：不透明的影子最清楚。'] } },
+
+  { html:
+    '<div class="eyebrow">生活任務 · REAL LIFE</div>'+
+    '<h2>大熱天，你站哪裡？</h2>'+
+    '<div class="big">🌳🕶️</div>'+
+    '<div class="lead">哪裡有影子，就比較涼</div>'+
+    '<div class="safety">⚠ 安全守則：絕對不可以用放大鏡或鏡子，把太陽光聚在眼睛或皮膚上，會受傷。</div>',
+    script:{ title:'應用・負責任的決定',
+      say:['生活裡呢？大熱天太陽很曬，你會站在哪裡比較涼？為什麼那裡有影子？這就是把今天學的，用來保護自己。','還有一個安全規則：不可以用放大鏡或鏡子把太陽光聚在眼睛或皮膚上，會受傷。這是保護自己，也保護同學。'],
+      sel:'把知識連到自我保護與他人安全（負責任的決定）。' } },
+
+  { html:
+    '<div class="eyebrow">任務回報 · REPORT</div>'+
+    '<h2>因為光被擋住，<br>所以出現影子</h2>'+
+    '<div class="lead">你把一開始不會的問題，自己講出來了</div>'+
+    '<div class="en">Because light is blocked, a shadow appears</div>',
+    script:{ title:'統整・首尾呼應＋反思',
+      say:['任務回報：一開始那個跟著你的黑影，現在你可以怎麼跟大家解釋它？','今天你最有成就感的一件事是什麼？指一下流程條，或說一句都可以。','最後，轉頭跟你的隊友說一聲：謝謝你的合作。'],
+      wait:'等待 10 秒',
+      track:['指影子或選出「影子」圖卡。','','說完整句：因為光被擋住，所以出現影子。'],
+      sel:'成就反思（自我覺察）＋感謝隊友（人際技巧）。⭐增強：你把不會的問題自己講出來了，這就是學會的證據。' } },
+
+  { html:
+    '<div class="eyebrow">MISSION COMPLETE</div>'+
+    '<div class="big">🎉🔦🎉</div>'+
+    '<h1>任務一完成</h1>'+
+    '<div class="lead">光線特勤隊，收工！</div>',
+    script:{ title:'結束・任務完成',
+      say:['任務一完成，收工！'],
+      note:'再次任務簽到（狀態燈），翻完流程條最後一格。',
+      sel:'固定結束儀式，讓下課轉換可預測。' } }
+];
+
+// ---------- render ----------
+var stage=document.getElementById('stage'), dots=document.getElementById('dots');
+slides.forEach(function(s,i){
+  var d=document.createElement('section'); d.className='slide'; d.dataset.i=i; d.innerHTML=s.html; stage.appendChild(d);
+  var dot=document.createElement('div'); dot.className='dot'; dot.onclick=function(){go(i)}; dots.appendChild(dot);
+});
+var cur=0, els=[].slice.call(document.querySelectorAll('.slide')), dotEls=[].slice.call(document.querySelectorAll('.dot'));
+var counter=document.getElementById('counter');
+
+function renderDrawer(i){
+  var s=slides[i].script||{};
+  document.getElementById('dTitle').textContent='🎙 '+(s.title||'教師口白');
+  var h='';
+  (s.say||[]).forEach(function(line){ h+='<div class="say"><b>老師：</b>「'+line+'」</div>'; });
+  if(s.wait) h+='<div class="wait">⏱ '+s.wait+'</div>';
+  if(s.track){ h+='<div class="track"><span class="b">🔵操作</span> '+(s.track[0]||'')+'</div>';
+               h+='<div class="track"><span class="o">🟠推理</span> '+(s.track[2]||'')+'</div>'; }
+  if(s.sel) h+='<div class="sel">💚 '+s.sel+'</div>';
+  if(s.note) h+='<div class="track" style="color:#9fc0e6">📋 '+s.note+'</div>';
+  document.getElementById('dBody').innerHTML=h;
+}
+function go(i){
+  cur=(i+slides.length)%slides.length;
+  els.forEach(function(e,k){ e.classList.toggle('on',k===cur); });
+  dotEls.forEach(function(e,k){ e.classList.toggle('on',k===cur); });
+  counter.textContent=(cur+1)+' / '+slides.length;
+  renderDrawer(cur);
+  if(cur===3) startLab1(); if(cur===4) startLab2();
+}
+document.getElementById('next').onclick=function(){go(cur+1)};
+document.getElementById('prev').onclick=function(){go(cur-1)};
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' ') go(cur+1);
+  else if(e.key==='ArrowLeft') go(cur-1);
+});
+
+// drawer
+var drawer=document.getElementById('drawer');
+document.getElementById('drawerBtn').onclick=function(){ drawer.classList.toggle('open'); };
+document.getElementById('drawerClose').onclick=function(){ drawer.classList.remove('open'); };
+
+// ---------- interactive lab 1: searchlight -> object -> shadow ----------
+var lab1={on:true,pos:0.5,raf:null};
+function startLab1(){
+  var cv=document.getElementById('cv1'); if(!cv) return;
+  var ctx=cv.getContext('2d');
+  function fit(){ cv.width=cv.clientWidth; cv.height=cv.clientHeight; }
+  fit();
+  var lampBtn=document.getElementById('lampBtn'), objPos=document.getElementById('objPos');
+  lampBtn.onclick=function(){ lab1.on=!lab1.on; draw(); };
+  objPos.oninput=function(){ lab1.pos=objPos.value/100; draw(); };
+  function draw(){
+    var W=cv.width,H=cv.height; ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0b1526'; ctx.fillRect(0,0,W,H);
+    var lampX=54, lampY=H/2, wallX=W-46, floorY=H-30;
+    var objX=120+lab1.pos*(wallX-200), objY=floorY, objW=30, objTop=objY-90;
+    // floor
+    ctx.strokeStyle='#1c3255'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,floorY); ctx.lineTo(W,floorY); ctx.stroke();
+    // wall
+    ctx.fillStyle='#16294a'; ctx.fillRect(wallX,10,46,H-20);
+    if(lab1.on){
+      // beam cone
+      var g=ctx.createLinearGradient(lampX,0,wallX,0);
+      g.addColorStop(0,'rgba(255,210,74,.5)'); g.addColorStop(1,'rgba(255,210,74,.08)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(lampX,lampY);
+      ctx.lineTo(wallX,lampY-70); ctx.lineTo(wallX,lampY+70); ctx.closePath(); ctx.fill();
+      // shadow on wall via straight-line projection past object right edge
+      function projY(px,py){ var m=(py-lampY)/(px-lampX); return lampY+m*(wallX-lampX); }
+      var sTop=projY(objX+objW, objTop), sBot=projY(objX+objW, objY);
+      ctx.fillStyle='#050b16'; ctx.fillRect(wallX,sTop,46,sBot-sTop);
+      ctx.fillStyle='#ffd24a'; ctx.font='bold 16px sans-serif'; ctx.fillText('影子',wallX+4,(sTop+sBot)/2);
+      // rays
+      ctx.strokeStyle='rgba(255,210,74,.85)'; ctx.lineWidth=2;
+      for(var k=-2;k<=2;k++){ var ty=lampY+k*30; ctx.beginPath(); ctx.moveTo(lampX,lampY);
+        if(Math.abs(k)<=1){ ctx.lineTo(objX-4,ty); } else { ctx.lineTo(wallX,ty); } ctx.stroke(); }
+    }
+    // lamp (searchlight)
+    ctx.fillStyle=lab1.on?'#ffd24a':'#4b5f7e';
+    ctx.beginPath(); ctx.moveTo(lampX-24,lampY-22); ctx.lineTo(lampX+8,lampY-13); ctx.lineTo(lampX+8,lampY+13); ctx.lineTo(lampX-24,lampY+22); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#2a406a'; ctx.fillRect(lampX-40,lampY-15,18,30);
+    if(!lab1.on){ ctx.fillStyle='#ff6b6b'; ctx.font='bold 15px sans-serif'; ctx.fillText('探照燈關',lampX-14,lampY-34); }
+    // object
+    ctx.fillStyle='#2e86de'; ctx.fillRect(objX,objTop,objW,90);
+    ctx.fillStyle='#7fb2e6'; ctx.fillRect(objX,objTop,objW,10);
+  }
+  window.addEventListener('resize',function(){ if(slides[cur]&&cur===3){fit();draw();} });
+  draw();
+}
+
+// ---------- interactive lab 2: straight line through 3 holes ----------
+function startLab2(){
+  if(startLab2.started) return; startLab2.started=true;
+  var cv=document.getElementById('cv2'); if(!cv){ startLab2.started=false; return; }
+  var ctx=cv.getContext('2d'); var t=0, offset=0, dir=1;
+  function fit(){ cv.width=cv.clientWidth; cv.height=cv.clientHeight; }
+  fit();
+  function draw(){
+    var W=cv.width,H=cv.height,midY=H/2; ctx.clearRect(0,0,W,H); ctx.fillStyle='#0b1526'; ctx.fillRect(0,0,W,H);
+    var lampX=40; var cardXs=[W*0.32,W*0.5,W*0.68];
+    // animate middle card offset in/out
+    offset+=dir*0.6; if(offset>46){dir=-1} if(offset<0){dir=1}
+    var holeYs=[midY,midY+offset,midY];
+    var blocked = offset>10;
+    // beam
+    ctx.strokeStyle=blocked?'rgba(255,120,120,.9)':'rgba(255,210,74,.95)'; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(lampX,midY);
+    if(blocked){ ctx.lineTo(cardXs[1]-14,midY); } else { ctx.lineTo(W-20,midY); }
+    ctx.stroke();
+    // lamp
+    ctx.fillStyle='#ffd24a'; ctx.beginPath(); ctx.arc(lampX,midY,12,0,7); ctx.fill();
+    // cards with holes
+    cardXs.forEach(function(cx,i){
+      ctx.fillStyle='#20375c'; ctx.fillRect(cx-8,20,16,H-40);
+      // hole (punch)
+      ctx.clearRect(cx-8,holeYs[i]-14,16,28); ctx.fillStyle='#0b1526'; ctx.fillRect(cx-8,holeYs[i]-14,16,28);
+    });
+    ctx.fillStyle=blocked?'#ff9b9b':'#ffe08a'; ctx.font='bold 16px sans-serif';
+    ctx.fillText(blocked?'中間歪掉 → 光過不去':'排成直線 → 光穿過去', W*0.28, H-14);
+    t++; requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+go(0);
+</script>
+</body>
+</html>
