@@ -3,67 +3,73 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#8fd0f7">
-<title>光與影子・第1節｜總入口</title>
+<meta name="theme-color" content="#05101f">
+<title>光線特勤隊・任務一｜總入口</title>
 <style>
   :root{
-    --sky1:#8fd0f7; --sky2:#dff2ff; --sun:#ffc93c; --sun2:#ff9f1c;
-    --ink:#123a5a; --ink2:#2b5f86; --card:#ffffff; --train:#2e86de;
-    --grass:#8ed081; --line:#d6e6f4; --shadow:rgba(20,60,95,.14);
+    --bg1:#05101f; --bg2:#0a2036; --bg3:#0e3350;
+    --amber:#ffc93c; --amber2:#ff9f1c; --teal:#42e0c8;
+    --ink:#eaf6ff; --dim:#9db8cf; --card:#0f2841; --line:rgba(120,170,210,.28);
+    --shadow:rgba(0,0,0,.45);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
     font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;
     color:var(--ink);
-    background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 40%,#f4fbff 100%);
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(255,201,60,.10), transparent 55%),
+      linear-gradient(165deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);
     min-height:100vh;
   }
-  .wrap{max-width:1080px;margin:0 auto;padding:20px 18px 60px}
-  header.hero{text-align:center;padding:22px 10px 8px}
-  .train{font-size:76px;line-height:1;filter:drop-shadow(0 4px 3px rgba(0,0,0,.18))}
-  h1{font-size:44px;margin:6px 0 2px;letter-spacing:1px;text-shadow:0 2px 0 #fff}
-  .sub{font-size:22px;color:var(--ink2);font-weight:800}
-  .en{font-size:16px;color:#5a86a8;font-weight:600;margin-top:2px}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 18px 64px}
+  header.hero{text-align:center;padding:26px 10px 10px}
+  .emblem{font-size:80px;line-height:1;filter:drop-shadow(0 8px 18px rgba(255,201,60,.35))}
+  .eyebrow{font-size:16px;font-weight:900;letter-spacing:.3em;color:var(--amber);text-transform:uppercase;margin-top:6px}
+  h1{font-size:46px;margin:4px 0 4px;letter-spacing:1px}
+  .sub{font-size:24px;color:var(--teal);font-weight:900}
+  .en{font-size:15px;color:var(--dim);font-weight:700;margin-top:6px;letter-spacing:.04em}
 
-  h2.sec{font-size:26px;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
-  h2.sec::after{content:"";flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--sun),transparent)}
+  h2.sec{font-size:24px;margin:38px 0 14px;display:flex;align-items:center;gap:10px}
+  h2.sec::after{content:"";flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--amber),transparent)}
 
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   .card{
     display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
-    background:var(--card);border-radius:22px;padding:26px 16px;text-decoration:none;color:var(--ink);
-    box-shadow:0 7px 0 var(--shadow);border:3px solid #fff;transition:transform .08s, box-shadow .08s;
-    min-height:170px;
+    background:var(--card);border-radius:22px;padding:28px 16px;text-decoration:none;color:var(--ink);
+    box-shadow:0 8px 22px var(--shadow);border:2px solid var(--line);transition:transform .1s, box-shadow .1s, border-color .1s;
+    min-height:180px;
   }
-  .card:hover{transform:translateY(-4px);box-shadow:0 11px 0 var(--shadow)}
-  .card .ico{font-size:56px;line-height:1;margin-bottom:8px}
-  .card .t{font-size:26px;font-weight:900}
-  .card .d{font-size:16px;color:var(--ink2);font-weight:600;margin-top:4px}
-  .card.play{background:linear-gradient(160deg,#fff5da,#ffe08a)}
-  .card.quiz{background:linear-gradient(160deg,#e7f6ff,#c8e9ff)}
-  .card.ppt{background:linear-gradient(160deg,#eafbe9,#c9edc2)}
+  .card:hover{transform:translateY(-5px);border-color:var(--amber);box-shadow:0 14px 30px var(--shadow)}
+  .card .ico{font-size:58px;line-height:1;margin-bottom:8px}
+  .card .t{font-size:27px;font-weight:900}
+  .card .d{font-size:15px;color:var(--dim);font-weight:700;margin-top:5px}
+  .card.ppt{background:linear-gradient(160deg,#123152,#0c2742);border-color:rgba(255,201,60,.4)}
+  .card.play{background:linear-gradient(160deg,#14343f,#0c2742);border-color:rgba(66,224,200,.4)}
+  .card.quiz{background:linear-gradient(160deg,#132a4d,#0c2742);border-color:rgba(74,163,255,.4)}
+  .card .badge{position:relative}
+  .newtag{display:inline-block;font-size:12px;font-weight:900;color:#08131f;background:linear-gradient(180deg,var(--amber),var(--amber2));border-radius:999px;padding:2px 10px;margin-top:8px;letter-spacing:.05em}
 
   .files{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .file{
-    display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--line);
-    border-radius:16px;padding:16px 18px;text-decoration:none;color:var(--ink);box-shadow:0 4px 0 var(--shadow);
+    display:flex;align-items:center;gap:14px;background:var(--card);border:2px solid var(--line);
+    border-radius:16px;padding:16px 18px;text-decoration:none;color:var(--ink);box-shadow:0 6px 16px var(--shadow);
   }
-  .file:hover{border-color:var(--train)}
+  .file:hover{border-color:var(--teal)}
   .file .fi{font-size:38px}
   .file .ft{font-size:20px;font-weight:900}
-  .file .fd{font-size:14px;color:var(--ink2);font-weight:600}
+  .file .fd{font-size:13.5px;color:var(--dim);font-weight:700}
 
   .videos{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-  .vid{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 6px 0 var(--shadow);border:3px solid #fff}
+  .vid{background:var(--card);border-radius:18px;overflow:hidden;box-shadow:0 6px 16px var(--shadow);border:2px solid var(--line)}
   .vframe{position:relative;width:100%;padding-top:56.25%;background:#0c1424}
   .vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
   .vcap{padding:12px 14px;font-size:18px;font-weight:800}
-  .vcap .vsrc{display:block;font-size:14px;color:var(--ink2);font-weight:600;margin-top:2px}
-  .langtag{display:inline-block;font-size:13px;font-weight:800;color:#fff;background:var(--train);border-radius:999px;padding:2px 10px;margin-right:6px}
-  .langtag.en{background:#e0872b}
+  .vcap .vsrc{display:block;font-size:13.5px;color:var(--dim);font-weight:700;margin-top:2px}
+  .langtag{display:inline-block;font-size:13px;font-weight:900;color:#08131f;background:var(--teal);border-radius:999px;padding:2px 10px;margin-right:6px}
+  .langtag.en{background:var(--amber)}
 
-  footer{text-align:center;margin-top:44px;font-size:15px;color:var(--ink2)}
+  footer{text-align:center;margin-top:46px;font-size:14px;color:var(--dim)}
   @media (max-width:720px){
     .cards{grid-template-columns:1fr}
     .files{grid-template-columns:1fr}
@@ -76,19 +82,20 @@
 <div class="wrap">
 
   <header class="hero">
-    <div class="train">🚂☀️</div>
-    <h1>光與影子・第 1 節</h1>
-    <div class="sub">光線特勤隊・任務一　｜　光走直線，影子出現</div>
-    <div class="en">SEL × 結構化 × 分層　｜　一頁直達：簡報・遊戲・搶答・教案・影片</div>
+    <div class="emblem">🔦</div>
+    <div class="eyebrow">光線特勤隊</div>
+    <h1>任務一</h1>
+    <div class="sub">光走直線，影子現形</div>
+    <div class="en">一頁直達：簡報・闖關・搶答・教案・影片</div>
   </header>
 
   <h2 class="sec">🎯 上課一鍵直達</h2>
   <div class="cards">
     <a class="card ppt" href="lesson1-slides.html" target="_blank" rel="noopener">
-      <div class="ico">🔦</div><div class="t">任務簡報</div><div class="d">光線特勤隊・互動光線動畫＋口白抽屜</div>
+      <div class="ico">🔦</div><div class="t">任務簡報</div><div class="d">互動光線動畫・投影上課</div><div class="newtag">全新自製</div>
     </a>
     <a class="card play" href="../games/light-shadow.html" target="_blank" rel="noopener">
-      <div class="ico">🎮</div><div class="t">光之國度</div><div class="d">大富翁闖關・音效灑花</div>
+      <div class="ico">🎮</div><div class="t">闖關任務</div><div class="d">大富翁闖關・音效慶祝</div>
     </a>
     <a class="card quiz" href="https://www.baamboozle.com/game/4734426" target="_blank" rel="noopener">
       <div class="ico">🙋</div><div class="t">全班搶答</div><div class="d">Baamboozle・7 題</div>
@@ -99,7 +106,7 @@
   <div class="files">
     <a class="file" href="lesson1-plan.docx">
       <div class="fi">📘</div>
-      <div><div class="ft">教案（含逐字台詞）</div><div class="fd">三段流程・迷思・提示層級・評量表・Word 下載</div></div>
+      <div><div class="ft">教案（逐字台詞版）</div><div class="fd">SEL 五能力・結構化提示・迷思・評量表・Word 下載</div></div>
     </a>
     <a class="file" href="lesson1-worksheet.docx">
       <div class="fi">📝</div>
@@ -107,7 +114,7 @@
     </a>
   </div>
 
-  <h2 class="sec">📺 看影片（學生最愛）</h2>
+  <h2 class="sec">📺 任務影片</h2>
   <div class="videos">
     <div class="vid">
       <div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/oOe_oUqdqmI" title="影子形成的科學原理" loading="lazy" allowfullscreen></iframe></div>
@@ -128,7 +135,7 @@
   </div>
 
   <footer>
-    🚂 光與影子・第 1 節　｜　竹東國中自然科　｜　一頁直達所有教材
+    🔦 光線特勤隊・任務一　｜　竹東國中自然科　｜　一頁直達所有教材
   </footer>
 
 </div>
