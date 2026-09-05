@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光線特勤隊 · 任務三：眼睛被騙了</title>
+<style>
+  :root{
+    --bg:#0d1b2a; --bg2:#12263a; --panel:#1b3350;
+    --ink:#f2f7ff; --ink2:#a9c2de;
+    --gold:#ffc857; --gold-d:#e0a92e;
+    --teal:#3fd0c9; --teal-d:#1f9e98;
+    --red:#ff5a5a; --green:#4ade80; --blue:#5b9dff;
+    --line:#2b4a6e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(circle at 50% 0%,var(--bg2),var(--bg));
+    color:var(--ink);
+    font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+    overflow:hidden;
+  }
+  #stage{height:100%;width:100%;display:flex;align-items:center;justify-content:center;position:relative}
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;
+    padding:5vh 6vw;gap:3vh;opacity:0;transition:opacity .4s ease;
+  }
+  .slide.on{display:flex;opacity:1}
+  h1{font-size:clamp(2.2rem,7vw,5rem);line-height:1.15;text-wrap:balance;font-weight:900}
+  h2{font-size:clamp(1.8rem,5vw,3.4rem);line-height:1.2;text-wrap:balance;font-weight:800}
+  .big{font-size:clamp(1.5rem,4.2vw,2.6rem);line-height:1.5;color:var(--ink2);max-width:24ch;text-wrap:balance}
+  .huge{font-size:clamp(3rem,12vw,9rem);font-weight:900;line-height:1}
+  .gold{color:var(--gold)} .teal{color:var(--teal)}
+  .tag{
+    font-size:clamp(1rem,2.4vw,1.5rem);letter-spacing:.3em;color:var(--gold);
+    font-weight:700;text-transform:uppercase;
+  }
+  .term{
+    display:inline-block;background:var(--gold);color:#1a1200;
+    font-weight:900;padding:.15em .6em;border-radius:.4em;
+    font-size:clamp(1.6rem,4.5vw,3rem);
+  }
+  /* buttons */
+  .btn{
+    font-family:inherit;font-size:clamp(1.3rem,3.2vw,2rem);font-weight:800;
+    padding:.7em 1.4em;border:none;border-radius:1000px;cursor:pointer;
+    background:var(--gold);color:#231700;box-shadow:0 6px 0 var(--gold-d);
+    transition:transform .1s,box-shadow .1s;user-select:none;
+  }
+  .btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--gold-d)}
+  .btn.ghost{background:var(--panel);color:var(--ink);box-shadow:0 6px 0 #0e2038}
+  .btn.ghost:active{box-shadow:0 2px 0 #0e2038}
+  .btn-row{display:flex;gap:2vw;flex-wrap:wrap;justify-content:center}
+  /* nav */
+  #nav{position:absolute;bottom:16px;left:0;right:0;display:flex;
+    align-items:center;justify-content:center;gap:14px;z-index:40}
+  .navbtn{
+    width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;
+    background:var(--panel);color:var(--ink);font-size:1.6rem;font-weight:900;
+    box-shadow:0 4px 0 #0e2038;display:flex;align-items:center;justify-content:center;
+  }
+  .navbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #0e2038}
+  #dots{display:flex;gap:8px;align-items:center}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--line);transition:.2s}
+  .dot.on{background:var(--gold);transform:scale(1.4)}
+  #tools{position:absolute;top:14px;right:16px;display:flex;gap:10px;z-index:40}
+  .tool{width:48px;height:48px;border-radius:14px;border:none;cursor:pointer;
+    background:rgba(27,51,80,.7);color:var(--ink);font-size:1.4rem;backdrop-filter:blur(4px)}
+  .tool:active{transform:scale(.92)}
+  .stepno{position:absolute;top:16px;left:20px;font-size:1rem;letter-spacing:.2em;
+    color:var(--ink2);font-weight:700;z-index:40}
+  /* pool / refraction */
+  .pool-wrap{position:relative;width:min(80vw,620px);height:min(42vh,360px)}
+  .pool{position:absolute;inset:0;border-radius:18px;overflow:hidden;
+    border:6px solid #0a3d62;background:linear-gradient(#7fdbff,#3aa7d8)}
+  .water-line{position:absolute;left:0;right:0;top:34%;height:2px;background:rgba(255,255,255,.6)}
+  .coin{position:absolute;width:64px;height:64px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ffe9a8,#e0a92e);
+    border:4px solid #b8860b;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;justify-content:center;font-weight:900;color:#7a5c00;font-size:1.4rem}
+  .coin.real{bottom:8%;opacity:.35;filter:blur(1px)}
+  .coin.seen{top:38%;box-shadow:0 0 24px #ffe9a8}
+  .label-float{position:absolute;font-weight:800;font-size:1.1rem;
+    background:rgba(13,27,42,.85);padding:.3em .7em;border-radius:8px;white-space:nowrap}
+  /* color lab */
+  .lab{display:flex;gap:4vw;align-items:center;justify-content:center;flex-wrap:wrap}
+  .card{
+    width:min(46vw,300px);border-radius:20px;overflow:hidden;
+    border:6px solid #06101d;background:#000;box-shadow:0 10px 40px rgba(0,0,0,.5)
+  }
+  .swatch{height:min(15vh,120px);display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:clamp(1rem,2.6vw,1.6rem);transition:background .35s,color .35s;
+    border-bottom:3px solid #06101d;position:relative}
+  .swatch:last-child{border-bottom:none}
+  .swatch .gone{opacity:0;transition:opacity .35s;font-size:1.4rem;color:#fff}
+  .swatch.dark .gone{opacity:.9}
+  .controls{display:flex;flex-direction:column;gap:2.4vh;align-items:center}
+  .lamp-label{font-size:clamp(1.1rem,2.6vw,1.6rem);color:var(--ink2);font-weight:700}
+  .lamps{display:flex;gap:16px}
+  .lamp{
+    width:clamp(64px,12vw,92px);height:clamp(64px,12vw,92px);border-radius:50%;
+    border:5px solid #06101d;cursor:pointer;font-weight:900;color:#06101d;
+    font-size:clamp(.9rem,2vw,1.15rem);display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 0 rgba(0,0,0,.4);transition:transform .1s
+  }
+  .lamp:active{transform:translateY(4px)}
+  .lamp.sel{outline:5px solid #fff;outline-offset:3px}
+  .lamp.white{background:#f6f8ff} .lamp.red{background:var(--red)}
+  .lamp.green{background:var(--green)} .lamp.blue{background:var(--blue)}
+  .beam-toggle{margin-top:1vh}
+  /* quiz */
+  .qbox{max-width:22ch}
+  .choices{display:flex;gap:3vw;flex-wrap:wrap;justify-content:center;margin-top:1vh}
+  .choice{
+    min-width:180px;font-size:clamp(1.4rem,3.4vw,2.2rem);font-weight:900;
+    padding:1em 1.2em;border-radius:22px;border:5px solid #06101d;cursor:pointer;
+    box-shadow:0 7px 0 rgba(0,0,0,.4);transition:transform .1s;color:#06101d
+  }
+  .choice:active{transform:translateY(4px)}
+  .choice.c-red{background:var(--red)} .choice.c-green{background:var(--green)}
+  .choice.c-blue{background:var(--blue)}
+  .verdict{font-size:clamp(1.4rem,4vw,2.4rem);font-weight:900;min-height:1.4em}
+  .score{position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    background:rgba(27,51,80,.7);padding:.3em 1em;border-radius:1000px;
+    font-weight:800;font-size:1.2rem;z-index:40}
+  .hintline{color:var(--gold);font-weight:800;font-size:clamp(1.1rem,2.6vw,1.5rem);min-height:1.5em}
+  .flow{display:flex;gap:2vw;flex-wrap:wrap;justify-content:center;margin-top:2vh}
+  .flowitem{background:var(--panel);border-radius:16px;padding:1em 1.4em;
+    font-size:clamp(1rem,2.4vw,1.5rem);font-weight:800;border:3px solid var(--line);opacity:.4;transition:.3s}
+  .flowitem.done{opacity:1;border-color:var(--teal);color:var(--teal)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="stepno" id="stepno"></div>
+  <div id="tools">
+    <button class="tool" id="soundBtn" title="音效開關" aria-label="音效開關">🔊</button>
+    <button class="tool" id="fsBtn" title="全螢幕" aria-label="全螢幕">⛶</button>
+  </div>
+
+  <!-- 0 封面 -->
+  <section class="slide" data-name="封面">
+    <div class="tag">光線特勤隊 · 任務三</div>
+    <h1>眼睛<span class="gold">被騙了</span></h1>
+    <div class="big">光會騙你位置，<br>光也會騙你顏色。</div>
+    <button class="btn" data-next>出發 ▶</button>
+  </section>
+
+  <!-- 1 回顧懸念 -->
+  <section class="slide" data-name="上週懸念">
+    <div class="tag">上禮拜五的案子</div>
+    <h2>游泳池看起來<span class="gold">很淺</span>，<br>可以直接跳下去嗎？</h2>
+    <div class="big">先想一想。等一下我們用一杯水來破案。</div>
+    <button class="btn" data-next>來實驗 ▶</button>
+  </section>
+
+  <!-- 2 折射模擬 -->
+  <section class="slide" data-name="折射：視深">
+    <h2>你<span class="teal">看到</span>的硬幣，比<span class="gold">真正</span>的位置淺</h2>
+    <div class="pool-wrap">
+      <div class="pool">
+        <div class="water-line"></div>
+        <div class="coin real">真的</div>
+        <div class="coin seen" id="seenCoin" style="display:none">看到</div>
+        <div class="label-float" style="left:8px;top:6px">空氣</div>
+        <div class="label-float" style="left:8px;top:40%;background:rgba(10,61,98,.85)">水</div>
+      </div>
+    </div>
+    <div class="big" id="refractText">手伸進去，摸摸看——摸得到嗎？</div>
+    <div class="btn-row">
+      <button class="btn ghost" id="showSeen">顯示「你看到的位置」</button>
+      <button class="btn" data-next id="refractNext" style="display:none">原來如此 ▶</button>
+    </div>
+  </section>
+
+  <!-- 3 命名折射 -->
+  <section class="slide" data-name="命名：折射">
+    <div class="big">光從水裡跑出來的時候，會轉彎。</div>
+    <div class="term">折射</div>
+    <div class="big">光轉彎了，所以你看到的位置，<br>比真正的位置<span class="gold">還要淺</span>。</div>
+    <div class="big" style="color:var(--red);font-weight:800">所以水看起來淺，<br>不可以直接跳下去！</div>
+    <button class="btn" data-next>下一個案子 ▶</button>
+  </section>
+
+  <!-- 4 新懸念 -->
+  <section class="slide" data-name="新懸念">
+    <div class="big">光可以騙你位置。</div>
+    <h2>那光有沒有辦法……<br><span class="gold">騙你顏色？</span></h2>
+    <div class="big">關燈囉。燈光師，準備。</div>
+    <button class="btn" data-next>關燈實驗 ▶</button>
+  </section>
+
+  <!-- 5 色光實驗室 -->
+  <section class="slide" data-name="色光實驗室">
+    <div class="stepno" style="position:static;color:var(--gold)">先選一種光，照在卡片上</div>
+    <div class="lab">
+      <div class="card" id="colorCard">
+        <div class="swatch" data-base="red"><span class="txt">紅</span><span class="gone">不見了</span></div>
+        <div class="swatch" data-base="green"><span class="txt">綠</span><span class="gone">不見了</span></div>
+        <div class="swatch" data-base="blue"><span class="txt">藍</span><span class="gone">不見了</span></div>
+      </div>
+      <div class="controls">
+        <div class="lamp-label">選一種光 👇</div>
+        <div class="lamps">
+          <button class="lamp white sel" data-light="white">白光</button>
+          <button class="lamp red" data-light="red">紅光</button>
+          <button class="lamp green" data-light="green">綠光</button>
+          <button class="lamp blue" data-light="blue">藍光</button>
+        </div>
+        <div class="big" id="labText" style="font-size:clamp(1.1rem,2.6vw,1.6rem)">白光下：三個顏色都看得到。</div>
+      </div>
+    </div>
+    <button class="btn" data-next>我發現了 ▶</button>
+  </section>
+
+  <!-- 6 預測搶答 -->
+  <section class="slide" data-name="預測搶答">
+    <div class="score" id="scoreTag">答對 0</div>
+    <div class="tag">預測員，先猜！</div>
+    <h2 class="qbox" id="qText">照<span style="color:var(--red)">紅光</span>，哪一塊會<span class="gold">不見</span>？</h2>
+    <div class="choices" id="choices">
+      <button class="choice c-red" data-c="red">紅</button>
+      <button class="choice c-green" data-c="green">綠</button>
+      <button class="choice c-blue" data-c="blue">藍</button>
+    </div>
+    <div class="verdict" id="verdict"></div>
+    <div class="hintline" id="hint"></div>
+    <button class="btn" data-next id="quizNext" style="display:none">結案 ▶</button>
+  </section>
+
+  <!-- 7 形成概念 -->
+  <section class="slide" data-name="形成概念">
+    <h2>是卡片變了嗎？<span class="gold">沒有。</span></h2>
+    <div class="big">變的是——<span class="teal" style="font-weight:900">光</span>。</div>
+    <div class="big">紅色的地方會亮，是因為它把<span class="term" style="font-size:1.4rem">紅光</span>反射回來。</div>
+    <div class="big">所以顏色不是長在東西上面。<br><span class="gold" style="font-weight:900">顏色是光給的。</span></div>
+    <button class="btn" data-next>最後一題 ▶</button>
+  </section>
+
+  <!-- 8 生活應用 -->
+  <section class="slide" data-name="生活應用">
+    <div class="tag">救人的顏色</div>
+    <h2>救生衣為什麼是<span style="color:#ff7a1a">橘色</span>的？</h2>
+    <div class="huge">🦺</div>
+    <div class="big">因為橘色會把光<span class="gold">大量反射</span>回來，<br>很遠就看得到。</div>
+    <div class="big teal">你今天學的東西，在海上會救人。</div>
+    <button class="btn" data-next>任務完成 ▶</button>
+  </section>
+
+  <!-- 9 結案 -->
+  <section class="slide" data-name="結案">
+    <div class="tag">光線特勤隊 · 任務三</div>
+    <h1>破案<span class="gold">成功</span> 🎉</h1>
+    <div class="flow">
+      <div class="flowitem" id="f1">光騙你位置<br><small>折射</small></div>
+      <div class="flowitem" id="f2">光騙你顏色<br><small>選擇性反射</small></div>
+    </div>
+    <button class="btn" onclick="restart()">再玩一次 ↺</button>
+  </section>
+</div>
+
+<div id="nav">
+  <button class="navbtn" id="prev" aria-label="上一頁">‹</button>
+  <div id="dots"></div>
+  <button class="navbtn" id="next" aria-label="下一頁">›</button>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const dots=document.getElementById('dots');
+let idx=0, soundOn=true;
+slides.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';dots.appendChild(d);});
+const dotEls=[...document.querySelectorAll('.dot')];
+
+// --- WebAudio blips (no external files) ---
+let actx;
+function beep(freq,dur,type='sine',vol=.15){
+  if(!soundOn)return;
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.type=type;o.frequency.value=freq;o.connect(g);g.connect(actx.destination);
+    g.gain.setValueAtTime(vol,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
+    o.start();o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const okSound=()=>{beep(660,.12);setTimeout(()=>beep(880,.18),110);};
+const tryAgain=()=>beep(300,.2,'triangle');
+const move=()=>beep(520,.06,'sine',.08);
+
+function show(n){
+  idx=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,i)=>s.classList.toggle('on',i===idx));
+  dotEls.forEach((d,i)=>d.classList.toggle('on',i===idx));
+  document.getElementById('stepno').textContent=`${idx+1} / ${slides.length}　${slides[idx].dataset.name}`;
+  document.getElementById('prev').style.visibility=idx===0?'hidden':'visible';
+  if(idx===9){document.getElementById('f1').classList.add('done');
+    setTimeout(()=>document.getElementById('f2').classList.add('done'),400);
+    setTimeout(()=>{okSound();},300);}
+}
+function go(n){move();show(n);}
+document.getElementById('next').onclick=()=>go(idx+1);
+document.getElementById('prev').onclick=()=>go(idx-1);
+document.querySelectorAll('[data-next]').forEach(b=>b.onclick=()=>go(idx+1));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(idx+1);}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(idx-1);}
+});
+
+// tools
+document.getElementById('soundBtn').onclick=e=>{soundOn=!soundOn;e.target.textContent=soundOn?'🔊':'🔇';};
+document.getElementById('fsBtn').onclick=()=>{
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+};
+
+// refraction reveal
+document.getElementById('showSeen').onclick=()=>{
+  document.getElementById('seenCoin').style.display='flex';
+  document.getElementById('refractText').innerHTML='摸不到！你<b class="gold">看到</b>的比較淺，<br><b class="gold">真正</b>的在下面。';
+  document.getElementById('refractNext').style.display='inline-block';
+  beep(440,.15);
+};
+
+// ---- color lab physics: a colored block reflects ONLY its own color ----
+const LIGHT_RGB={white:'#f6f8ff',red:'#ff3b3b',green:'#25d366',blue:'#3b82f6'};
+const BASE_RGB={red:'#ff3b3b',green:'#25d366',blue:'#3b82f6'};
+const LABTEXT={
+  white:'白光下：三個顏色都看得到。',
+  red:'紅光下：只有<b class="gold">紅色</b>亮，綠色和藍色都<b>不見了</b>！',
+  green:'綠光下：只有<b class="gold">綠色</b>亮，紅色和藍色都<b>不見了</b>！',
+  blue:'藍光下：只有<b class="gold">藍色</b>亮，紅色和綠色都<b>不見了</b>！'
+};
+function applyLight(light){
+  document.querySelectorAll('.lamp').forEach(l=>l.classList.toggle('sel',l.dataset.light===light));
+  document.querySelectorAll('#colorCard .swatch').forEach(sw=>{
+    const base=sw.dataset.base;
+    let bright;
+    if(light==='white') bright=true; else bright=(light===base);
+    sw.style.background=bright?BASE_RGB[base]:'#060b12';
+    sw.querySelector('.txt').style.color=bright?'#06101d':'#1a2632';
+    sw.classList.toggle('dark',!bright);
+  });
+  document.getElementById('labText').innerHTML=LABTEXT[light];
+  beep(light==='white'?520:400,.14);
+}
+document.querySelectorAll('.lamp').forEach(l=>l.onclick=()=>applyLight(l.dataset.light));
+applyLight('white');
+
+// ---- quiz: predict which block disappears ----
+const QUIZ=[
+  {light:'red',  answer:'red',  q:'照<span style="color:#ff5a5a">紅光</span>，哪一塊<span class="gold">還會亮</span>？'},
+  {light:'blue', answer:'blue', q:'照<span style="color:#5b9dff">藍光</span>，哪一塊<span class="gold">還會亮</span>？'},
+  {light:'green',answer:'green',q:'照<span style="color:#4ade80">綠光</span>，哪一塊<span class="gold">還會亮</span>？'}
+];
+let qi=0, score=0;
+function loadQ(){
+  const q=QUIZ[qi];
+  document.getElementById('qText').innerHTML=q.q;
+  document.getElementById('verdict').textContent='';
+  document.getElementById('hint').textContent='';
+  document.getElementById('quizNext').style.display='none';
+  document.querySelectorAll('.choice').forEach(c=>c.disabled=false);
+}
+document.querySelectorAll('.choice').forEach(c=>c.onclick=()=>{
+  const q=QUIZ[qi], pick=c.dataset.c;
+  if(pick===q.answer){
+    score++;document.getElementById('scoreTag').textContent='答對 '+score;
+    document.getElementById('verdict').innerHTML='✅ 答對了！只有<b class="gold">'+({red:'紅',green:'綠',blue:'藍'})[q.answer]+'</b>會亮';
+    document.querySelectorAll('.choice').forEach(x=>x.disabled=true);
+    okSound();
+    qi++;
+    if(qi<QUIZ.length){setTimeout(loadQ,1400);}
+    else{document.getElementById('quizNext').style.display='inline-block';
+      document.getElementById('hint').textContent='三題全破！';}
+  }else{
+    document.getElementById('verdict').innerHTML='再想想～';
+    document.getElementById('hint').innerHTML='💡 提示：光是什麼顏色，就只有那個顏色會亮。';
+    tryAgain();
+  }
+});
+loadQ();
+
+function restart(){qi=0;score=0;document.getElementById('scoreTag').textContent='答對 0';
+  loadQ();applyLight('white');
+  document.getElementById('seenCoin').style.display='none';
+  document.getElementById('refractText').textContent='手伸進去，摸摸看——摸得到嗎？';
+  document.getElementById('refractNext').style.display='none';
+  document.getElementById('f1').classList.remove('done');
+  document.getElementById('f2').classList.remove('done');
+  show(0);}
+
+show(0);
+</script>
+</body>
+</html>
