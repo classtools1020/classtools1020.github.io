@@ -59,8 +59,15 @@
   .say{font-size:14px;color:var(--dim);font-weight:800}
   .hintbar{text-align:center;margin-top:12px;font-size:19px;font-weight:900;color:var(--teal);min-height:26px}
   footer{text-align:center;margin-top:26px;color:var(--dim);font-size:14px}
+  .home{position:fixed;left:12px;top:12px;z-index:120;background:#0f2841;border:2px solid var(--amber);
+    color:var(--amber);font-weight:900;font-size:16px;text-decoration:none;padding:8px 14px;border-radius:999px;
+    box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home:hover{background:#152f4d}
+  canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:110}
 </style>
 
+<a class="home" href="../light-reflection/">🏠 回到首頁</a>
+<canvas class="confetti" id="cf"></canvas>
 <div class="wrap">
   <header>
     <div class="emblem">🔬</div>
@@ -125,6 +132,26 @@
 
 <script>
 const $=id=>document.getElementById(id);
+/* audio */
+let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function tone(f,t,d,ty="sine",v=.2){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();
+  o.type=ty;o.frequency.setValueAtTime(f,t);o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function blip(f){const a=ac();if(!a)return;tone(f||660,a.currentTime,.09,"square",.15);}
+function fanfare(){const a=ac();if(!a)return;const t=a.currentTime;[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.1,.24,"triangle",.26));}
+/* confetti */
+const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
+function csize(){cv.width=innerWidth;cv.height=innerHeight;}csize();addEventListener("resize",csize);
+const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
+function confetti(n=120){for(let i=0;i<n;i++)parts.push({x:Math.random()*innerWidth,y:-20,
+  vx:(Math.random()-.5)*8,vy:Math.random()*3+2,g:.25,s:6+Math.random()*8,
+  c:COL[Math.floor(Math.random()*COL.length)],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0});crun();}
+let craf=null;function crun(){if(!craf)craf=requestAnimationFrame(cloop);}
+function cloop(){cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});
+  parts=parts.filter(p=>p.y<cv.height+30&&p.life<260);
+  if(parts.length)craf=requestAnimationFrame(cloop);else{craf=null;cx.clearRect(0,0,cv.width,cv.height);}}
 /* speech */
 function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
@@ -213,6 +240,7 @@ document.querySelectorAll("#termsA .chip").forEach(c=>c.onclick=()=>{
   document.querySelectorAll("#termsA .chip").forEach(x=>x.classList.toggle("lit",x===c));
   highlight=c.dataset.hi;
   $("hintA").textContent=hintFor(highlight);
+  if(highlight==="law"){confetti(110);fanfare();}else blip(680);
   speak(c.dataset.zh,c.dataset.en);
   clearTimeout(window._hlT);window._hlT=setTimeout(()=>{highlight=null;
     document.querySelectorAll("#termsA .chip").forEach(x=>x.classList.remove("lit"));},3500);
@@ -231,9 +259,9 @@ const HITS=[130,250,370,490], INC=rad(34); // incident angle from normal
 // fixed random tilts for rough surface
 const TILT=[ -0.5, 0.42, -0.32, 0.55 ];
 $("smooth").onclick=()=>{mode="smooth";$("smooth").classList.add("on");$("rough").classList.remove("on");
-  $("hintB").textContent="平滑面：光整齊反射 → 看得到自己 😊";speak("鏡面反射","Specular reflection");};
+  $("hintB").textContent="平滑面：光整齊反射 → 看得到自己 😊";blip(720);confetti(50);speak("鏡面反射","Specular reflection");};
 $("rough").onclick=()=>{mode="rough";$("rough").classList.add("on");$("smooth").classList.remove("on");
-  $("hintB").textContent="粗糙面：光亂亂反射 → 看不到自己 🙈";speak("漫反射","Diffuse reflection");};
+  $("hintB").textContent="粗糙面：光亂亂反射 → 看不到自己 🙈";blip(500);speak("漫反射","Diffuse reflection");};
 document.querySelectorAll("#termsB .chip").forEach(c=>c.onclick=()=>{
   speak(c.dataset.zh,c.dataset.en);
   if(c.dataset.zh==="鏡面反射")$("smooth").click();else $("rough").click();
