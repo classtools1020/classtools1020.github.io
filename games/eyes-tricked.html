@@ -153,6 +153,21 @@
   canvas#fx{position:fixed;inset:0;z-index:60;pointer-events:none}
   .badge{font-size:clamp(3rem,10vw,6rem);animation:tada 1s}
   @keyframes tada{0%{transform:scale(.5) rotate(-8deg)}60%{transform:scale(1.2) rotate(4deg)}100%{transform:scale(1)}}
+  /* 火車衝出去慶祝 */
+  #zoomer{position:fixed;left:-30vw;top:50%;z-index:65;font-size:clamp(3rem,9vw,6.5rem);
+    pointer-events:none;opacity:0;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+  #zoomer.run{animation:zoom 1.15s cubic-bezier(.5,0,.4,1)}
+  @keyframes zoom{0%{opacity:0;left:-30vw;transform:translateY(-50%) scale(.7)}
+    12%{opacity:1}18%{transform:translateY(-58%) scale(1.1) rotate(-3deg)}
+    50%{transform:translateY(-50%) scale(1.15)}
+    82%{transform:translateY(-56%) scale(1.1) rotate(3deg)}
+    100%{opacity:1;left:115vw;transform:translateY(-50%) scale(.9)}}
+  #banner{position:fixed;inset:0;z-index:64;display:none;align-items:center;justify-content:center;
+    pointer-events:none}
+  #banner.show{display:flex;animation:bpop .5s cubic-bezier(.2,1.5,.3,1)}
+  #banner span{font-size:clamp(2.4rem,9vw,6rem);font-weight:900;color:#fff;
+    text-shadow:0 3px 0 #d98a00,0 6px 18px rgba(0,0,0,.5);letter-spacing:.05em}
+  @keyframes bpop{0%{transform:scale(.3) rotate(-6deg);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
   .progress{display:flex;gap:6px;margin-top:4px}
   .pdot{width:10px;height:10px;border-radius:50%;background:var(--edge)}
   .pdot.on{background:var(--gold)}
@@ -295,6 +310,8 @@
   </section>
 </div>
 
+<div id="zoomer">🚂💨</div>
+<div id="banner"><span id="bannerTxt">破關！</span></div>
 <canvas id="fx"></canvas>
 
 <script>
@@ -357,10 +374,21 @@ function drawBoard(){const b=document.getElementById('board');b.innerHTML='';
 function enter(st){sChoo();if(st==='refract')resetRefract();if(st==='mix')resetMix();
   if(st==='reflect')resetReflect();if(st==='quiz')resetQuiz();screen(st);}
 
-function win(st){done[st]=true;sWin();burst(110);flyCoins(5);
+function celebrate(text,big){
+  const z=document.getElementById('zoomer');
+  z.textContent=big?'🚄💨':'🚂💨';
+  z.classList.remove('run');void z.offsetWidth;z.classList.add('run');
+  const b=document.getElementById('banner'),bt=document.getElementById('bannerTxt');
+  bt.textContent=text;b.classList.remove('show');void b.offsetWidth;b.classList.add('show');
+  setTimeout(()=>b.classList.remove('show'),1200);
+  sChoo();
+}
+function win(st){done[st]=true;sWin();burst(130);flyCoins(6);celebrate('破關！🎉',false);
   setTimeout(()=>{const all=stations.every(s=>done[s]);
-    if(all){document.getElementById('finalCoin').textContent=coins;screen('finish');burst(140);}
-    else{screen('map');drawBoard();}},1100);}
+    if(all){document.getElementById('finalCoin').textContent=coins;screen('finish');
+      burst(180);setTimeout(()=>{burst(160);celebrate('全部破關！🏆',true);},400);
+      setTimeout(()=>burst(160),1000);}
+    else{screen('map');drawBoard();}},1250);}
 
 /* ---------- station 1: refraction ---------- */
 function resetRefract(){document.getElementById('seen').style.display='none';
