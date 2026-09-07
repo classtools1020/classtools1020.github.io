@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>光線特勤隊・任務二｜總入口</title>
+<style>
+  :root{
+    --bg1:#05101f; --bg2:#0a2036; --bg3:#0e3350;
+    --amber:#ffc93c; --amber2:#ff9f1c; --teal:#42e0c8;
+    --ink:#eaf6ff; --dim:#9db8cf; --card:#0f2841; --line:rgba(120,170,210,.28);
+    --shadow:rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(255,201,60,.10), transparent 55%),
+      linear-gradient(165deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);
+    min-height:100vh;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 18px 64px}
+  header.hero{text-align:center;padding:26px 10px 10px}
+  .emblem{font-size:80px;line-height:1;filter:drop-shadow(0 8px 18px rgba(255,201,60,.35))}
+  .eyebrow{font-size:16px;font-weight:900;letter-spacing:.3em;color:var(--amber);text-transform:uppercase;margin-top:6px}
+  h1{font-size:46px;margin:4px 0 4px;letter-spacing:1px}
+  .sub{font-size:24px;color:var(--teal);font-weight:900}
+  .en{font-size:15px;color:var(--dim);font-weight:700;margin-top:6px;letter-spacing:.04em}
+
+  h2.sec{font-size:24px;margin:38px 0 14px;display:flex;align-items:center;gap:10px}
+  h2.sec::after{content:"";flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--amber),transparent)}
+
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    background:var(--card);border-radius:22px;padding:28px 16px;text-decoration:none;color:var(--ink);
+    box-shadow:0 8px 22px var(--shadow);border:2px solid var(--line);transition:transform .1s, box-shadow .1s, border-color .1s;
+    min-height:180px;
+  }
+  .card:hover{transform:translateY(-5px);border-color:var(--amber);box-shadow:0 14px 30px var(--shadow)}
+  .card .ico{font-size:58px;line-height:1;margin-bottom:8px}
+  .card .t{font-size:27px;font-weight:900}
+  .card .d{font-size:15px;color:var(--dim);font-weight:700;margin-top:5px}
+  .card.ppt{background:linear-gradient(160deg,#123152,#0c2742);border-color:rgba(255,201,60,.4)}
+  .card.play{background:linear-gradient(160deg,#14343f,#0c2742);border-color:rgba(66,224,200,.4)}
+  .card.quiz{background:linear-gradient(160deg,#3a1740,#2a0c31);border-color:rgba(199,125,255,.5)}
+  .newtag{display:inline-block;font-size:12px;font-weight:900;color:#08131f;background:linear-gradient(180deg,var(--amber),var(--amber2));border-radius:999px;padding:2px 10px;margin-top:8px;letter-spacing:.05em}
+
+  .files{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .file{display:flex;align-items:center;gap:14px;background:var(--card);border:2px solid var(--line);
+    border-radius:16px;padding:16px 18px;text-decoration:none;color:var(--ink);box-shadow:0 6px 16px var(--shadow)}
+  .file:hover{border-color:var(--teal)}
+  .file .fi{font-size:38px}
+  .file .ft{font-size:20px;font-weight:900}
+  .file .fd{font-size:13.5px;color:var(--dim);font-weight:700}
+
+  footer{text-align:center;margin-top:46px;font-size:14px;color:var(--dim)}
+  @media (max-width:720px){
+    .cards{grid-template-columns:1fr}
+    .files{grid-template-columns:1fr}
+    h1{font-size:34px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="emblem">🪞</div>
+    <div class="eyebrow">光線特勤隊</div>
+    <h1>任務二</h1>
+    <div class="sub">光碰鏡子，彈回來！</div>
+    <div class="en">一頁直達：搶答・闖關・課本簡報　｜　光的反射</div>
+  </header>
+
+  <h2 class="sec">🎯 上課一鍵直達</h2>
+  <div class="cards">
+    <a class="card play" href="../games/light-reflection-monopoly.html" target="_blank" rel="noopener">
+      <div class="ico">🎲</div><div class="t">大富翁闖關</div><div class="d">擲骰子・機會命運・答題賺金幣</div><div class="newtag">全新自製</div>
+    </a>
+    <a class="card quiz" href="../games/light-reflection-race.html" target="_blank" rel="noopener">
+      <div class="ico">🏎️</div><div class="t">賽車搶答</div><div class="d">雙隊競速・衝線灑花・中英文發音</div><div class="newtag">全新自製</div>
+    </a>
+    <a class="card ppt" href="#" onclick="alert('今天用課本 PPT p79（光的反射・投影片14 起）從頭帶。之後可換成 Gamma／Google 簡報連結。');return false;">
+      <div class="ico">🖥️</div><div class="t">課本簡報</div><div class="d">翰林 p79・投影片 14 起</div>
+    </a>
+  </div>
+
+  <h2 class="sec">📖 專有名詞（給同事/家長看的專業度）</h2>
+  <div class="files">
+    <div class="file"><div class="fi">🔦</div><div><div class="ft">反射・入射光・反射光</div><div class="fd">光碰到物體彈回，就是反射；照進去＝入射光，彈回來＝反射光</div></div></div>
+    <div class="file"><div class="fi">📐</div><div><div class="ft">反射定律</div><div class="fd">入射角＝反射角，光永遠對稱彈出</div></div></div>
+    <div class="file"><div class="fi">🪞</div><div><div class="ft">鏡面反射</div><div class="fd">平滑面→光整齊反射→看得到自己（鏡子、水面）</div></div></div>
+    <div class="file"><div class="fi">🧱</div><div><div class="ft">漫反射</div><div class="fd">粗糙面→光四散反射→看不到人影（牆壁、紙）</div></div></div>
+  </div>
+
+  <footer>
+    🪞 光線特勤隊・任務二　｜　竹東國中自然科　｜　一頁直達所有教材
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<title>光的反射大富翁</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{
+    --bg:#0d1430; --bg2:#141d3d; --panel:#1b2650; --panel2:#22305f; --board:#101a3d;
+    --red:#ff4d4d; --blue:#3aa0ff; --gold:#ffc93c; --green:#28c76f; --wrong:#ff8a5b;
+    --purple:#c77dff; --tile:#eef3ff; --tileInk:#16203f;
+    --q:#ffe08a; --chance:#a5e8c0; --fate:#c9b6ff; --bonus:#ffd0a3; --go:#ffb3b3;
+    --ink:#fff; --muted:#aab4d4;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;
+    --body:'Noto Sans TC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);
+    background:radial-gradient(1200px 600px at 50% -10%,#24306a 0,transparent 60%),linear-gradient(180deg,#0d1430,#0a1026);
+    min-height:100vh;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:980px;margin:0 auto;padding:12px 14px 24px;
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  h1{font-family:var(--disp);font-weight:700;font-size:30px;margin:0}
+  h1 .g{color:var(--gold)}
+  .scores{display:flex;gap:8px}
+  .score{display:flex;align-items:center;gap:6px;background:var(--panel);border-radius:14px;
+    padding:7px 12px;font-family:var(--disp);font-size:22px;font-weight:700;box-shadow:var(--shadow)}
+  .score.red{border:3px solid var(--red)} .score.blue{border:3px solid var(--blue)}
+  .score .coin{font-size:20px}
+
+  .stage{display:grid;grid-template-columns:1fr;gap:14px}
+  /* board */
+  .board{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);
+    gap:6px;background:var(--board);border-radius:20px;padding:10px;box-shadow:var(--shadow);
+    aspect-ratio:1/1;max-width:min(72vh,640px);margin:0 auto;width:100%}
+  .tile{position:relative;border-radius:12px;background:var(--tile);color:var(--tileInk);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-weight:900;text-align:center;padding:2px;overflow:hidden;min-height:0}
+  .tile .ic{font-size:min(5vw,30px);line-height:1}
+  .tile .lb{font-size:min(2.4vw,13px);line-height:1.1;margin-top:1px}
+  .tile.q{background:var(--q)} .tile.chance{background:var(--chance)}
+  .tile.fate{background:var(--fate)} .tile.bonus{background:var(--bonus)} .tile.go{background:var(--go)}
+  .tile .tokens{position:absolute;bottom:1px;right:2px;display:flex;gap:1px}
+  .tile .tk{font-size:min(4vw,22px);filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
+  .tile.hot{outline:4px solid var(--gold);outline-offset:-2px;animation:hot .5s}
+  @keyframes hot{0%,100%{outline-color:var(--gold)}50%{outline-color:#fff}}
+  /* center panel */
+  .center{grid-column:2/6;grid-row:2/6;background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:8px}
+  .turn{font-family:var(--disp);font-weight:700;font-size:min(3.6vw,22px);padding:4px 14px;border-radius:999px}
+  .turn.red{background:rgba(255,77,77,.18);color:#ff9a9a;border:2px solid var(--red)}
+  .turn.blue{background:rgba(58,160,255,.18);color:#9cccff;border:2px solid var(--blue)}
+  .dice{font-size:min(14vw,74px);line-height:1;filter:drop-shadow(0 6px 8px rgba(0,0,0,.4))}
+  .dice.roll{animation:shake .5s}
+  @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-18deg) scale(1.08)}75%{transform:rotate(18deg) scale(1.08)}}
+  .rollbtn{font-family:var(--disp);font-weight:700;font-size:min(4vw,22px);border:none;border-radius:14px;
+    padding:10px 22px;background:var(--gold);color:#3a2a00;cursor:pointer;box-shadow:0 5px 0 #c99a10}
+  .rollbtn:active{transform:translateY(3px);box-shadow:0 2px 0 #c99a10}
+  .rollbtn:disabled{opacity:.5;cursor:default;box-shadow:none}
+  .hintline{font-size:min(2.6vw,14px);color:var(--muted);text-align:center;font-weight:700}
+
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(6,10,26,.86);display:none;align-items:center;
+    justify-content:center;z-index:50;padding:16px}
+  .modal.show{display:flex}
+  .box{background:linear-gradient(180deg,var(--panel2),var(--panel));border-radius:22px;
+    padding:22px 20px 24px;box-shadow:var(--shadow);text-align:center;max-width:560px;width:100%}
+  .hero{font-size:76px;line-height:1;margin:2px 0 6px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.35))}
+  .qtxt{font-size:30px;font-weight:900;margin:4px auto 8px;max-width:20ch;text-wrap:balance;line-height:1.25}
+  .say{display:inline-flex;align-items:center;gap:8px;background:var(--bg2);border:2px solid #34406f;color:#fff;
+    font-weight:700;font-size:18px;border-radius:999px;padding:7px 14px;cursor:pointer;margin-bottom:12px}
+  .say:hover{border-color:var(--gold)} .say .en{color:var(--gold);font-family:var(--disp)}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.opts{grid-template-columns:1fr}.qtxt{font-size:26px}}
+  .opt{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--tile);color:var(--tileInk);
+    border:none;border-radius:16px;padding:18px 12px;font-weight:900;font-size:26px;cursor:pointer;
+    box-shadow:0 6px 0 #b9c6e8;min-height:72px}
+  .opt .emo{font-size:32px}
+  .opt:active{transform:translateY(4px);box-shadow:0 2px 0 #b9c6e8}
+  .opt.right{background:var(--green);color:#fff;box-shadow:0 6px 0 #199a53;animation:pop .4s}
+  .opt.wrong{background:var(--wrong);color:#fff;box-shadow:0 6px 0 #d8632f}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
+  .fb{min-height:30px;margin-top:12px;font-size:23px;font-weight:900}
+  .fb.good{color:var(--green)} .fb.hint{color:var(--gold)}
+  .cardface{font-size:64px;margin:6px 0}
+  .cardttl{font-family:var(--disp);font-size:30px;font-weight:700;margin:2px 0 4px}
+  .carddesc{font-size:26px;font-weight:900;margin:6px auto;max-width:18ch;line-height:1.3}
+  .btn{font-family:var(--disp);font-weight:700;font-size:22px;border:none;border-radius:14px;
+    padding:12px 26px;cursor:pointer;background:var(--gold);color:#3a2a00;box-shadow:var(--shadow);margin-top:10px}
+
+  .win{position:fixed;inset:0;background:rgba(6,10,26,.94);display:none;align-items:center;justify-content:center;
+    flex-direction:column;text-align:center;z-index:60;padding:20px}
+  .win.show{display:flex}
+  .win .big{font-size:110px;margin:0;animation:trophy .8s ease-out both}
+  @keyframes trophy{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+  .win h2{font-family:var(--disp);font-size:48px;margin:8px 0;text-shadow:0 3px 0 rgba(0,0,0,.3)}
+  .vlap{position:absolute;left:0;right:0;top:48%;height:120px;overflow:hidden;pointer-events:none}
+  .vlap .finish{position:absolute;right:8%;top:0;font-size:76px}
+  .vlap .car{position:absolute;left:-140px;top:16px;font-size:92px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+  .vlap.go .car{animation:drive 2s cubic-bezier(.3,0,.2,1) forwards}
+  @keyframes drive{0%{left:-140px}100%{left:82%}}
+  .vlap .line{position:absolute;top:48px;height:5px;width:60px;background:#fff;opacity:0;border-radius:4px}
+  .vlap.go .line{animation:zoom .5s linear infinite}
+  @keyframes zoom{0%{left:100%;opacity:.7}100%{left:-20%;opacity:0}}
+  canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:55}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>🎲 光的反射 <span class="g">大富翁</span></h1>
+    <div class="scores">
+      <div class="score red">🔴<span class="coin">🪙</span><span id="cRed">0</span></div>
+      <div class="score blue">🔵<span class="coin">🪙</span><span id="cBlue">0</span></div>
+    </div>
+  </header>
+
+  <div class="board" id="board"></div>
+  <p class="hintline">🎯 收集 <b>15 個金幣</b>先贏！答對＋金幣、機會命運有驚喜、走到 🏁 出發加金幣。</p>
+</div>
+
+<!-- question modal -->
+<div class="modal" id="qModal">
+  <div class="box">
+    <div class="hero" id="qHero">🔦</div>
+    <div class="qtxt" id="qTxt">題目</div>
+    <button class="say" id="qSay">🔊 <span id="qZh">聽發音</span> <span class="en" id="qEn"></span></button>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb" id="qFb"></div>
+    <button class="btn" id="qDone" style="display:none">繼續 ➡️</button>
+  </div>
+</div>
+
+<!-- chance/fate modal -->
+<div class="modal" id="cModal">
+  <div class="box">
+    <div class="cardttl" id="cTtl">機會</div>
+    <div class="cardface" id="cFace">❓</div>
+    <div class="carddesc" id="cDesc"></div>
+    <button class="btn" id="cDone">收下 ✨</button>
+  </div>
+</div>
+
+<div class="win" id="win">
+  <div class="vlap" id="vlap">
+    <div class="finish">🏁</div>
+    <div class="line" style="animation-delay:0s"></div>
+    <div class="line" style="top:68px;animation-delay:.15s"></div>
+    <div class="line" style="top:28px;animation-delay:.3s"></div>
+    <div class="car" id="vcar">🏎️</div>
+  </div>
+  <div class="big" id="winFace">🏆</div>
+  <h2 id="winText">紅隊獲勝！</h2>
+  <button class="btn" id="again">再玩一次 🔄</button>
+</div>
+
+<canvas class="confetti" id="cf"></canvas>
+
+<script>
+/* ---------- data ---------- */
+const QUESTIONS=[
+  {hero:"🔦🪞",q:"光碰到鏡子會怎樣？",term:["反射","Reflection"],opts:[{t:"彈回來",e:"↩️",ok:1},{t:"不見了",e:"❌"}],hint:"光會彈回來，叫反射！"},
+  {hero:"➡️🪞",q:"照過去的光叫什麼？",term:["入射光","Incident light"],opts:[{t:"入射光",e:"➡️",ok:1},{t:"反射光",e:"↩️"}],hint:"照進去的是入射光。"},
+  {hero:"🪞↩️",q:"彈回來的光叫什麼？",term:["反射光","Reflected light"],opts:[{t:"反射光",e:"↩️",ok:1},{t:"入射光",e:"➡️"}],hint:"彈回來的是反射光。"},
+  {hero:"📐✨",q:"進去角和彈出角？",term:["反射定律","Law of reflection"],opts:[{t:"一樣大",e:"🟰",ok:1},{t:"不一樣",e:"➖"}],hint:"進去角＝彈出角，反射定律！"},
+  {hero:"🪞😊",q:"平鏡子光整齊彈回，叫？",term:["鏡面反射","Specular reflection"],opts:[{t:"鏡面反射",e:"🪞",ok:1},{t:"漫反射",e:"🧱"}],hint:"平滑面→鏡面反射。"},
+  {hero:"🧱🔀",q:"粗牆光亂彈，叫？",term:["漫反射","Diffuse reflection"],opts:[{t:"漫反射",e:"🔀",ok:1},{t:"鏡面反射",e:"🪞"}],hint:"粗糙面→漫反射。"},
+  {hero:"🪞👀",q:"為何鏡子看得到自己？",term:["鏡面反射","Specular reflection"],opts:[{t:"光整齊反射",e:"✅",ok:1},{t:"光不見了",e:"❌"}],hint:"光整齊反射進眼睛。"},
+  {hero:"🪞🧱",q:"哪個看得到自己？",term:["反射","Reflection"],opts:[{t:"鏡子",e:"🪞",ok:1},{t:"牆壁",e:"🧱"}],hint:"鏡子光滑→鏡面反射。"},
+  {hero:"🚗👀",q:"開車看後面用什麼？",term:["後照鏡","Rear-view mirror"],opts:[{t:"後照鏡",e:"🪞",ok:1},{t:"輪胎",e:"🛞"}],hint:"後照鏡靠反射。"},
+  {hero:"🌊☁️",q:"平靜水面像什麼？",term:["反射","Reflection"],opts:[{t:"鏡子",e:"🪞",ok:1},{t:"石頭",e:"🪨"}],hint:"平靜水面會反射。"},
+];
+const CHANCE=[
+  {f:"🔦",d:"撿到手電筒！+2 金幣",coin:2},
+  {f:"⚡",d:"光速前進 2 格！",fwd:2},
+  {f:"🎲",d:"手氣好，再擲一次！",again:1},
+  {f:"☀️",d:"太陽公公 +3 金幣",coin:3},
+];
+const FATE=[
+  {f:"💡",d:"幫同學開燈 +2 金幣",coin:2},
+  {f:"🪞",d:"反射好運，前進 1 格",fwd:1},
+  {f:"🎁",d:"分享點心，兩隊都 +1",both:1},
+  {f:"😊",d:"開心休息 +1 金幣",coin:1},
+];
+// board tiles (20, clockwise). type: go/q/chance/fate/bonus
+const TILES=[
+  {ty:"go",ic:"🏁",lb:"出發"},{ty:"q"},{ty:"chance",ic:"❓",lb:"機會"},{ty:"q"},{ty:"bonus",ic:"⚡",lb:"光能+1"},
+  {ty:"q"},{ty:"fate",ic:"🎲",lb:"命運"},{ty:"q"},{ty:"q"},{ty:"chance",ic:"❓",lb:"機會"},
+  {ty:"bonus",ic:"🚉",lb:"中繼+2"},{ty:"q"},{ty:"fate",ic:"🎲",lb:"命運"},{ty:"q"},{ty:"q"},
+  {ty:"chance",ic:"❓",lb:"機會"},{ty:"q"},{ty:"bonus",ic:"⚡",lb:"光能+1"},{ty:"q"},{ty:"fate",ic:"🎲",lb:"命運"},
+];
+// perimeter grid coords for 6x6 (row,col 1-based)
+const COORDS=[];
+for(let c=1;c<=6;c++)COORDS.push([1,c]);
+for(let r=2;r<=6;r++)COORDS.push([r,6]);
+for(let c=5;c>=1;c--)COORDS.push([6,c]);
+for(let r=5;r>=2;r--)COORDS.push([r,1]);
+const N=TILES.length, GOAL=15;
+
+let team=0, coins=[0,0], pos=[0,0], busy=false;
+const TEAMS=[{n:"紅隊",cls:"red",emo:"🔴",tk:"🔴"},{n:"藍隊",cls:"blue",emo:"🔵",tk:"🔵"}];
+const $=id=>document.getElementById(id);
+
+/* ---------- audio ---------- */
+let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function tone(f,t,d,ty="sine",v=.25){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();
+  o.type=ty;o.frequency.setValueAtTime(f,t);o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function sRight(){const a=ac();if(!a)return;const t=a.currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.09,.18,"triangle",.3));}
+function sCoin(){const a=ac();if(!a)return;const t=a.currentTime;tone(988,t,.08,"square",.2);tone(1319,t+.08,.16,"square",.2);}
+function sWrong(){const a=ac();if(!a)return;const t=a.currentTime;tone(196,t,.18,"sawtooth",.18);tone(150,t+.12,.2,"sawtooth",.18);}
+function sStep(){const a=ac();if(!a)return;tone(440,a.currentTime,.06,"square",.15);}
+function sRoll(){const a=ac();if(!a)return;const t=a.currentTime;for(let i=0;i<5;i++)tone(300+i*40,t+i*.05,.05,"square",.12);}
+function sWin(){const a=ac();if(!a)return;const t=a.currentTime;[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.12,.28,"triangle",.3));}
+
+/* ---------- speech ---------- */
+function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
+  u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.85;speechSynthesis.speak(e);}};
+  speechSynthesis.speak(u);}catch(e){}}
+
+/* ---------- build board ---------- */
+const board=$("board");
+const tileEls=[];
+TILES.forEach((t,i)=>{
+  const el=document.createElement("div");
+  el.className="tile "+(t.ty==="q"?"q":t.ty);
+  const ic=t.ty==="q"?"📝":t.ic;
+  const lb=t.ty==="q"?"題目":t.lb;
+  el.innerHTML='<div class="ic">'+ic+'</div><div class="lb">'+lb+'</div><div class="tokens"></div>';
+  const [r,c]=COORDS[i];el.style.gridRow=r;el.style.gridColumn=c;
+  board.appendChild(el);tileEls.push(el);
+});
+// center panel
+const center=document.createElement("div");
+center.className="center";
+center.innerHTML=
+  '<div class="turn red" id="turn">🔴 紅隊</div>'+
+  '<div class="dice" id="dice">🎲</div>'+
+  '<button class="rollbtn" id="roll">擲骰子 🎲</button>';
+board.appendChild(center);
+
+function drawTokens(){
+  tileEls.forEach(el=>el.querySelector(".tokens").innerHTML="");
+  [0,1].forEach(t=>{
+    const s=document.createElement("span");s.className="tk";s.textContent=TEAMS[t].tk;
+    tileEls[pos[t]].querySelector(".tokens").appendChild(s);
+  });
+}
+function updTurn(){const T=TEAMS[team];$("turn").className="turn "+T.cls;$("turn").textContent=T.emo+" "+T.n;}
+function updCoins(){$("cRed").textContent=coins[0];$("cBlue").textContent=coins[1];}
+
+/* ---------- roll & move ---------- */
+$("roll").onclick=roll;
+function roll(){
+  if(busy)return;busy=true;
+  const dice=$("dice");dice.classList.add("roll");sRoll();
+  const faces=["⚀","⚁","⚂","⚃","⚄","⚅"];
+  let ticks=0;const iv=setInterval(()=>{dice.textContent=faces[Math.floor(Math.random()*6)];
+    if(++ticks>8){clearInterval(iv);
+      const n=1+Math.floor(Math.random()*6);dice.textContent=faces[n-1];
+      dice.classList.remove("roll");
+      setTimeout(()=>step(team,n),300);
+    }},60);
+}
+function step(t,n){
+  if(n<=0){land(t);return;}
+  const prev=pos[t];pos[t]=(pos[t]+1)%N;
+  if(pos[t]===0){coins[t]+=2;updCoins();} // pass GO
+  drawTokens();sStep();
+  setTimeout(()=>step(t,n-1),260);
+}
+function hot(i){tileEls[i].classList.add("hot");setTimeout(()=>tileEls[i].classList.remove("hot"),900);}
+function land(t){
+  const tile=TILES[pos[t]];hot(pos[t]);
+  if(tile.ty==="q")setTimeout(()=>openQ(t),400);
+  else if(tile.ty==="chance")setTimeout(()=>openCard(t,"chance"),400);
+  else if(tile.ty==="fate")setTimeout(()=>openCard(t,"fate"),400);
+  else if(tile.ty==="bonus"){const add=tile.lb.includes("2")?2:1;coins[t]+=add;updCoins();sCoin();confetti(40);checkWin(t,()=>endTurn());}
+  else{checkWin(t,()=>endTurn());} // go
+}
+
+/* ---------- question ---------- */
+let curQ=null,curT=0,qResolved=false;
+function openQ(t){
+  curT=t;qResolved=false;
+  curQ=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+  $("qHero").textContent=curQ.hero;$("qTxt").textContent=curQ.q;
+  $("qZh").textContent=curQ.term[0];$("qEn").textContent=curQ.term[1];
+  $("qFb").textContent="";$("qFb").className="fb";$("qDone").style.display="none";
+  const wrap=$("qOpts");wrap.innerHTML="";
+  curQ.opts.forEach(o=>{const b=document.createElement("button");b.className="opt";
+    b.innerHTML='<span class="emo">'+o.e+'</span>'+o.t;b.onclick=()=>chooseQ(b,o);wrap.appendChild(b);});
+  $("qModal").classList.add("show");
+}
+$("qSay").onclick=()=>{if(curQ)speak(curQ.term[0],curQ.term[1]);};
+function chooseQ(btn,o){
+  if(qResolved)return;
+  if(o.ok){
+    qResolved=true;btn.classList.add("right");
+    [...$("qOpts").children].forEach(b=>b.disabled=true);
+    coins[curT]+=2;updCoins();
+    $("qFb").textContent="🎉 答對！+2 金幣　"+curQ.term[0];$("qFb").className="fb good";
+    sRight();sCoin();speak(curQ.term[0],curQ.term[1]);confetti(80);
+    $("qDone").style.display="inline-block";
+  }else{
+    btn.classList.add("wrong");btn.disabled=true;
+    $("qFb").textContent="💡 "+curQ.hint;$("qFb").className="fb hint";sWrong();
+  }
+}
+$("qDone").onclick=()=>{$("qModal").classList.remove("show");checkWin(curT,()=>endTurn());};
+
+/* ---------- chance / fate ---------- */
+let curCard=null,cardT=0,cardKind="";
+function openCard(t,kind){
+  cardT=t;cardKind=kind;
+  const pool=kind==="chance"?CHANCE:FATE;
+  curCard=pool[Math.floor(Math.random()*pool.length)];
+  $("cTtl").textContent=kind==="chance"?"🍀 機會":"🎯 命運";
+  $("cFace").textContent=curCard.f;$("cDesc").textContent=curCard.d;
+  $("cModal").classList.add("show");speak(curCard.d,"");
+}
+$("cDone").onclick=()=>{
+  const c=curCard,t=cardT;$("cModal").classList.remove("show");
+  if(c.coin){coins[t]+=c.coin;updCoins();sCoin();confetti(50);}
+  if(c.both){coins[0]+=c.both;coins[1]+=c.both;updCoins();sCoin();confetti(50);}
+  if(c.fwd){ // move forward without retriggering, just add coins if pass GO
+    let n=c.fwd;const iv=setInterval(()=>{const prev=pos[t];pos[t]=(pos[t]+1)%N;
+      if(pos[t]===0){coins[t]+=2;updCoins();}drawTokens();sStep();
+      if(--n<=0){clearInterval(iv);hot(pos[t]);setTimeout(()=>checkWin(t,()=>endTurn()),300);}},220);
+    return;
+  }
+  if(c.again){busy=false;return;} // extra roll, same team
+  checkWin(t,()=>endTurn());
+};
+
+/* ---------- turn / win ---------- */
+function endTurn(){team=1-team;updTurn();busy=false;}
+function checkWin(t,cb){
+  if(coins[t]>=GOAL){finish();return;}
+  cb&&cb();
+}
+function finish(){
+  let msg,face;
+  if(coins[0]>coins[1]){msg="🔴 紅隊獲勝！";face="🏎️";}
+  else if(coins[1]>coins[0]){msg="🔵 藍隊獲勝！";face="🚙";}
+  else{msg="平手！都好棒！";face="🤝";}
+  $("winText").textContent=msg;$("winFace").textContent=face;
+  $("vcar").textContent=(face==="🤝")?"🏎️":face;
+  const vl=$("vlap");vl.classList.remove("go");void vl.offsetWidth;vl.classList.add("go");
+  $("win").classList.add("show");sWin();bigConfetti();
+  setTimeout(bigConfetti,700);setTimeout(sWin,300);
+}
+$("again").onclick=()=>{team=0;coins=[0,0];pos=[0,0];busy=false;
+  updCoins();updTurn();drawTokens();$("dice").textContent="🎲";$("win").classList.remove("show");};
+
+/* ---------- confetti ---------- */
+const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
+function size(){cv.width=innerWidth;cv.height=innerHeight;}size();addEventListener("resize",size);
+const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
+function confetti(n=70){for(let i=0;i<n;i++)parts.push(mk(innerWidth/2,innerHeight*.35));run();}
+function bigConfetti(){for(let i=0;i<220;i++)parts.push(mk(Math.random()*innerWidth,-20));run();}
+function mk(x,y){return{x,y,vx:(Math.random()-.5)*10,vy:Math.random()*-9-3,g:.3+Math.random()*.2,
+  s:6+Math.random()*8,c:COL[Math.floor(Math.random()*COL.length)],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0};}
+let raf=null;function run(){if(!raf)raf=requestAnimationFrame(loop);}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});
+  parts=parts.filter(p=>p.y<cv.height+30&&p.life<260);
+  if(parts.length)raf=requestAnimationFrame(loop);else{raf=null;cx.clearRect(0,0,cv.width,cv.height);}}
+
+/* init */
+drawTokens();updTurn();updCoins();
+</script>

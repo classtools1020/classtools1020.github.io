@@ -1,0 +1,323 @@
+<title>光的反射大賽車</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{
+    --bg:#0e1630; --bg2:#141d3d; --panel:#1b2650; --panel2:#22305f;
+    --track:#2a3358; --line:#3a4border;
+    --red:#ff4d4d; --redglow:#ff7a7a;
+    --blue:#3aa0ff; --blueglow:#7ac2ff;
+    --gold:#ffc93c; --green:#28c76f; --wrong:#ff8a5b;
+    --ink:#ffffff; --muted:#aab4d4;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;
+    --body:'Noto Sans TC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:var(--body);
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #24306a 0%, transparent 60%),
+      linear-gradient(180deg,#0e1630 0%,#0b1128 100%);
+    min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:16px 18px 30px;
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+
+  /* header / scoreboard */
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  h1{font-family:var(--disp);font-weight:700;font-size:34px;margin:0;letter-spacing:.5px;
+     text-shadow:0 3px 0 rgba(0,0,0,.25)}
+  h1 .spark{color:var(--gold)}
+  .scores{display:flex;gap:10px}
+  .score{display:flex;align-items:center;gap:8px;background:var(--panel);border-radius:16px;
+    padding:8px 14px;font-family:var(--disp);font-size:26px;font-weight:700;box-shadow:var(--shadow)}
+  .score.red{border:3px solid var(--red)}
+  .score.blue{border:3px solid var(--blue)}
+  .score .car{font-size:26px}
+
+  /* race track */
+  .track{position:relative;background:var(--track);border-radius:20px;padding:14px 16px;
+    box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+  .lane{position:relative;height:56px;display:flex;align-items:center;margin:6px 0}
+  .lane .road{position:absolute;left:44px;right:52px;height:6px;border-radius:6px;
+    background:repeating-linear-gradient(90deg,#4a568c 0 22px,transparent 22px 40px)}
+  .lane .tag{width:40px;font-size:26px;text-align:center;z-index:2}
+  .lane .flag{position:absolute;right:8px;font-size:30px;z-index:2}
+  .racer{position:absolute;left:44px;font-size:38px;z-index:3;
+    transition:left .6s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+  .racer.bump{animation:bump .5s}
+  @keyframes bump{0%,100%{transform:translateY(0)}30%{transform:translateY(-14px) rotate(-6deg)}60%{transform:translateY(-4px)}}
+
+  /* question card */
+  .card{background:linear-gradient(180deg,var(--panel2),var(--panel));border-radius:24px;
+    padding:22px 20px 24px;box-shadow:var(--shadow);text-align:center;position:relative}
+  .turn{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:700;
+    font-size:22px;padding:6px 16px;border-radius:999px;margin-bottom:6px}
+  .turn.red{background:rgba(255,77,77,.18);color:var(--redglow);border:2px solid var(--red)}
+  .turn.blue{background:rgba(58,160,255,.18);color:var(--blueglow);border:2px solid var(--blue)}
+  .qnum{color:var(--muted);font-size:20px;font-weight:700;margin:2px 0 4px}
+  .hero{font-size:96px;line-height:1.1;margin:4px 0 6px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.35))}
+  .q{font-size:34px;font-weight:900;margin:2px auto 6px;max-width:22ch;text-wrap:balance;line-height:1.25}
+  .say{display:inline-flex;align-items:center;gap:8px;background:var(--bg2);border:2px solid #34406f;
+    color:var(--ink);font-family:var(--body);font-weight:700;font-size:20px;border-radius:999px;
+    padding:8px 16px;cursor:pointer;margin-bottom:14px}
+  .say:hover{border-color:var(--gold)}
+  .say .en{color:var(--gold);font-family:var(--disp)}
+
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+  @media(max-width:560px){.opts{grid-template-columns:1fr}.q{font-size:28px}.hero{font-size:76px}}
+  .opt{display:flex;align-items:center;justify-content:center;gap:10px;
+    background:#eef3ff;color:#16203f;border:none;border-radius:18px;
+    padding:20px 14px;font-family:var(--body);font-weight:900;font-size:30px;cursor:pointer;
+    box-shadow:0 6px 0 #b9c6e8;transition:transform .08s,box-shadow .08s;min-height:82px}
+  .opt .emo{font-size:36px}
+  .opt:active{transform:translateY(4px);box-shadow:0 2px 0 #b9c6e8}
+  .opt.right{background:var(--green);color:#fff;box-shadow:0 6px 0 #199a53;animation:pop .4s}
+  .opt.wrong{background:var(--wrong);color:#fff;box-shadow:0 6px 0 #d8632f}
+  .opt:disabled{cursor:default}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+  .fb{min-height:40px;margin-top:14px;font-size:26px;font-weight:900}
+  .fb.good{color:var(--green)}
+  .fb.hint{color:var(--gold)}
+
+  .row{display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+  .btn{font-family:var(--disp);font-weight:700;font-size:24px;border:none;border-radius:16px;
+    padding:14px 28px;cursor:pointer;box-shadow:var(--shadow)}
+  .btn.next{background:var(--gold);color:#3a2a00}
+  .btn.ghost{background:var(--panel);color:var(--ink);border:2px solid #3a4680}
+  .btn:disabled{opacity:.4;cursor:default}
+
+  /* win overlay */
+  .win{position:fixed;inset:0;background:rgba(6,10,26,.92);display:none;align-items:center;
+    justify-content:center;flex-direction:column;text-align:center;z-index:50;padding:20px}
+  .win.show{display:flex}
+  .win .big{font-size:120px;margin:0;animation:trophy .8s ease-out both}
+  @keyframes trophy{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+  .win h2{font-family:var(--disp);font-size:52px;margin:8px 0;text-shadow:0 3px 0 rgba(0,0,0,.3)}
+  .vlap{position:absolute;left:0;right:0;top:50%;height:120px;overflow:hidden;pointer-events:none}
+  .vlap .finish{position:absolute;right:8%;top:0;font-size:80px}
+  .vlap .car{position:absolute;left:-140px;top:18px;font-size:96px;
+    filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+  .vlap.go .car{animation:drive 2s cubic-bezier(.3,0,.2,1) forwards}
+  @keyframes drive{0%{left:-140px}100%{left:82%}}
+  .vlap .line{position:absolute;top:50px;height:5px;width:60px;background:#fff;opacity:0;border-radius:4px}
+  .vlap.go .line{animation:zoom .5s linear infinite}
+  @keyframes zoom{0%{left:100%;opacity:.7}100%{left:-20%;opacity:0}}
+  canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>🚂 光的反射 <span class="spark">大賽車</span> 🏁</h1>
+    <div class="scores">
+      <div class="score red"><span class="car">🏎️</span><span id="sRed">0</span></div>
+      <div class="score blue"><span class="car">🚙</span><span id="sBlue">0</span></div>
+    </div>
+  </header>
+
+  <div class="track" aria-label="賽車跑道">
+    <div class="lane">
+      <div class="tag">🔴</div><div class="road"></div>
+      <div class="racer" id="carRed">🏎️</div><div class="flag">🏁</div>
+    </div>
+    <div class="lane">
+      <div class="tag">🔵</div><div class="road"></div>
+      <div class="racer" id="carBlue">🚙</div><div class="flag">🏁</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="turn red" id="turn">🔴 紅隊搶答</div>
+    <div class="qnum" id="qnum">第 1 題 / 10</div>
+    <div class="hero" id="hero">🔦</div>
+    <div class="q" id="q">題目</div>
+    <button class="say" id="say">🔊 <span id="sayZh">聽發音</span> <span class="en" id="sayEn"></span></button>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <div class="row">
+      <button class="btn ghost" id="skip">跳過 ➡️</button>
+      <button class="btn next" id="next" disabled>下一題 ➡️</button>
+    </div>
+  </div>
+</div>
+
+<div class="win" id="win">
+  <div class="vlap" id="vlap">
+    <div class="finish">🏁</div>
+    <div class="line" style="animation-delay:0s"></div>
+    <div class="line" style="top:70px;animation-delay:.15s"></div>
+    <div class="line" style="top:30px;animation-delay:.3s"></div>
+    <div class="car" id="vcar">🏎️</div>
+  </div>
+  <div class="big" id="winCar">🏆</div>
+  <h2 id="winText">紅隊獲勝！</h2>
+  <button class="btn next" id="again">再玩一次 🔄</button>
+</div>
+
+<canvas class="confetti" id="cf"></canvas>
+
+<script>
+const QUESTIONS = [
+  {hero:"🔦🪞", q:"光碰到鏡子會怎樣？", term:["反射","Reflection"],
+   opts:[{t:"彈回來",e:"↩️",ok:true},{t:"不見了",e:"❌",ok:false}], hint:"光會彈回來，這叫「反射」！"},
+  {hero:"➡️🪞", q:"照過去的光，叫什麼光？", term:["入射光","Incident light"],
+   opts:[{t:"入射光",e:"➡️",ok:true},{t:"反射光",e:"↩️",ok:false}], hint:"照「進去」的是入射光。"},
+  {hero:"🪞↩️", q:"彈回來的光，叫什麼光？", term:["反射光","Reflected light"],
+   opts:[{t:"反射光",e:"↩️",ok:true},{t:"入射光",e:"➡️",ok:false}], hint:"彈「回來」的是反射光。"},
+  {hero:"📐✨", q:"進去的角和彈出的角？", term:["反射定律","Law of reflection"],
+   opts:[{t:"一樣大",e:"🟰",ok:true},{t:"不一樣",e:"➖",ok:false}], hint:"進去角＝彈出角，這是反射定律！"},
+  {hero:"🪞😊", q:"平平的鏡子，光整齊彈回，叫？", term:["鏡面反射","Specular reflection"],
+   opts:[{t:"鏡面反射",e:"🪞",ok:true},{t:"漫反射",e:"🧱",ok:false}], hint:"平滑鏡面→光整齊→鏡面反射。"},
+  {hero:"🧱🔀", q:"粗粗的牆，光亂亂彈，叫？", term:["漫反射","Diffuse reflection"],
+   opts:[{t:"漫反射",e:"🔀",ok:true},{t:"鏡面反射",e:"🪞",ok:false}], hint:"粗糙面→光亂彈→漫反射。"},
+  {hero:"🪞👀", q:"為什麼鏡子看得到自己？", term:["鏡面反射","Specular reflection"],
+   opts:[{t:"光整齊反射",e:"✅",ok:true},{t:"光不見了",e:"❌",ok:false}], hint:"光整齊反射進眼睛，就看到自己。"},
+  {hero:"🪞 vs 🧱", q:"哪個看得到自己？", term:["反射","Reflection"],
+   opts:[{t:"鏡子",e:"🪞",ok:true},{t:"牆壁",e:"🧱",ok:false}], hint:"鏡子光滑，是鏡面反射。"},
+  {hero:"🚗👀", q:"開車看後面，用什麼？", term:["後照鏡","Rear-view mirror"],
+   opts:[{t:"後照鏡",e:"🪞",ok:true},{t:"輪胎",e:"🛞",ok:false}], hint:"後照鏡用反射看到後方。"},
+  {hero:"🌊☁️", q:"平靜的水面像什麼？", term:["反射","Reflection"],
+   opts:[{t:"鏡子",e:"🪞",ok:true},{t:"石頭",e:"🪨",ok:false}], hint:"平靜水面會反射，像鏡子。"},
+];
+const WIN = QUESTIONS.length; // reach finish after all correct-ish; win = most points / first to fill track
+
+let idx=0, team=0, answered=false; // team 0=red 1=blue
+let pos=[0,0], score=[0,0];
+const TEAMS=[{n:"紅隊",cls:"red",emo:"🔴",car:"carRed"},{n:"藍隊",cls:"blue",emo:"🔵",car:"carBlue"}];
+
+const $=id=>document.getElementById(id);
+
+/* ---------- audio ---------- */
+let AC;
+function ac(){ if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}} return AC;}
+function tone(f,t,dur,type="sine",vol=.25){
+  const a=ac(); if(!a)return; const o=a.createOscillator(),g=a.createGain();
+  o.type=type;o.frequency.setValueAtTime(f,t);o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.start(t);o.stop(t+dur);
+}
+function sfxRight(){const a=ac();if(!a)return;const t=a.currentTime;
+  [523,659,784,1047].forEach((f,i)=>tone(f,t+i*.09,.18,"triangle",.3));}
+function sfxCoin(){const a=ac();if(!a)return;const t=a.currentTime;tone(988,t,.08,"square",.2);tone(1319,t+.08,.16,"square",.2);}
+function sfxWrong(){const a=ac();if(!a)return;const t=a.currentTime;tone(196,t,.18,"sawtooth",.18);tone(150,t+.12,.2,"sawtooth",.18);}
+function sfxWin(){const a=ac();if(!a)return;const t=a.currentTime;[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.12,.28,"triangle",.3));}
+
+/* ---------- speech ---------- */
+function speak(zh,en){
+  if(!('speechSynthesis' in window))return;
+  try{speechSynthesis.cancel();
+    const u1=new SpeechSynthesisUtterance(zh);u1.lang="zh-TW";u1.rate=.85;
+    u1.onend=()=>{ if(en){const u2=new SpeechSynthesisUtterance(en);u2.lang="en-US";u2.rate=.85;speechSynthesis.speak(u2);} };
+    speechSynthesis.speak(u1);
+  }catch(e){}
+}
+
+/* ---------- render ---------- */
+function render(){
+  answered=false;
+  const Q=QUESTIONS[idx], T=TEAMS[team];
+  $("turn").className="turn "+T.cls;
+  $("turn").textContent=T.emo+" "+T.n+"搶答";
+  $("qnum").textContent="第 "+(idx+1)+" 題 / "+QUESTIONS.length;
+  $("hero").textContent=Q.hero;
+  $("q").textContent=Q.q;
+  $("sayZh").textContent=Q.term[0];
+  $("sayEn").textContent=Q.term[1];
+  $("fb").textContent="";$("fb").className="fb";
+  $("next").disabled=true;
+  const wrap=$("opts");wrap.innerHTML="";
+  Q.opts.forEach(o=>{
+    const b=document.createElement("button");
+    b.className="opt";
+    b.innerHTML='<span class="emo">'+o.e+'</span>'+o.t;
+    b.onclick=()=>choose(b,o,Q);
+    wrap.appendChild(b);
+  });
+}
+function choose(btn,o,Q){
+  if(answered && o.ok)return;
+  if(o.ok){
+    answered=true;
+    btn.classList.add("right");
+    [...$("opts").children].forEach(b=>b.disabled=true);
+    $("fb").textContent="🎉 答對了！"+Q.term[0];
+    $("fb").className="fb good";
+    sfxRight();sfxCoin();
+    speak(Q.term[0],Q.term[1]);
+    advance(team);
+    confetti();
+    $("next").disabled=false;
+  }else{
+    btn.classList.add("wrong");btn.disabled=true;
+    $("fb").textContent="💡 "+Q.hint;
+    $("fb").className="fb hint";
+    sfxWrong();
+  }
+}
+function advance(t){
+  score[t]++;$("sRed").textContent=score[0];$("sBlue").textContent=score[1];
+  pos[t]=Math.min(WIN,pos[t]+1);
+  const car=$(TEAMS[t].car);
+  const pct=pos[t]/WIN;
+  const laneW = car.parentElement.clientWidth;
+  car.style.left=(44 + pct*(laneW-44-52))+"px";
+  car.classList.remove("bump");void car.offsetWidth;car.classList.add("bump");
+  if(pos[t]>=WIN)finish();
+}
+$("next").onclick=()=>{
+  if(idx<QUESTIONS.length-1){idx++;team=1-team;render();}
+  else finish();
+};
+$("skip").onclick=()=>{
+  if(idx<QUESTIONS.length-1){idx++;team=1-team;render();}
+  else finish();
+};
+$("say").onclick=()=>{const Q=QUESTIONS[idx];speak(Q.term[0],Q.term[1]);};
+
+function finish(){
+  let msg,car;
+  if(score[0]>score[1]){msg="🔴 紅隊獲勝！";car="🏎️";}
+  else if(score[1]>score[0]){msg="🔵 藍隊獲勝！";car="🚙";}
+  else{msg="平手！兩隊都好棒！";car="🤝";}
+  $("winText").textContent=msg;$("winCar").textContent=car;
+  $("vcar").textContent=(car==="🤝")?"🏎️":car;
+  const vl=$("vlap");vl.classList.remove("go");void vl.offsetWidth;vl.classList.add("go");
+  $("win").classList.add("show");sfxWin();bigConfetti();
+  setTimeout(bigConfetti,700);setTimeout(sfxWin,300);
+}
+$("again").onclick=()=>{
+  idx=0;team=0;score=[0,0];pos=[0,0];
+  $("sRed").textContent=0;$("sBlue").textContent=0;
+  $("carRed").style.left="44px";$("carBlue").style.left="44px";
+  $("win").classList.remove("show");render();
+};
+
+/* ---------- confetti ---------- */
+const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
+function size(){cv.width=innerWidth;cv.height=innerHeight;}
+size();addEventListener("resize",size);
+const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
+function confetti(n=90){for(let i=0;i<n;i++)parts.push(mk(innerWidth/2,innerHeight*.4));run();}
+function bigConfetti(){for(let i=0;i<220;i++)parts.push(mk(Math.random()*innerWidth,-20));run();}
+function mk(x,y){return{x,y,vx:(Math.random()-.5)*10,vy:Math.random()*-9-3,
+  g:.3+Math.random()*.2,s:6+Math.random()*8,c:COL[i2()],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0};}
+function i2(){return Math.floor(Math.random()*COL.length);}
+let raf=null;
+function run(){if(raf)return;raf=requestAnimationFrame(loop);}
+function loop(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;
+    cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});
+  parts=parts.filter(p=>p.y<cv.height+30 && p.life<260);
+  if(parts.length)raf=requestAnimationFrame(loop);else{raf=null;cx.clearRect(0,0,cv.width,cv.height);}
+}
+
+render();
+</script>
