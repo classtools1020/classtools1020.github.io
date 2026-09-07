@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>光的反射・真實照片體驗館</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{
+    --bg1:#05101f; --bg2:#0a2036; --bg3:#0e3350;
+    --panel:#0f2841; --line:rgba(120,170,210,.28);
+    --amber:#ffc93c; --teal:#42e0c8; --ink:#eaf6ff; --dim:#9db8cf;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif; --body:'Noto Sans TC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -10%,rgba(255,201,60,.10),transparent 55%),
+      linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3));min-height:100vh;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 16px 48px}
+  .home{position:fixed;left:12px;top:12px;z-index:120;background:#0f2841;border:2px solid var(--amber);
+    color:var(--amber);font-weight:900;font-size:16px;text-decoration:none;padding:8px 14px;border-radius:999px;
+    box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  header{text-align:center;padding:6px 0 4px}
+  .emblem{font-size:56px;filter:drop-shadow(0 8px 18px rgba(255,201,60,.35))}
+  h1{font-family:var(--disp);font-size:32px;margin:2px 0 2px}
+  .sub{color:var(--teal);font-weight:900;font-size:19px}
+  .tip{color:var(--dim);font-weight:800;font-size:15px;margin-top:6px}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+  @media(max-width:820px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.grid{grid-template-columns:1fr}}
+  .card{position:relative;border-radius:20px;overflow:hidden;cursor:pointer;border:3px solid var(--line);
+    background:#08131f;box-shadow:0 8px 22px rgba(0,0,0,.45);transition:transform .12s,border-color .12s}
+  .card:hover{transform:translateY(-4px);border-color:var(--amber)}
+  .card.lit{border-color:var(--teal)}
+  .photo{aspect-ratio:3/2;width:100%;object-fit:cover;display:block}
+  .tapmark{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-weight:900;
+    font-size:14px;padding:5px 12px;border-radius:999px;backdrop-filter:blur(4px)}
+  .cap{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;
+    background:linear-gradient(0deg,rgba(4,10,20,.94),rgba(4,10,20,.55) 70%,transparent);
+    transform:translateY(101%);transition:transform .28s ease}
+  .card.lit .cap{transform:translateY(0)}
+  .cap .z{font-family:var(--disp);font-size:24px;font-weight:700}
+  .cap .e{color:var(--amber);font-size:15px;font-weight:800;font-family:var(--disp)}
+  .cap .ty{display:inline-block;background:var(--teal);color:#062a24;font-weight:900;font-size:14px;
+    border-radius:999px;padding:2px 12px;margin:6px 0 4px}
+  .cap .d{font-size:16px;font-weight:700;line-height:1.35;color:#eaf6ff}
+  .label{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,.5);color:#fff;font-family:var(--disp);
+    font-weight:700;font-size:22px;padding:6px 14px;border-radius:12px;backdrop-filter:blur(4px);transition:opacity .2s}
+  .card.lit .label{opacity:0}
+
+  footer{text-align:center;margin-top:30px;color:var(--dim);font-size:14px}
+  canvas.confetti{position:fixed;inset:0;width:100vw;height:100vh;background:transparent;pointer-events:none;z-index:110}
+</style>
+</head>
+<body>
+<a class="home" href="./">🏠 回到首頁</a>
+<canvas class="confetti" id="cf"></canvas>
+<div class="wrap">
+  <header>
+    <div class="emblem">📸</div>
+    <h1>光的反射・真實照片體驗館</h1>
+    <div class="sub">這些都是「光的反射」！</div>
+    <div class="tip">👆 點一張照片：聽它的名字（中文＋英文），看它是哪一種反射</div>
+  </header>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>📸 光的反射・真實照片體驗館　｜　竹東國中自然科</footer>
+</div>
+
+<script>
+const PHOTOS=[
+  {img:"img/lake.png",zh:"湖面倒影",en:"Lake reflection",ty:"鏡面反射",d:"平靜的水面像鏡子，把山和天空整齊反射出來"},
+  {img:"img/mirror.png",zh:"鏡子",en:"Mirror",ty:"鏡面反射",d:"光滑的鏡子把光整齊反射，所以看得到房間和自己"},
+  {img:"img/carmirror.png",zh:"後照鏡",en:"Rear-view mirror",ty:"反射的應用",d:"開車用反射，看到後面的車子"},
+  {img:"img/puddle.png",zh:"水坑倒影",en:"Puddle reflection",ty:"鏡面反射",d:"下雨後的水坑像鏡子，反射天空和大樓"},
+  {img:"img/spoon.png",zh:"湯匙反射",en:"Spoon reflection",ty:"曲面反射",d:"彎彎的湯匙也會反射，影像會變形、上下顛倒"},
+];
+const $=id=>document.getElementById(id);
+/* audio */
+let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function tone(f,t,d,ty="triangle",v=.22){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();
+  o.type=ty;o.frequency.setValueAtTime(f,t);o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function ding(){const a=ac();if(!a)return;const t=a.currentTime;[784,1047,1319].forEach((f,i)=>tone(f,t+i*.08,.16));}
+function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
+  u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.82;speechSynthesis.speak(e);}};
+  speechSynthesis.speak(u);}catch(e){}}
+/* confetti */
+const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
+function csize(){cv.width=innerWidth;cv.height=innerHeight;}csize();addEventListener("resize",csize);
+const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
+function confetti(n=70,cxp){for(let i=0;i<n;i++)parts.push({x:(cxp||innerWidth/2)+(Math.random()-.5)*180,y:innerHeight*.4,
+  vx:(Math.random()-.5)*9,vy:Math.random()*-8-2,g:.28,s:6+Math.random()*8,
+  c:COL[Math.floor(Math.random()*COL.length)],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0});crun();}
+let craf=null;function crun(){if(!craf)craf=requestAnimationFrame(cloop);}
+function cloop(){cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});
+  parts=parts.filter(p=>p.y<cv.height+30&&p.life<240);
+  if(parts.length)craf=requestAnimationFrame(cloop);else{craf=null;cx.clearRect(0,0,cv.width,cv.height);}}
+/* build */
+const grid=$("grid");
+PHOTOS.forEach(p=>{
+  const c=document.createElement("div");c.className="card";
+  c.innerHTML='<span class="tapmark">👆 點我</span>'+
+    '<img class="photo" src="'+p.img+'" alt="'+p.zh+'" loading="lazy">'+
+    '<div class="label">'+p.zh+'</div>'+
+    '<div class="cap"><div class="z">'+p.zh+' <span class="e">'+p.en+'</span></div>'+
+    '<div class="ty">'+p.ty+'</div><div class="d">'+p.d+'</div></div>';
+  c.onclick=e=>{
+    document.querySelectorAll(".card").forEach(x=>{if(x!==c)x.classList.remove("lit");});
+    c.classList.toggle("lit");
+    if(c.classList.contains("lit")){ding();speak(p.zh,p.en);
+      confetti(60,c.getBoundingClientRect().left+c.offsetWidth/2);}
+  };
+  grid.appendChild(c);
+});
+</script>
+</body>
+</html>
