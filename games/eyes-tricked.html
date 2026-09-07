@@ -33,7 +33,7 @@
     background:linear-gradient(160deg,rgba(22,26,69,.92),rgba(15,12,48,.96));
     border:2px solid var(--edge);border-radius:26px;
     box-shadow:0 30px 80px -20px #000,inset 0 1px 0 rgba(255,255,255,.06);
-    display:none;flex-direction:column;overflow:hidden}
+    display:none;flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
   .screen.on{display:flex;animation:pop .45s cubic-bezier(.2,1.2,.3,1)}
   @keyframes pop{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
 
@@ -54,8 +54,8 @@
     background:rgba(10,8,30,.6);color:var(--ink);font-size:19px;cursor:pointer}
   .tbtn:active{transform:scale(.9)}
 
-  .pad{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-align:center;padding:64px 6vw 26px;gap:18px}
+  .pad{flex:1 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:safe center;
+    text-align:center;padding:70px 5vw 28px;gap:16px;min-height:100%}
   h1{font-size:clamp(2rem,6vw,3.6rem);font-weight:900;line-height:1.1;text-wrap:balance}
   h2{font-size:clamp(1.5rem,4.4vw,2.5rem);font-weight:900;line-height:1.2;text-wrap:balance}
   .big{font-size:clamp(1.15rem,3vw,1.7rem);color:var(--ink2);line-height:1.5;max-width:26ch}
@@ -184,6 +184,7 @@
   <div id="hud">
     <div class="coinbox"><div class="c">$</div><span id="coinN">0</span></div>
     <div class="tools">
+      <button class="tbtn" id="home" aria-label="回主畫面">🏠</button>
       <button class="tbtn" id="sound" aria-label="音效">🔊</button>
       <button class="tbtn" id="full" aria-label="全螢幕">⛶</button>
       <button class="tbtn" id="reset" aria-label="重來">↺</button>
@@ -247,7 +248,7 @@
       <h2>第二關 · <span class="gold">混光魔法</span></h2>
       <div class="mixstage">
         <div class="spot r" id="spR"></div><div class="spot g" id="spG"></div><div class="spot b" id="spB"></div>
-        <div class="mixhint" id="mixHint">按住燈，看光疊在一起！</div>
+        <div class="mixhint" id="mixHint">點一點燈，看光疊在一起！</div>
       </div>
       <div class="lamps">
         <button class="lamp r" data-c="r">紅光</button>
@@ -401,7 +402,7 @@ document.getElementById('pool').addEventListener('click',()=>{
 
 /* ---------- station 2: light mixing (additive) ---------- */
 const active={r:false,g:false,b:false};
-const MIXNAME={'':'按住燈，看光疊在一起！',r:'紅光',g:'綠光',b:'藍光',
+const MIXNAME={'':'點一點燈，看光疊在一起！',r:'紅光',g:'綠光',b:'藍光',
   rg:'紅＋綠 = 黃色！',rb:'紅＋藍 = 洋紅！',gb:'綠＋藍 = 青色！',rgb:'三色相加 = 白光！越混越亮 ✨'};
 function keymix(){return (active.r?'r':'')+(active.g?'g':'')+(active.b?'b':'');}
 function updateMix(){document.getElementById('spR').classList.toggle('on',active.r);
@@ -413,11 +414,7 @@ function updateMix(){document.getElementById('spR').classList.toggle('on',active
 }
 document.querySelectorAll('#s-mix .lamp').forEach(l=>{
   const c=l.dataset.c;
-  const on=()=>{active[c]=true;l.classList.add('hot');sTap();updateMix();};
-  const off=()=>{active[c]=false;l.classList.remove('hot');updateMix();};
-  l.addEventListener('pointerdown',e=>{e.preventDefault();on();});
-  l.addEventListener('pointerup',off);l.addEventListener('pointerleave',off);
-  l.addEventListener('pointercancel',off);
+  l.addEventListener('click',()=>{active[c]=!active[c];l.classList.toggle('hot',active[c]);sTap();updateMix();});
 });
 function resetMix(){active.r=active.g=active.b=false;document.querySelectorAll('#s-mix .lamp').forEach(l=>l.classList.remove('hot'));
   updateMix();document.getElementById('mixMsg').innerHTML='試試看：紅光＋綠光＋藍光 = ？';
@@ -468,6 +465,7 @@ function resetQuiz(){qi=0;loadQ();}
 document.getElementById('sound').onclick=e=>{soundOn=!soundOn;e.target.textContent=soundOn?'🔊':'🔇';};
 document.getElementById('full').onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.();};
 document.getElementById('reset').onclick=restart;
+document.getElementById('home').onclick=()=>{sTap();screen('map');drawBoard();};
 function restart(){coins=0;addCoin(0);stations.forEach(s=>delete done[s]);sTap();screen('title');}
 </script>
 </body>
