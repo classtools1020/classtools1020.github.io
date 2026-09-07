@@ -1,0 +1,295 @@
+<title>光的反射互動實驗室</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{
+    --bg1:#05101f; --bg2:#0a2036; --bg3:#0e3350;
+    --panel:#0f2841; --panel2:#123152; --line:rgba(120,170,210,.28);
+    --amber:#ffc93c; --amber2:#ff9f1c; --teal:#42e0c8; --blue:#5aa0ff; --red:#ff6b6b; --green:#28c76f;
+    --ink:#eaf6ff; --dim:#9db8cf;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif; --body:'Noto Sans TC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -10%,rgba(255,201,60,.10),transparent 55%),
+      linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3));min-height:100vh;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1000px;margin:0 auto;padding:16px 16px 40px}
+  header{text-align:center;padding:8px 0 6px}
+  .emblem{font-size:60px;filter:drop-shadow(0 8px 18px rgba(255,201,60,.35))}
+  h1{font-family:var(--disp);font-size:34px;margin:2px 0 2px}
+  .sub{color:var(--teal);font-weight:900;font-size:19px}
+
+  /* tabs */
+  .tabs{display:flex;gap:10px;justify-content:center;margin:14px 0 4px;flex-wrap:wrap}
+  .tab{font-family:var(--disp);font-weight:700;font-size:21px;border:2px solid var(--line);
+    background:var(--panel);color:var(--ink);border-radius:14px;padding:11px 22px;cursor:pointer}
+  .tab.on{background:linear-gradient(160deg,#123152,#0c2742);border-color:var(--amber);color:var(--amber)}
+
+  .stage{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:14px;margin-top:12px;
+    box-shadow:0 10px 26px rgba(0,0,0,.4)}
+  canvas{width:100%;height:auto;display:block;border-radius:14px;background:#071627;touch-action:none}
+
+  .controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+  .slider{display:flex;align-items:center;gap:12px;background:var(--panel2);border:2px solid var(--line);
+    border-radius:14px;padding:10px 16px}
+  .slider label{font-weight:900;font-size:20px}
+  input[type=range]{width:min(46vw,300px);height:30px;accent-color:var(--amber)}
+  .val{font-family:var(--disp);font-size:26px;color:var(--amber);min-width:56px;text-align:center}
+  .toggle{display:flex;gap:10px}
+  .tbtn{font-family:var(--disp);font-weight:700;font-size:21px;border:2px solid var(--line);
+    background:var(--panel2);color:var(--ink);border-radius:14px;padding:12px 20px;cursor:pointer}
+  .tbtn.on{background:linear-gradient(160deg,#14343f,#0c2742);border-color:var(--teal);color:var(--teal)}
+
+  .readout{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .rd{background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:10px 18px;text-align:center}
+  .rd .k{font-size:15px;color:var(--dim);font-weight:800}
+  .rd .v{font-family:var(--disp);font-size:30px;font-weight:700}
+  .rd.inc{border-color:var(--blue)} .rd.inc .v{color:var(--blue)}
+  .rd.ref{border-color:var(--amber)} .rd.ref .v{color:var(--amber)}
+  .rd.eq{border-color:var(--green)} .rd.eq .v{color:var(--green);font-size:22px}
+
+  .terms{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:var(--panel2);border:2px solid var(--line);
+    color:var(--ink);border-radius:999px;padding:9px 16px;font-weight:900;font-size:19px;cursor:pointer}
+  .chip:hover{border-color:var(--amber)}
+  .chip .en{color:var(--dim);font-family:var(--disp);font-size:15px}
+  .chip.lit{background:linear-gradient(160deg,#2a2410,#1a2440);border-color:var(--amber);color:var(--amber)}
+
+  .say{font-size:14px;color:var(--dim);font-weight:800}
+  .hintbar{text-align:center;margin-top:12px;font-size:19px;font-weight:900;color:var(--teal);min-height:26px}
+  footer{text-align:center;margin-top:26px;color:var(--dim);font-size:14px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="emblem">🔬</div>
+    <h1>光的反射・互動實驗室</h1>
+    <div class="sub">動手拖一拖，名詞看得見！</div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab on" data-t="0">📐 反射定律</button>
+    <button class="tab" data-t="1">🪞 鏡面 vs 漫反射</button>
+  </div>
+
+  <!-- SECTION A -->
+  <section id="secA">
+    <div class="stage">
+      <canvas id="cvA" width="640" height="430"></canvas>
+      <div class="controls">
+        <div class="slider">
+          <label>光照的角度</label>
+          <input type="range" id="ang" min="10" max="80" value="45">
+          <span class="val" id="angV">45°</span>
+        </div>
+      </div>
+      <div class="readout">
+        <div class="rd inc"><div class="k">入射角</div><div class="v" id="rIn">45°</div></div>
+        <div class="rd ref"><div class="k">反射角</div><div class="v" id="rRef">45°</div></div>
+        <div class="rd eq"><div class="k">反射定律</div><div class="v" id="rEq">一樣大 ✓</div></div>
+      </div>
+    </div>
+    <div class="terms" id="termsA">
+      <button class="chip" data-hi="incident" data-zh="入射光" data-en="Incident light">🔦 入射光 <span class="en">Incident light</span></button>
+      <button class="chip" data-hi="normal" data-zh="法線" data-en="Normal">📏 法線 <span class="en">Normal</span></button>
+      <button class="chip" data-hi="reflect" data-zh="反射光" data-en="Reflected light">↩️ 反射光 <span class="en">Reflected light</span></button>
+      <button class="chip" data-hi="law" data-zh="反射定律" data-en="Law of reflection">📐 反射定律 <span class="en">Law of reflection</span></button>
+    </div>
+    <div class="hintbar" id="hintA">👆 拖動角度：入射角和反射角永遠一樣大！</div>
+  </section>
+
+  <!-- SECTION B -->
+  <section id="secB" hidden>
+    <div class="stage">
+      <canvas id="cvB" width="640" height="430"></canvas>
+      <div class="controls">
+        <div class="toggle">
+          <button class="tbtn on" id="smooth">🪞 平滑鏡面</button>
+          <button class="tbtn" id="rough">🧱 粗糙面</button>
+        </div>
+      </div>
+    </div>
+    <div class="terms" id="termsB">
+      <button class="chip" data-zh="鏡面反射" data-en="Specular reflection">🪞 鏡面反射 <span class="en">Specular reflection</span></button>
+      <button class="chip" data-zh="漫反射" data-en="Diffuse reflection">🔀 漫反射 <span class="en">Diffuse reflection</span></button>
+    </div>
+    <div class="hintbar" id="hintB">平滑面：光整齊反射 → 看得到自己 😊</div>
+  </section>
+
+  <div style="text-align:center;margin-top:16px">
+    <span class="say">💡 點名詞會用中文＋英文念給你聽，畫面也會亮起來</span>
+  </div>
+  <footer>🔬 光的反射・互動實驗室　｜　竹東國中自然科</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+/* speech */
+function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
+  u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.85;speechSynthesis.speak(e);}};
+  speechSynthesis.speak(u);}catch(e){}}
+
+/* tabs */
+let tab=0;
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  tab=+b.dataset.t;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));
+  $("secA").hidden=tab!==0;$("secB").hidden=tab!==1;
+});
+
+/* ---------- SECTION A : law of reflection ---------- */
+const cA=$("cvA"),xA=cA.getContext("2d");
+const W=640,H=430, P={x:320,y:330}, L=250, NLEN=210;
+let theta=45, highlight=null, tA=0;
+$("ang").oninput=e=>{theta=+e.target.value;$("angV").textContent=theta+"°";
+  $("rIn").textContent=theta+"°";$("rRef").textContent=theta+"°";};
+function rad(d){return d*Math.PI/180;}
+function drawA(){
+  xA.clearRect(0,0,W,H);
+  // mirror
+  const my=P.y;
+  xA.fillStyle="#16324e";xA.fillRect(50,my,W-100,16);
+  xA.fillStyle="rgba(120,200,255,.35)";xA.fillRect(50,my,W-100,4);
+  for(let x=56;x<W-56;x+=16){xA.strokeStyle="rgba(120,170,210,.4)";xA.lineWidth=2;
+    xA.beginPath();xA.moveTo(x,my+16);xA.lineTo(x-10,my+26);xA.stroke();}
+  // points
+  const inc={x:P.x - L*Math.sin(rad(theta)), y:P.y - L*Math.cos(rad(theta))};
+  const ref={x:P.x + L*Math.sin(rad(theta)), y:P.y - L*Math.cos(rad(theta))};
+  const nTop={x:P.x,y:P.y-NLEN};
+  // normal (dashed)
+  const nHi=highlight==="normal";
+  xA.setLineDash([9,8]);xA.strokeStyle=nHi?"#fff":"rgba(180,210,235,.75)";xA.lineWidth=nHi?4:2.5;
+  xA.beginPath();xA.moveTo(P.x,P.y);xA.lineTo(nTop.x,nTop.y);xA.stroke();xA.setLineDash([]);
+  // angle arcs
+  xA.strokeStyle="rgba(90,160,255,.9)";xA.lineWidth=3;
+  xA.beginPath();xA.arc(P.x,P.y,58,-Math.PI/2-rad(theta),-Math.PI/2);xA.stroke();
+  xA.strokeStyle="rgba(255,201,60,.9)";
+  xA.beginPath();xA.arc(P.x,P.y,58,-Math.PI/2,-Math.PI/2+rad(theta));xA.stroke();
+  // incident ray
+  ray(inc,P, highlight==="incident"||highlight==="law"?"#7ab8ff":"#5aa0ff", highlight==="incident");
+  // reflected ray
+  ray(P,ref, highlight==="reflect"||highlight==="law"?"#ffd86b":"#ffc93c", highlight==="reflect");
+  // photon
+  photon(inc,P,ref);
+  // source emoji
+  emoji("🔦",inc.x-4,inc.y-6,34);
+  emoji("👁️",ref.x-2,ref.y-4,30);
+  // labels
+  label("入射光",(inc.x+P.x)/2-70,(inc.y+P.y)/2, "#5aa0ff");
+  label("反射光",(ref.x+P.x)/2+6,(ref.y+P.y)/2, "#ffc93c");
+  label("法線",P.x+8,P.y-NLEN+6, "#cfe4f5");
+  label("入射角 "+theta+"°",P.x-118,P.y-70,"#5aa0ff",15);
+  label("反射角 "+theta+"°",P.x+34,P.y-70,"#ffc93c",15);
+  // hit point
+  xA.fillStyle="#fff";xA.beginPath();xA.arc(P.x,P.y,5,0,7);xA.fill();
+}
+function ray(a,b,col,hi){
+  xA.strokeStyle=col;xA.lineWidth=hi?8:5;xA.lineCap="round";
+  xA.beginPath();xA.moveTo(a.x,a.y);xA.lineTo(b.x,b.y);xA.stroke();
+  // arrow head near mid
+  const mx=(a.x+b.x)/2,my=(a.y+b.y)/2,ang=Math.atan2(b.y-a.y,b.x-a.x);
+  xA.fillStyle=col;xA.beginPath();
+  xA.moveTo(mx+12*Math.cos(ang),my+12*Math.sin(ang));
+  xA.lineTo(mx-8*Math.cos(ang)-7*Math.sin(ang),my-8*Math.sin(ang)+7*Math.cos(ang));
+  xA.lineTo(mx-8*Math.cos(ang)+7*Math.sin(ang),my-8*Math.sin(ang)-7*Math.cos(ang));
+  xA.fill();
+}
+function photon(inc,P,ref){
+  let t=tA%1, x,y;
+  if(t<.5){const k=t/.5;x=inc.x+(P.x-inc.x)*k;y=inc.y+(P.y-inc.y)*k;}
+  else{const k=(t-.5)/.5;x=P.x+(ref.x-P.x)*k;y=P.y+(ref.y-P.y)*k;}
+  xA.fillStyle="#fff";xA.shadowColor="#ffe89a";xA.shadowBlur=18;
+  xA.beginPath();xA.arc(x,y,7,0,7);xA.fill();xA.shadowBlur=0;
+}
+function label(t,x,y,col,sz){xA.fillStyle=col||"#eaf6ff";xA.font="900 "+(sz||17)+"px 'Noto Sans TC',sans-serif";
+  xA.fillText(t,x,y);}
+function emoji(e,x,y,sz){xA.font=(sz||30)+"px serif";xA.textAlign="center";xA.textBaseline="middle";
+  xA.fillText(e,x,y);xA.textAlign="left";xA.textBaseline="alphabetic";}
+
+/* term chips A */
+document.querySelectorAll("#termsA .chip").forEach(c=>c.onclick=()=>{
+  document.querySelectorAll("#termsA .chip").forEach(x=>x.classList.toggle("lit",x===c));
+  highlight=c.dataset.hi;
+  $("hintA").textContent=hintFor(highlight);
+  speak(c.dataset.zh,c.dataset.en);
+  clearTimeout(window._hlT);window._hlT=setTimeout(()=>{highlight=null;
+    document.querySelectorAll("#termsA .chip").forEach(x=>x.classList.remove("lit"));},3500);
+});
+function hintFor(h){return({
+  incident:"🔦 入射光：照「進去」打到鏡子的光",
+  normal:"📏 法線：跟鏡面垂直的虛線，量角度用它",
+  reflect:"↩️ 反射光：從鏡子「彈回來」的光",
+  law:"📐 反射定律：入射角＝反射角，永遠對稱！"
+})[h]||"👆 拖動角度：入射角和反射角永遠一樣大！";}
+
+/* ---------- SECTION B : specular vs diffuse ---------- */
+const cB=$("cvB"),xB=cB.getContext("2d");
+let mode="smooth", tB=0;
+const HITS=[130,250,370,490], INC=rad(34); // incident angle from normal
+// fixed random tilts for rough surface
+const TILT=[ -0.5, 0.42, -0.32, 0.55 ];
+$("smooth").onclick=()=>{mode="smooth";$("smooth").classList.add("on");$("rough").classList.remove("on");
+  $("hintB").textContent="平滑面：光整齊反射 → 看得到自己 😊";speak("鏡面反射","Specular reflection");};
+$("rough").onclick=()=>{mode="rough";$("rough").classList.add("on");$("smooth").classList.remove("on");
+  $("hintB").textContent="粗糙面：光亂亂反射 → 看不到自己 🙈";speak("漫反射","Diffuse reflection");};
+document.querySelectorAll("#termsB .chip").forEach(c=>c.onclick=()=>{
+  speak(c.dataset.zh,c.dataset.en);
+  if(c.dataset.zh==="鏡面反射")$("smooth").click();else $("rough").click();
+});
+function drawB(){
+  xB.clearRect(0,0,W,H);
+  const sy=330;
+  // surface
+  if(mode==="smooth"){
+    xB.fillStyle="#16324e";xB.fillRect(50,sy,W-100,18);
+    xB.fillStyle="rgba(120,200,255,.4)";xB.fillRect(50,sy,W-100,5);
+  }else{
+    xB.fillStyle="#3a2f22";xB.beginPath();xB.moveTo(50,sy+30);
+    let x=50,up=true;while(x<W-50){const nx=x+22;const ny=sy+(up?0:16);xB.lineTo(x,ny);up=!up;x=nx;}
+    xB.lineTo(W-50,sy+30);xB.closePath();xB.fill();
+  }
+  const d={x:Math.sin(INC),y:Math.cos(INC)}; // incident dir (down-right)
+  HITS.forEach((hx,i)=>{
+    const hp={x:hx,y:sy};
+    // incident from up-left
+    const s={x:hp.x-190*d.x, y:hp.y-190*d.y};
+    beam(s,hp,"#5aa0ff");
+    // normal
+    let phi = mode==="smooth"?0:TILT[i];
+    const n={x:Math.sin(phi), y:-Math.cos(phi)};
+    const dot=d.x*n.x+d.y*n.y;
+    const r={x:d.x-2*dot*n.x, y:d.y-2*dot*n.y};
+    const e={x:hp.x+190*r.x, y:hp.y+190*r.y};
+    beam(hp,e,"#ffc93c");
+    arrow(hp,e,"#ffc93c");
+    // photon
+    photonB(s,hp,e,i);
+  });
+  // verdict
+  if(mode==="smooth"){emoji("😊",560,90,44);label("整齊！看得到自己",360,70,"#42e0c8",18);}
+  else{emoji("🙈",560,90,44);label("亂彈！看不到自己",360,70,"#ff9f6b",18);}
+  labelB("入射光（太陽/手電筒）",60,40,"#5aa0ff",15);
+  labelB(mode==="smooth"?"反射光：整齊平行":"反射光：四面八方",60,60,"#ffc93c",15);
+}
+function beam(a,b,col){xB.strokeStyle=col;xB.lineWidth=5;xB.lineCap="round";
+  xB.beginPath();xB.moveTo(a.x,a.y);xB.lineTo(b.x,b.y);xB.stroke();}
+function arrow(a,b,col){const ang=Math.atan2(b.y-a.y,b.x-a.x);xB.fillStyle=col;
+  xB.beginPath();xB.moveTo(b.x,b.y);
+  xB.lineTo(b.x-13*Math.cos(ang)-8*Math.sin(ang),b.y-13*Math.sin(ang)+8*Math.cos(ang));
+  xB.lineTo(b.x-13*Math.cos(ang)+8*Math.sin(ang),b.y-13*Math.sin(ang)-8*Math.cos(ang));
+  xB.fill();}
+function photonB(s,hp,e,i){let t=(tB+i*0.13)%1,x,y;
+  if(t<.5){const k=t/.5;x=s.x+(hp.x-s.x)*k;y=s.y+(hp.y-s.y)*k;}
+  else{const k=(t-.5)/.5;x=hp.x+(e.x-hp.x)*k;y=hp.y+(e.y-hp.y)*k;}
+  xB.fillStyle="#fff";xB.shadowColor="#ffe89a";xB.shadowBlur=14;
+  xB.beginPath();xB.arc(x,y,6,0,7);xB.fill();xB.shadowBlur=0;}
+function labelB(t,x,y,col,sz){xB.fillStyle=col;xB.font="900 "+(sz||16)+"px 'Noto Sans TC',sans-serif";xB.fillText(t,x,y);}
+
+/* loop */
+function loop(){tA+=0.006;tB+=0.006;
+  if(tab===0)drawA();else drawB();
+  requestAnimationFrame(loop);}
+drawA();drawB();loop();
+</script>
