@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>顏色大搶答・光與顏色</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{
+    --bg1:#05101f; --bg2:#0a2036; --bg3:#0e3350;
+    --panel:#0f2841; --line:rgba(120,170,210,.28);
+    --amber:#ffc93c; --teal:#42e0c8; --ink:#eaf6ff; --dim:#9db8cf;
+    --red:#ff5a5a; --blue:#4aa8ff; --green:#28e07a;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif; --body:'Noto Sans TC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -10%,rgba(255,201,60,.10),transparent 55%),
+      linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3));min-height:100vh;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1000px;margin:0 auto;padding:14px 14px 40px}
+  .home{position:fixed;left:12px;top:12px;z-index:200;background:#0f2841;border:2px solid var(--amber);
+    color:var(--amber);font-weight:900;font-size:15px;text-decoration:none;padding:7px 13px;border-radius:999px}
+
+  /* scoreboard */
+  .score{display:flex;align-items:stretch;gap:12px;justify-content:center;margin:8px 0 4px}
+  .team{flex:1;max-width:320px;background:var(--panel);border:3px solid var(--line);border-radius:18px;
+    padding:10px 12px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+  .team.a{border-color:rgba(255,90,90,.6)} .team.b{border-color:rgba(74,168,255,.6)}
+  .team .who{font-family:var(--disp);font-size:22px;font-weight:700;display:flex;align-items:center;gap:6px}
+  .team .pts{font-family:var(--disp);font-size:34px;font-weight:700;min-width:56px;text-align:center}
+  .team.a .pts{color:var(--red)} .team.b .pts{color:var(--blue)}
+  .pm{display:flex;flex-direction:column;gap:4px}
+  .pm button{width:38px;height:30px;border-radius:8px;border:2px solid var(--line);background:#13314f;color:#fff;
+    font-size:18px;font-weight:900;cursor:pointer;line-height:1}
+  .vs{align-self:center;font-family:var(--disp);font-size:22px;color:var(--dim)}
+
+  .progress{text-align:center;color:var(--dim);font-weight:800;font-size:15px;margin:8px 0}
+  .dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:#26425f;margin:0 3px}
+  .dot.done{background:var(--teal)} .dot.now{background:var(--amber);transform:scale(1.3)}
+
+  .card{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:26px 22px;margin-top:8px;
+    box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  .qnum{display:inline-block;background:var(--amber);color:#08131f;font-family:var(--disp);font-weight:700;
+    font-size:18px;border-radius:999px;padding:4px 16px;margin-bottom:12px}
+  .q{font-size:30px;font-weight:900;line-height:1.35;margin-bottom:18px}
+  .opts{display:grid;gap:14px}
+  .opt{display:flex;align-items:center;gap:14px;background:#13314f;border:3px solid var(--line);border-radius:16px;
+    padding:18px 20px;cursor:pointer;font-size:26px;font-weight:800;transition:transform .1s,border-color .1s}
+  .opt:hover{transform:translateY(-2px);border-color:var(--amber)}
+  .opt .k{font-family:var(--disp);background:#0a2036;border-radius:10px;width:44px;height:44px;display:flex;
+    align-items:center;justify-content:center;font-size:24px;color:var(--amber);flex:0 0 auto}
+  .opt.correct{border-color:var(--green);background:rgba(40,224,122,.18)}
+  .opt.wrong{border-color:var(--red);background:rgba(255,90,90,.16);animation:shake .35s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .opt.disabled{pointer-events:none;opacity:.85}
+
+  .feedback{margin-top:16px;border-radius:16px;padding:16px 18px;font-size:19px;font-weight:800;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:rgba(40,224,122,.15);border:2px solid var(--green)}
+  .feedback.hint{background:rgba(255,201,60,.14);border:2px solid var(--amber)}
+  .feedback .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:16px;margin-left:6px}
+
+  .row{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+  .btn{font-family:var(--disp);font-weight:700;font-size:20px;border:none;border-radius:16px;padding:14px 28px;cursor:pointer}
+  .btn.next{background:linear-gradient(180deg,var(--teal),#1fbfa8);color:#063}
+  .btn.ghost{background:var(--panel);border:2px solid var(--line);color:var(--ink)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .award{font-size:16px;color:var(--dim);font-weight:800;text-align:center;margin-top:10px}
+
+  /* end */
+  .end{text-align:center;padding:20px}
+  .end .big{font-family:var(--disp);font-size:44px;font-weight:700;margin:10px 0}
+  .end .fin{font-size:24px;font-weight:900;margin:6px 0}
+
+  footer{text-align:center;margin-top:22px;color:var(--dim);font-size:13px}
+  canvas.confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:150}
+  @media(max-width:560px){.q{font-size:24px}.opt{font-size:21px}.team .who{font-size:18px}.team .pts{font-size:28px}}
+</style>
+</head>
+<body>
+<a class="home" href="../light-color/">🏠 回到首頁</a>
+<canvas class="confetti" id="cf"></canvas>
+<div class="wrap">
+
+  <div class="score">
+    <div class="team a"><div class="pm"><button onclick="pt(0,1)">＋</button><button onclick="pt(0,-1)">－</button></div>
+      <div class="who">🚂 A隊</div><div class="pts" id="pa">0</div></div>
+    <div class="vs">VS</div>
+    <div class="team b"><div class="who">🤖 B隊</div><div class="pts" id="pb">0</div>
+      <div class="pm"><button onclick="pt(1,1)">＋</button><button onclick="pt(1,-1)">－</button></div></div>
+  </div>
+  <div class="progress"><span id="dots"></span></div>
+
+  <div class="card" id="card"><!-- filled by JS --></div>
+
+  <footer>🌈 顏色大搶答　｜　光與顏色・色散/選擇性反射/加色混合　｜　竹東國中自然科</footer>
+</div>
+
+<script>
+const Q=[
+ {q:"白光通過三稜鏡，會發生什麼事？",o:["分成七彩顏色","消失不見","變得更亮"],c:0,
+  hint:"白光其實是很多顏色合起來的，三稜鏡把它們分開。",tz:"色散",te:"Dispersion"},
+ {q:"天空的彩虹，是怎麼來的？",o:["陽光被小水滴分成七彩","是雲變的","有人畫上去的"],c:0,
+  hint:"下雨後空中有很多小水滴，像一顆顆小三稜鏡。",tz:"彩虹（色散）",te:"Rainbow"},
+ {q:"紅蘋果看起來紅紅的，因為它…",o:["只反射紅光","自己會發紅光","把紅光吸收掉"],c:0,
+  hint:"蘋果把紅光反射到眼睛，其他顏色被吸收。",tz:"選擇性反射",te:"Selective reflection"},
+ {q:"用綠光照紅蘋果，蘋果看起來會…",o:["變黑、變暗","變得更紅","變成綠色"],c:0,
+  hint:"紅蘋果沒有綠光可以反射，就變黑黑的（記得魔法相機嗎？）。",tz:"選擇性反射",te:"Selective reflection"},
+ {q:"光的三原色是哪三個？",o:["紅、綠、藍","紅、黃、藍","紅、綠、黃"],c:0,
+  hint:"想想電視螢幕裡的三種小光點。",tz:"光的三原色",te:"RGB"},
+ {q:"紅光 ＋ 綠光 ＝ ？",o:["黃光","黑色","咖啡色"],c:0,
+  hint:"色光是『相加』的，越加越亮，不是變暗。",tz:"加色混合",te:"Additive mixing"},
+ {q:"紅光＋綠光＋藍光，合在一起＝？",o:["白光","黑色","灰色"],c:0,
+  hint:"三原色光全部加起來，就變回白光。",tz:"白光",te:"White light"},
+ {q:"電視、手機螢幕，用哪三種光組成所有顏色？",o:["紅、綠、藍","黑、白、灰","紅、黃、藍"],c:0,
+  hint:"把螢幕放大看，會看到紅綠藍的小點。",tz:"三原色 RGB",te:"RGB pixels"},
+ {q:"白色的紙看起來白，因為它…",o:["反射所有顏色的光","把光都吸收","自己會發光"],c:0,
+  hint:"所有顏色的光都被反射回來，混在一起就是白。",tz:"反射",te:"Reflection"},
+ {q:"黑色的衣服看起來黑，因為它…",o:["幾乎把光都吸收","反射所有的光","會發出黑光"],c:0,
+  hint:"光被吸收、幾乎沒有反射，所以看起來黑。",tz:"吸收",te:"Absorption"},
+];
+const KEYS=["A","B","C","D"];
+let idx=0, answered=false, scores=[0,0];
+const $=id=>document.getElementById(id);
+
+/* audio */
+let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function tone(f,t,d,ty="triangle",v=.2){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();
+  o.type=ty;o.frequency.setValueAtTime(f,t);o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function ding(){const a=ac();if(!a)return;const t=a.currentTime;[784,1047,1319,1568].forEach((f,i)=>tone(f,t+i*.08,.18));}
+function buzz(){const a=ac();if(!a)return;const t=a.currentTime;tone(180,t,.22,"sawtooth",.16);}
+function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
+  u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.82;speechSynthesis.speak(e);}};
+  speechSynthesis.speak(u);}catch(e){}}
+
+/* scoreboard */
+function pt(team,d){scores[team]=Math.max(0,scores[team]+d);$(team?"pb":"pa").textContent=scores[team];
+  if(d>0){ac();tone(880,ac()?ac().currentTime:0,.12);confetti(30,team? innerWidth*0.75:innerWidth*0.25);}}
+
+function dots(){let s="";for(let i=0;i<Q.length;i++){let c="dot";if(i<idx)c+=" done";if(i===idx)c+=" now";s+='<span class="'+c+'"></span>';}$("dots").innerHTML=s;}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function render(){
+  answered=false; dots();
+  if(idx>=Q.length){return end();}
+  const item=Q[idx];
+  const order=shuffle(item.o.map((t,i)=>({t,ok:i===item.c})));
+  let opts="";
+  order.forEach((op,i)=>{opts+='<div class="opt" data-ok="'+op.ok+'" onclick="pick(this)"><span class="k">'+KEYS[i]+'</span><span>'+op.t+'</span></div>';});
+  $("card").innerHTML=
+    '<div class="qnum">第 '+(idx+1)+' 題 / '+Q.length+'</div>'+
+    '<div class="q">'+item.q+'</div>'+
+    '<div class="opts">'+opts+'</div>'+
+    '<div class="feedback" id="fb"></div>'+
+    '<div class="row"><button class="btn next" id="nextBtn" onclick="next()" disabled>➡ 下一題</button></div>'+
+    '<div class="award">答對了 → 幫答對的隊伍加分：上面的 🚂＋ 或 🤖＋</div>';
+}
+function pick(el){
+  const item=Q[idx];
+  if(el.dataset.ok==="true"){
+    document.querySelectorAll(".opt").forEach(o=>o.classList.add("disabled"));
+    el.classList.add("correct"); answered=true;
+    ding(); confetti(90,innerWidth/2); speak(item.tz,item.te);
+    const fb=$("fb"); fb.className="feedback ok show";
+    fb.innerHTML="✅ 答對了！<span class='term'>"+item.tz+" · "+item.te+"</span><br><span style='font-size:16px;font-weight:700;color:#cfe4f5'>"+item.hint+"</span>";
+    $("nextBtn").disabled=false;
+  }else{
+    el.classList.add("wrong"); buzz();
+    const fb=$("fb"); fb.className="feedback hint show";
+    fb.innerHTML="💡 再想一下：<span style='font-weight:700'>"+item.hint+"</span>";
+    setTimeout(()=>el.classList.remove("wrong"),400);
+  }
+}
+function next(){ if(idx<Q.length){idx++;} render(); }
+function end(){
+  let msg,emo;
+  if(scores[0]>scores[1]){msg="🚂 A隊 獲勝！";emo="🚂";}
+  else if(scores[1]>scores[0]){msg="🤖 B隊 獲勝！";emo="🤖";}
+  else{msg="平手！兩隊都好棒！";emo="🤝";}
+  $("card").innerHTML='<div class="end"><div style="font-size:70px">'+emo+'</div>'+
+    '<div class="big">🎉 全部答完！</div>'+
+    '<div class="fin">🚂 A隊 '+scores[0]+' 分　｜　🤖 B隊 '+scores[1]+' 分</div>'+
+    '<div class="fin" style="color:var(--amber)">'+msg+'</div>'+
+    '<div class="row"><button class="btn next" onclick="restart()">🔄 再玩一次</button>'+
+    '<a class="btn ghost" href="../light-color/" style="text-decoration:none">🏠 回首頁</a></div></div>';
+  ding(); confetti(160,innerWidth/2); setTimeout(()=>confetti(160,innerWidth*0.3),300); setTimeout(()=>confetti(160,innerWidth*0.7),600);
+}
+function restart(){idx=0;scores=[0,0];$("pa").textContent=0;$("pb").textContent=0;render();}
+
+/* confetti */
+const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
+function csize(){cv.width=innerWidth;cv.height=innerHeight;}csize();addEventListener("resize",csize);
+const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
+function confetti(n=80,cxp){for(let i=0;i<n;i++)parts.push({x:(cxp||innerWidth/2)+(Math.random()-.5)*220,y:innerHeight*.35,
+  vx:(Math.random()-.5)*9,vy:Math.random()*-9-2,g:.28,s:6+Math.random()*8,
+  c:COL[Math.floor(Math.random()*COL.length)],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0});crun();}
+let craf=null;function crun(){if(!craf)craf=requestAnimationFrame(cloop);}
+function cloop(){cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});
+  parts=parts.filter(p=>p.y<cv.height+30&&p.life<240);
+  if(parts.length)craf=requestAnimationFrame(cloop);else{craf=null;cx.clearRect(0,0,cv.width,cv.height);}}
+
+render();
+</script>
+</body>
+</html>
