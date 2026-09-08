@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>顏色魔法相機・光與顏色</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{
+    --bg1:#05101f; --bg2:#0a2036; --bg3:#0e3350;
+    --panel:#0f2841; --line:rgba(120,170,210,.28);
+    --amber:#ffc93c; --teal:#42e0c8; --ink:#eaf6ff; --dim:#9db8cf;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif; --body:'Noto Sans TC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -10%,rgba(255,201,60,.10),transparent 55%),
+      linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3));min-height:100vh;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:920px;margin:0 auto;padding:18px 14px 48px}
+  .home{position:fixed;left:12px;top:12px;z-index:200;background:#0f2841;border:2px solid var(--amber);
+    color:var(--amber);font-weight:900;font-size:16px;text-decoration:none;padding:8px 14px;border-radius:999px;
+    box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  header{text-align:center;padding:6px 0 2px}
+  .emblem{font-size:52px;filter:drop-shadow(0 8px 18px rgba(255,201,60,.35))}
+  h1{font-family:var(--disp);font-size:30px;margin:2px 0}
+  .sub{color:var(--teal);font-weight:900;font-size:19px}
+  .tip{color:var(--dim);font-weight:800;font-size:15px;margin-top:6px}
+
+  /* stage */
+  .stage{position:relative;margin:16px auto 0;border-radius:22px;overflow:hidden;border:3px solid var(--line);
+    background:#08131f;box-shadow:0 10px 30px rgba(0,0,0,.5);aspect-ratio:4/3}
+  #view{width:100%;height:100%;object-fit:cover;display:block;background:#08131f}
+  video{display:none}
+  /* start overlay */
+  .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:14px;background:linear-gradient(160deg,#0a2036,#0e3350);padding:20px}
+  .overlay.hide{display:none}
+  .bigbtn{font-family:var(--disp);font-weight:700;font-size:26px;color:#08131f;
+    background:linear-gradient(180deg,var(--amber),#ff9f1c);border:none;border-radius:999px;
+    padding:16px 34px;cursor:pointer;box-shadow:0 8px 22px rgba(255,159,28,.4)}
+  .overlay .ohint{color:var(--dim);font-weight:800;font-size:15px;max-width:420px;line-height:1.5}
+  .overlay .oemoji{font-size:60px}
+  /* light badge on stage */
+  .lightbadge{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.55);color:#fff;font-family:var(--disp);
+    font-weight:700;font-size:20px;padding:6px 14px;border-radius:12px;backdrop-filter:blur(4px);z-index:6}
+  .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:8}
+  .flash.go{animation:flash .5s ease}
+  @keyframes flash{0%{opacity:0}12%{opacity:.9}100%{opacity:0}}
+  .scanline{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--teal),transparent);
+    top:0;z-index:5;opacity:.0}
+  .stage.live .scanline{opacity:.7;animation:scan 3.2s linear infinite}
+  @keyframes scan{0%{top:2%}100%{top:98%}}
+
+  /* light buttons */
+  .lights{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+  .lb{border:3px solid var(--line);border-radius:18px;padding:16px 6px 12px;cursor:pointer;text-align:center;
+    background:var(--panel);transition:transform .1s,border-color .1s,box-shadow .1s;color:var(--ink)}
+  .lb:hover{transform:translateY(-3px)}
+  .lb .dot{width:44px;height:44px;border-radius:50%;margin:0 auto 8px;border:2px solid rgba(255,255,255,.35);
+    box-shadow:0 0 18px rgba(255,255,255,.25)}
+  .lb .n{font-family:var(--disp);font-size:21px;font-weight:700}
+  .lb.on{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,201,60,.35),0 8px 20px rgba(0,0,0,.4);transform:translateY(-3px)}
+  .lb[data-c="white"] .dot{background:#ffffff}
+  .lb[data-c="red"]   .dot{background:#ff3b3b}
+  .lb[data-c="green"] .dot{background:#28e05a}
+  .lb[data-c="blue"]  .dot{background:#3b8dff}
+  @media(max-width:520px){.lb .n{font-size:18px}.lb .dot{width:38px;height:38px}}
+
+  /* science caption */
+  .sci{margin-top:16px;background:var(--panel);border:3px solid var(--line);border-radius:18px;padding:16px 18px;
+    display:flex;gap:14px;align-items:center;min-height:74px}
+  .sci .si{font-size:34px}
+  .sci .st{font-size:18px;font-weight:800;line-height:1.4}
+  .sci .term{display:inline-block;background:var(--teal);color:#062a24;font-weight:900;font-size:14px;
+    border-radius:999px;padding:1px 10px;margin-right:6px}
+
+  /* action row */
+  .actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+  .act{font-family:var(--disp);font-weight:700;font-size:18px;border:3px solid var(--line);border-radius:16px;
+    padding:12px 20px;cursor:pointer;background:var(--panel);color:var(--ink)}
+  .act.primary{background:linear-gradient(180deg,var(--teal),#1fbfa8);color:#062a24;border-color:transparent}
+  .act:hover{border-color:var(--amber)}
+  .act:disabled{opacity:.4;cursor:not-allowed}
+
+  /* filmstrip */
+  .strip{display:flex;gap:10px;overflow-x:auto;margin-top:16px;padding:4px 2px 8px}
+  .strip:empty{display:none}
+  .shot{position:relative;flex:0 0 auto;width:150px;border-radius:12px;overflow:hidden;border:2px solid var(--line)}
+  .shot img{width:100%;display:block}
+  .shot .sb{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.6);color:#fff;font-weight:900;
+    font-size:12px;border-radius:8px;padding:2px 8px}
+
+  footer{text-align:center;margin-top:26px;color:var(--dim);font-size:14px}
+  canvas.confetti{position:fixed;inset:0;width:100vw;height:100vh;background:transparent;pointer-events:none;z-index:150}
+  .err{color:#ffd86b;font-weight:800;font-size:15px;margin-top:8px;max-width:440px;line-height:1.5}
+</style>
+</head>
+<body>
+<a class="home" href="./">🏠 回到首頁</a>
+<canvas class="confetti" id="cf"></canvas>
+<div class="wrap">
+  <header>
+    <div class="emblem">🪄</div>
+    <h1>顏色魔法相機</h1>
+    <div class="sub">換一種光，東西就變色！</div>
+    <div class="tip">👆 開相機 → 把彩色的東西舉到鏡頭前 → 按「只給某種光」看它變色</div>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="view"></canvas>
+    <video id="cam" playsinline muted></video>
+    <div class="scanline"></div>
+    <div class="lightbadge" id="badge" style="display:none">⚪ 白光</div>
+    <div class="flash" id="flash"></div>
+    <div class="overlay" id="overlay">
+      <div class="oemoji">📷</div>
+      <button class="bigbtn" id="startBtn">▶ 開啟相機</button>
+      <div class="ohint">按下去會問你「要不要用相機」，請按<b>允許</b>。<br>沒有相機也沒關係，會用內建的彩色照片一起玩。</div>
+      <div class="err" id="err"></div>
+    </div>
+  </div>
+
+  <div class="lights" id="lights">
+    <div class="lb on" data-c="white"><div class="dot"></div><div class="n">白光</div></div>
+    <div class="lb" data-c="red"><div class="dot"></div><div class="n">紅光</div></div>
+    <div class="lb" data-c="green"><div class="dot"></div><div class="n">綠光</div></div>
+    <div class="lb" data-c="blue"><div class="dot"></div><div class="n">藍光</div></div>
+  </div>
+
+  <div class="sci" id="sci">
+    <div class="si">💡</div>
+    <div class="st" id="sciText"><span class="term">白光</span>白光裡有紅、綠、藍各種光，物體本來的顏色都看得到。</div>
+  </div>
+
+  <div class="actions">
+    <button class="act primary" id="shotBtn" disabled>📸 拍照存證</button>
+    <button class="act" id="sampleBtn">🍎 用範例照片</button>
+    <button class="act" id="switchBtn" style="display:none">🔄 前/後鏡頭</button>
+  </div>
+
+  <div class="strip" id="strip"></div>
+
+  <footer>🪄 顏色魔法相機　｜　光與顏色・選擇性反射　｜　竹東國中自然科</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const cam=$("cam"), view=$("view"), vctx=view.getContext("2d",{willReadFrequently:true});
+const stage=$("stage");
+let LIGHT="white", source=null /* 'cam' | 'img' */, sampleImg=null, facing="environment";
+
+/* ---------- audio ---------- */
+let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function tone(f,t,d,ty="triangle",v=.22){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();
+  o.type=ty;o.frequency.setValueAtTime(f,t);o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function ding(){const a=ac();if(!a)return;const t=a.currentTime;[784,1047,1319].forEach((f,i)=>tone(f,t+i*.08,.16));}
+function shutter(){const a=ac();if(!a)return;const t=a.currentTime;tone(1200,t,.05,"square",.18);tone(500,t+.05,.09,"square",.15);}
+function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
+  u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.82;speechSynthesis.speak(e);}};
+  speechSynthesis.speak(u);}catch(e){}}
+
+/* ---------- science copy ---------- */
+const SCI={
+  white:{i:"💡",t:'<span class="term">白光</span>白光裡有紅、綠、藍各種光，物體本來的顏色都看得到。',zh:"白光",en:"White light"},
+  red:{i:"🔴",t:'<span class="term">只給紅光</span>只有會反射紅光的東西（紅色）才亮，其他顏色沒有紅光可反射→變暗。這叫<b>選擇性反射</b>。',zh:"紅光",en:"Red light"},
+  green:{i:"🟢",t:'<span class="term">只給綠光</span>綠色的東西最亮；紅色的東西沒有綠光可以反射→<b>變黑</b>。',zh:"綠光",en:"Green light"},
+  blue:{i:"🔵",t:'<span class="term">只給藍光</span>藍色的東西才亮；紅、綠的東西反射不了藍光→變暗。',zh:"藍光",en:"Blue light"}
+};
+const BADGE={white:"⚪ 白光",red:"🔴 紅光",green:"🟢 綠光",blue:"🔵 藍光"};
+
+function setLight(c){
+  LIGHT=c;
+  document.querySelectorAll(".lb").forEach(b=>b.classList.toggle("on",b.dataset.c===c));
+  const s=SCI[c]; $("sci").querySelector(".si").textContent=s.i; $("sciText").innerHTML=s.t;
+  $("badge").textContent=BADGE[c];
+  ding(); speak(s.zh,s.en);
+}
+document.querySelectorAll(".lb").forEach(b=>b.onclick=()=>setLight(b.dataset.c));
+
+/* ---------- render loop: apply single-colour light ---------- */
+function draw(){
+  let W=view.width,H=view.height,ok=false;
+  if(source==="cam" && cam.readyState>=2){ W=view.width; H=view.height; vctx.drawImage(cam,0,0,W,H); ok=true; }
+  else if(source==="img" && sampleImg){ vctx.drawImage(sampleImg,0,0,W,H); ok=true; }
+  if(ok && LIGHT!=="white"){
+    const d=vctx.getImageData(0,0,W,H), p=d.data;
+    if(LIGHT==="red"){ for(let i=0;i<p.length;i+=4){ p[i+1]=0; p[i+2]=0; } }
+    else if(LIGHT==="green"){ for(let i=0;i<p.length;i+=4){ p[i]=0; p[i+2]=0; } }
+    else if(LIGHT==="blue"){ for(let i=0;i<p.length;i+=4){ p[i]=0; p[i+1]=0; } }
+    vctx.putImageData(d,0,0);
+  }
+  requestAnimationFrame(draw);
+}
+function fitCanvas(w,h){ view.width=w; view.height=h; }
+
+/* ---------- camera ---------- */
+let stream=null;
+async function startCam(){
+  $("err").textContent="";
+  try{
+    if(stream){stream.getTracks().forEach(t=>t.stop());}
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});
+    cam.srcObject=stream; await cam.play();
+    const w=cam.videoWidth||640,h=cam.videoHeight||480; fitCanvas(w,h);
+    source="cam"; go();
+    $("switchBtn").style.display="";
+  }catch(e){
+    $("err").innerHTML="相機打不開（可能沒相機或未允許）。<br>沒關係，按下面的 <b>🍎 用範例照片</b> 一樣能玩！";
+    useSample(true);
+  }
+}
+function go(){
+  $("overlay").classList.add("hide"); stage.classList.add("live");
+  $("badge").style.display=""; $("shotBtn").disabled=false;
+  ac(); // unlock audio on gesture
+  setLight("white");
+}
+/* ---------- sample fallback ---------- */
+const SAMPLES=["img/fruits.jpg","img/blocks.jpg"];
+let sampleIdx=0;
+function loadSample(src){
+  return new Promise(res=>{
+    const im=new Image(); im.crossOrigin="anonymous";
+    im.onload=()=>res(im); im.onerror=()=>res(null); im.src=src;
+  });
+}
+async function useSample(auto){
+  // try cached list; cycle through
+  let im=null, tries=0;
+  while(!im && tries<SAMPLES.length){ im=await loadSample(SAMPLES[sampleIdx%SAMPLES.length]); sampleIdx++; tries++; }
+  if(!im){ // built-in drawn fallback if no image files
+    im=drawnFallback();
+  }
+  sampleImg=im; fitCanvas(im.width||640,im.height||480);
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  source="img"; $("switchBtn").style.display="none";
+  go();
+}
+function drawnFallback(){
+  const c=document.createElement("canvas");c.width=640;c.height=480;const x=c.getContext("2d");
+  x.fillStyle="#e9edf2";x.fillRect(0,0,640,480);
+  const cols=[["#ff3b3b",120,150],["#28e05a",300,150],["#3b8dff",480,150],["#ffd43b",210,330],["#c77dff",390,330]];
+  cols.forEach(([col,cx,cy])=>{x.fillStyle=col;x.beginPath();x.arc(cx,cy,72,0,7);x.fill();});
+  const im=new Image(); im.width=640; im.height=480;
+  // wrap canvas as drawable: return canvas directly (drawImage accepts canvas)
+  return c;
+}
+
+/* ---------- capture ---------- */
+function capture(){
+  if(source==null) return;
+  shutter(); const fl=$("flash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go");
+  confetti(80, innerWidth/2);
+  const snap=document.createElement("canvas"); snap.width=view.width; snap.height=view.height;
+  snap.getContext("2d").drawImage(view,0,0);
+  const url=snap.toDataURL("image/png");
+  const div=document.createElement("div"); div.className="shot";
+  div.innerHTML='<img src="'+url+'"><div class="sb">'+BADGE[LIGHT]+'</div>';
+  const strip=$("strip"); strip.insertBefore(div,strip.firstChild);
+  while(strip.children.length>8) strip.removeChild(strip.lastChild);
+}
+$("shotBtn").onclick=capture;
+$("sampleBtn").onclick=()=>{ ac(); useSample(false); };
+$("switchBtn").onclick=()=>{ facing=(facing==="environment")?"user":"environment"; startCam(); };
+$("startBtn").onclick=startCam;
+
+/* ---------- confetti ---------- */
+const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
+function csize(){cv.width=innerWidth;cv.height=innerHeight;}csize();addEventListener("resize",csize);
+const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
+function confetti(n=70,cxp){for(let i=0;i<n;i++)parts.push({x:(cxp||innerWidth/2)+(Math.random()-.5)*220,y:innerHeight*.35,
+  vx:(Math.random()-.5)*9,vy:Math.random()*-9-2,g:.28,s:6+Math.random()*8,
+  c:COL[Math.floor(Math.random()*COL.length)],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0});crun();}
+let craf=null;function crun(){if(!craf)craf=requestAnimationFrame(cloop);}
+function cloop(){cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});
+  parts=parts.filter(p=>p.y<cv.height+30&&p.life<240);
+  if(parts.length)craf=requestAnimationFrame(cloop);else{craf=null;cx.clearRect(0,0,cv.width,cv.height);}}
+
+/* init */
+fitCanvas(640,480); draw();
+</script>
+</body>
+</html>
