@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>30秒反射複習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--bg1:#05101f;--bg2:#0a2036;--bg3:#0e3350;--panel:#0f2841;--line:rgba(120,170,210,.28);
+    --amber:#ffc93c;--teal:#42e0c8;--ink:#eaf6ff;--dim:#9db8cf;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif;}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -10%,rgba(255,201,60,.10),transparent 55%),
+      linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3));min-height:100vh;-webkit-tap-highlight-color:transparent}
+  .home{position:fixed;left:12px;top:12px;z-index:200;background:#0f2841;border:2px solid var(--amber);
+    color:var(--amber);font-weight:900;font-size:15px;text-decoration:none;padding:7px 13px;border-radius:999px}
+  .wrap{max-width:760px;margin:0 auto;padding:16px 16px 40px;text-align:center}
+  header{padding:8px 0 2px}
+  .emblem{font-size:46px}
+  h1{font-family:var(--disp);font-size:26px;margin:2px 0}
+  .tip{color:var(--dim);font-weight:800;font-size:14px}
+  .dots{margin:10px 0}
+  .dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:#26425f;margin:0 4px}
+  .dot.now{background:var(--amber);transform:scale(1.3)}.dot.done{background:var(--teal)}
+  .stage{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:22px 18px;margin-top:8px;
+    box-shadow:0 10px 30px rgba(0,0,0,.45);min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .big{font-size:70px;line-height:1.1;margin:4px 0}
+  .say{font-size:26px;font-weight:900;line-height:1.4;margin:12px 0 6px}
+  .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:2px 14px;font-weight:900;font-size:18px;margin-top:6px}
+  .row{display:flex;gap:12px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+  .btn{font-family:var(--disp);font-weight:700;font-size:20px;border:none;border-radius:16px;padding:14px 28px;cursor:pointer}
+  .btn.next{background:linear-gradient(180deg,var(--teal),#1fbfa8);color:#063}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);color:#08131f;text-decoration:none;display:inline-block}
+  svg{max-width:100%;height:auto}
+  footer{margin-top:20px;color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<a class="home" href="./">🏠 回到首頁</a>
+<div class="wrap">
+  <header>
+    <div class="emblem">🪞</div>
+    <h1>先暖身・30 秒反射複習</h1>
+    <div class="tip">👆 點「下一步」，聽它唸一次</div>
+  </header>
+  <div class="dots" id="dots"></div>
+  <div class="stage" id="stage"></div>
+  <footer>🪞 30秒反射複習　｜　接下來：白光藏著七彩・光與顏色</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function ding(){const a=ac();if(!a)return;const t=a.currentTime;[784,1047,1319].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.type="triangle";o.frequency.setValueAtTime(f,t+i*.08);o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.2,t+i*.08);g.gain.exponentialRampToValueAtTime(.0001,t+i*.08+.16);o.start(t+i*.08);o.stop(t+i*.08+.16);});}
+function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
+  u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.82;speechSynthesis.speak(e);}};
+  speechSynthesis.speak(u);}catch(e){}}
+
+const mirrorSVG=`<svg viewBox="0 0 320 200" width="320">
+  <rect x="40" y="150" width="240" height="10" rx="3" fill="#8fd3ff"/>
+  <text x="160" y="185" fill="#9db8cf" font-size="14" text-anchor="middle" font-weight="700">鏡子</text>
+  <line x1="160" y1="150" x2="160" y2="60" stroke="#5f7a92" stroke-dasharray="5 5" stroke-width="2"/>
+  <line x1="60" y1="60" x2="160" y2="150" stroke="#ffd43b" stroke-width="5"/>
+  <line x1="160" y1="150" x2="260" y2="60" stroke="#ff6b6b" stroke-width="5"/>
+  <polygon points="150,142 160,150 152,133" fill="#ffd43b"/>
+  <polygon points="170,142 160,150 168,133" fill="#ff6b6b"/>
+  <text x="95" y="70" fill="#ffd43b" font-size="14" font-weight="900">入射光</text>
+  <text x="205" y="70" fill="#ff6b6b" font-size="14" font-weight="900">反射光</text>
+  <path d="M160 120 A 30 30 0 0 0 140 132" fill="none" stroke="#ffd43b" stroke-width="2"/>
+  <path d="M160 120 A 30 30 0 0 1 180 132" fill="none" stroke="#ff6b6b" stroke-width="2"/>
+</svg>`;
+
+const STEPS=[
+ {html:'<div class="big">💡→🪞→😀</div><div class="say">光碰到鏡子，會<span style="color:#ffd43b">彈回來</span>！</div><div class="term">反射 · Reflection</div>',zh:"光碰到鏡子會彈回來，這叫反射",en:"Reflection"},
+ {html:mirrorSVG+'<div class="say">光彈回來很公平：<br><span style="color:#ffd43b">入射角</span> ＝ <span style="color:#ff6b6b">反射角</span></div><div class="term">反射定律</div>',zh:"入射角等於反射角",en:"Angle in equals angle out"},
+ {html:'<div class="big">🪞✨　vs　🧱💥</div><div class="say"><span style="color:#42e0c8">平滑</span>→整齊反射（照鏡子）<br><span style="color:#ff9f1c">粗糙</span>→光四散（看得到但不成像）</div><div class="term">鏡面反射 · 漫反射</div>',zh:"平滑的面是鏡面反射，粗糙的面是漫反射",en:"Specular and diffuse reflection"},
+ {html:'<div class="big">🍎→👁️</div><div class="say">我們看到<span style="color:#ff6b6b">顏色</span>，<br>也是光從物體<span style="color:#ffd43b">反射</span>進眼睛！</div><div class="term">今天：物體的顏色</div>',zh:"我們看到顏色，是光從物體反射進眼睛",en:"We see color from reflected light",last:true},
+];
+let i=0;
+function dots(){let s="";STEPS.forEach((_,k)=>{let c="dot";if(k<i)c+=" done";if(k===i)c+=" now";s+='<span class="'+c+'"></span>';});$("dots").innerHTML=s;}
+function render(){
+  dots();const st=STEPS[i];
+  let btn = st.last
+    ? '<a class="btn go" href="https://gamma.app/docs/cvet1x6jr7eyeh7" target="_blank" rel="noopener">▶ 開始顏色任務</a><a class="btn next" href="./" style="text-decoration:none">🏠 回首頁</a>'
+    : '<button class="btn next" onclick="nextS()">下一步 ➡</button>';
+  $("stage").innerHTML=st.html+'<div class="row">'+btn+'</div>';
+  ding();speak(st.zh,st.en);
+}
+function nextS(){if(i<STEPS.length-1){i++;render();}}
+render();
+</script>
+</body>
+</html>
