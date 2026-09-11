@@ -138,6 +138,18 @@
     <div class="cards" id="cards"></div>
     <div class="say" id="say4">每關都是真的生活場景，用手指操作；集滿 6 張有驚喜</div>
   </div>
+  <h2 class="sec">站 5・真人版：水盆撈硬幣（螢幕外的 4D 挑戰）</h2>
+  <div class="card">
+    <div class="real">
+      <div class="ps" style="cursor:default"><img src="img/coin.jpg" alt=""><div class="lbl">桌上真的水盆＋硬幣</div><div class="note">🥢 從側邊看，用筷子一次夾到硬幣</div></div>
+      <div style="display:flex;flex-direction:column;justify-content:center;gap:8px;font-weight:900;font-size:17px;line-height:1.5">
+        <div>1️⃣ 水盆裝水，丟一枚 10 元硬幣到底</div><div>2️⃣ 眼睛放低，從<b>側邊</b>看硬幣</div><div>3️⃣ 筷子從上面一次夾下去，不能試探</div><div>4️⃣ 夾到？夾空？按下面計分</div>
+        <div style="color:var(--aqua)">為什麼會夾空？光從水裡出來轉彎，硬幣看起來比真的<b>淺、偏</b>。要往更深、更靠中間夾。</div>
+      </div>
+    </div>
+    <div class="ctrl"><button class="btn go" id="tHit">🙌 夾到了</button><button class="btn ghost" id="tMiss">😅 夾空了</button><span class="lbl2" id="tally">夾到 0・夾空 0</span><button class="btn ghost" id="tReset">↺</button></div>
+    <div class="say" id="say5">全班輪流，看誰能一次夾到</div>
+  </div>
   <footer>🥤 折射實驗室　｜　任務四 光的折射・Ka-IV-8　｜　竹東國中自然科</footer>
 </div>
 
@@ -431,6 +443,13 @@ function xpStraw(c,i){const st=$("xpStage");st.innerHTML=`<canvas id="xc" width=
     tiltFn=ev=>{if(ev.beta==null)return;if(base===null)base=ev.beta;const v=clamp((ev.beta-base)/45,0,1);if(Math.abs(v-lvl)>.01&&Date.now()-bt>120){bt=Date.now();bubbleSound();}setLvl(v);};
     window.addEventListener("deviceorientation",tiltFn);};}
 
+/* 站 5 真人版計分 */
+let tH=+(localStorage.getItem("refractTallyH")||0),tM=+(localStorage.getItem("refractTallyM")||0);
+function tally(){$("tally").textContent="夾到 "+tH+"・夾空 "+tM;localStorage.setItem("refractTallyH",tH);localStorage.setItem("refractTallyM",tM);}
+$("tHit").onclick=()=>{tH++;tally();FX.sound.coin();buzz([40,30,40]);FX.confetti(70);addCoins(5);$("say5").textContent=["一次夾到！你知道要往更深夾了","高手！硬幣其實比看起來深","太厲害了，全班掌聲！"][tH%3];if(tH%3===0)FX.stamp({text:"神之筷"});};
+$("tMiss").onclick=()=>{tM++;tally();FX.sound.wrongsoft();buzz(120);$("say5").textContent=["夾空了！硬幣看起來比較淺——再往下、往中間一點","不是你的錯，是光騙了你的眼睛（折射）","再來一次，眼睛放低看"][tM%3];};
+$("tReset").onclick=()=>{tH=0;tM=0;tally();FX.sound.blip();};
+tally();
 pg();
 </script>
 </body>
