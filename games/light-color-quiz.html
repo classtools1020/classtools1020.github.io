@@ -100,6 +100,7 @@
   <footer>🌈 顏色大搶答　｜　光與顏色・色散/選擇性反射/加色混合　｜　竹東國中自然科</footer>
 </div>
 
+<script src="fx.js"></script>
 <script>
 const Q=[
  {q:"白光通過三稜鏡，會發生什麼事？",o:["分成七彩顏色","消失不見","變得更亮"],c:0,
@@ -178,7 +179,10 @@ function pick(el){
     setTimeout(()=>el.classList.remove("wrong"),400);
   }
 }
-function next(){ if(idx<Q.length){idx++;} render(); }
+function next(){ if(idx<Q.length){idx++;}
+  // ⬆️ 第5題結束：LEVEL UP 中場獎勵
+  if(idx===5){FX.levelup({level:2,label:"顏色偵探晉級",onDone:render});return;}
+  render(); }
 function end(){
   let msg,emo;
   if(scores[0]>scores[1]){msg="🚂 A隊 獲勝！";emo="🚂";}
@@ -188,9 +192,11 @@ function end(){
     '<div class="big">🎉 全部答完！</div>'+
     '<div class="fin">🚂 A隊 '+scores[0]+' 分　｜　🤖 B隊 '+scores[1]+' 分</div>'+
     '<div class="fin" style="color:var(--amber)">'+msg+'</div>'+
-    '<div class="row"><button class="btn next" onclick="restart()">🔄 再玩一次</button>'+
+    '<div class="row"><button class="btn next" onclick="FX.wheel({title:\'🎡 幸運轉盤・全班獎勵\'})">🎡 轉幸運轉盤</button><button class="btn ghost" onclick="restart()">🔄 再玩一次</button>'+
     '<a class="btn ghost" href="../light-color/" style="text-decoration:none">🏠 回首頁</a></div></div>';
   ding(); confetti(160,innerWidth/2); setTimeout(()=>confetti(160,innerWidth*0.3),300); setTimeout(()=>confetti(160,innerWidth*0.7),600);
+  // 🎡 轉盤 → 🏅 勳章
+  setTimeout(()=>FX.wheel({title:"🎡 幸運轉盤・全班獎勵",onDone:()=>FX.badge({id:"quiz",emoji:"🎮",name:"顏色搶答王",desc:"10 題全部挑戰完成"})}),1200);
 }
 function restart(){idx=0;scores=[0,0];$("pa").textContent=0;$("pb").textContent=0;render();}
 

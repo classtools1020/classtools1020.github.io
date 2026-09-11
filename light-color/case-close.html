@@ -148,6 +148,7 @@
   <footer>🕵️ 顏色偵探・結案報告　｜　光與顏色 第3節・選擇性反射的生活應用　｜　Ka-IV-11・ah-IV-2　｜　竹東國中自然科</footer>
 </div>
 
+<script src="../games/fx.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
@@ -193,15 +194,17 @@ function build(){
 function pick(i,k,el){
   const c=CASES[i]; const box=$("case"+i); if(box.classList.contains("done"))return;
   if(k===c.ok){ box.classList.add("done"); el.classList.add("right"); box.querySelectorAll(".opt").forEach(o=>o.classList.add("disabled"));
-    sRight(); confetti(90); speak(c.opts[c.ok][0]+"。"+c.why, c.te);
+    sRight(); confetti(90); FX.stamp({text:"破案"}); setTimeout(()=>speak(c.opts[c.ok][0]+"。"+c.why, c.te),600);
     $("fb"+i).innerHTML="✅ 破案！"+c.why+"<span class='term'>"+c.tz+" · "+c.te+"</span>"; $("fb"+i).className="fb";
     solved++; if(solved>=CASES.length){$("closeBtn").disabled=false;$("closeBtn").classList.add("pulse");}
   }else{ el.classList.add("wrong"); sWrong(); $("fb"+i).innerHTML="💡 "+c.hint; $("fb"+i).className="fb hint"; setTimeout(()=>el.classList.remove("wrong"),400); }
 }
 function closeCase(){ $("closeBtn").disabled=true; $("closeBtn").classList.remove("pulse");
-  const vl=$("vlap"); vl.classList.remove("go"); void vl.offsetWidth; vl.classList.add("go");
-  $("win").classList.add("show"); sWin(); bigConfetti(); setTimeout(bigConfetti,700); setTimeout(bigConfetti,1400);
-  speak("結案！物體的顏色，就是它反射什麼光","Case closed"); }
+  // 🔖 結案章 → 🤖 機器人小幫手飛進來宣布 → 🏅 勳章 → 🎈 氣球
+  FX.stamp({text:"結案",onDone:()=>{
+    FX.mascot({emoji:"🤖",name:"機器人小幫手",lines:["三案全破！結案！","物體的顏色，就是它反射什麼光！","你們是真正的顏色偵探！"],onDone:()=>{
+      FX.badge({id:"case",emoji:"🕵️",name:"顏色偵探",desc:"三個生活案件全破・選擇性反射",onDone:()=>{FX.balloons(3500);
+        $("win").classList.add("show");}});}});}}); }
 
 /* confetti */
 const cv=$("cf"),cx=cv.getContext("2d");let parts=[];

@@ -172,9 +172,11 @@
   <footer>🪄 混光魔法　｜　光與顏色 第2節・加色混合　｜　Ka-IV-10・Ka-IV-11　｜　竹東國中自然科</footer>
 </div>
 
+<script src="../games/fx.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 let on={R:false,G:false,B:false}, locked=false;
+const GEMS=[["🟡","黃光寶石","#ffe83a"],["🔷","青光寶石","#3af0f0"],["🟣","洋紅寶石","#ff4ae0"],["💎","白光寶石","#ffffff"]];
 /* ---------- audio ---------- */
 let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
 function tone(f,t,d,ty="triangle",v=.22){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);
@@ -252,15 +254,18 @@ function verify(){
     document.querySelectorAll(".opt").forEach(o=>{if(+o.dataset.i===T.ok)o.classList.add("right");});
     if(right){sRight();confetti(90);$("fb").innerHTML="🎉 猜對了！"+T.why+"<span class='term'>"+T.tz+" · "+T.te+"</span>";}
     else{sWrong();setTimeout(()=>{sRight();confetti(50);},500);$("fb").innerHTML="👀 來看真的是什麼：<b>"+zh+"</b>！"+T.why+"<span class='term'>"+T.tz+" · "+T.te+"</span>";}
-    $("row").innerHTML='<button class="btn next pulse" onclick="nextTask()">➡ 下一個任務</button>';
+    // 🎁 每關開寶箱，掉出這一關的色光寶石（獎勵＝概念）
+    const [ge,gn,gc]=GEMS[ti];
+    setTimeout(()=>{FX.chest({title:right?"猜對了！開寶箱":"開寶箱看看是什麼光",gem:ge,gemName:gn,gemColor:gc,sub:T.why,
+      onDone:()=>{$("row").innerHTML='<button class="btn next pulse" onclick="nextTask()">➡ 下一個任務</button>';}});},1100);
   },seq.length*450+300);
 }
 function finish(){
   locked=false; setLights(true,true,true); $("stepTag").textContent="完成"; $("q").textContent="破解成功！白光＝紅＋綠＋藍"; $("opts").innerHTML=""; $("fb").innerHTML="";
   $("row").innerHTML='<button class="btn ghost" onclick="restart()">🔄 再玩一次</button>';
-  const vl=$("vlap"); vl.classList.remove("go"); void vl.offsetWidth; vl.classList.add("go");
-  $("win").classList.add("show"); sWin(); bigConfetti(); setTimeout(bigConfetti,700); setTimeout(bigConfetti,1400);
-  speak("白光等於紅加綠加藍！光的三原色","White light is red plus green plus blue");
+  speak("三顆寶石合體！白光等於紅加綠加藍","White light is red plus green plus blue");
+  // 💎 三顆寶石合成白光寶石 → 🏅 勳章 → 🎆 煙火
+  FX.badge({id:"mix",emoji:"🔦",name:"混光魔法師",desc:"白光＝紅＋綠＋藍・光的三原色",onDone:()=>{FX.fireworks(3000);}});
 }
 function restart(){ $("win").classList.remove("show"); document.body.classList.remove("dark"); ti=-1; locked=false; setLights(false,false,false);
   $("stepTag").textContent="開始"; $("q").textContent="準備好了嗎？先來關燈儀式！"; $("opts").innerHTML=""; $("fb").innerHTML=""; dots();
