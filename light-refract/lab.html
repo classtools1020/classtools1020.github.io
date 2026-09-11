@@ -17,8 +17,8 @@
     background:radial-gradient(120% 80% at 50% -10%,rgba(62,194,255,.12),transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3))}
   .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
   .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
-  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 70px}
-  header{text-align:center;padding:6px 0 2px}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 90px}
+  header{text-align:center;padding:40px 0 2px}
   .emblem{font-size:46px;filter:drop-shadow(0 8px 18px rgba(62,194,255,.4))}
   h1{font-family:var(--disp);font-size:28px;margin:2px 0}
   .sub{color:var(--aqua);font-weight:900;font-size:18px}
@@ -27,13 +27,10 @@
   h2.sec{font-size:21px;margin:22px 0 10px;display:flex;align-items:center;gap:10px}
   h2.sec::after{content:"";flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--aqua),transparent)}
   .card{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
-  /* photo stage with two layers */
   .ps{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:16/9;background:#08111d;border:2px solid var(--line)}
-  .ps img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-  .ps img.top{clip-path:inset(100% 0 0 0);transition:clip-path .25s linear}
-  .ps .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.6);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4.5vw,22px);padding:6px 14px;border-radius:12px;z-index:3}
-  .ps .wave{position:absolute;left:0;right:0;height:6px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);z-index:2;opacity:0;pointer-events:none}
-  .ps canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
+  .ps canvas,.ps img{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .ps img{object-fit:cover}
+  .ps .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.62);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4.5vw,22px);padding:6px 14px;border-radius:12px;z-index:3}
   .ps .note{position:absolute;left:0;right:0;bottom:0;padding:10px 14px;background:linear-gradient(0deg,rgba(4,10,20,.92),transparent);font-weight:900;font-size:min(4vw,18px);z-index:3}
   .ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:10px}
   .btn{font-family:var(--disp);font-weight:700;font-size:18px;border:none;border-radius:16px;padding:12px 20px;cursor:pointer}
@@ -49,12 +46,25 @@
   @media(max-width:600px){.cards{grid-template-columns:repeat(2,1fr)}}
   .mc{position:relative;border-radius:16px;overflow:hidden;border:3px solid var(--line);aspect-ratio:4/3;cursor:pointer;background:#08111d;transition:transform .15s,border-color .15s}
   .mc:hover{transform:translateY(-3px)}
-  .mc img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1) brightness(.55);transition:filter .5s}
-  .mc.got img{filter:none}.mc.got{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,201,60,.35)}
-  .mc .q{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:min(12vw,56px);text-shadow:0 4px 12px rgba(0,0,0,.8)}
-  .mc.got .q{display:none}
-  .mc .t{position:absolute;left:0;right:0;bottom:0;padding:8px 10px;background:linear-gradient(0deg,rgba(4,10,20,.92),transparent);font-weight:900;font-size:min(3.6vw,15px);opacity:0;transition:opacity .4s}
-  .mc.got .t{opacity:1}
+  .mc img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.8);transition:filter .5s}
+  .mc.got{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,201,60,.35)}.mc.got img{filter:none}
+  .mc .tt{position:absolute;left:0;right:0;bottom:0;padding:8px 10px;background:linear-gradient(0deg,rgba(4,10,20,.92),transparent);font-weight:900;font-size:min(3.8vw,16px)}
+  .mc .tap{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-weight:900;font-size:12px;padding:4px 10px;border-radius:999px}
+  .mc .ok{position:absolute;top:8px;left:8px;font-size:22px;display:none}.mc.got .ok{display:block}
+  /* experience overlay */
+  .xp{position:fixed;inset:0;z-index:9300;background:rgba(3,8,18,.96);display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:14px;overflow:auto}
+  .xp.show{display:flex;animation:fade .25s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .xp .x{position:absolute;right:14px;top:14px;width:46px;height:46px;border-radius:50%;border:2px solid var(--amber);background:#0f2841;color:var(--amber);font-weight:900;font-size:22px;cursor:pointer;z-index:2}
+  .xp h3{font-family:var(--disp);font-size:min(6vw,28px);margin:6px 0 8px;text-align:center}
+  .xp .stage{position:relative;width:min(96vw,900px);aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:3px solid var(--line);background:#08111d;touch-action:none}
+  .xp .stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .xp .stage canvas{position:absolute;inset:0;width:100%;height:100%}
+  .xp .lens{position:absolute;width:150px;height:150px;border-radius:50%;border:5px solid rgba(255,255,255,.9);box-shadow:0 10px 30px rgba(0,0,0,.7),inset 0 0 20px rgba(255,255,255,.35);pointer-events:none;background-repeat:no-repeat;display:none;transform:translate(-50%,-50%)}
+  .xp .tag{position:absolute;background:rgba(0,0,0,.65);color:#fff;font-weight:900;font-size:min(4vw,18px);padding:6px 12px;border-radius:12px;pointer-events:none}
+  .xp .ctrl{margin-top:12px}
+  .xp .why{margin-top:10px;font-size:min(4.6vw,20px);font-weight:900;color:#ffe08a;text-align:center;max-width:900px;min-height:28px}
+  .xp .ok{margin-top:12px}
   footer{text-align:center;margin-top:26px;color:var(--dim);font-size:13px}
 </style>
 </head>
@@ -69,81 +79,96 @@
     <div class="prog">🪙 折射魔法卡 <span id="pgTxt">0 / 6</span><div class="bar"><i id="pgBar"></i></div></div>
   </header>
 
-  <h2 class="sec">站 1・吸管放進水裡</h2>
+  <h2 class="sec">站 1・吸管放進水裡（同一個杯子，親眼看它「斷」）</h2>
   <div class="card">
-    <div class="ps" id="ps1">
-      <img src="img/glass-empty.jpg" alt="">
-      <img class="top" id="s1top" src="img/straw.jpg" alt="">
-      <div class="wave" id="s1wave"></div>
-      <div class="lbl" id="s1lbl">還沒有水</div>
-      <div class="note" id="s1note">💧 拉水位，看吸管會怎樣</div>
-    </div>
+    <div class="ps"><canvas id="c1" width="1280" height="720"></canvas><div class="lbl" id="s1lbl">還沒有水</div><div class="note" id="s1note">💧 拉水位，看吸管會怎樣</div></div>
     <div class="ctrl"><span class="lbl2">💧 水位</span><input type="range" id="water" min="0" max="100" value="0"><button class="btn ghost" id="pullBtn">🖐️ 拿出來看</button></div>
     <div class="say" id="say1">先把水倒進去，看吸管會怎樣</div>
   </div>
 
-  <h2 class="sec">站 2・消失的硬幣</h2>
+  <h2 class="sec">站 2・消失的硬幣（同一個碗）</h2>
   <div class="card">
-    <div class="ps" id="ps2">
-      <img src="img/bowl-empty.jpg" alt="">
-      <img class="top" id="s2top" src="img/coin.jpg" alt="">
-      <div class="lbl" id="s2lbl">眼睛在碗邊，硬幣被擋住</div>
-      <div class="note" id="s2note">🫗 按「倒水」，眼睛不要動</div>
-    </div>
+    <div class="ps"><canvas id="c2" width="1280" height="720"></canvas><div class="lbl" id="s2lbl">眼睛在碗邊，硬幣被擋住</div><div class="note" id="s2note">🫗 按「倒水」，眼睛不要動</div></div>
     <div class="ctrl"><button class="btn aqua" id="pourBtn">🫗 倒水進碗裡</button><button class="btn ghost" id="emptyBtn">↩ 倒掉</button></div>
     <div class="say" id="say2">硬幣沒動，等一下會發生魔法</div>
   </div>
 
   <h2 class="sec">站 3・光線轉彎</h2>
   <div class="card">
-    <div class="ps" id="ps3">
-      <img src="img/laser.jpg" alt="">
-      <canvas id="c3" width="960" height="540"></canvas>
-      <div class="lbl">真實雷射光進水</div>
-      <div class="note" id="s3note">🔦 拉入射角，看折射角變化</div>
-    </div>
+    <div class="ps"><img src="img/laser.jpg" alt=""><canvas id="c3" width="960" height="540"></canvas><div class="lbl">真實雷射光進水</div><div class="note">🔦 拉入射角，看折射角變化</div></div>
     <div class="ctrl"><span class="lbl2">🔦 入射角</span><input type="range" id="angle" min="0" max="80" value="40"><span class="lbl2" id="angleTxt">40°</span></div>
     <div class="say" id="say3">光進水後往法線靠近，這叫<span class="term">折射 · Refraction</span></div>
   </div>
 
-  <h2 class="sec">站 4・折射魔法卡：生活裡的折射，點一張翻一張</h2>
+  <h2 class="sec">站 4・折射魔法卡：點一張，進去玩</h2>
   <div class="card">
     <div class="cards" id="cards"></div>
-    <div class="say" id="say4">集滿 6 張，有驚喜</div>
+    <div class="say" id="say4">每張都能操作，集滿 6 張有驚喜</div>
   </div>
-
   <footer>🥤 折射實驗室　｜　任務四 光的折射・Ka-IV-8　｜　竹東國中自然科</footer>
 </div>
+
+<!-- 體驗覆蓋層 -->
+<div class="xp" id="xp"><button class="x" onclick="closeXp()">✖</button><h3 id="xpTitle"></h3><div class="stage" id="xpStage"></div><div class="ctrl" id="xpCtrl"></div><div class="why" id="xpWhy"></div><div class="ok" id="xpOk"></div></div>
 
 <script src="../games/fx.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const pour=()=>{const a=(FX.sound&&FX.sound.blip)?null:null;};
-/* ===== 站 1 ===== */
+/* ===================== 站 1：同一張照片＋即時折射 ===================== */
+const G={l:.19,r:.37,top:.31,bot:.91};            // 玻璃杯在照片中的位置（比例）
+const img1=new Image();img1.src="img/glass-empty.jpg";
 let water=0,pulled=false,s1done=false;
-function s1(){const top=$("s1top");top.style.clipPath=pulled?"inset(100% 0 0 0)":`inset(${100-water}% 0 0 0)`;
-  const w=$("s1wave");w.style.top=(100-water)+"%";w.style.opacity=water>0&&!pulled?"1":"0";
-  $("s1lbl").textContent=pulled?"拿出來：直的！沒斷":(water>50?"看起來在水面「斷」了？":water>0?"水慢慢漫上來…":"還沒有水");}
-$("water").oninput=e=>{water=+e.target.value;pulled=false;FX.sound.blip();s1();
+function cover(ctx,im,W,H){const s=Math.max(W/im.width,H/im.height),w=im.width*s,h=im.height*s;return {x:(W-w)/2,y:(H-h)/2,w,h};}
+function drawS1(){const c=$("c1"),x=c.getContext("2d"),W=c.width,H=c.height;x.clearRect(0,0,W,H);if(!img1.complete||!img1.naturalWidth)return;
+  const f=cover(x,img1,W,H);x.drawImage(img1,f.x,f.y,f.w,f.h);
+  const gl=f.x+f.w*G.l,gr=f.x+f.w*G.r,gt=f.y+f.h*G.top,gb=f.y+f.h*G.bot;const lvl=pulled?0:water/100;const wy=gb-(gb-gt)*lvl;
+  if(lvl>0){
+    // 水下區域：同一張照片，橫向錯位＋放寬 → 吸管看起來斷掉（折射的視覺效果）
+    x.save();x.beginPath();x.rect(gl,wy,gr-gl,gb-wy);x.clip();
+    const cx=(gl+gr)/2,dx=(gr-gl)*.14,sx=1.12;
+    x.translate(cx+dx,0);x.scale(sx,1);x.translate(-cx,0);x.drawImage(img1,f.x,f.y,f.w,f.h);x.restore();
+    // 水的色調＋水面
+    x.fillStyle="rgba(62,194,255,.22)";x.fillRect(gl,wy,gr-gl,gb-wy);
+    x.fillStyle="rgba(255,255,255,.55)";x.fillRect(gl,wy-3,gr-gl,6);
+    x.strokeStyle="rgba(255,255,255,.35)";x.lineWidth=2;x.beginPath();x.ellipse((gl+gr)/2,wy,(gr-gl)/2,10,0,0,6.283);x.stroke();
+    x.fillStyle="#ffd43b";x.font="900 26px 'Noto Sans TC',sans-serif";x.fillText("← 光在這裡轉彎",gr+16,wy+8);
+  }
+  $("s1lbl").textContent=pulled?"拿出來：直的！沒斷":(lvl>.5?"看起來在水面「斷」了？":lvl>0?"水慢慢漫上來…":"還沒有水");
+}
+img1.onload=drawS1;
+$("water").oninput=e=>{water=+e.target.value;pulled=false;FX.sound.blip();drawS1();
   $("say1").innerHTML=water>50?"吸管看起來彎了、斷了？按「拿出來看」！":"再多倒一點水";
-  if(water>50&&!s1done){s1done=true;setTimeout(()=>{FX.stamp({text:"斷了？"});},200);}};
-$("pullBtn").onclick=()=>{pulled=true;FX.sound.jump();s1();$("say1").innerHTML="沒斷！是<b>光進水轉彎</b>讓它看起來彎<span class='term'>折射</span>";
-  FX.stamp({text:"沒斷"});FX.confetti(60);getCard(0);setTimeout(()=>{pulled=false;s1();},2200);};
-s1();
+  if(water>50&&!s1done){s1done=true;setTimeout(()=>FX.stamp({text:"斷了？"}),200);}};
+$("pullBtn").onclick=()=>{pulled=true;FX.sound.jump();drawS1();$("say1").innerHTML="沒斷！同一支吸管，是<b>光進水轉彎</b>讓它看起來彎<span class='term'>折射</span>";FX.stamp({text:"沒斷"});FX.confetti(60);getCard(5);setTimeout(()=>{pulled=false;drawS1();},2200);};
 
-/* ===== 站 2 ===== */
+/* ===================== 站 2：同一個碗＋硬幣浮現 ===================== */
+const img2=new Image();img2.src="img/bowl-empty.jpg";
 let fill=0,anim=null;
-function pourSound(){const a=FX.sound;for(let i=0;i<8;i++)setTimeout(()=>a.blip(),i*140);}
-function s2(){$("s2top").style.clipPath=`inset(${100-fill*100}% 0 0 0)`;$("s2lbl").textContent=fill>=1?"硬幣浮上來了！":fill>0?"倒水中…":"眼睛在碗邊，硬幣被擋住";}
-$("pourBtn").onclick=()=>{if(anim)return;pourSound();let t=0;anim=setInterval(()=>{t+=.04;fill=Math.min(1,t);s2();if(fill>=1){clearInterval(anim);anim=null;FX.sound.coin();FX.emojiBurst("🪙",24,innerWidth/2,innerHeight*.5);
+function drawS2(){const c=$("c2"),x=c.getContext("2d"),W=c.width,H=c.height;x.clearRect(0,0,W,H);if(!img2.complete||!img2.naturalWidth)return;
+  const f=cover(x,img2,W,H);x.drawImage(img2,f.x,f.y,f.w,f.h);
+  const rimY=f.y+f.h*.40,cx=W*.5;                        // 碗緣高度（比例估計）
+  if(fill>0){ // 水：碗內色調（碗口橢圓）
+    x.fillStyle="rgba(62,194,255,"+(.25*fill)+")";x.beginPath();x.ellipse(cx,f.y+f.h*.385,f.w*.3,f.h*.035,0,0,6.283);x.fill();
+    // 硬幣影像從碗緣後方「浮」到看得見的位置
+    const y=rimY+40-70*fill;x.save();x.beginPath();x.rect(0,0,W,rimY+2);x.clip();
+    const g=x.createRadialGradient(cx-8,y-6,4,cx,y,40);g.addColorStop(0,"#fff3b0");g.addColorStop(.5,"#ffd25a");g.addColorStop(1,"#b8860b");
+    x.fillStyle=g;x.beginPath();x.ellipse(cx,y,40,15,0,0,6.283);x.fill();x.strokeStyle="#8a6508";x.lineWidth=3;x.stroke();
+    x.fillStyle="#8a6508";x.font="900 16px sans-serif";x.textAlign="center";x.fillText("10",cx,y+6);x.restore();
+    x.textAlign="left";x.fillStyle="#42e0c8";x.font="900 26px 'Noto Sans TC',sans-serif";x.fillText(fill>=1?"光在水面轉彎 → 看到硬幣了！":"倒水中…",30,60);
+    if(fill>=1){x.fillStyle="#ffe08a";x.font="900 20px 'Noto Sans TC',sans-serif";x.fillText("硬幣沒動，是影像被抬高",30,96);}
+  }else{x.fillStyle="#ff6b6b";x.font="900 26px 'Noto Sans TC',sans-serif";x.fillText("被碗邊擋住，看不到硬幣",30,60);}
+  $("s2lbl").textContent=fill>=1?"硬幣浮上來了！":fill>0?"倒水中…":"眼睛在碗邊，硬幣被擋住";
+}
+img2.onload=drawS2;
+function pourSound(){for(let i=0;i<8;i++)setTimeout(()=>FX.sound.blip(),i*140);}
+$("pourBtn").onclick=()=>{if(anim)return;pourSound();let t=0;anim=setInterval(()=>{t+=.04;fill=Math.min(1,t);drawS2();if(fill>=1){clearInterval(anim);anim=null;FX.sound.coin();FX.emojiBurst("🪙",24,innerWidth/2,innerHeight*.5);
   $("say2").innerHTML="硬幣沒動，是<b>光在水面轉彎</b>，影像被抬高——游泳池看起來淺也是這樣<span class='term'>折射・視深</span>";
-  setTimeout(()=>FX.chest({title:"硬幣浮起來了！開寶箱",gem:"🪙",gemName:"折射金幣",gemColor:"#ffd25a",sub:"光在水面轉彎，影像被抬高",onDone:()=>getCard(1)}),600);}},40);};
-$("emptyBtn").onclick=()=>{if(anim)return;fill=0;FX.sound.blip();s2();$("say2").textContent="硬幣沒動，等一下會發生魔法";};
-s2();
+  setTimeout(()=>FX.chest({title:"硬幣浮起來了！開寶箱",gem:"🪙",gemName:"折射金幣",gemColor:"#ffd25a",sub:"光在水面轉彎，影像被抬高",onDone:()=>{}}),600);}},40);};
+$("emptyBtn").onclick=()=>{if(anim)return;fill=0;FX.sound.blip();drawS2();$("say2").textContent="硬幣沒動，等一下會發生魔法";};
 
-/* ===== 站 3 ===== */
+/* ===================== 站 3：雷射照片＋互動光線 ===================== */
 const c3=$("c3"),x3=c3.getContext("2d");let ang=40,s3done=false;
-function s3(){const W=c3.width,H=c3.height,mid=H*.5,cx=W*.5;x3.clearRect(0,0,W,H);
+function drawS3(){const W=c3.width,H=c3.height,mid=H*.5,cx=W*.5;x3.clearRect(0,0,W,H);
   x3.strokeStyle="rgba(255,255,255,.85)";x3.lineWidth=3;x3.setLineDash([10,8]);x3.beginPath();x3.moveTo(cx,40);x3.lineTo(cx,H-30);x3.stroke();x3.setLineDash([]);
   x3.strokeStyle="rgba(255,255,255,.5)";x3.lineWidth=2;x3.beginPath();x3.moveTo(0,mid);x3.lineTo(W,mid);x3.stroke();
   const i=ang*Math.PI/180,r=Math.asin(Math.sin(i)/1.33),L=H*.45;
@@ -153,25 +178,82 @@ function s3(){const W=c3.width,H=c3.height,mid=H*.5,cx=W*.5;x3.clearRect(0,0,W,H
   x3.fillStyle="#ffd43b";x3.font="900 26px 'Noto Sans TC',sans-serif";x3.fillText("入射角 "+ang+"°",cx-260,mid-120);
   x3.fillStyle="#3ef0ff";x3.fillText("折射角 "+Math.round(r*180/Math.PI)+"°",cx+70,mid+130);
   x3.fillStyle="rgba(255,255,255,.85)";x3.font="900 18px 'Noto Sans TC',sans-serif";x3.fillText("空氣",24,mid-14);x3.fillText("水",24,mid+30);}
-$("angle").oninput=e=>{ang=+e.target.value;$("angleTxt").textContent=ang+"°";FX.sound.blip();s3();
-  if(ang>=60&&!s3done){s3done=true;FX.mascot({emoji:"🤖",name:"機器人小幫手",lines:["看到了嗎？光進水往中間的線靠近！","折射角比入射角小。","這就是折射！"],onDone:()=>getCard(2)});}};
-s3();
+$("angle").oninput=e=>{ang=+e.target.value;$("angleTxt").textContent=ang+"°";FX.sound.blip();drawS3();
+  if(ang>=60&&!s3done){s3done=true;FX.mascot({emoji:"🤖",name:"機器人小幫手",lines:["看到了嗎？光進水往中間的線靠近！","折射角比入射角小。","這就是折射！"]});}};
+drawS3();
 
-/* ===== 站 4 魔法卡 ===== */
+/* ===================== 站 4：魔法卡 → 全螢幕體驗 ===================== */
 const CARDS=[
-  {img:"img/pool.jpg",t:"游泳池看起來淺——其實更深，別直接跳",term:"視深"},
-  {img:"img/net.jpg",t:"撈魚要往更深一點撈，看到的位置比真的高",term:"折射"},
-  {img:"img/aquarium.jpg",t:"魚缸裡的魚看起來變大——水和玻璃讓光轉彎",term:"折射放大"},
-  {img:"img/drop.jpg",t:"水滴是小放大鏡，字變大了",term:"透鏡"},
-  {img:"img/magnifier.jpg",t:"放大鏡、眼鏡：鏡片讓光轉彎，看得更清楚",term:"透鏡"},
-  {img:"img/straw.jpg",t:"吸管沒斷，是光進水轉彎",term:"折射"},
+ {img:"img/pool.jpg",t:"游泳池看起來淺？",kind:"pool",term:"視深",why:"光從水裡出來時轉彎，池底的影像被抬高——看起來淺，其實更深。下水前要先確認深度！"},
+ {img:"img/net.jpg",t:"撈魚要往哪撈？",kind:"net",term:"折射",why:"看到的魚比真的位置高，往看到的地方撈會撈空；要往更深一點撈。"},
+ {img:"img/aquarium.jpg",t:"魚缸的魚變大了？",kind:"zoom",term:"折射放大",why:"水和彎彎的玻璃讓光轉彎，魚的影像被放大——像放大鏡一樣。"},
+ {img:"img/drop.jpg",t:"水滴放大鏡",kind:"lens",term:"透鏡",why:"一滴水就是小放大鏡：光穿過水滴轉彎，字就變大。手指滑到哪裡，哪裡就放大。"},
+ {img:"img/magnifier.jpg",t:"放大鏡、眼鏡",kind:"lens",term:"透鏡",why:"鏡片讓光轉彎，看得更清楚——眼鏡就是幫眼睛把光轉到對的地方。"},
+ {img:"img/straw.jpg",t:"吸管沒斷",kind:"straw",term:"折射",why:"吸管沒斷，是光進水轉彎，讓它看起來彎。"},
 ];
-let got=CARDS.map(()=>false);
+let got=CARDS.map(()=>false),cur=-1;
 function pg(){const n=got.filter(Boolean).length;$("pgTxt").textContent=n+" / 6";$("pgBar").style.width=(n/6*100)+"%";
   if(n===6&&!window._allDone){window._allDone=true;$("say4").textContent="🎉 六張全部收集！";setTimeout(()=>FX.wheel({title:"🎡 折射魔法轉盤",onDone:()=>FX.badge({id:"refract",emoji:"🥤",name:"折射偵探",desc:"光進水會轉彎＝折射・六張魔法卡集滿",onDone:()=>FX.fireworks(3000)})}),600);}}
-function getCard(i){if(got[i])return;got[i]=true;const el=document.querySelectorAll(".mc")[i];if(el)el.classList.add("got");FX.sound.coin();pg();}
-$("cards").innerHTML=CARDS.map((c,i)=>`<div class="mc" onclick="flip(${i})"><img src="${c.img}" alt=""><div class="q">❓</div><div class="t">${c.t}<span class="term">${c.term}</span></div></div>`).join("");
-window.flip=i=>{if(got[i]){FX.sound.blip();return;}FX.sound.jump();FX.emojiBurst("✨",14,innerWidth/2,innerHeight*.6);getCard(i);};
+function getCard(i){if(got[i])return;got[i]=true;const el=document.querySelectorAll(".mc")[i];if(el)el.classList.add("got");FX.sound.coin();FX.emojiBurst("🪙",12,innerWidth/2,innerHeight*.4);pg();}
+$("cards").innerHTML=CARDS.map((c,i)=>`<div class="mc" onclick="openXp(${i})"><img src="${c.img}" alt=""><span class="tap">👆 點我玩</span><span class="ok">✅</span><div class="tt">${c.t}</div></div>`).join("");
+
+function closeXp(){$("xp").classList.remove("show");FX.sound.blip();}
+window.openXp=i=>{cur=i;const c=CARDS[i];FX.sound.jump();$("xpTitle").textContent=c.t;$("xpWhy").textContent="";$("xpOk").innerHTML="";
+  const st=$("xpStage");st.innerHTML=`<img src="${c.img}" alt="">`;$("xpCtrl").innerHTML="";
+  if(c.kind==="pool")xpPool(c);else if(c.kind==="net")xpNet(c);else if(c.kind==="zoom")xpZoom(c);else if(c.kind==="lens")xpLens(c);else xpStraw(c);
+  $("xp").classList.add("show");};
+function okBtn(c,i){$("xpOk").innerHTML=`<button class="btn go" onclick="learned(${i})">✅ 我懂了：${c.term}</button>`;}
+window.learned=i=>{FX.sound.powerup();$("xpWhy").innerHTML=CARDS[i].why+`<span class="term">${CARDS[i].term}</span>`;getCard(i);setTimeout(closeXp,1800);};
+
+/* 游泳池：看起來 vs 實際深度 */
+function xpPool(c){const st=$("xpStage");st.insertAdjacentHTML("beforeend",`<canvas id="xc" width="960" height="540"></canvas><div class="tag" style="left:12px;top:12px" id="xtag">👀 看起來的深度</div>`);
+  const cv=$("xc"),x=cv.getContext("2d");let real=false,anim=0;
+  function draw(){x.clearRect(0,0,960,540);const x0=760,top=120;const seen=250,deep=430;const y=top+(real?deep:seen)*Math.min(1,anim);
+    x.strokeStyle="#fff";x.lineWidth=4;x.beginPath();x.moveTo(x0,top);x.lineTo(x0,y);x.stroke();
+    for(let k=0;k<=4;k++){const yy=top+(y-top)*k/4;x.beginPath();x.moveTo(x0-14,yy);x.lineTo(x0+14,yy);x.stroke();}
+    x.fillStyle=real?"#ff6b6b":"#42e0c8";x.font="900 30px 'Noto Sans TC',sans-serif";x.textAlign="right";x.fillText(real?"實際 1.8 m":"看起來 1.2 m",x0-24,y);
+    x.fillStyle=real?"#ff6b6b":"#42e0c8";x.beginPath();x.moveTo(x0,y+18);x.lineTo(x0-14,y-4);x.lineTo(x0+14,y-4);x.closePath();x.fill();}
+  function go(){anim=0;const iv=setInterval(()=>{anim+=.06;draw();if(anim>=1)clearInterval(iv);},30);}
+  go();
+  $("xpCtrl").innerHTML=`<button class="btn aqua" id="b1">👀 看起來的深度</button><button class="btn go" id="b2">📏 真正的深度</button>`;
+  $("b1").onclick=()=>{real=false;$("xtag").textContent="👀 看起來的深度";FX.sound.blip();go();};
+  $("b2").onclick=()=>{real=true;$("xtag").textContent="📏 真正的深度：更深！";FX.sound.boom();go();$("xpWhy").textContent="⚠️ 看起來淺，其實更深——不可以直接跳！";okBtn(c,0);};}
+
+/* 撈魚：往看到的地方撈 vs 往更深撈 */
+function xpNet(c){const st=$("xpStage");st.insertAdjacentHTML("beforeend",`<canvas id="xc" width="960" height="540"></canvas>`);
+  const cv=$("xc"),x=cv.getContext("2d");const fishSeen={x:600,y:300},fishReal={x:600,y:380};let net={x:300,y:120},show="seen";
+  function draw(){x.clearRect(0,0,960,540);x.strokeStyle="rgba(255,255,255,.6)";x.lineWidth=2;x.beginPath();x.moveTo(0,250);x.lineTo(960,250);x.stroke();
+    x.font="64px serif";x.globalAlpha=.55;x.fillText("🐟",fishSeen.x-32,fishSeen.y+22);x.globalAlpha=1;
+    if(show==="real"){x.fillText("🐟",fishReal.x-32,fishReal.y+22);}
+    x.font="900 20px 'Noto Sans TC',sans-serif";x.fillStyle="#42e0c8";x.fillText("看到的魚（影像）",fishSeen.x+40,fishSeen.y);
+    if(show==="real"){x.fillStyle="#ffd43b";x.fillText("真正的魚（更深）",fishReal.x+40,fishReal.y+10);}
+    x.strokeStyle="#ffd43b";x.lineWidth=6;x.beginPath();x.arc(net.x,net.y,46,0,6.283);x.stroke();x.beginPath();x.moveTo(net.x+46,net.y-46);x.lineTo(net.x+140,net.y-140);x.stroke();}
+  draw();
+  function swing(target,hit){let t=0;const sx=net.x,sy=net.y;const iv=setInterval(()=>{t+=.05;net.x=sx+(target.x-sx)*t;net.y=sy+(target.y-sy)*t;draw();if(t>=1){clearInterval(iv);
+    if(hit){FX.sound.coin();FX.emojiBurst("🐟",10,innerWidth/2,innerHeight*.4);$("xpWhy").textContent="撈到了！往更深一點撈才對。";okBtn(c,1);}
+    else{FX.sound.wrongsoft();$("xpWhy").textContent="撈空了！魚不在看到的地方——它在更深的地方。";show="real";draw();}
+    setTimeout(()=>{net={x:300,y:120};draw();},900);}},30);}
+  $("xpCtrl").innerHTML=`<button class="btn aqua" id="b1">🎯 往「看到的地方」撈</button><button class="btn go" id="b2">⬇ 往「更深一點」撈</button>`;
+  $("b1").onclick=()=>{FX.sound.jump();swing(fishSeen,false);};$("b2").onclick=()=>{FX.sound.jump();swing(fishReal,true);};}
+
+/* 魚缸：靠近→變大 */
+function xpZoom(c){const im=$("xpStage").querySelector("img");im.style.transition="transform .3s";
+  $("xpCtrl").innerHTML=`<span class="lbl2">🔍 靠近魚缸</span><input type="range" id="z" min="100" max="220" value="100">`;
+  $("z").oninput=e=>{const v=+e.target.value/100;im.style.transform=`scale(${v})`;FX.sound.blip();if(v>=1.8){$("xpWhy").textContent="魚看起來變大了——水和玻璃讓光轉彎，影像被放大。";okBtn(c,2);}};}
+
+/* 水滴／放大鏡：真的放大鏡跟著手指 */
+function xpLens(c){const st=$("xpStage");st.insertAdjacentHTML("beforeend",`<div class="lens" id="lens"></div><div class="tag" style="left:12px;top:12px">👆 手指滑過去，看字變大</div>`);
+  const lens=$("lens"),im=st.querySelector("img");let moved=0;const ZOOM=2.2;
+  function place(e){const r=st.getBoundingClientRect();const px=(e.clientX-r.left),py=(e.clientY-r.top);if(px<0||py<0||px>r.width||py>r.height)return;
+    lens.style.display="block";lens.style.left=px+"px";lens.style.top=py+"px";
+    lens.style.backgroundImage=`url(${im.src})`;lens.style.backgroundSize=(r.width*ZOOM)+"px "+(r.height*ZOOM)+"px";
+    lens.style.backgroundPosition=(-(px*ZOOM)+75)+"px "+(-(py*ZOOM)+75)+"px";
+    if(++moved===25){FX.sound.coin();$("xpWhy").textContent="看到了嗎？鏡片（或水滴）讓光轉彎，字就變大變清楚。";okBtn(c,cur);}}
+  st.onpointermove=e=>{e.preventDefault();place(e);};st.onpointerdown=e=>{place(e);};}
+
+/* 吸管卡：重播站 1 的概念 */
+function xpStraw(c){$("xpCtrl").innerHTML=`<span class="lbl2">上面站 1 已經親手做過了：</span>`;$("xpWhy").textContent="吸管沒斷，是光進水轉彎。";okBtn(c,5);}
+
 pg();
 </script>
 </body>
