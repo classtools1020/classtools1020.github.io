@@ -70,9 +70,9 @@ const glassMat=new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,o
 const glass=new THREE.Mesh(new THREE.CylinderGeometry(RT,RB,H,64,1,true),glassMat);glass.position.y=H/2;S.add(glass);
 const base=new THREE.Mesh(new THREE.CylinderGeometry(RB,RB,.12,64),new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.35,roughness:.05,clearcoat:1}));base.position.y=.06;base.castShadow=true;S.add(base);
 // 水（真的折射：transmission + ior 1.33）
-const waterMat=new THREE.MeshPhysicalMaterial({color:0x9fd8ff,transparent:true,opacity:.42,roughness:.05,metalness:0,clearcoat:1,clearcoatRoughness:.05,depthWrite:false});
+const waterMat=new THREE.MeshPhysicalMaterial({color:0x8fd0ff,transparent:true,opacity:.3,roughness:.05,metalness:0,clearcoat:1,clearcoatRoughness:.05,depthWrite:false});
 const water=new THREE.Mesh(new THREE.CylinderGeometry(RT-.05,RB-.04,1,64),waterMat);water.visible=false;water.renderOrder=2;glass.renderOrder=3;S.add(water);
-const surf=new THREE.Mesh(new THREE.CircleGeometry(RT-.05,64),new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.35,roughness:0,clearcoat:1,side:THREE.DoubleSide,depthWrite:false}));surf.rotation.x=-Math.PI/2;surf.visible=false;surf.renderOrder=2;S.add(surf);
+const surf=new THREE.Mesh(new THREE.CircleGeometry(RT-.05,64),new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.18,roughness:0,clearcoat:1,side:THREE.DoubleSide,depthWrite:false}));surf.rotation.x=-Math.PI/2;surf.visible=false;surf.renderOrder=2;S.add(surf);
 let lvl=0,lvlT=0;
 function setWater(){const h=Math.max(.001,(H-.15)*lvl);water.scale.y=h;water.position.y=.12+h/2;water.visible=lvl>.01;surf.visible=lvl>.01;surf.position.y=.12+h+.002;}
 // 吸管（紅白條紋）：分成水上段（真實位置）＋水下段（影像被抬高 1/1.33 ＝ 視深）
