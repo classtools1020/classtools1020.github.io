@@ -194,5 +194,27 @@
     document.body.appendChild(v);}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bell);else bell();
 
+  /* ---------- 📍 今日流程自動串聯（主入口「開始這堂課」→ 每頁底部導覽列） ---------- */
+  const norm=u=>{try{const a=new URL(u,location.href);return (a.origin+a.pathname).replace(/index\.html$/,"");}catch(e){return u;}};
+  FX.flowStart=(title,steps)=>{try{localStorage.setItem("flow",JSON.stringify({title,steps,i:0,t:Date.now()}));}catch(e){}
+    const u=steps[0].url;if(/gamma\.app|youtube\.com|\.docx$/i.test(u)){window.open(u,"_blank");}else{location.href=u;}};
+  FX.flowEnd=()=>{try{localStorage.removeItem("flow");}catch(e){}const b=document.getElementById("fxflow");if(b)b.remove();};
+  function flowBar(){let f=null;try{f=JSON.parse(localStorage.getItem("flow")||"null");}catch(e){}if(!f||!f.steps||!f.steps.length)return;
+    if(Date.now()-(f.t||0)>12*3600*1000){FX.flowEnd();return;}          // 超過 12 小時自動結束
+    const here=norm(location.href);const k=f.steps.findIndex(s=>norm(s.url)===here);if(k>=0){f.i=k;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}}
+    const i=f.i,n=f.steps.length,cur=f.steps[i],nx=f.steps[i+1],pv=f.steps[i-1];
+    const bar=document.createElement("div");bar.id="fxflow";
+    bar.style.cssText="position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:9400;background:rgba(8,20,36,.96);border:2px solid #ffc93c;border-radius:18px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:min(96vw,760px);box-shadow:0 10px 26px rgba(0,0,0,.6);font-family:'Noto Sans TC','Microsoft JhengHei',system-ui,sans-serif;color:#eaf6ff";
+    const btn=(t,c)=>`<button style="font-weight:900;font-size:15px;border:none;border-radius:12px;padding:10px 14px;cursor:pointer;background:${c};color:#08131f">${t}</button>`;
+    bar.innerHTML=`<span style="font-weight:900;font-size:14px;color:#ffe08a">📍 ${esc(f.title)}　第 ${i+1}/${n} 步：${esc(cur.label)}</span>`+
+      (pv?btn("⬅ 上一步","#9db8cf"):"")+(nx?btn("下一步 ➡ "+esc(nx.label),"#ffc93c"):btn("🏁 這堂上完了","#42e0c8"))+`<button id="fxflowx" title="結束流程" style="border:none;background:transparent;color:#9db8cf;font-weight:900;cursor:pointer">✖</button>`;
+    document.body.appendChild(bar);
+    const go=(j)=>{f.i=j;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}const u=f.steps[j].url;FX.sound.jump();
+      if(/gamma\.app|youtube\.com|\.docx$/i.test(u)){window.open(u,"_blank");bar.remove();flowBar();}else{location.href=u;}};
+    const bs=bar.querySelectorAll("button");let bi=0;if(pv){bs[bi++].onclick=()=>go(i-1);}
+    bs[bi++].onclick=()=>{if(nx)go(i+1);else{FX.sound.clear();FX.confetti(160);FX.fireworks(2500);setTimeout(FX.flowEnd,2600);}};
+    bar.querySelector("#fxflowx").onclick=FX.flowEnd;}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",flowBar);else flowBar();
+
   window.FX=FX;
 })();

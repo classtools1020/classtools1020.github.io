@@ -4,515 +4,182 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#05101f">
-<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>顏色偵探大挑戰・真實照片破案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--bg1:#05101f;--bg2:#0a2036;--bg3:#0e3350;--panel:#0f2841;--line:rgba(120,170,210,.28);
+    --amber:#ffc93c;--teal:#42e0c8;--rose:#ff5d8f;--ink:#eaf6ff;--dim:#9db8cf;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;
+    background:radial-gradient(120% 80% at 50% -10%,rgba(255,93,143,.12),transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3))}
+  body.shake{animation:shake .5s}
+  @keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(10px,-4px)}60%{transform:translate(-8px,2px)}80%{transform:translate(8px,-2px)}}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 90px}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:44px 0 6px}
+  .pill{background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:900;font-size:16px}
+  .pill b{color:var(--amber);font-family:var(--disp);font-size:20px}
+  .dots{text-align:center;margin:6px 0 10px}
+  .dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:#26425f;margin:0 3px}
+  .dot.done{background:var(--teal)}.dot.now{background:var(--amber);transform:scale(1.3)}.dot.boss{border:2px solid var(--rose)}
+  .boss{display:none;align-items:center;gap:12px;background:linear-gradient(90deg,#3a1030,#1a0c22);border:3px solid var(--rose);border-radius:18px;padding:10px 16px;margin-bottom:10px}
+  .boss.show{display:flex}
+  .boss .face{font-size:44px;animation:bob 1.2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .boss .nm{font-weight:900;font-size:18px;color:#ff9ad0}
+  .hp{flex:1;height:16px;border-radius:999px;background:#2a1020;overflow:hidden;border:2px solid #ff5d8f}
+  .hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff5d8f,#ff9ad0);transition:width .6s}
+  .stage{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+  @media(max-width:760px){.stage{grid-template-columns:1fr}}
+  .photo{position:relative;border-radius:22px;overflow:hidden;border:3px solid var(--line);aspect-ratio:16/10;background:#08111d;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  .photo img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:filter .5s}
+  .photo .objs{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-around;padding:6% 4% 8%;gap:2%}
+  .obj{width:22%;text-align:center;cursor:pointer;transition:transform .12s}
+  .obj:hover{transform:translateY(-4px)}
+  .obj img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block;mix-blend-mode:screen;transition:filter .5s;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))}
+  .obj .nm{font-family:var(--disp);font-weight:700;font-size:min(3.4vw,16px);background:rgba(0,0,0,.55);border-radius:8px;padding:2px 8px;display:inline-block;margin-top:4px}
+  .obj.pick{outline:4px solid var(--amber);outline-offset:4px;border-radius:12px}
+  .photo .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.6);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4vw,20px);padding:6px 14px;border-radius:12px;z-index:3}
+  .photo .dark{position:absolute;inset:0;background:#000;opacity:0;transition:opacity .6s;pointer-events:none;z-index:2}
+  .qcard{background:var(--panel);border:3px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,.5);display:flex;flex-direction:column}
+  .qn{display:inline-block;background:var(--amber);color:#08131f;font-family:var(--disp);font-weight:700;font-size:16px;border-radius:999px;padding:3px 14px;margin-bottom:8px;align-self:flex-start}
+  .q{font-size:24px;font-weight:900;line-height:1.35;margin-bottom:12px}
+  .opts{display:grid;gap:10px}
+  .opt{display:flex;align-items:center;gap:12px;background:#13314f;border:3px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;font-size:21px;font-weight:900;transition:transform .1s,border-color .1s}
+  .opt:hover{transform:translateY(-2px);border-color:var(--amber)}
+  .opt .k{font-family:var(--disp);background:#0a2036;border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--amber);flex:none}
+  .opt .sw{width:28px;height:28px;border-radius:8px;border:2px solid rgba(255,255,255,.5);flex:none}
+  .opt.right{border-color:#28e07a;background:rgba(40,224,122,.2)}.opt.wrong{border-color:#ff5a5a;animation:shk .35s}
+  @keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .opt.disabled{pointer-events:none;opacity:.85}
+  .hint{font-size:15px;color:var(--dim);font-weight:800;margin-top:6px}
+  .fb{margin-top:10px;font-size:17px;font-weight:900;min-height:24px;line-height:1.4}
+  .fb .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:14px;margin-left:6px}
+  .row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .btn{font-family:var(--disp);font-weight:700;font-size:18px;border:none;border-radius:16px;padding:12px 22px;cursor:pointer}
+  .btn.next{background:linear-gradient(180deg,var(--teal),#1fbfa8);color:#063}.btn.ghost{background:var(--panel);border:2px solid var(--line);color:var(--ink)}
+  .btn.pulse{animation:pulse 1.1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(66,224,200,.5)}50%{box-shadow:0 0 0 12px rgba(66,224,200,0)}}
+  footer{text-align:center;margin-top:22px;color:var(--dim);font-size:13px}
+</style>
 </head>
 <body>
-<a href="/light/" class="mainmenu-btn" style="position:fixed;right:12px;top:12px;z-index:99999;background:#0f2841;border:2px solid #42e0c8;color:#42e0c8;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:Noto Sans TC,Microsoft JhengHei,system-ui,sans-serif">🗂️ 主選單</a>
-<a href="./" style="position:fixed;left:12px;top:12px;z-index:99999;background:#0f2841;border:2px solid #ffc93c;color:#ffc93c;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:Noto Sans TC,Microsoft JhengHei,system-ui,sans-serif">🏠 回到首頁</a>
-<title>顏色偵探大挑戰</title>
-<style>
-  :root{
-    --bg1:#05101f; --bg2:#0a2036; --bg3:#0e3350;
-    --amber:#ffc93c; --amber2:#ff9f1c; --teal:#42e0c8; --rose:#ff5d8f;
-    --ink:#eaf6ff; --dim:#9db8cf; --card:#0f2841; --line:rgba(120,170,210,.28);
-    --shadow:rgba(0,0,0,.5);
-    --kR:#e94b4b; --kB:#2e7be0; --kY:#f4c020; --kG:#38b26b;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;height:100%;overflow:hidden}
-  body{
-    font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;
-    color:var(--ink);
-    background:radial-gradient(120% 80% at 50% -10%, rgba(255,201,60,.10), transparent 55%),
-      linear-gradient(165deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);
-    height:100vh;
-  }
-  /* 背景漂浮光球，增加氛圍 */
-  #bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
-  #bg .orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.35;animation:float 16s ease-in-out infinite}
-  #bg .o1{width:40vmax;height:40vmax;left:-10vmax;top:-8vmax;background:radial-gradient(circle,#ff5d8f,transparent 70%)}
-  #bg .o2{width:44vmax;height:44vmax;right:-12vmax;top:6vmax;background:radial-gradient(circle,#2e9bff,transparent 70%);animation-delay:-5s}
-  #bg .o3{width:38vmax;height:38vmax;left:20vmax;bottom:-16vmax;background:radial-gradient(circle,#42e0c8,transparent 70%);animation-delay:-9s}
-  @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(3vmax,-3vmax) scale(1.08)}}
-  .screen{position:absolute;inset:0;z-index:1;display:none;flex-direction:column;align-items:center;justify-content:center;
-    padding:2vh 3vw;overflow:auto}
-  .screen.on{display:flex;animation:fade .35s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-
-  /* HOME */
-  .emblem{font-size:clamp(60px,11vh,110px);filter:drop-shadow(0 8px 18px rgba(255,201,60,.4))}
-  h1.title{font-size:clamp(38px,8vh,84px);font-weight:900;margin:.05em 0;text-align:center;line-height:1}
-  .title .rb{background:linear-gradient(90deg,#ff5d5d,#ff9f1c,#ffd426,#38d967,#2e9bff,#8a5cf6,#ff5d5d);
-    background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
-    animation:shimmer 6s linear infinite}
-  @keyframes shimmer{to{background-position:200% 0}}
-  .tag{font-size:clamp(16px,2.6vh,24px);color:var(--teal);font-weight:900;margin-bottom:2.5vh;text-align:center}
-  .panel{background:rgba(15,40,65,.7);border:2px solid var(--line);border-radius:24px;padding:20px 24px;
-    max-width:640px;width:100%;box-shadow:0 12px 30px var(--shadow);backdrop-filter:blur(4px)}
-  .panel label{display:block;font-size:15px;font-weight:800;color:var(--dim);margin:2px 0 8px}
-  .panel textarea{width:100%;min-height:64px;border-radius:14px;border:2px solid var(--line);background:#08182b;
-    color:var(--ink);font-family:inherit;font-size:17px;font-weight:700;padding:12px;resize:vertical}
-  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px;justify-content:center}
-  .chk{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--dim);
-    background:#08182b;border:2px solid var(--line);border-radius:999px;padding:8px 16px;cursor:pointer;user-select:none}
-  .chk.on{color:#08131f;background:var(--amber);border-color:var(--amber)}
-  .btn{font-size:clamp(20px,3vh,30px);font-weight:900;color:#2a1c00;
-    background:linear-gradient(150deg,var(--amber),var(--amber2));padding:16px 40px;border-radius:999px;
-    box-shadow:0 10px 26px rgba(255,159,28,.4);transition:transform .1s;display:inline-flex;align-items:center;gap:10px}
-  .btn:active{transform:scale(.94)}
-  .btn.ghost{background:#12324f;color:var(--ink);box-shadow:0 8px 20px var(--shadow)}
-  .btn.big{font-size:clamp(24px,4.2vh,44px);padding:20px 56px}
-
-  /* QUIZ */
-  .qtop{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1180px;gap:12px;margin-bottom:1vh}
-  .pill{background:var(--card);border:2px solid var(--line);border-radius:999px;padding:8px 18px;font-weight:900;font-size:clamp(15px,2.4vh,22px)}
-  .pill .lbl{color:var(--dim);font-size:.8em;margin-right:6px}
-  .pill.score{color:var(--amber)} .pill.combo{color:var(--rose)}
-  .qhead{display:flex;align-items:center;gap:14px;width:100%;max-width:1180px;margin-bottom:1vh}
-  .qnum{flex:none;display:grid;place-items:center;min-width:52px;height:52px;padding:0 12px;border-radius:14px;
-    background:var(--amber);color:#08131f;font-weight:900;font-size:clamp(20px,3vh,30px)}
-  .qtext{font-size:clamp(20px,3.4vh,36px);font-weight:900;line-height:1.35}
-  .qmid{display:flex;gap:2vw;width:100%;max-width:1180px;align-items:center;flex:1;min-height:0}
-  .qimg{flex:1 1 46%;max-width:620px;border-radius:18px;border:2px solid var(--line);box-shadow:0 10px 26px var(--shadow);
-    background:#05101f;object-fit:contain;max-height:52vh;min-width:0}
-  .timerwrap{flex:1 1 54%;display:flex;flex-direction:column;gap:1.4vh;min-width:0}
-  .dots{display:flex;gap:6px;justify-content:center;margin-bottom:1vh;flex-wrap:wrap;width:100%;max-width:1180px}
-  .dot{width:24px;height:9px;border-radius:999px;background:#0d2338;border:1px solid var(--line);transition:background .3s,transform .3s}
-  .dot.done{background:var(--kG);border-color:transparent}
-  .dot.cur{background:var(--amber);border-color:transparent;transform:scaleY(1.5)}
-  .trow{display:flex;align-items:center;gap:12px}
-  .tnum{flex:none;font-weight:900;font-size:clamp(18px,2.8vh,26px);color:var(--teal);min-width:2.6em;text-align:right}
-  .tbar{flex:1;height:18px;border-radius:999px;background:#08182b;overflow:hidden;border:1px solid var(--line)}
-  .tbar > i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--teal),#7dffe0);
-    transition:width 1s linear,background .4s}
-  .tbar > i.warn{background:linear-gradient(90deg,var(--amber),var(--amber2))}
-  .tbar > i.danger{background:linear-gradient(90deg,#ff8a8a,#e94b4b)}
-  @keyframes slidein{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-  .anim{animation:slidein .4s ease both}
-  .opts{display:grid;grid-template-columns:1fr 1fr;gap:1.4vh 1.4vw}
-  .opt{position:relative;display:flex;align-items:center;gap:12px;border-radius:18px;padding:2vh 20px;color:#fff;font-weight:900;
-    font-size:clamp(17px,2.7vh,26px);line-height:1.25;text-align:left;box-shadow:0 8px 20px var(--shadow),inset 0 2px 0 rgba(255,255,255,.25);
-    transition:transform .12s,filter .15s,box-shadow .15s;min-height:9vh;overflow:hidden}
-  .opt::before{content:"";position:absolute;inset:0 0 auto 0;height:45%;background:linear-gradient(rgba(255,255,255,.28),transparent);pointer-events:none}
-  .opt:hover{transform:translateY(-3px);box-shadow:0 14px 28px var(--shadow),inset 0 2px 0 rgba(255,255,255,.3)}
-  .opt:active{transform:scale(.97)}
-  .opt .sh{font-size:1.25em;flex:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
-  .opt.r{background:linear-gradient(160deg,#ff6a6a,#d93636)} .opt.b{background:linear-gradient(160deg,#4a95ff,#2160d6)}
-  .opt.y{background:linear-gradient(160deg,#ffe066,#e8ad00);color:#3a2a00} .opt.g{background:linear-gradient(160deg,#54d98a,#2a9455)}
-  .opt.dim{filter:grayscale(.7) brightness(.5);transform:scale(.97)}
-  .opt.win{outline:6px solid #fff;box-shadow:0 0 0 6px var(--amber),0 0 40px var(--amber);animation:pop .5s;filter:none !important;transform:none}
-  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
-  .opt.lose{opacity:.6}
-  .opt .mark{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:1.5em;
-    filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))}
-  .qfoot{display:flex;gap:12px;align-items:center;width:100%;max-width:1180px;margin-top:1.2vh;justify-content:space-between;flex-wrap:wrap}
-  .hintbox{flex:1;min-width:240px;font-size:clamp(15px,2.2vh,22px);color:var(--teal);font-weight:800;
-    background:rgba(66,224,200,.1);border-left:5px solid var(--teal);border-radius:0 12px 12px 0;padding:10px 16px;line-height:1.5}
-  .hintbox[hidden]{display:none}
-  .minibtn{background:var(--card);border:2px solid var(--line);border-radius:999px;padding:10px 18px;font-weight:900;
-    font-size:clamp(14px,2.2vh,20px);color:var(--amber)}
-
-  /* RESULT */
-  .bigscore{font-size:clamp(60px,16vh,160px);font-weight:900;color:var(--amber);line-height:1;filter:drop-shadow(0 6px 16px rgba(255,201,60,.4))}
-  .stars{font-size:clamp(30px,6vh,60px);letter-spacing:.1em;margin:1vh 0}
-  .msg{font-size:clamp(20px,3.4vh,34px);font-weight:900;text-align:center;margin-bottom:2vh}
-
-  /* WHEEL / 抽獎 */
-  .overlay{position:absolute;inset:0;background:rgba(3,8,16,.82);display:none;flex-direction:column;
-    align-items:center;justify-content:center;z-index:40;padding:3vh 3vw;backdrop-filter:blur(3px)}
-  .overlay.on{display:flex;animation:fade .3s ease}
-  .overlay h2{font-size:clamp(26px,5vh,52px);font-weight:900;margin:.2em 0 2vh;color:var(--amber);text-align:center}
-  .wheelbox{position:relative;width:min(62vh,86vw);aspect-ratio:1/1}
-  .wheel{width:100%;height:100%;border-radius:50%;border:10px solid #0f2841;box-shadow:0 0 0 8px var(--amber),0 20px 50px var(--shadow);
-    transition:transform 5s cubic-bezier(.12,.66,.06,1)}
-  .pointer{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:clamp(40px,7vh,64px);z-index:2;
-    filter:drop-shadow(0 4px 6px rgba(0,0,0,.6))}
-  .hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:16%;height:16%;border-radius:50%;
-    background:var(--amber);border:6px solid #0f2841;display:grid;place-items:center;font-size:clamp(22px,4vh,40px)}
-  .winner{font-size:clamp(40px,9vh,96px);font-weight:900;color:#fff;text-align:center;
-    text-shadow:0 0 30px var(--amber),0 4px 10px #000;animation:pop .6s;min-height:1.2em}
-  .ovbtns{display:flex;gap:14px;margin-top:2.5vh;flex-wrap:wrap;justify-content:center}
-
-  #fx{position:absolute;inset:0;pointer-events:none;z-index:60}
-  .shake{animation:shk .4s}
-  @keyframes shk{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-  @media(max-width:760px){.qmid{flex-direction:column}.qimg{max-height:34vh;flex-basis:auto;width:100%}.opts{grid-template-columns:1fr}}
-  /* 自閉症／感覺敏感友善：系統開「減少動態」時，關掉搖晃與快閃 */
-  @media (prefers-reduced-motion: reduce){
-    *{animation-duration:.001s !important;animation-iteration-count:1 !important}
-    .shake{animation:none !important}
-    .opt.win{animation:none}
-    .wheel{transition:transform 3s ease-out}
-  }
-</style>
-<div id="bg"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
-
-<!-- HOME -->
-<section id="home" class="screen on">
-  <div class="emblem">🕵️🎨</div>
-  <h1 class="title"><span class="rb">顏色偵探</span> 大挑戰</h1>
-  <div class="tag">光與顏色 ・ 12 關 ・ 看圖搶答 ・ 音效 ＋ 抽獎，全班嗨翻！</div>
-  <div class="panel">
-    <label>🎡 抽人名單（老師自己輸入座號或姓名，用逗號／空白／換行分開；留空就自動用 1～8 號）</label>
-    <textarea id="names" placeholder="例如：1, 2, 3, 4, 5, 6　或直接留空用座號"></textarea>
-    <div class="row">
-      <div class="chk on" id="chkTimer">⏱️ 計時模式</div>
-      <div class="chk on" id="chkSound">🔊 音效</div>
-      <div class="chk" id="chkShuffle">🔀 隨機出題</div>
-    </div>
-    <div class="row">
-      <button class="btn big" id="startBtn">▶ 開始挑戰</button>
-      <button class="btn ghost" id="wheelHomeBtn">🎡 先抽人</button>
-    </div>
-    <p style="text-align:center;color:var(--dim);font-size:14px;font-weight:700;margin:14px 0 0;line-height:1.6">
-      玩法：看大圖 → 按 🎡 抽人回答 → 點答案，答對加分！<br>可用滑鼠、觸控或鍵盤 <b>1~4</b> 選答、<b>空白鍵</b> 下一題。</p>
-  </div>
-</section>
-
-<!-- QUIZ -->
-<section id="quiz" class="screen">
-  <div class="qtop">
-    <div class="pill"><span class="lbl">第</span><span id="curN">1</span><span class="lbl"> / 12 關</span></div>
-    <div class="pill combo" id="comboPill" style="visibility:hidden">🔥 連對 <span id="comboN">2</span>！</div>
-    <div class="pill score"><span class="lbl">分數</span><span id="scoreN">0</span></div>
-  </div>
+<a class="fixbtn home" href="./">🏠 回到首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<svg width="0" height="0" style="position:absolute"><filter id="lightf"><feColorMatrix id="lmtx" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></svg>
+<div class="wrap">
+  <div class="top"><span class="pill">第 <b id="qi">1</b> / 12 關</span><span class="pill">🔥 連對 <b id="streak">0</b></span><span class="pill">分數 <b id="score">0</b></span></div>
   <div class="dots" id="dots"></div>
-  <div class="qhead">
-    <div class="qnum" id="qnum">1</div>
-    <div class="qtext" id="qtext">題目</div>
-  </div>
-  <div class="qmid">
-    <img class="qimg" id="qimg" alt="對照圖">
-    <div class="timerwrap">
-      <div class="trow"><div class="tbar"><i id="tfill"></i></div><div class="tnum"><span id="tnum">30</span>秒</div></div>
+  <style>
+    .lane{position:relative;height:120px;border-radius:18px;background:linear-gradient(180deg,rgba(62,194,255,.06),rgba(0,0,0,.35));border:2px solid var(--line);margin-bottom:12px;overflow:hidden}
+    .lane .ground{position:absolute;left:0;right:0;bottom:0;height:14px;background:repeating-linear-gradient(90deg,#3b2a12 0 24px,#5a3d1a 24px 48px)}
+    .lane .hero{position:absolute;left:8%;bottom:14px;font-size:44px;line-height:1;transform-origin:50% 100%;transition:transform .25s;filter:drop-shadow(0 6px 8px rgba(0,0,0,.6))}
+    .lane .hero.jump{animation:jump .7s cubic-bezier(.2,1.2,.4,1)}
+    @keyframes jump{0%{bottom:14px}45%{bottom:var(--jh)}100%{bottom:14px}}
+    .lane .hero.dash{animation:dash .8s ease-in-out}
+    @keyframes dash{0%{left:8%}45%{left:70%}60%{left:66%}100%{left:8%}}
+    .lane .foe{position:absolute;right:8%;bottom:14px;font-size:56px;line-height:1;display:none;filter:drop-shadow(0 6px 8px rgba(0,0,0,.6))}
+    .lane .foe.show{display:block;animation:bob 1.2s ease-in-out infinite}
+    .lane .foe.hit{animation:hit .5s}
+    @keyframes hit{0%,100%{transform:translate(0) rotate(0)}25%{transform:translate(8px,-6px) rotate(12deg)}50%{transform:translate(-6px,4px) rotate(-10deg)}75%{transform:translate(4px,-2px) rotate(6deg)}}
+    .lane .pw{position:absolute;left:8%;top:10px;font-weight:900;font-size:14px;color:#ffe08a;background:rgba(0,0,0,.5);border-radius:999px;padding:3px 10px}
+    .lane .coinrow{position:absolute;right:12px;top:10px;font-weight:900;font-size:14px;color:#ffe08a}
+    .lane .star{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 20% 80%,rgba(255,255,255,.35),transparent 30%);opacity:0;transition:opacity .4s}
+    .lane.invincible .star{opacity:1;animation:starflash .5s linear infinite alternate}
+    @keyframes starflash{from{filter:hue-rotate(0)}to{filter:hue-rotate(180deg)}}
+  </style>
+  <div class="lane" id="lane"><div class="star"></div><div class="pw" id="pw">🤖 小幫手 Lv.1</div><div class="coinrow" id="coinrow">🪙 0</div><span class="hero" id="hero">🤖</span><span class="foe" id="foe">🌑</span><div class="ground"></div></div>
+  <div class="boss" id="boss"><span class="face" id="bossFace">🌑</span><span class="nm" id="bossName">黑暗魔王</span><div class="hp"><i id="hp"></i></div></div>
+  <div class="stage">
+    <div class="photo" id="photo"></div>
+    <div class="qcard">
+      <span class="qn" id="qn">關卡 1</span>
+      <div class="q" id="q"></div>
       <div class="opts" id="opts"></div>
+      <div class="hint" id="hint"></div>
+      <div class="fb" id="fb"></div>
+      <div class="row"><button class="btn next" id="next" disabled>➡ 下一關</button></div>
     </div>
   </div>
-  <div class="qfoot">
-    <div class="hintbox" id="hint" hidden></div>
-    <div style="display:flex;gap:10px">
-      <button class="minibtn" id="pickBtn">🎡 抽人回答</button>
-      <button class="minibtn" id="nextBtn" hidden>下一題 ▶</button>
-    </div>
-  </div>
-</section>
-
-<!-- RESULT -->
-<section id="result" class="screen">
-  <div class="emblem" id="resEmo">🎉</div>
-  <div class="msg" id="resMsg">太厲害了，你們都是光的專家！</div>
-  <div class="bigscore" id="resScore">0</div>
-  <div class="stars" id="resStars">⭐⭐⭐</div>
-  <div id="recapWrap" style="text-align:center;margin:1vh 0 2vh">
-    <div style="font-size:clamp(16px,2.4vh,22px);font-weight:900;color:var(--teal);margin-bottom:1vh">
-      答對 <span id="rightN">0</span> / <span id="totalN">12</span> 題</div>
-    <div id="recap" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;max-width:640px"></div>
-  </div>
-  <div class="row">
-    <button class="btn big" id="drawBtn">🎁 終極大抽獎</button>
-    <button class="btn ghost" id="againBtn">🔄 再玩一次</button>
-  </div>
-</section>
-
-<!-- WHEEL OVERLAY -->
-<div class="overlay" id="ov">
-  <h2 id="ovTitle">🎡 幸運轉盤</h2>
-  <div class="wheelbox">
-    <div class="pointer">🔻</div>
-    <div class="wheel" id="wheel"></div>
-    <div class="hub">🎯</div>
-  </div>
-  <div class="winner" id="winner">&nbsp;</div>
-  <div class="ovbtns">
-    <button class="btn" id="spinBtn">🎡 轉！</button>
-    <button class="btn ghost" id="ovCloseBtn">關閉</button>
-  </div>
+  <footer>🎨 顏色偵探大挑戰・真實照片破案　｜　光與顏色　｜　鍵盤 1–4 選答、空白鍵下一關　｜　竹東國中自然科</footer>
 </div>
 
-<canvas id="fx"></canvas>
-
+<script src="../games/fx.js"></script>
 <script>
-const IMGDATA={"01_\u4e09\u539f\u8272.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%3Cfilter%20id%3D%22g1%22%3E%3CfeGaussianBlur%20stdDeviation%3D%228%22%2F%3E%3C%2Ffilter%3E%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E5%85%89%E7%9A%84%E4%B8%89%E5%8E%9F%E8%89%B2%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E7%B4%85%20Red%E3%83%BB%E7%B6%A0%20Green%E3%83%BB%E8%97%8D%20Blue%3C%2Ftext%3E%3Cg%20transform%3D%22translate%28340%2C430%29%22%3E%0A%20%20%3Ccircle%20r%3D%22120%22%20fill%3D%22%23ff3b3b%22%2F%3E%3Ccircle%20r%3D%22120%22%20fill%3D%22%23ff3b3b%22%20opacity%3D%22.5%22%20transform%3D%22scale%281.25%29%22%2F%3E%0A%20%20%3Ctext%20y%3D%22185%22%20font-size%3D%2246%22%20fill%3D%22%23eaf6ff%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E7%B4%85%3C%2Ftext%3E%0A%20%20%3Ctext%20y%3D%22230%22%20font-size%3D%2230%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22800%22%3ERed%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28640%2C430%29%22%3E%0A%20%20%3Ccircle%20r%3D%22120%22%20fill%3D%22%232fd960%22%2F%3E%3Ccircle%20r%3D%22120%22%20fill%3D%22%232fd960%22%20opacity%3D%22.5%22%20transform%3D%22scale%281.25%29%22%2F%3E%0A%20%20%3Ctext%20y%3D%22185%22%20font-size%3D%2246%22%20fill%3D%22%23eaf6ff%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E7%B6%A0%3C%2Ftext%3E%0A%20%20%3Ctext%20y%3D%22230%22%20font-size%3D%2230%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22800%22%3EGreen%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28940%2C430%29%22%3E%0A%20%20%3Ccircle%20r%3D%22120%22%20fill%3D%22%233b82ff%22%2F%3E%3Ccircle%20r%3D%22120%22%20fill%3D%22%233b82ff%22%20opacity%3D%22.5%22%20transform%3D%22scale%281.25%29%22%2F%3E%0A%20%20%3Ctext%20y%3D%22185%22%20font-size%3D%2246%22%20fill%3D%22%23eaf6ff%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E8%97%8D%3C%2Ftext%3E%0A%20%20%3Ctext%20y%3D%22230%22%20font-size%3D%2230%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22800%22%3EBlue%3C%2Ftext%3E%3C%2Fg%3E%0A%3C%2Fsvg%3E","02_\u87a2\u5e55RGB.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E8%9E%A2%E5%B9%95%E7%9A%84%E7%A5%95%E5%AF%86%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E6%94%BE%E5%A4%A7%E7%9C%8B%EF%BC%8C%E5%85%A8%E6%98%AF%E7%B4%85%E7%B6%A0%E8%97%8D%E5%B0%8F%E7%87%88%E9%BB%9E%3C%2Ftext%3E%3Cg%20transform%3D%22translate%28250%2C240%29%22%3E%0A%20%20%20%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%22480%22%20height%3D%22320%22%20rx%3D%2218%22%20fill%3D%22%230b1220%22%20stroke%3D%22%233a4a63%22%20stroke-width%3D%2210%22%2F%3E%0A%20%20%20%3Crect%20x%3D%2220%22%20y%3D%2220%22%20width%3D%22440%22%20height%3D%22280%22%20rx%3D%228%22%20fill%3D%22%23101a2e%22%2F%3E%0A%20%20%20%3Ctext%20x%3D%22240%22%20y%3D%22175%22%20font-size%3D%22120%22%20text-anchor%3D%22middle%22%3E%F0%9F%8C%85%3C%2Ftext%3E%0A%20%3C%2Fg%3E%0A%20%3Cline%20x1%3D%22690%22%20y1%3D%22300%22%20x2%3D%22820%22%20y2%3D%22250%22%20stroke%3D%22%23ffc93c%22%20stroke-width%3D%226%22%20stroke-dasharray%3D%2210%208%22%2F%3E%0A%20%3Cline%20x1%3D%22690%22%20y1%3D%22360%22%20x2%3D%22820%22%20y2%3D%22470%22%20stroke%3D%22%23ffc93c%22%20stroke-width%3D%226%22%20stroke-dasharray%3D%2210%208%22%2F%3E%0A%20%3Cg%20transform%3D%22translate%28820%2C230%29%22%3E%0A%20%20%20%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%22330%22%20height%3D%22260%22%20rx%3D%2220%22%20fill%3D%22%23050a12%22%20stroke%3D%22%23ffc93c%22%20stroke-width%3D%228%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2218%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%2256%22%20y%3D%2218%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%2294%22%20y%3D%2218%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22132%22%20y%3D%2218%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22170%22%20y%3D%2218%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22208%22%20y%3D%2218%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22246%22%20y%3D%2218%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22284%22%20y%3D%2218%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22322%22%20y%3D%2218%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2256%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%2256%22%20y%3D%2256%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%2294%22%20y%3D%2256%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22132%22%20y%3D%2256%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22170%22%20y%3D%2256%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22208%22%20y%3D%2256%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22246%22%20y%3D%2256%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22284%22%20y%3D%2256%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22322%22%20y%3D%2256%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2294%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%2256%22%20y%3D%2294%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%2294%22%20y%3D%2294%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22132%22%20y%3D%2294%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22170%22%20y%3D%2294%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22208%22%20y%3D%2294%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22246%22%20y%3D%2294%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22284%22%20y%3D%2294%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22322%22%20y%3D%2294%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%22132%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%2256%22%20y%3D%22132%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%2294%22%20y%3D%22132%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22132%22%20y%3D%22132%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22170%22%20y%3D%22132%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22208%22%20y%3D%22132%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22246%22%20y%3D%22132%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22284%22%20y%3D%22132%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22322%22%20y%3D%22132%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%22170%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%2256%22%20y%3D%22170%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%2294%22%20y%3D%22170%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22132%22%20y%3D%22170%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22170%22%20y%3D%22170%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22208%22%20y%3D%22170%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22246%22%20y%3D%22170%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22284%22%20y%3D%22170%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22322%22%20y%3D%22170%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%22208%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%2256%22%20y%3D%22208%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%2294%22%20y%3D%22208%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22132%22%20y%3D%22208%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22170%22%20y%3D%22208%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22208%22%20y%3D%22208%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3Crect%20x%3D%22246%22%20y%3D%22208%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22284%22%20y%3D%22208%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%2322dd44%22%2F%3E%3Crect%20x%3D%22322%22%20y%3D%22208%22%20width%3D%2230%22%20height%3D%2230%22%20rx%3D%224%22%20fill%3D%22%232e7bff%22%2F%3E%3C%2Fg%3E%0A%3C%2Fsvg%3E","03_\u6df7\u5149\u767d\u5149.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E7%B4%85%E5%85%89%20%EF%BC%8B%20%E7%B6%A0%E5%85%89%20%EF%BC%8B%20%E8%97%8D%E5%85%89%3C%2Ftext%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%22128%22%20font-size%3D%2232%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E4%B8%89%E7%A8%AE%E5%85%89%E7%96%8A%E5%9C%A8%E4%B8%80%E8%B5%B7%20%E2%86%92%20%E8%AE%8A%E6%88%90%E7%99%BD%E5%85%89%3C%2Ftext%3E%0A%3Crect%20x%3D%22300%22%20y%3D%22180%22%20width%3D%22470%22%20height%3D%22470%22%20rx%3D%2224%22%20fill%3D%22%2302040a%22%2F%3E%0A%3Cg%3E%0A%20%3Ccircle%20cx%3D%22535%22%20cy%3D%22330%22%20r%3D%22150%22%20fill%3D%22%2300ff2a%22%20style%3D%22mix-blend-mode%3Ascreen%22%2F%3E%0A%20%3Ccircle%20cx%3D%22720%22%20cy%3D%22330%22%20r%3D%22150%22%20fill%3D%22%231a5cff%22%20style%3D%22mix-blend-mode%3Ascreen%22%2F%3E%0A%20%3Ccircle%20cx%3D%22628%22%20cy%3D%22490%22%20r%3D%22150%22%20fill%3D%22%23ff1a1a%22%20style%3D%22mix-blend-mode%3Ascreen%22%2F%3E%0A%3C%2Fg%3E%0A%3Ctext%20x%3D%22470%22%20y%3D%22250%22%20font-size%3D%2230%22%20fill%3D%22%237dffa0%22%20font-weight%3D%22900%22%20text-anchor%3D%22middle%22%3E%E7%B6%A0%3C%2Ftext%3E%0A%3Ctext%20x%3D%22790%22%20y%3D%22250%22%20font-size%3D%2230%22%20fill%3D%22%238ab4ff%22%20font-weight%3D%22900%22%20text-anchor%3D%22middle%22%3E%E8%97%8D%3C%2Ftext%3E%0A%3Ctext%20x%3D%22628%22%20y%3D%22600%22%20font-size%3D%2230%22%20fill%3D%22%23ff9a9a%22%20font-weight%3D%22900%22%20text-anchor%3D%22middle%22%3E%E7%B4%85%3C%2Ftext%3E%0A%3Ctext%20x%3D%22628%22%20y%3D%22415%22%20font-size%3D%2230%22%20fill%3D%22%230a1424%22%20font-weight%3D%22900%22%20text-anchor%3D%22middle%22%3E%E7%99%BD%3C%2Ftext%3E%0A%3Cline%20x1%3D%22800%22%20y1%3D%22400%22%20x2%3D%22960%22%20y2%3D%22400%22%20stroke%3D%22%23ffc93c%22%20stroke-width%3D%2212%22%20stroke-linecap%3D%22round%22%2F%3E%0A%3Cpolygon%20points%3D%22990%2C400%20958%2C384%20958%2C416%22%20fill%3D%22%23ffc93c%22%2F%3E%0A%3Ccircle%20cx%3D%221090%22%20cy%3D%22400%22%20r%3D%2286%22%20fill%3D%22%23ffffff%22%2F%3E%0A%3Ccircle%20cx%3D%221090%22%20cy%3D%22400%22%20r%3D%22110%22%20fill%3D%22%23ffffff%22%20opacity%3D%22.25%22%2F%3E%0A%3Ctext%20x%3D%221090%22%20y%3D%22412%22%20font-size%3D%2234%22%20fill%3D%22%23111%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E7%99%BD%E5%85%89%3C%2Ftext%3E%0A%3C%2Fsvg%3E","04_\u8d8a\u52a0\u8d8a\u4eae.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E5%85%89%EF%BC%9A%E8%B6%8A%E5%8A%A0%E8%B6%8A%E4%BA%AE%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E4%B8%80%E7%9B%9E%20%E2%86%92%20%E5%85%A9%E7%9B%9E%20%E2%86%92%20%E4%B8%89%E7%9B%9E%EF%BC%8C%E8%B6%8A%E4%BE%86%E8%B6%8A%E4%BA%AE%3C%2Ftext%3E%3Cg%20transform%3D%22translate%28300%2C430%29%22%3E%0A%20%20%20%3Ccircle%20r%3D%2270%22%20fill%3D%22%23fff7d6%22%20opacity%3D%220.35%22%2F%3E%3Ccircle%20r%3D%2252%22%20fill%3D%22%23fff2b0%22%2F%3E%0A%20%20%20%3Ctext%20y%3D%2212%22%20font-size%3D%2252%22%20text-anchor%3D%22middle%22%3E%F0%9F%92%A1%3C%2Ftext%3E%0A%20%20%20%3Ctext%20y%3D%22150%22%20font-size%3D%2240%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E1%20%E7%9B%9E%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28640%2C430%29%22%3E%0A%20%20%20%3Ccircle%20r%3D%22110%22%20fill%3D%22%23fff7d6%22%20opacity%3D%220.55%22%2F%3E%3Ccircle%20r%3D%2252%22%20fill%3D%22%23fff2b0%22%2F%3E%0A%20%20%20%3Ctext%20y%3D%2212%22%20font-size%3D%2252%22%20text-anchor%3D%22middle%22%3E%F0%9F%92%A1%3C%2Ftext%3E%0A%20%20%20%3Ctext%20y%3D%22150%22%20font-size%3D%2240%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E2%20%E7%9B%9E%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28980%2C430%29%22%3E%0A%20%20%20%3Ccircle%20r%3D%22150%22%20fill%3D%22%23fff7d6%22%20opacity%3D%220.85%22%2F%3E%3Ccircle%20r%3D%2252%22%20fill%3D%22%23fff2b0%22%2F%3E%0A%20%20%20%3Ctext%20y%3D%2212%22%20font-size%3D%2252%22%20text-anchor%3D%22middle%22%3E%F0%9F%92%A1%3C%2Ftext%3E%0A%20%20%20%3Ctext%20y%3D%22150%22%20font-size%3D%2240%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E3%20%E7%9B%9E%EF%BC%9D%E7%99%BD%E4%BA%AE%3C%2Ftext%3E%3C%2Fg%3E%3Cline%20x1%3D%22400%22%20y1%3D%22430%22%20x2%3D%22504%22%20y2%3D%22430%22%20stroke%3D%22%2342e0c8%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpolygon%20points%3D%22520%2C430%20496%2C440%20496%2C420%22%20fill%3D%22%2342e0c8%22%2F%3E%3Cline%20x1%3D%22760%22%20y1%3D%22430%22%20x2%3D%22834%22%20y2%3D%22430%22%20stroke%3D%22%2342e0c8%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpolygon%20points%3D%22850%2C430%20826%2C440%20826%2C420%22%20fill%3D%22%2342e0c8%22%2F%3E%0A%3C%2Fsvg%3E","05_\u4e09\u7a1c\u93e1\u8272\u6563.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E4%B8%89%E7%A8%9C%E9%8F%A1%EF%BC%9A%E8%89%B2%E6%95%A3%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E7%99%BD%E5%85%89%E6%95%A3%E9%96%8B%E6%88%90%E4%B8%83%E5%BD%A9%3C%2Ftext%3E%3Cline%20x1%3D%22150%22%20y1%3D%22380%22%20x2%3D%22600%22%20y2%3D%22380%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%2216%22%20stroke-linecap%3D%22round%22%2F%3E%3Ctext%20x%3D%22360%22%20y%3D%22350%22%20font-size%3D%2230%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22800%22%20text-anchor%3D%22middle%22%3E%E7%99%BD%E5%85%89%3C%2Ftext%3E%3Cpolygon%20points%3D%22640%2C250%20760%2C470%20520%2C470%22%20fill%3D%22rgba%28180%2C220%2C255%2C.22%29%22%20stroke%3D%22%23bfe0ff%22%20stroke-width%3D%226%22%2F%3E%3Cline%20x1%3D%22700%22%20y1%3D%22380%22%20x2%3D%221120%22%20y2%3D%22250%22%20stroke%3D%22%23ff2d2d%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Cline%20x1%3D%22700%22%20y1%3D%22380%22%20x2%3D%221120%22%20y2%3D%22288%22%20stroke%3D%22%23ff8a1e%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Cline%20x1%3D%22700%22%20y1%3D%22380%22%20x2%3D%221120%22%20y2%3D%22326%22%20stroke%3D%22%23ffd426%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Cline%20x1%3D%22700%22%20y1%3D%22380%22%20x2%3D%221120%22%20y2%3D%22364%22%20stroke%3D%22%2338d967%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Cline%20x1%3D%22700%22%20y1%3D%22380%22%20x2%3D%221120%22%20y2%3D%22402%22%20stroke%3D%22%232e9bff%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Cline%20x1%3D%22700%22%20y1%3D%22380%22%20x2%3D%221120%22%20y2%3D%22440%22%20stroke%3D%22%233b53d6%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Cline%20x1%3D%22700%22%20y1%3D%22380%22%20x2%3D%221120%22%20y2%3D%22478%22%20stroke%3D%22%238a3bd6%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Ctext%20x%3D%22960%22%20y%3D%22600%22%20font-size%3D%2230%22%20fill%3D%22%239db8cf%22%20font-weight%3D%22800%22%20text-anchor%3D%22middle%22%3E%E7%B4%85%E6%A9%99%E9%BB%83%E7%B6%A0%E8%97%8D%E9%9D%9B%E7%B4%AB%3C%2Ftext%3E%0A%3C%2Fsvg%3E","06_\u767d\u5149\u7684\u7955\u5bc6.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E7%99%BD%E5%85%89%E7%9A%84%E7%A5%95%E5%AF%86%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E7%9C%8B%E8%B5%B7%E4%BE%86%E7%99%BD%E7%99%BD%E7%9A%84%EF%BC%8C%E5%85%B6%E5%AF%A6%E8%97%8F%E4%BA%86%E5%BE%88%E5%A4%9A%E9%A1%8F%E8%89%B2%3C%2Ftext%3E%3Ccircle%20cx%3D%22360%22%20cy%3D%22410%22%20r%3D%22120%22%20fill%3D%22%23ffffff%22%2F%3E%3Ctext%20x%3D%22360%22%20y%3D%22425%22%20font-size%3D%2240%22%20fill%3D%22%23111%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E7%99%BD%E5%85%89%3C%2Ftext%3E%3Cline%20x1%3D%22500%22%20y1%3D%22410%22%20x2%3D%22684%22%20y2%3D%22410%22%20stroke%3D%22%23ffc93c%22%20stroke-width%3D%2212%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpolygon%20points%3D%22700%2C410%20676%2C420%20676%2C400%22%20fill%3D%22%23ffc93c%22%2F%3E%3Crect%20x%3D%22740%22%20y%3D%22250%22%20width%3D%22360%22%20height%3D%2236%22%20fill%3D%22%23ff2d2d%22%2F%3E%3Crect%20x%3D%22740%22%20y%3D%22290%22%20width%3D%22360%22%20height%3D%2236%22%20fill%3D%22%23ff8a1e%22%2F%3E%3Crect%20x%3D%22740%22%20y%3D%22330%22%20width%3D%22360%22%20height%3D%2236%22%20fill%3D%22%23ffd426%22%2F%3E%3Crect%20x%3D%22740%22%20y%3D%22370%22%20width%3D%22360%22%20height%3D%2236%22%20fill%3D%22%2338d967%22%2F%3E%3Crect%20x%3D%22740%22%20y%3D%22410%22%20width%3D%22360%22%20height%3D%2236%22%20fill%3D%22%232e9bff%22%2F%3E%3Crect%20x%3D%22740%22%20y%3D%22450%22%20width%3D%22360%22%20height%3D%2236%22%20fill%3D%22%233b53d6%22%2F%3E%3Crect%20x%3D%22740%22%20y%3D%22490%22%20width%3D%22360%22%20height%3D%2236%22%20fill%3D%22%238a3bd6%22%2F%3E%3Ctext%20x%3D%22920%22%20y%3D%22620%22%20font-size%3D%2228%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22800%22%3E%E6%8B%86%E9%96%8B%E4%BE%86%20%3D%20%E5%A5%BD%E5%A4%9A%E9%A1%8F%E8%89%B2%3C%2Ftext%3E%0A%3C%2Fsvg%3E","07_\u5f69\u8679.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E5%BD%A9%E8%99%B9%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E4%B8%8B%E9%9B%A8%E5%BE%8C%E5%A4%A9%E7%A9%BA%E7%9A%84%E4%B8%83%E5%BD%A9%E6%A9%8B%3C%2Ftext%3E%3Cpath%20d%3D%22M%20240%20640%20A%20400%20400%200%200%201%201040%20640%22%20fill%3D%22none%22%20stroke%3D%22%23ff2d2d%22%20stroke-width%3D%2226%22%20transform%3D%22translate%280%2C0%29%22%2F%3E%3Cpath%20d%3D%22M%20240%20640%20A%20400%20400%200%200%201%201040%20640%22%20fill%3D%22none%22%20stroke%3D%22%23ff8a1e%22%20stroke-width%3D%2226%22%20transform%3D%22translate%280%2C26%29%22%2F%3E%3Cpath%20d%3D%22M%20240%20640%20A%20400%20400%200%200%201%201040%20640%22%20fill%3D%22none%22%20stroke%3D%22%23ffd426%22%20stroke-width%3D%2226%22%20transform%3D%22translate%280%2C52%29%22%2F%3E%3Cpath%20d%3D%22M%20240%20640%20A%20400%20400%200%200%201%201040%20640%22%20fill%3D%22none%22%20stroke%3D%22%2338d967%22%20stroke-width%3D%2226%22%20transform%3D%22translate%280%2C78%29%22%2F%3E%3Cpath%20d%3D%22M%20240%20640%20A%20400%20400%200%200%201%201040%20640%22%20fill%3D%22none%22%20stroke%3D%22%232e9bff%22%20stroke-width%3D%2226%22%20transform%3D%22translate%280%2C104%29%22%2F%3E%3Cpath%20d%3D%22M%20240%20640%20A%20400%20400%200%200%201%201040%20640%22%20fill%3D%22none%22%20stroke%3D%22%233b53d6%22%20stroke-width%3D%2226%22%20transform%3D%22translate%280%2C130%29%22%2F%3E%3Cpath%20d%3D%22M%20240%20640%20A%20400%20400%200%200%201%201040%20640%22%20fill%3D%22none%22%20stroke%3D%22%238a3bd6%22%20stroke-width%3D%2226%22%20transform%3D%22translate%280%2C156%29%22%2F%3E%3Cellipse%20cx%3D%22640%22%20cy%3D%22700%22%20rx%3D%22520%22%20ry%3D%2260%22%20fill%3D%22%231e6b3a%22%20opacity%3D%22.5%22%2F%3E%3Ccircle%20cx%3D%221090%22%20cy%3D%22180%22%20r%3D%2260%22%20fill%3D%22%23ffe08a%22%2F%3E%3Cg%3E%3Cellipse%20cx%3D%22300%22%20cy%3D%22200%22%20rx%3D%2290%22%20ry%3D%2252%22%20fill%3D%22%23c9d6e2%22%2F%3E%3Cellipse%20cx%3D%22360%22%20cy%3D%22180%22%20rx%3D%2270%22%20ry%3D%2246%22%20fill%3D%22%23dbe6f0%22%2F%3E%3Cline%20x1%3D%22260%22%20y1%3D%22250%22%20x2%3D%22252%22%20y2%3D%22300%22%20stroke%3D%22%237fb0e0%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%2F%3E%3Cline%20x1%3D%22300%22%20y1%3D%22250%22%20x2%3D%22292%22%20y2%3D%22300%22%20stroke%3D%22%237fb0e0%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%2F%3E%3Cline%20x1%3D%22340%22%20y1%3D%22250%22%20x2%3D%22332%22%20y2%3D%22300%22%20stroke%3D%22%237fb0e0%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fg%3E%0A%3C%2Fsvg%3E","08_\u5f69\u8679\u4e03\u8272.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E5%BD%A9%E8%99%B9%E6%9C%89%E4%B8%83%E7%A8%AE%E9%A1%8F%E8%89%B2%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E7%B4%85%E3%83%BB%E6%A9%99%E3%83%BB%E9%BB%83%E3%83%BB%E7%B6%A0%E3%83%BB%E8%97%8D%E3%83%BB%E9%9D%9B%E3%83%BB%E7%B4%AB%3C%2Ftext%3E%3Cg%20transform%3D%22translate%28150%2C180%29%22%3E%3Crect%20width%3D%22820%22%20height%3D%2252%22%20rx%3D%2212%22%20fill%3D%22%23ff2d2d%22%2F%3E%0A%20%20%20%3Ctext%20x%3D%22860%22%20y%3D%2238%22%20font-size%3D%2240%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22900%22%3E%E7%B4%85%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28150%2C242%29%22%3E%3Crect%20width%3D%22820%22%20height%3D%2252%22%20rx%3D%2212%22%20fill%3D%22%23ff8a1e%22%2F%3E%0A%20%20%20%3Ctext%20x%3D%22860%22%20y%3D%2238%22%20font-size%3D%2240%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22900%22%3E%E6%A9%99%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28150%2C304%29%22%3E%3Crect%20width%3D%22820%22%20height%3D%2252%22%20rx%3D%2212%22%20fill%3D%22%23ffd426%22%2F%3E%0A%20%20%20%3Ctext%20x%3D%22860%22%20y%3D%2238%22%20font-size%3D%2240%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22900%22%3E%E9%BB%83%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28150%2C366%29%22%3E%3Crect%20width%3D%22820%22%20height%3D%2252%22%20rx%3D%2212%22%20fill%3D%22%2338d967%22%2F%3E%0A%20%20%20%3Ctext%20x%3D%22860%22%20y%3D%2238%22%20font-size%3D%2240%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22900%22%3E%E7%B6%A0%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28150%2C428%29%22%3E%3Crect%20width%3D%22820%22%20height%3D%2252%22%20rx%3D%2212%22%20fill%3D%22%232e9bff%22%2F%3E%0A%20%20%20%3Ctext%20x%3D%22860%22%20y%3D%2238%22%20font-size%3D%2240%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22900%22%3E%E8%97%8D%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28150%2C490%29%22%3E%3Crect%20width%3D%22820%22%20height%3D%2252%22%20rx%3D%2212%22%20fill%3D%22%233b53d6%22%2F%3E%0A%20%20%20%3Ctext%20x%3D%22860%22%20y%3D%2238%22%20font-size%3D%2240%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22900%22%3E%E9%9D%9B%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate%28150%2C552%29%22%3E%3Crect%20width%3D%22820%22%20height%3D%2252%22%20rx%3D%2212%22%20fill%3D%22%238a3bd6%22%2F%3E%0A%20%20%20%3Ctext%20x%3D%22860%22%20y%3D%2238%22%20font-size%3D%2240%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22900%22%3E%E7%B4%AB%3C%2Ftext%3E%3C%2Fg%3E%3Ctext%20x%3D%22560%22%20y%3D%22660%22%20font-size%3D%2234%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E7%B8%BD%E5%85%B1%207%20%E7%A8%AE%EF%BC%81%3C%2Ftext%3E%0A%3C%2Fsvg%3E","09_\u9999\u8549\u9ec3.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E9%A6%99%E8%95%89%E7%82%BA%E4%BB%80%E9%BA%BC%E6%98%AF%E9%BB%83%E8%89%B2%EF%BC%9F%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E5%AE%83%E6%8A%8A%E9%BB%83%E5%85%89%E5%8F%8D%E5%B0%84%E9%80%B2%E7%9C%BC%E7%9D%9B%3C%2Ftext%3E%3Cline%20x1%3D%22150%22%20y1%3D%22300%22%20x2%3D%22480%22%20y2%3D%22380%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22290%22%20font-size%3D%2226%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22800%22%20text-anchor%3D%22middle%22%3E%E7%99%BD%E5%85%89%E7%85%A7%E9%81%8E%E4%BE%86%3C%2Ftext%3E%3Cg%20transform%3D%22translate%28560%2C420%29%20rotate%28-20%29%22%3E%3Cpath%20d%3D%22M%20-150%2040%20Q%20-120%20-110%2040%20-120%20Q%2020%20-60%2060%20-20%20Q%20-20%2090%20-150%2040%20Z%22%20fill%3D%22%23ffd426%22%20stroke%3D%22%23e0a800%22%20stroke-width%3D%228%22%2F%3E%3Cpath%20d%3D%22M%2030%20-118%20l%2014%20-26%20l%2010%206%20l%20-12%2024%20Z%22%20fill%3D%22%236b4a1a%22%2F%3E%3C%2Fg%3E%3Cline%20x1%3D%22640%22%20y1%3D%22360%22%20x2%3D%22885%22%20y2%3D%22304%22%20stroke%3D%22%23ffd426%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpolygon%20points%3D%22900%2C300%20879%2C315%20874%2C296%22%20fill%3D%22%23ffd426%22%2F%3E%3Ctext%20x%3D%22790%22%20y%3D%22270%22%20font-size%3D%2230%22%20fill%3D%22%23ffd426%22%20text-anchor%3D%22middle%22%20font-weight%3D%22800%22%3E%E5%8F%8D%E5%B0%84%E9%BB%83%E5%85%89%3C%2Ftext%3E%3Cg%20transform%3D%22translate%281040%2C330%29%20scale%281.1%29%22%3E%3Cellipse%20cx%3D%220%22%20cy%3D%220%22%20rx%3D%2252%22%20ry%3D%2234%22%20fill%3D%22%23fff%22%20stroke%3D%22%230a2036%22%20stroke-width%3D%224%22%2F%3E%3Ccircle%20cx%3D%226%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%2328324a%22%2F%3E%3Ccircle%20cx%3D%226%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22%23050a12%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%22-6%22%20r%3D%225%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22560%22%20y%3D%22640%22%20font-size%3D%2226%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22800%22%3E%E5%85%B6%E4%BB%96%E9%A1%8F%E8%89%B2%E7%9A%84%E5%85%89%E8%A2%AB%E5%90%B8%E6%94%B6%EF%BC%8C%E5%8F%AA%E5%89%A9%E9%BB%83%E5%85%89%E8%B7%91%E5%87%BA%E4%BE%86%3C%2Ftext%3E%0A%3C%2Fsvg%3E","10_\u860b\u679c\u7d05.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E8%98%8B%E6%9E%9C%E7%82%BA%E4%BB%80%E9%BA%BC%E6%98%AF%E7%B4%85%E8%89%B2%EF%BC%9F%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E5%AE%83%E6%8A%8A%E7%B4%85%E5%85%89%E5%8F%8D%E5%B0%84%E9%80%B2%E7%9C%BC%E7%9D%9B%3C%2Ftext%3E%3Cline%20x1%3D%22150%22%20y1%3D%22300%22%20x2%3D%22480%22%20y2%3D%22380%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22290%22%20font-size%3D%2226%22%20fill%3D%22%23eaf6ff%22%20font-weight%3D%22800%22%20text-anchor%3D%22middle%22%3E%E7%99%BD%E5%85%89%E7%85%A7%E9%81%8E%E4%BE%86%3C%2Ftext%3E%3Cg%20transform%3D%22translate%28580%2C430%29%22%3E%3Cpath%20d%3D%22M%200%20-80%20C%2090%20-140%20170%20-60%20130%2040%20C%20110%20110%2040%20130%200%20100%20C%20-40%20130%20-110%20110%20-130%2040%20C%20-170%20-60%20-90%20-140%200%20-80%20Z%22%20fill%3D%22%23e83b3b%22%20stroke%3D%22%23a51f1f%22%20stroke-width%3D%228%22%2F%3E%3Crect%20x%3D%22-8%22%20y%3D%22-120%22%20width%3D%2216%22%20height%3D%2250%22%20rx%3D%226%22%20fill%3D%22%236b4a1a%22%2F%3E%3Cpath%20d%3D%22M%2010%20-110%20q%2060%20-20%2070%2020%20q%20-55%2012%20-70%20-20%22%20fill%3D%22%233fae5a%22%2F%3E%3C%2Fg%3E%3Cline%20x1%3D%22700%22%20y1%3D%22370%22%20x2%3D%22885%22%20y2%3D%22305%22%20stroke%3D%22%23ff5a5a%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpolygon%20points%3D%22900%2C300%20881%2C317%20874%2C298%22%20fill%3D%22%23ff5a5a%22%2F%3E%3Ctext%20x%3D%22800%22%20y%3D%22270%22%20font-size%3D%2230%22%20fill%3D%22%23ff5a5a%22%20text-anchor%3D%22middle%22%20font-weight%3D%22800%22%3E%E5%8F%8D%E5%B0%84%E7%B4%85%E5%85%89%3C%2Ftext%3E%3Cg%20transform%3D%22translate%281040%2C330%29%20scale%281.1%29%22%3E%3Cellipse%20cx%3D%220%22%20cy%3D%220%22%20rx%3D%2252%22%20ry%3D%2234%22%20fill%3D%22%23fff%22%20stroke%3D%22%230a2036%22%20stroke-width%3D%224%22%2F%3E%3Ccircle%20cx%3D%226%22%20cy%3D%220%22%20r%3D%2220%22%20fill%3D%22%2328324a%22%2F%3E%3Ccircle%20cx%3D%226%22%20cy%3D%220%22%20r%3D%2210%22%20fill%3D%22%23050a12%22%2F%3E%3Ccircle%20cx%3D%220%22%20cy%3D%22-6%22%20r%3D%225%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22560%22%20y%3D%22640%22%20font-size%3D%2226%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22800%22%3E%E5%85%B6%E4%BB%96%E9%A1%8F%E8%89%B2%E7%9A%84%E5%85%89%E8%A2%AB%E5%90%B8%E6%94%B6%EF%BC%8C%E5%8F%AA%E5%89%A9%E7%B4%85%E5%85%89%E8%B7%91%E5%87%BA%E4%BE%86%3C%2Ftext%3E%0A%3C%2Fsvg%3E","11_\u5168\u9ed1\u623f\u9593.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E5%85%A8%E9%BB%91%E7%9A%84%E6%88%BF%E9%96%93%E8%A3%A1%E2%80%A6%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E6%B2%92%E6%9C%89%E5%85%89%20%E2%86%92%20%E7%9C%8B%E4%B8%8D%E5%87%BA%E9%A1%8F%E8%89%B2%3C%2Ftext%3E%3Crect%20x%3D%22150%22%20y%3D%22180%22%20width%3D%22980%22%20height%3D%22430%22%20rx%3D%2224%22%20fill%3D%22%2302060c%22%2F%3E%3Cg%20transform%3D%22translate%28640%2C430%29%22%20opacity%3D%22.16%22%3E%3Cpath%20d%3D%22M%200%20-80%20C%2090%20-140%20170%20-60%20130%2040%20C%20110%20110%2040%20130%200%20100%20C%20-40%20130%20-110%20110%20-130%2040%20C%20-170%20-60%20-90%20-140%200%20-80%20Z%22%20fill%3D%22%23333%22%20%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22640%22%20y%3D%22445%22%20font-size%3D%2240%22%20fill%3D%22%2333465e%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%EF%BC%9F%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22590%22%20font-size%3D%2230%22%20fill%3D%22%235b7a99%22%20text-anchor%3D%22middle%22%20font-weight%3D%22800%22%3E%E9%BB%91%E9%BB%91%E7%9A%84%EF%BC%8C%E7%9C%8B%E4%B8%8D%E5%88%B0%E8%98%8B%E6%9E%9C%E7%9A%84%E7%B4%85%E8%89%B2%3C%2Ftext%3E%0A%3C%2Fsvg%3E","12_\u7d05\u7da0\u71c8.svg":"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201280%20720%22%20font-family%3D%22%27WenQuanYi%20Zen%20Hei%27%2C%27Noto%20Sans%20TC%27%2Csans-serif%22%3E%0A%3Cdefs%3E%0A%3CradialGradient%20id%3D%22bg%22%20cx%3D%2250%25%22%20cy%3D%228%25%22%20r%3D%22120%25%22%3E%0A%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23123a5c%22%2F%3E%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%230a2036%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%2305101f%22%2F%3E%0A%3C%2FradialGradient%3E%0A%3ClinearGradient%20id%3D%22amber%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd76a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff9f1c%22%2F%3E%3C%2FlinearGradient%3E%0A%0A%3C%2Fdefs%3E%0A%3Crect%20width%3D%221280%22%20height%3D%22720%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%221260%22%20height%3D%22700%22%20rx%3D%2230%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C170%2C210%2C.28%29%22%20stroke-width%3D%224%22%2F%3E%0A%3Ctext%20x%3D%22640%22%20y%3D%2280%22%20font-size%3D%2252%22%20fill%3D%22%23ffc93c%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E7%B4%85%E7%B6%A0%E7%87%88%3C%2Ftext%3E%3Ctext%20x%3D%22640%22%20y%3D%22132%22%20font-size%3D%2234%22%20fill%3D%22%239db8cf%22%20text-anchor%3D%22middle%22%20font-weight%3D%22700%22%3E%E7%B6%A0%E7%87%88%20%E2%86%92%20%E5%8F%AF%E4%BB%A5%E5%AE%89%E5%85%A8%E8%B5%B0%3C%2Ftext%3E%3Crect%20x%3D%22540%22%20y%3D%22150%22%20width%3D%22200%22%20height%3D%22440%22%20rx%3D%2240%22%20fill%3D%22%2314202f%22%20stroke%3D%22%233a4a63%22%20stroke-width%3D%2210%22%2F%3E%3Ccircle%20cx%3D%22640%22%20cy%3D%22240%22%20r%3D%2262%22%20fill%3D%22%235a1414%22%2F%3E%3Ctext%20x%3D%22640%22%20y%3D%22255%22%20font-size%3D%2228%22%20fill%3D%22%238a3a3a%22%20text-anchor%3D%22middle%22%3E%E7%B4%85%3C%2Ftext%3E%3Ccircle%20cx%3D%22640%22%20cy%3D%22370%22%20r%3D%2262%22%20fill%3D%22%235a5014%22%2F%3E%3Ctext%20x%3D%22640%22%20y%3D%22385%22%20font-size%3D%2228%22%20fill%3D%22%238a7a3a%22%20text-anchor%3D%22middle%22%3E%E9%BB%83%3C%2Ftext%3E%3Ccircle%20cx%3D%22640%22%20cy%3D%22500%22%20r%3D%2262%22%20fill%3D%22%232fd967%22%2F%3E%3Ccircle%20cx%3D%22640%22%20cy%3D%22500%22%20r%3D%2290%22%20fill%3D%22%232fd967%22%20opacity%3D%22.3%22%2F%3E%3Ctext%20x%3D%22640%22%20y%3D%22515%22%20font-size%3D%2230%22%20fill%3D%22%2306331a%22%20text-anchor%3D%22middle%22%20font-weight%3D%22900%22%3E%E7%B6%A0%3C%2Ftext%3E%3Cg%20transform%3D%22translate%28930%2C430%29%22%3E%3Ccircle%20cy%3D%22-70%22%20r%3D%2226%22%20fill%3D%22%23eaf6ff%22%2F%3E%3Crect%20x%3D%22-14%22%20y%3D%22-46%22%20width%3D%2228%22%20height%3D%2270%22%20rx%3D%2212%22%20fill%3D%22%2342e0c8%22%2F%3E%3Cline%20x1%3D%22-10%22%20y1%3D%2224%22%20x2%3D%22-24%22%20y2%3D%2280%22%20stroke%3D%22%2342e0c8%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3Cline%20x1%3D%2210%22%20y1%3D%2224%22%20x2%3D%2226%22%20y2%3D%2278%22%20stroke%3D%22%2342e0c8%22%20stroke-width%3D%2214%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fg%3E%3Crect%20x%3D%22860%22%20y%3D%22600%22%20width%3D%2230%22%20height%3D%2214%22%20fill%3D%22%23eaf6ff%22%20opacity%3D%22.8%22%2F%3E%3Crect%20x%3D%22906%22%20y%3D%22600%22%20width%3D%2230%22%20height%3D%2214%22%20fill%3D%22%23eaf6ff%22%20opacity%3D%22.8%22%2F%3E%3Crect%20x%3D%22952%22%20y%3D%22600%22%20width%3D%2230%22%20height%3D%2214%22%20fill%3D%22%23eaf6ff%22%20opacity%3D%22.8%22%2F%3E%3Crect%20x%3D%22998%22%20y%3D%22600%22%20width%3D%2230%22%20height%3D%2214%22%20fill%3D%22%23eaf6ff%22%20opacity%3D%22.8%22%2F%3E%3Crect%20x%3D%221044%22%20y%3D%22600%22%20width%3D%2230%22%20height%3D%2214%22%20fill%3D%22%23eaf6ff%22%20opacity%3D%22.8%22%2F%3E%0A%3C%2Fsvg%3E"};
-/* ================= 題目資料 ================= */
-const IMG_DIR = "../img/";
-const Q = [
- {img:"01_三原色.svg", s:"三原色", q:"🎨 顏色偵探開案！光的三原色是哪三個顏色？",
-  o:["🔴🟡🔵 紅、黃、藍","🔴🟢🔵 紅、綠、藍","🟠🟢🟣 橘、綠、紫","⚫⚪🟤 黑、白、棕"], a:1,
-  h:"光的三原色＝紅 Red、綠 Green、藍 Blue（RGB）。"},
- {img:"02_螢幕RGB.svg", s:"螢幕的祕密", q:"電視、手機螢幕用哪三種顏色的光，變出所有畫面？",
-  o:["🎨 黑、白、灰","🌈 全部七彩","🔴🟢🔵 紅、綠、藍","🖍️ 紅、黃、藍"], a:2,
-  h:"螢幕靠紅綠藍三色的小燈點，混出各種畫面。"},
- {img:"03_混光白光.svg", s:"混光", q:"紅光 ＋ 綠光 ＋ 藍光，三種光疊在一起會變成？",
-  o:["⚫ 黑色","⚪ 白光","🟤 咖啡色","🌈 直接變彩虹"], a:1,
-  h:"三原色的光一起疊 → 變回白光。"},
- {img:"04_越加越亮.svg", s:"混光觀念", q:"光是「越加越亮」還是「越加越暗」？",
-  o:["🌑 越加越暗","☀️ 越加越亮","😐 都沒變","💥 會爆炸"], a:1,
-  h:"光是加色：越多光疊在一起越亮，全疊起來就是白光。"},
- {img:"05_三稜鏡色散.svg", s:"色散", q:"白色的太陽光穿過三稜鏡，散開成七彩，這叫？",
-  o:["💨 蒸發","🌈 色散","🧊 結冰","🔊 回音"], a:1,
-  h:"白光藏了很多顏色，三稜鏡把它們分開 → 色散。"},
- {img:"06_白光的祕密.svg", s:"白光的祕密", q:"其實白光裡面藏了什麼祕密？",
-  o:["🕳️ 什麼都沒有","💧 藏了水","🌈 藏了很多顏色的光","🔋 藏了電"], a:2,
-  h:"看起來白白的太陽光，其實是很多顏色混在一起。"},
- {img:"07_彩虹.svg", s:"彩虹", q:"下雨後天空出現七彩的橋，那是什麼？",
-  o:["☁️ 烏雲","⚡ 閃電","🌈 彩虹","🎆 煙火"], a:2,
-  h:"空中的小水滴像三稜鏡，把陽光色散成彩虹。"},
- {img:"08_彩虹七色.svg", s:"彩虹七色", q:"彩虹總共有幾種顏色？",
-  o:["3️⃣ 三種","7️⃣ 七種（紅橙黃綠藍靛紫）","5️⃣ 五種","🔟 十種"], a:1,
-  h:"彩虹七色：紅、橙、黃、綠、藍、靛、紫。"},
- {img:"09_香蕉黃.svg", s:"物體的顏色", q:"為什麼香蕉看起來是黃色的？",
-  o:["💛 它把黃光反射進我們眼睛","🎨 有人偷偷幫它上色","😋 因為它很好吃","🌙 因為晚上才看得到"], a:0,
-  h:"香蕉反射黃光、吸收其他光，所以看到黃色。物體顏色＝它反射的光。"},
- {img:"10_蘋果紅.svg", s:"物體的顏色", q:"那紅蘋果為什麼是紅色的？",
-  o:["🖌️ 農夫幫它塗紅色","🍎 它反射紅光、把別的光吃掉","🔥 因為它很燙","😳 因為它害羞臉紅"], a:1,
-  h:"蘋果反射紅光、吸收其他顏色，所以是紅色。"},
- {img:"11_全黑房間.svg", s:"顏色需要光", q:"在全黑、完全沒有光的房間裡，紅蘋果看起來是什麼顏色？",
-  o:["🔴 還是紅色","🌈 變成彩虹色","⚫ 黑黑的，看不出顏色","⚪ 變白色"], a:2,
-  h:"沒有光就沒有可反射的光 → 看不出顏色。有光，才有顏色！"},
- {img:"12_紅綠燈.svg", s:"生活應用", q:"🚦 顏色偵探結案！紅綠燈看到哪個顏色可以安全走過馬路？",
-  o:["🔴 紅燈","🟡 黃燈","🟢 綠燈","🌈 彩虹燈"], a:2,
-  h:"綠燈行、紅燈停、黃燈小心。你也是顏色偵探了 🎉"},
-];
-const OPTCLS=["r","b","y","g"], OPTSH=["🔺","🔷","🟡","🟩"];
-const QSEC=30;
-
-/* ================= 音效（Web Audio 合成，免外部檔） ================= */
-const Snd=(()=>{
-  let ctx=null, on=true, drum=null;
-  const ac=()=>{ if(!ctx){ try{ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return ctx; };
-  function tone(f,t,dur,type="sine",vol=.25){
-    if(!on)return; const c=ac(); if(!c)return;
-    const o=c.createOscillator(), g=c.createGain();
-    o.type=type; o.frequency.value=f; o.connect(g); g.connect(c.destination);
-    const s=c.currentTime+t;
-    g.gain.setValueAtTime(0,s); g.gain.linearRampToValueAtTime(vol,s+.01);
-    g.gain.exponentialRampToValueAtTime(.0001,s+dur);
-    o.start(s); o.stop(s+dur+.02);
-  }
-  function noise(t,dur,vol=.3){
-    if(!on)return; const c=ac(); if(!c)return;
-    const n=c.sampleRate*dur, b=c.createBuffer(1,n,c.sampleRate), d=b.getChannelData(0);
-    for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
-    const src=c.createBufferSource(); src.buffer=b;
-    const g=c.createGain(); g.gain.value=vol; src.connect(g); g.connect(c.destination);
-    src.start(c.currentTime+t);
-  }
-  return {
-    set(v){on=v;}, get(){return on;}, resume(){const c=ac(); if(c&&c.state==="suspended")c.resume();},
-    click(){tone(520,0,.08,"triangle",.2);},
-    tick(){tone(880,0,.03,"square",.06);},
-    correct(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.09,.25,"triangle",.28)); noise(.02,.15,.12);},
-    wrong(){tone(200,0,.3,"sawtooth",.28); tone(150,.12,.3,"sawtooth",.28);},
-    whoosh(){tone(300,0,.25,"sine",.18); tone(600,.05,.2,"sine",.12);},
-    win(){[523,659,784,1047,1319,1047,1319,1568].forEach((f,i)=>tone(f,i*.11,.32,"triangle",.3)); noise(.4,.5,.15);},
-    drumStart(){ if(!on)return; drum=setInterval(()=>{tone(160,0,.05,"square",.14);noise(0,.03,.08);},70); },
-    drumStop(){ if(drum){clearInterval(drum);drum=null;} },
-  };
-})();
-
-/* ================= 通用 ================= */
 const $=id=>document.getElementById(id);
-const show=id=>{document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on")); $(id).classList.add("on");};
-let names=[], score=0, combo=0, idx=0, timer=null, timeLeft=0, locked=false, useTimer=true;
-let deck=Q.slice(), results=[];
-function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+const OBJ=[{n:"蘋果",img:"img/stage/apple.png",ref:"R"},{n:"香蕉",img:"img/stage/banana.png",ref:"RG"},{n:"植物",img:"img/stage/plant.png",ref:"G"},{n:"白衣",img:"img/stage/shirt.png",ref:"RGB"}];
+const LIGHT={white:[1,1,1],red:[1,0,0],green:[0,1,0],blue:[0,0,1],none:[0,0,0]};
+const LN={white:"⚪ 白光",red:"🔴 紅光",green:"🟢 綠光",blue:"🔵 藍光",none:"🌑 沒有光"};
+function setLight(k){const [r,g,b]=LIGHT[k];$("lmtx").setAttribute("values",`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`);const l=$("photo").querySelector(".lbl");if(l)l.textContent=LN[k];
+  const d=$("photo").querySelector(".dark");if(d)d.style.opacity=k==="none"?"1":"0";}
 
-/* ================= 開始 ================= */
-$("chkTimer").onclick=e=>{e.currentTarget.classList.toggle("on"); useTimer=e.currentTarget.classList.contains("on");};
-$("chkSound").onclick=e=>{e.currentTarget.classList.toggle("on"); Snd.set(e.currentTarget.classList.contains("on"));};
-$("chkShuffle").onclick=e=>{e.currentTarget.classList.toggle("on");};
-function parseNames(){
-  const raw=$("names").value.trim();
-  let arr = raw? raw.split(/[\s,，、]+/).filter(Boolean) : [];
-  if(arr.length<2) arr=["1號","2號","3號","4號","5號","6號","7號","8號"];
-  return arr;
+/* 關卡：type objs=點物件 / photo=看照片選答 / boss */
+const Q=[
+ {type:"photo",img:"img/fruits.jpg",q:"白光下，香蕉是什麼顏色？",opts:[["黃色","#ffe600"],["紅色","#e53935"],["藍色","#2f7bff"]],ok:0,light:"white",why:"白光有各種顏色的光，香蕉反射黃光（紅＋綠）。",tz:"反射"},
+ {type:"objs",q:"只給「綠光」，哪一個會變得最黑？點它！",okObj:0,light:"green",why:"紅蘋果只反射紅光，綠光照上去沒有紅光可反射，就變黑。",tz:"選擇性反射"},
+ {type:"objs",q:"要讓「植物」最亮，開哪種光？先點植物，再選光",okObj:2,pickLight:true,opts:[["綠光","#28e05a"],["紅光","#ff3b3b"],["藍光","#3b8dff"]],ok:0,why:"葉子反射綠光，綠光照上去最亮。",tz:"選擇性反射"},
+ {type:"boss",name:"黑暗魔王",face:"🌑",img:"img/fruits.jpg",q:"全黑、完全沒有光的房間裡，紅蘋果看起來是什麼顏色？",opts:[["黑黑的，看不出顏色","#111"],["還是紅色","#e53935"],["變白色","#fff"]],ok:0,light:"none",why:"沒有光就沒有反射，什麼顏色都看不到——顏色來自光！",tz:"沒有光就沒有顏色"},
+ {type:"photo",img:"img/ws-rg.jpg",q:"紅光＋綠光疊在一起，會變什麼？",opts:[["黃光","#ffe600"],["黑色","#111"],["咖啡色","#7b4a12"]],ok:0,light:"white",why:"色光相加會變亮：紅＋綠＝黃。這叫加色混合。",tz:"加色混合"},
+ {type:"objs",q:"只給「藍光」，哪一個還是最亮？點它！",okObj:3,light:"blue",why:"白衣反射所有顏色的光，藍光下當然亮。",tz:"反射所有光"},
+ {type:"objs",q:"「紅光」照紅蘋果，蘋果會？先點蘋果，再選",okObj:0,pickLight:false,opts:[["更亮的紅","#ff3b3b"],["變黑","#111"],["變綠","#28e05a"]],ok:0,light:"red",why:"蘋果就是反射紅光，紅光下最亮。",tz:"選擇性反射"},
+ {type:"boss",name:"舞台魔王",face:"🎭",img:"img/ws-rgb.jpg",q:"紅、綠、藍三盞燈一起開，牆上變成什麼光？",opts:[["白光","#fff"],["黑色","#111"],["灰色","#888"]],ok:0,light:"white",why:"紅＋綠＋藍＝白光！光的三原色合起來是白。",tz:"光的三原色"},
+ {type:"photo",img:"img/case-vest.jpg",q:"晚上在馬路邊工作，穿哪件最安全？",opts:[["螢光黃綠","#c8ff3a"],["黑色","#111"],["深藍","#123a7a"]],ok:0,light:"white",why:"螢光黃綠反射最多光，車燈一照就亮。",tz:"反射最多光"},
+ {type:"photo",img:"img/case-shirts.jpg",q:"大太陽底下，穿哪件比較涼？",opts:[["白衣","#fff"],["黑衣","#111"]],ok:0,light:"white",why:"白色反射光；黑色吸收光變熱。",tz:"反射 vs 吸收"},
+ {type:"photo",img:"img/case-traffic.jpg",q:"「停」為什麼用紅燈？",opts:[["紅光傳得遠、最醒目","#ff3b3b"],["因為紅色好看","#ff9ad0"],["隨便選的","#888"]],ok:0,light:"white",why:"紅光在雨霧中傳得最遠，最容易被看到。",tz:"紅光傳得遠"},
+ {type:"boss",name:"終極魔王：顏色之謎",face:"👑",img:"img/fruits.jpg",q:"物體的顏色，到底是什麼？",opts:[["它反射什麼光","#ffe600"],["它自己發光","#e53935"],["它吃掉什麼光","#111"]],ok:0,light:"white",why:"物體的顏色＝它反射什麼光。破案！",tz:"選擇性反射"},
+];
+let qi=0,score=0,streak=0,picked=null,solved=false,hp=100;
+const KEYS=["A","B","C","D"];
+function dots(){$("dots").innerHTML=Q.map((x,k)=>`<span class="dot${k<qi?" done":k===qi?" now":""}${x.type==="boss"?" boss":""}"></span>`).join("");}
+function renderPhoto(item){const p=$("photo");
+  if(item.type==="objs"){p.innerHTML=`<img class="bg" src="img/wall.jpg" alt="" style="filter:brightness(.25)"><div class="lbl">⚪ 白光</div><div class="objs">${OBJ.map((o,i)=>`<div class="obj" data-i="${i}" onclick="pickObj(${i})"><img src="${o.img}" alt="" style="filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))"><div class="nm">${o.n}</div></div>`).join("")}</div><div class="dark"></div>`;}
+  else{p.innerHTML=`<img class="bg" src="${item.img}" alt="" style="filter:url(#lightf)"><div class="lbl">⚪ 白光</div><div class="dark"></div>`;}
+  setLight("white");}
+function render(){picked=null;solved=false;dots();const item=Q[qi];
+  $("qi").textContent=qi+1;$("qn").textContent=item.type==="boss"?"👑 魔王關":"關卡 "+(qi+1);$("q").textContent=item.q;$("fb").innerHTML="";$("hint").textContent="";$("next").disabled=true;$("next").classList.remove("pulse");
+  $("boss").classList.toggle("show",item.type==="boss");$("foe").classList.toggle("show",item.type==="boss");if(item.type==="boss"){$("bossFace").textContent=item.face;$("foe").textContent=item.face;$("bossName").textContent=item.name;hp=100;$("hp").style.width="100%";FX.sound.boom();document.body.classList.add("shake");setTimeout(()=>document.body.classList.remove("shake"),500);}
+  renderPhoto(item);
+  if(item.type==="objs"&&!item.opts){$("opts").innerHTML="";$("hint").textContent="👆 直接點照片裡的東西";}
+  else{const order=item.opts.map((o,i)=>({o,i})).sort(()=>Math.random()-.5);
+    $("opts").innerHTML=order.map(({o,i},k)=>`<div class="opt" data-i="${i}" onclick="choose(${i},this)"><span class="k">${KEYS[k]}</span><span class="sw" style="background:${o[1]}"></span>${o[0]}</div>`).join("");
+    if(item.type==="objs")$("hint").textContent="👆 先點照片裡的東西，再選答案";}
 }
-$("startBtn").onclick=()=>{ Snd.resume(); Snd.click(); names=parseNames(); score=0; combo=0; idx=0; results=[];
-  useTimer=$("chkTimer").classList.contains("on");
-  deck = $("chkShuffle").classList.contains("on") ? shuffle(Q.slice()) : Q.slice();
-  $("scoreN").textContent=0; show("quiz"); render(); };
-$("wheelHomeBtn").onclick=()=>{ Snd.resume(); names=parseNames(); openWheel("🎡 抽人回答", names, null); };
-$("againBtn").onclick=()=>{ Snd.click(); show("home"); };
-
-/* ================= 出題 ================= */
-function render(){
-  locked=false;
-  const q=deck[idx];
-  $("curN").textContent=idx+1; $("qnum").textContent=idx+1;
-  $("qtext").textContent=q.q;
-  $("qimg").src=IMGDATA[q.img]||""; $("qimg").alt=q.s;
-  $("hint").hidden=true; $("nextBtn").hidden=true; $("pickBtn").hidden=false;
-  $("comboPill").style.visibility = combo>=2? "visible":"hidden"; $("comboN").textContent=combo;
-  // 進度圓點
-  const dots=$("dots"); dots.innerHTML="";
-  deck.forEach((_,i)=>{ const d=document.createElement("div");
-    d.className="dot"+(i<idx?" done":"")+(i===idx?" cur":""); dots.appendChild(d); });
-  const box=$("opts"); box.innerHTML="";
-  q.o.forEach((t,i)=>{
-    const b=document.createElement("button");
-    b.className="opt "+OPTCLS[i];
-    b.innerHTML=`<span class="sh">${OPTSH[i]}</span><span>${t}</span>`;
-    b.onclick=()=>choose(i,b);
-    box.appendChild(b);
-  });
-  // 進場動畫
-  ["qhead","qmid"].forEach(id=>{ const el=$(id); el.classList.remove("anim"); void el.offsetWidth; el.classList.add("anim"); });
-  const fill=$("tfill"); fill.className=""; fill.style.transition="none"; fill.style.width="100%";
-  $("tnum").textContent=QSEC;
-  document.querySelector(".trow").style.visibility = useTimer? "visible":"hidden";
-  if(useTimer) startTimer();
-}
-function startTimer(){
-  clearInterval(timer); timeLeft=QSEC; const fill=$("tfill");
-  requestAnimationFrame(()=>{ fill.style.transition=`width ${QSEC}s linear`; fill.style.width="0%"; });
-  timer=setInterval(()=>{
-    timeLeft--; $("tnum").textContent=Math.max(timeLeft,0);
-    if(timeLeft===10) fill.classList.add("warn");
-    if(timeLeft===5) fill.classList.replace("warn","danger");
-    if(timeLeft<=5&&timeLeft>0)Snd.tick();
-    if(timeLeft<=0){ clearInterval(timer); if(!locked) reveal(-1); }
-  },1000);
-}
-function choose(i,btn){ if(locked)return; Snd.click(); reveal(i,btn); }
-function reveal(picked,btn){
-  if(locked)return; locked=true; clearInterval(timer);
-  const q=deck[idx];
-  const opts=[...document.querySelectorAll(".opt")];
-  const correct = (picked===q.a); results[idx]=correct;
-  opts.forEach((el,i)=>{
-    if(i===q.a){ el.classList.add("win"); el.insertAdjacentHTML("beforeend",'<span class="mark">✅</span>'); }
-    else { el.classList.add("dim"); }
-  });
-  if(correct){
-    combo++; const gain = 100 + (combo>=2?(combo-1)*30:0);
-    score+=gain; bumpScore();
-    Snd.correct(); confetti(); flashMsg("答對啦！ +"+gain, "#38d967");
-  }else{
-    combo=0; if(btn){ btn.classList.add("lose"); btn.insertAdjacentHTML("beforeend",'<span class="mark">❌</span>'); }
-    Snd.wrong(); document.body.classList.add("shake"); setTimeout(()=>document.body.classList.remove("shake"),400);
-    flashMsg(picked<0? "時間到！看正解 👀":"再想一次也很棒 💪", "#ff5d8f");
-  }
-  $("comboPill").style.visibility = combo>=2? "visible":"hidden"; $("comboN").textContent=combo;
-  $("hint").textContent="🔑 "+q.h; $("hint").hidden=false;
-  $("pickBtn").hidden=true; $("nextBtn").hidden=false;
-}
-function bumpScore(){ const s=$("scoreN"); let cur=score-100; const step=Math.ceil((score-cur)/12);
-  const t=setInterval(()=>{ cur+=step; if(cur>=score){cur=score;clearInterval(t);} s.textContent=cur; },20); }
-$("nextBtn").onclick=()=>{ Snd.click(); idx++; if(idx>=deck.length) finish(); else render(); };
-$("pickBtn").onclick=()=>{ Snd.resume(); openWheel("🎡 誰來回答第 "+(idx+1)+" 關？", names, null); };
-
-/* ================= 結算 ================= */
-function finish(){
-  show("result");
-  const total=deck.length, right=results.filter(Boolean).length, ratio=right/total;
-  $("totalN").textContent=total; $("rightN").textContent=right;
-  // 復習表：每題一格，綠=答對 紅=答錯
-  const rc=$("recap"); rc.innerHTML="";
-  deck.forEach((_,i)=>{ const c=document.createElement("div");
-    const ok=results[i]; c.textContent=i+1;
-    c.style.cssText=`width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-weight:900;
-      font-size:16px;color:#fff;background:${ok?"#38b26b":"#e94b4b"};box-shadow:0 4px 10px var(--shadow)`;
-    rc.appendChild(c); });
-  $("resScore").textContent="0"; let c=0; const step=Math.max(1,Math.ceil(score/40));
-  const t=setInterval(()=>{ c+=step; if(c>=score){c=score;clearInterval(t);} $("resScore").textContent=c; },25);
-  let stars="⭐⭐⭐", emo="🏆", msg="太厲害了，你們都是光的專家！";
-  if(ratio<.4){stars="⭐";emo="💪";msg="很棒的開始！再玩一次會更神！";}
-  else if(ratio<.75){stars="⭐⭐";emo="😎";msg="很強喔！顏色偵探出師啦！";}
-  $("resStars").textContent=stars; $("resEmo").textContent=emo; $("resMsg").textContent=msg;
-  Snd.win();
-  // 盛大慶祝：連續多波彩帶
-  confetti(2600); [500,1000,1600].forEach(d=>setTimeout(()=>confetti(1800),d));
-}
-
-/* ================= 轉盤 / 抽獎 ================= */
-const WHEELCOLS=["#e94b4b","#ff9f1c","#f4c020","#38b26b","#2e9bff","#8a5cf6","#ff5d8f","#42e0c8"];
-let curSpinList=[], spinning=false, afterSpin=null, wheelRot=0;
-function buildWheel(list){
-  const n=list.length, seg=360/n; const stops=[];
-  list.forEach((_,i)=>{ const c=WHEELCOLS[i%WHEELCOLS.length]; stops.push(`${c} ${i*seg}deg ${(i+1)*seg}deg`); });
-  const w=$("wheel"); w.style.background=`conic-gradient(${stops.join(",")})`;
-  w.style.transition="none"; wheelRot=0; w.style.transform="rotate(0deg)"; void w.offsetWidth;
-  w.style.transition="";
-  // labels（沿半徑排在每一格中央）
-  [...w.querySelectorAll(".lab")].forEach(e=>e.remove());
-  list.forEach((name,i)=>{
-    const el=document.createElement("div"); el.className="lab";
-    const ang=(i+0.5)*seg;
-    el.style.cssText=`position:absolute;left:0;top:0;width:100%;height:100%;
-      display:flex;justify-content:center;align-items:flex-start;padding-top:5%;
-      transform:rotate(${ang}deg);pointer-events:none;`;
-    el.innerHTML=`<span style="font-weight:900;color:#08131f;max-width:38%;text-align:center;line-height:1.1;
-      font-size:clamp(14px,2.3vh,22px);text-shadow:0 1px 2px rgba(255,255,255,.35)">${name}</span>`;
-    w.appendChild(el);
-  });
-}
-function openWheel(title, list, after){
-  curSpinList=list.slice(); afterSpin=after; spinning=false;
-  $("ovTitle").textContent=title; $("winner").innerHTML="&nbsp;";
-  buildWheel(curSpinList); $("ov").classList.add("on"); $("spinBtn").disabled=false;
-}
-$("spinBtn").onclick=()=>{
-  if(spinning)return; spinning=true; $("spinBtn").disabled=true; $("winner").innerHTML="&nbsp;";
-  Snd.resume(); Snd.whoosh(); Snd.drumStart();
-  const n=curSpinList.length, seg=360/n;
-  const turns=5+Math.floor(Math.random()*3);
-  wheelRot += turns*360 + Math.random()*360;
-  const w=$("wheel");
-  w.style.transform=`rotate(${wheelRot}deg)`;
-  // 轉完後，頂端指針指到的原始角度 → 對應中獎格（指針＝贏家，永遠一致）
-  const atTop=(360-(wheelRot%360)+360)%360;
-  const win=Math.floor(atTop/seg)%n;
-  setTimeout(()=>{
-    Snd.drumStop(); Snd.win(); spinning=false; $("spinBtn").disabled=false;
-    $("winner").textContent="🎉 "+curSpinList[win]+" 🎉";
-    confetti(1600);
-  },5200);
+window.pickObj=i=>{if(solved)return;const item=Q[qi];FX.sound.blip();document.querySelectorAll(".obj").forEach(o=>o.classList.remove("pick"));document.querySelectorAll(".obj")[i].classList.add("pick");
+  if(!item.opts){ // 純點物件題：切光驗證
+    setLight(item.light);setTimeout(()=>{if(i===item.okObj)win(item);else{FX.sound.wrongsoft();$("fb").innerHTML="💡 看！燈切成"+LN[item.light]+"了——再看一次哪個最黑／最亮";$("fb").className="fb";setTimeout(()=>setLight("white"),1600);}},700);}
+  else{picked=i;}
 };
-$("ovCloseBtn").onclick=()=>{ Snd.drumStop(); Snd.click(); $("ov").classList.remove("on"); if(afterSpin)afterSpin(); };
-$("drawBtn").onclick=()=>{ Snd.resume(); openWheel("🎁 終極大抽獎！誰是幸運兒？", names, null); };
-
-/* ================= 特效：彩帶 + 飄字 ================= */
-const cv=$("fx"), cx=cv.getContext("2d"); let parts=[];
-function resize(){ cv.width=innerWidth; cv.height=innerHeight; } resize(); addEventListener("resize",resize);
-const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
-function confetti(ms=1400){
-  if(REDUCE) ms=Math.min(ms,700);
-  const cols=["#ffc93c","#ff5d8f","#42e0c8","#38d967","#2e9bff","#ff9f1c","#8a5cf6"];
-  const N = REDUCE? 24 : 70;
-  for(let i=0;i<N;i++) parts.push({x:Math.random()*innerWidth, y:-20-Math.random()*120,
-    vx:(Math.random()-.5)*3, vy:2+Math.random()*3.5, g:.06+Math.random()*.05,
-    s:7+Math.random()*8, c:cols[i%cols.length], r:Math.random()*6, vr:(Math.random()-.5)*.35, life:ms});
-  if(!raf) loop();
+window.choose=(i,el)=>{if(solved)return;const item=Q[qi];
+  if(item.type==="objs"&&picked!==item.okObj){FX.sound.wrongsoft();$("fb").innerHTML="💡 先點照片裡正確的東西（"+OBJ[item.okObj].n+"）";return;}
+  if(i===item.ok){setLight(item.light);setTimeout(()=>win(item,el),item.light==="white"?0:600);}
+  else{el.classList.add("wrong");heroWrong();$("fb").innerHTML="💡 來看真的會怎樣…";setLight(item.light);setTimeout(()=>{setLight("white");el.classList.remove("wrong");$("fb").innerHTML="💡 再選一次（答錯不扣分）";},1500);streak=0;$("streak").textContent=0;heroGrow();}
+};
+/* 🎮 英雄跑道：答對→跳（越連對跳越高）、變大；連對3吃🍄、連對6拿⭐；魔王關→衝過去揍 */
+let coins=0;
+function heroGrow(){const h=$("hero");const sc=Math.min(2.2,1+streak*.15);h.style.transform=`scale(${sc})`;$("pw").textContent=`🤖 小幫手 Lv.${1+Math.floor(streak/2)}${streak>=6?" ⭐無敵":streak>=3?" 🍄變大":""}`;
+  $("lane").classList.toggle("invincible",streak>=6);}
+function heroJump(){const h=$("hero");h.style.setProperty("--jh",Math.min(92,30+streak*10)+"px");h.classList.remove("jump");void h.offsetWidth;h.classList.add("jump");FX.sound.jump();
+  coins+=1+Math.floor(streak/3);$("coinrow").textContent="🪙 "+coins;FX.emojiBurst("🪙",6+streak,innerWidth*.25,innerHeight*.35);}
+function heroAttack(){const h=$("hero"),f=$("foe");h.classList.remove("dash");void h.offsetWidth;h.classList.add("dash");
+  setTimeout(()=>{f.classList.remove("hit");void f.offsetWidth;f.classList.add("hit");FX.sound.boom();FX.emojiBurst("💥",16,innerWidth*.72,innerHeight*.3);},380);}
+function heroWrong(){FX.sound.wrongsoft();$("pw").textContent="🤖 小幫手 沒關係，再試一次";}
+function win(item,el){solved=true;streak++;score+=item.type==="boss"?500:100+streak*10;$("score").textContent=score;$("streak").textContent=streak;
+  if(item.type==="boss"){heroAttack();}else{heroJump();}heroGrow();
+  if(streak===3){FX.sound.powerup();FX.emojiBurst("🍄",10,innerWidth*.25,innerHeight*.3);}if(streak===6){FX.sound.oneup();FX.emojiBurst("⭐",14,innerWidth*.25,innerHeight*.3);}
+  document.querySelectorAll(".opt").forEach(o=>{o.classList.add("disabled");if(+o.dataset.i===item.ok)o.classList.add("right");});
+  $("fb").innerHTML="✅ "+item.why+"<span class='term'>"+item.tz+"</span>";$("next").disabled=false;$("next").classList.add("pulse");
+  if(item.type==="boss"){$("hp").style.width="0%";FX.sound.boom();document.body.classList.add("shake");setTimeout(()=>document.body.classList.remove("shake"),500);
+    setTimeout(()=>{FX.sound.clear();FX.fireworks(2200);if(qi===3)FX.stamp({text:"打敗！"});else if(qi===7)FX.chest({title:"舞台魔王掉落寶物",gem:"💎",gemName:"白光寶石",gemColor:"#fff",sub:"紅＋綠＋藍＝白光"});else FX.badge({id:"detective",emoji:"🎨",name:"顏色偵探大師",desc:"12 關真實照片破案全破"});},600);}
+  else{FX.sound.powerup();FX.confetti(80);if(streak===3)FX.sound.oneup();if(qi===5)FX.mascot({emoji:"🤖",name:"機器人小幫手",lines:["連對好厲害！","記住：物體的顏色＝它反射什麼光"]});}
 }
-let raf=null;
-function loop(){
-  raf=requestAnimationFrame(loop); cx.clearRect(0,0,cv.width,cv.height);
-  parts=parts.filter(p=>p.life>0);
-  parts.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; p.life-=16;
-    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.fillStyle=p.c;
-    cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); cx.restore(); });
-  if(parts.length===0){ cancelAnimationFrame(raf); raf=null; cx.clearRect(0,0,cv.width,cv.height); }
-}
-function flashMsg(txt,color){
-  const d=document.createElement("div"); d.textContent=txt;
-  d.style.cssText=`position:absolute;top:16%;left:50%;transform:translateX(-50%);z-index:70;
-    font-size:clamp(28px,5vh,52px);font-weight:900;color:${color};text-shadow:0 3px 10px #000;
-    pointer-events:none;transition:all 1.1s ease;opacity:1`;
-  document.body.appendChild(d);
-  requestAnimationFrame(()=>{ d.style.top="8%"; d.style.opacity="0"; });
-  setTimeout(()=>d.remove(),1200);
-}
-
-/* 鍵盤：空白/→ 下一題，1-4 選答（方便老師投影操作） */
-addEventListener("keydown",e=>{
-  if($("quiz").classList.contains("on")){
-    if((e.key===" "||e.key==="ArrowRight")&&!$("nextBtn").hidden){e.preventDefault();$("nextBtn").click();}
-    else if(["1","2","3","4"].includes(e.key)&&!locked){ const b=document.querySelectorAll(".opt")[+e.key-1]; if(b)b.click(); }
-  }
-});
+$("next").onclick=()=>{if(qi<Q.length-1){qi++;render();}else{$("q").textContent="🎉 全部破案！你是顏色偵探大師";$("opts").innerHTML="";$("next").disabled=true;FX.wheel({title:"🎡 顏色偵探・全班獎勵"});}};
+addEventListener("keydown",e=>{if(e.key===" "||e.key==="ArrowRight"){if(!$("next").disabled){e.preventDefault();$("next").click();}}
+  else if(["1","2","3","4"].includes(e.key)){const b=document.querySelectorAll(".opt")[+e.key-1];if(b)b.click();}});
+render();
 </script>
-
-
 </body>
 </html>
