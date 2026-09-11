@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>混光魔法・白光大解密</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--bg1:#05101f;--bg2:#0a2036;--bg3:#0e3350;--panel:#0f2841;--line:rgba(120,170,210,.28);
+    --amber:#ffc93c;--teal:#42e0c8;--ink:#eaf6ff;--dim:#9db8cf;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;
+    background:radial-gradient(120% 80% at 50% -10%,rgba(255,201,60,.10),transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3));transition:filter .6s}
+  body.dark{filter:brightness(.55)}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)}
+  .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .wrap{max-width:960px;margin:0 auto;padding:18px 14px 50px}
+  header{text-align:center;padding:6px 0 2px}
+  .emblem{font-size:52px;filter:drop-shadow(0 8px 18px rgba(255,201,60,.35))}
+  h1{font-family:var(--disp);font-size:30px;margin:2px 0}
+  .sub{color:var(--teal);font-weight:900;font-size:19px}
+  .tip{color:var(--dim);font-weight:800;font-size:15px;margin-top:6px}
+
+  /* wall */
+  .wall{position:relative;margin:16px auto 0;border-radius:24px;overflow:hidden;border:3px solid var(--line);aspect-ratio:16/9;
+    background:#0a0f1c;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  .spot{position:absolute;inset:0;background:#000;transition:background .35s}
+  .beam{position:absolute;bottom:-10%;width:60%;height:120%;opacity:0;transition:opacity .3s;pointer-events:none;mix-blend-mode:screen;filter:blur(2px)}
+  .beam.r{left:-5%;background:radial-gradient(ellipse at 30% 100%,rgba(255,40,40,.95),rgba(255,40,40,.35) 35%,transparent 65%)}
+  .beam.g{left:20%;background:radial-gradient(ellipse at 50% 100%,rgba(40,255,90,.95),rgba(40,255,90,.35) 35%,transparent 65%)}
+  .beam.b{left:45%;background:radial-gradient(ellipse at 70% 100%,rgba(60,140,255,.95),rgba(60,140,255,.35) 35%,transparent 65%)}
+  .beam.on{opacity:1}
+  .mixlabel{position:absolute;left:50%;top:14%;transform:translateX(-50%);font-family:var(--disp);font-size:min(9vw,52px);font-weight:700;
+    text-shadow:0 4px 14px rgba(0,0,0,.8);transition:opacity .3s;pointer-events:none}
+  .torches{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:min(6vw,40px)}
+  .torch{width:min(18vw,96px);height:min(18vw,96px);border-radius:50%;border:4px solid rgba(255,255,255,.35);cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--disp);font-weight:700;font-size:min(3.6vw,18px);
+    color:#fff;background:#15223a;box-shadow:0 6px 16px rgba(0,0,0,.6);transition:transform .1s,box-shadow .2s;user-select:none}
+  .torch:active{transform:scale(.94)}
+  .torch .e{font-size:min(6vw,30px);line-height:1}
+  .torch.r.on{background:#ff3b3b;box-shadow:0 0 30px #ff3b3b}
+  .torch.g.on{background:#28e05a;box-shadow:0 0 30px #28e05a;color:#063}
+  .torch.b.on{background:#3b8dff;box-shadow:0 0 30px #3b8dff}
+  .torch.locked{opacity:.4;pointer-events:none}
+
+  /* quest */
+  .quest{margin-top:16px;background:var(--panel);border:3px solid var(--line);border-radius:22px;padding:18px 18px 16px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  .qhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .step{display:inline-block;background:var(--amber);color:#08131f;font-family:var(--disp);font-weight:700;font-size:16px;border-radius:999px;padding:3px 14px}
+  .dots .d{display:inline-block;width:12px;height:12px;border-radius:50%;background:#26425f;margin:0 3px}
+  .dots .d.done{background:var(--teal)}.dots .d.now{background:var(--amber);transform:scale(1.3)}
+  .q{font-size:28px;font-weight:900;margin:10px 0 12px;line-height:1.3}
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:560px){.opts{grid-template-columns:1fr}}
+  .opt{display:flex;align-items:center;justify-content:center;gap:10px;background:#13314f;border:3px solid var(--line);border-radius:16px;
+    padding:16px 10px;cursor:pointer;font-size:24px;font-weight:900;transition:transform .1s,border-color .1s}
+  .opt:hover{transform:translateY(-2px);border-color:var(--amber)}
+  .opt .sw{width:34px;height:34px;border-radius:9px;border:2px solid rgba(255,255,255,.5);flex:none}
+  .opt.picked{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,201,60,.35)}
+  .opt.right{border-color:#28e07a;background:rgba(40,224,122,.2)}
+  .opt.disabled{pointer-events:none;opacity:.8}
+  .fb{margin-top:12px;font-size:19px;font-weight:800;min-height:28px}
+  .fb .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:15px;margin-left:6px}
+  .row{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+  .btn{font-family:var(--disp);font-weight:700;font-size:19px;border:none;border-radius:16px;padding:13px 24px;cursor:pointer}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);color:#08131f;box-shadow:0 6px 0 #c9860f}
+  .btn.go:active{transform:translateY(4px);box-shadow:0 2px 0 #c9860f}
+  .btn.next{background:linear-gradient(180deg,var(--teal),#1fbfa8);color:#063}
+  .btn.ghost{background:var(--panel);border:2px solid var(--line);color:var(--ink)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.pulse{animation:pulse 1.1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 6px 0 #c9860f,0 0 0 0 rgba(255,201,60,.5)}50%{box-shadow:0 6px 0 #c9860f,0 0 0 12px rgba(255,201,60,0)}}
+
+  /* countdown overlay */
+  .cd{position:fixed;inset:0;background:rgba(3,6,14,.92);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:500;text-align:center}
+  .cd.show{display:flex}
+  .cd .n{font-family:var(--disp);font-size:min(40vw,220px);font-weight:700;color:var(--amber);line-height:1;animation:pop .9s}
+  .cd .t{font-size:26px;font-weight:900;color:#fff;margin-top:10px}
+  @keyframes pop{0%{transform:scale(.4);opacity:0}30%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+
+  /* win */
+  .win{position:fixed;inset:0;background:rgba(6,10,26,.94);display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:600;padding:20px}
+  .win.show{display:flex}
+  .win .big{font-size:96px;margin:0;animation:trophy .8s ease-out both}
+  @keyframes trophy{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(10deg)}100%{transform:scale(1)}}
+  .win h2{font-family:var(--disp);font-size:44px;margin:8px 0}
+  .win p{font-size:22px;font-weight:900;color:var(--amber);margin:4px 0}
+  .vlap{position:absolute;left:0;right:0;top:20%;height:130px;overflow:hidden;pointer-events:none}
+  .vlap .finish{position:absolute;right:8%;top:0;font-size:76px}
+  .vlap .car{position:absolute;left:-160px;top:16px;font-size:92px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+  .vlap.go .car{animation:drive 2.2s cubic-bezier(.3,0,.2,1) forwards}
+  @keyframes drive{0%{left:-160px}100%{left:82%}}
+
+  /* teacher cards */
+  details{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:12px 16px;margin-top:12px}
+  summary{cursor:pointer;font-weight:900;font-size:18px;color:var(--amber)}
+  .tc{font-size:16px;font-weight:700;line-height:1.6;color:#dbe9f7}
+  .tc b{color:var(--teal)}
+  .files{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .file{display:inline-flex;align-items:center;gap:8px;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:10px 14px;text-decoration:none;color:var(--ink);font-weight:900}
+  .file:hover{border-color:var(--amber)}
+  footer{text-align:center;margin-top:26px;color:var(--dim);font-size:13px}
+  canvas.confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:650}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="./">🏠 回到首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<canvas class="confetti" id="cf"></canvas>
+
+<div class="cd" id="cd"><div class="n" id="cdn">3</div><div class="t" id="cdt">我們要關燈了</div></div>
+
+<div class="win" id="win">
+  <div class="vlap" id="vlap"><div class="finish">🏁</div><div class="car">🚂</div></div>
+  <div class="big">🏆</div>
+  <h2>白光大解密成功！</h2>
+  <p>白光 ＝ 紅 ＋ 綠 ＋ 藍</p>
+  <p style="color:#cfe4f5;font-size:17px">光的三原色・加色混合</p>
+  <div class="row"><button class="btn next" onclick="restart()">🔄 再玩一次</button><a class="btn ghost" href="./" style="text-decoration:none">🏠 回首頁</a></div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="emblem">🪄</div>
+    <h1>混光魔法・白光大解密</h1>
+    <div class="sub">先猜，再開燈！</div>
+    <div class="tip">👆 點下面的手電筒開關光；跟著任務一步步猜、驗證</div>
+  </header>
+
+  <div class="wall" id="wall">
+    <div class="spot" id="spot"></div>
+    <div class="beam r" id="beamR"></div><div class="beam g" id="beamG"></div><div class="beam b" id="beamB"></div>
+    <div class="mixlabel" id="mixlabel">關燈中…</div>
+    <div class="torches">
+      <div class="torch r" id="tR" onclick="toggle('R')"><span class="e">🔦</span>紅光</div>
+      <div class="torch g" id="tG" onclick="toggle('G')"><span class="e">🔦</span>綠光</div>
+      <div class="torch b" id="tB" onclick="toggle('B')"><span class="e">🔦</span>藍光</div>
+    </div>
+  </div>
+
+  <div class="quest" id="quest">
+    <div class="qhead"><span class="step" id="stepTag">開始</span><span class="dots" id="dots"></span></div>
+    <div class="q" id="q">準備好了嗎？先來關燈儀式！</div>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <div class="row" id="row"><button class="btn go pulse" id="startBtn" onclick="startRitual()">🌙 關燈儀式 3・2・1</button></div>
+  </div>
+
+  <details>
+    <summary>👩‍🏫 老師逐格操作卡（投影用）</summary>
+    <div class="tc">
+      ① 按「關燈儀式」→ 畫面倒數 3、2、1 並唸預告句，同時你把教室燈關掉。<br>
+      ② 任務 1：畫面問「紅＋綠＝？」→ 學生先猜（🔵指色卡／🟠說出來）→ 你再拿<b>真的手電筒</b>照白牆驗證 → 按「開燈驗證」看數位版一致。<br>
+      ③ 任務 2、3 同樣：綠＋藍、紅＋藍。每次補一句名詞：<b>色光相加會變亮＝加色混合</b>。<br>
+      ④ 任務 4：三支一起 → 白光！賽車衝線慶祝 → 全班一起說「<b>白光＝紅＋綠＋藍</b>」。<br>
+      ⑤ 發學習單：🔵貼色光貼紙／🟠寫因果句。等待每題 5 秒；提示層級 獨立→手勢→扶手。
+    </div>
+  </details>
+
+  <div class="files">
+    <a class="file" href="files/05_混光魔法_教師逐格帶法包.docx">📘 教師帶法包（Word）</a>
+    <a class="file" href="files/04_混光魔法_學習單_操作與推理.docx">📝 學習單 🔵🟠（Word）</a>
+    <a class="file" href="files/04_混光魔法_學習單_答案卡.docx">✅ 答案卡（Word）</a>
+    <a class="file" href="../games/color-mixer.html" target="_blank" rel="noopener">🎛️ 數位混光台</a>
+  </div>
+
+  <footer>🪄 混光魔法　｜　光與顏色 第2節・加色混合　｜　Ka-IV-10・Ka-IV-11　｜　竹東國中自然科</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let on={R:false,G:false,B:false}, locked=false;
+/* ---------- audio ---------- */
+let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function tone(f,t,d,ty="triangle",v=.22){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);
+  o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function glide(f1,f2,t,d,ty="sine",v=.2){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=ty;o.frequency.setValueAtTime(f1,t);
+  o.frequency.exponentialRampToValueAtTime(f2,t+d);o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function noise(t,d,v=.15,hp=800){const a=ac();if(!a)return;const n=Math.floor(a.sampleRate*d),buf=a.createBuffer(1,n,a.sampleRate),ch=buf.getChannelData(0);
+  for(let i=0;i<n;i++)ch[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource();s.buffer=buf;const f=a.createBiquadFilter();f.type="highpass";f.frequency.value=hp;
+  const g=a.createGain();g.gain.value=v;s.connect(f);f.connect(g);g.connect(a.destination);s.start(t);}
+const sClick=()=>{const a=ac();if(a)tone(880,a.currentTime,.06,"square",.12);};
+const sBeam=()=>{const a=ac();if(a){glide(300,900,a.currentTime,.25,"sine",.18);noise(a.currentTime,.12,.05,2000);}};
+const sOff=()=>{const a=ac();if(a)glide(700,250,a.currentTime,.2,"sine",.14);};
+const sRight=()=>{const a=ac();if(!a)return;const t=a.currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.08,.2,"triangle",.28));tone(2093,t+.34,.25,"sine",.12);};
+const sWrong=()=>{const a=ac();if(a){glide(360,220,a.currentTime,.28,"sine",.18);}};
+const sTick=()=>{const a=ac();if(a)tone(660,a.currentTime,.12,"square",.2);};
+const sGo=()=>{const a=ac();if(!a)return;const t=a.currentTime;tone(1047,t,.35,"triangle",.3);tone(1319,t+.05,.4,"triangle",.25);};
+const sWin=()=>{const a=ac();if(!a)return;const t=a.currentTime;[[523,0],[523,.12],[523,.24],[659,.38],[784,.54],[1047,.72]].forEach(([f,dt])=>tone(f,t+dt,.3,"triangle",.3));
+  for(let i=0;i<6;i++){glide(120+i*40,400+i*60,t+.9+i*.15,.14,"sawtooth",.12);}noise(t+1.8,.3,.08,3000);};
+function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.88;
+  u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.85;speechSynthesis.speak(e);}};speechSynthesis.speak(u);}catch(e){}}
+
+/* ---------- wall mixing ---------- */
+const NAMES={"000":["關燈中…","",'#000'],"100":["紅光","Red light",'#ff2a2a'],"010":["綠光","Green light",'#2af05a'],"001":["藍光","Blue light",'#3b8dff'],
+  "110":["黃光","Yellow light",'#ffe83a'],"011":["青光","Cyan light",'#3af0f0'],"101":["洋紅光","Magenta light",'#ff4ae0'],"111":["白光！","White light",'#ffffff']};
+function key(){return (on.R?1:0)+""+(on.G?1:0)+""+(on.B?1:0);}
+function render(){
+  ["R","G","B"].forEach(k=>{$("t"+k).classList.toggle("on",on[k]);$("beam"+k).classList.toggle("on",on[k]);});
+  const [zh,,col]=NAMES[key()];
+  $("spot").style.background=on.R||on.G||on.B?`radial-gradient(ellipse at 50% 60%, ${col} 0%, ${col}cc 30%, #000 75%)`:"#000";
+  $("mixlabel").textContent=zh; $("mixlabel").style.color=col==="#000"?"#5f7a92":(key()==="111"?"#fff":col);
+}
+function toggle(k){ if(locked)return; on[k]=!on[k]; on[k]?sBeam():sOff(); render(); const [zh,en]=NAMES[key()]; if(on.R||on.G||on.B)speak(zh,en); }
+function setLights(r,g,b){on={R:r,G:g,B:b};render();}
+
+/* ---------- guided quest ---------- */
+const TASKS=[
+  {q:"任務 1：紅光 ＋ 綠光 ＝ ？",lights:[1,1,0],opts:[["黃光","#ffe83a"],["黑色","#111"],["咖啡色","#7b4a12"]],ok:0,
+   why:"色光相加會變亮：紅＋綠＝黃。這叫加色混合。",tz:"加色混合",te:"Additive mixing"},
+  {q:"任務 2：綠光 ＋ 藍光 ＝ ？",lights:[0,1,1],opts:[["青光","#3af0f0"],["綠光","#2af05a"],["紫色","#7b3aff"]],ok:0,
+   why:"綠＋藍＝青（像游泳池的顏色）。",tz:"青光",te:"Cyan"},
+  {q:"任務 3：紅光 ＋ 藍光 ＝ ？",lights:[1,0,1],opts:[["洋紅光","#ff4ae0"],["橘色","#ff8c1a"],["黑色","#111"]],ok:0,
+   why:"紅＋藍＝洋紅（粉紅紫）。",tz:"洋紅光",te:"Magenta"},
+  {q:"最終任務：紅＋綠＋藍 三支一起 ＝ ？",lights:[1,1,1],opts:[["白光","#fff"],["黑色","#111"],["灰色","#888"]],ok:0,
+   why:"三原色光全部相加＝白光！白光是紅綠藍合成的。",tz:"光的三原色",te:"RGB primary colors"},
+];
+let ti=-1, picked=null;
+function dots(){let s="";TASKS.forEach((_,k)=>{let c="d";if(k<ti)c+=" done";if(k===ti)c+=" now";s+='<span class="'+c+'"></span>';});$("dots").innerHTML=s;}
+function startRitual(){
+  ac(); sClick(); $("startBtn").disabled=true;
+  const cd=$("cd"),n=$("cdn"),t=$("cdt"); cd.classList.add("show"); document.body.classList.add("dark");
+  speak("我們要關燈了，數 3、2、1","");
+  let c=3; n.textContent=c; sTick();
+  const iv=setInterval(()=>{c--; if(c>0){n.textContent=c; n.style.animation="none"; void n.offsetWidth; n.style.animation=""; sTick();}
+    else{clearInterval(iv); n.textContent="🌙"; t.textContent="關燈！"; sGo(); setTimeout(()=>{cd.classList.remove("show"); nextTask();},900);}},1000);
+}
+function nextTask(){
+  ti++; picked=null; setLights(false,false,false); locked=true; dots();
+  if(ti>=TASKS.length){return finish();}
+  const T=TASKS[ti]; $("stepTag").textContent="任務 "+(ti+1)+" / "+TASKS.length; $("q").textContent=T.q; $("fb").innerHTML="";
+  const order=T.opts.map((o,i)=>({o,i})).sort(()=>Math.random()-.5);
+  $("opts").innerHTML=order.map(({o,i})=>'<div class="opt" data-i="'+i+'" onclick="pick(this)"><span class="sw" style="background:'+o[1]+'"></span>'+o[0]+'</div>').join("");
+  $("row").innerHTML='<button class="btn go" id="verifyBtn" onclick="verify()" disabled>💡 開燈驗證</button>';
+  speak(T.q.replace(/任務 \d：|最終任務：/,""),"");
+}
+function pick(el){ sClick(); document.querySelectorAll(".opt").forEach(o=>o.classList.remove("picked")); el.classList.add("picked"); picked=+el.dataset.i; $("verifyBtn").disabled=false; $("verifyBtn").classList.add("pulse"); }
+function verify(){
+  const T=TASKS[ti]; $("verifyBtn").disabled=true; $("verifyBtn").classList.remove("pulse");
+  document.querySelectorAll(".opt").forEach(o=>o.classList.add("disabled"));
+  // light up sequentially
+  const seq=[["R",T.lights[0]],["G",T.lights[1]],["B",T.lights[2]]].filter(x=>x[1]);
+  seq.forEach((x,i)=>setTimeout(()=>{on[x[0]]=true;render();sBeam();},i*450));
+  setTimeout(()=>{
+    const [zh,en]=NAMES[key()]; speak(zh,en);
+    const right=picked===T.ok;
+    document.querySelectorAll(".opt").forEach(o=>{if(+o.dataset.i===T.ok)o.classList.add("right");});
+    if(right){sRight();confetti(90);$("fb").innerHTML="🎉 猜對了！"+T.why+"<span class='term'>"+T.tz+" · "+T.te+"</span>";}
+    else{sWrong();setTimeout(()=>{sRight();confetti(50);},500);$("fb").innerHTML="👀 來看真的是什麼：<b>"+zh+"</b>！"+T.why+"<span class='term'>"+T.tz+" · "+T.te+"</span>";}
+    $("row").innerHTML='<button class="btn next pulse" onclick="nextTask()">➡ 下一個任務</button>';
+  },seq.length*450+300);
+}
+function finish(){
+  locked=false; setLights(true,true,true); $("stepTag").textContent="完成"; $("q").textContent="破解成功！白光＝紅＋綠＋藍"; $("opts").innerHTML=""; $("fb").innerHTML="";
+  $("row").innerHTML='<button class="btn ghost" onclick="restart()">🔄 再玩一次</button>';
+  const vl=$("vlap"); vl.classList.remove("go"); void vl.offsetWidth; vl.classList.add("go");
+  $("win").classList.add("show"); sWin(); bigConfetti(); setTimeout(bigConfetti,700); setTimeout(bigConfetti,1400);
+  speak("白光等於紅加綠加藍！光的三原色","White light is red plus green plus blue");
+}
+function restart(){ $("win").classList.remove("show"); document.body.classList.remove("dark"); ti=-1; locked=false; setLights(false,false,false);
+  $("stepTag").textContent="開始"; $("q").textContent="準備好了嗎？先來關燈儀式！"; $("opts").innerHTML=""; $("fb").innerHTML=""; dots();
+  $("row").innerHTML='<button class="btn go pulse" id="startBtn" onclick="startRitual()">🌙 關燈儀式 3・2・1</button>'; }
+
+/* ---------- confetti ---------- */
+const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
+function size(){cv.width=innerWidth;cv.height=innerHeight;}size();addEventListener("resize",size);
+const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
+function mk(x,y){return{x,y,vx:(Math.random()-.5)*10,vy:Math.random()*-9-3,g:.3+Math.random()*.2,s:6+Math.random()*8,c:COL[Math.floor(Math.random()*COL.length)],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0};}
+function confetti(n=70){for(let i=0;i<n;i++)parts.push(mk(innerWidth/2,innerHeight*.35));run();}
+function bigConfetti(){for(let i=0;i<220;i++)parts.push(mk(Math.random()*innerWidth,-20));run();}
+let raf=null;function run(){if(!raf)raf=requestAnimationFrame(loop);}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;
+  cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});
+  parts=parts.filter(p=>p.y<cv.height+30&&p.life<260);if(parts.length)raf=requestAnimationFrame(loop);else{raf=null;cx.clearRect(0,0,cv.width,cv.height);}}
+
+render(); dots();
+</script>
+</body>
+</html>

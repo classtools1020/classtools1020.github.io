@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>顏色偵探・結案報告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--bg1:#05101f;--bg2:#0a2036;--bg3:#0e3350;--panel:#0f2841;--line:rgba(120,170,210,.28);
+    --amber:#ffc93c;--teal:#42e0c8;--rose:#ff5d8f;--ink:#eaf6ff;--dim:#9db8cf;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;
+    background:radial-gradient(120% 80% at 50% -10%,rgba(255,93,143,.10),transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3))}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .wrap{max-width:960px;margin:0 auto;padding:18px 14px 50px}
+  header{text-align:center;padding:6px 0 2px}
+  .emblem{font-size:52px;filter:drop-shadow(0 8px 18px rgba(255,93,143,.4))}
+  h1{font-family:var(--disp);font-size:30px;margin:2px 0}
+  .sub{color:var(--teal);font-weight:900;font-size:19px}
+  .tip{color:var(--dim);font-weight:800;font-size:15px;margin-top:6px}
+  h2.sec{font-size:22px;margin:26px 0 10px;display:flex;align-items:center;gap:10px}
+  h2.sec::after{content:"";flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--rose),transparent)}
+
+  /* evidence recap */
+  .ev{position:relative;border-radius:22px;overflow:hidden;border:3px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.5);aspect-ratio:16/8}
+  .ev img{width:100%;height:100%;object-fit:cover;display:block;transition:filter .3s}
+  .ev .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.6);color:#fff;font-family:var(--disp);font-weight:700;font-size:22px;padding:6px 14px;border-radius:12px}
+  .lights{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+  .lb{border:3px solid var(--line);border-radius:16px;padding:12px 6px;cursor:pointer;text-align:center;background:var(--panel);font-family:var(--disp);font-weight:700;font-size:19px;color:var(--ink);transition:transform .1s}
+  .lb:active{transform:scale(.96)} .lb.on{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,201,60,.35)}
+  .lb .dot{width:30px;height:30px;border-radius:50%;margin:0 auto 6px;border:2px solid rgba(255,255,255,.4)}
+  .evsay{margin-top:10px;font-size:18px;font-weight:800;color:#ffe08a;min-height:26px;text-align:center}
+
+  /* cases */
+  .case{background:var(--panel);border:3px solid var(--line);border-radius:22px;overflow:hidden;margin-top:16px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  .case.done{border-color:rgba(40,224,122,.6)}
+  .case .ph{position:relative;aspect-ratio:16/7;overflow:hidden}
+  .case .ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .case .tag{position:absolute;left:12px;top:12px;background:var(--rose);color:#fff;font-family:var(--disp);font-weight:700;font-size:18px;padding:4px 14px;border-radius:999px}
+  .case .body{padding:16px 18px 18px}
+  .q{font-size:26px;font-weight:900;line-height:1.3;margin-bottom:12px}
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:560px){.opts{grid-template-columns:1fr}.q{font-size:22px}}
+  .opt{display:flex;align-items:center;justify-content:center;gap:10px;background:#13314f;border:3px solid var(--line);border-radius:16px;padding:16px 10px;cursor:pointer;font-size:22px;font-weight:900;transition:transform .1s,border-color .1s}
+  .opt:hover{transform:translateY(-2px);border-color:var(--amber)}
+  .opt .sw{width:30px;height:30px;border-radius:8px;border:2px solid rgba(255,255,255,.5);flex:none}
+  .opt.right{border-color:#28e07a;background:rgba(40,224,122,.2)} .opt.wrong{border-color:#ff5a5a;animation:shake .35s}
+  .opt.disabled{pointer-events:none;opacity:.85}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .fb{margin-top:12px;font-size:18px;font-weight:800;min-height:26px;line-height:1.45}
+  .fb .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:15px;margin-left:6px}
+  .fb.hint{color:#ffe08a}
+
+  .close{margin-top:20px;text-align:center}
+  .btn{font-family:var(--disp);font-weight:700;font-size:20px;border:none;border-radius:16px;padding:14px 28px;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);color:#08131f;box-shadow:0 6px 0 #c9860f}
+  .btn.go:disabled{opacity:.4;box-shadow:none;cursor:not-allowed}
+  .btn.next{background:linear-gradient(180deg,var(--teal),#1fbfa8);color:#063}
+  .btn.ghost{background:var(--panel);border:2px solid var(--line);color:var(--ink)}
+  .btn.pulse{animation:pulse 1.1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 6px 0 #c9860f,0 0 0 0 rgba(255,201,60,.5)}50%{box-shadow:0 6px 0 #c9860f,0 0 0 12px rgba(255,201,60,0)}}
+  .files{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+  .file{display:inline-flex;align-items:center;gap:8px;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:10px 14px;text-decoration:none;color:var(--ink);font-weight:900}
+  details{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:12px 16px;margin-top:16px}
+  summary{cursor:pointer;font-weight:900;font-size:18px;color:var(--amber)}
+  .tc{font-size:16px;font-weight:700;line-height:1.6;color:#dbe9f7}.tc b{color:var(--teal)}
+
+  .win{position:fixed;inset:0;background:rgba(6,10,26,.94);display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:600;padding:20px}
+  .win.show{display:flex}
+  .win .big{font-size:96px;margin:0;animation:trophy .8s ease-out both}
+  @keyframes trophy{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(10deg)}100%{transform:scale(1)}}
+  .win h2{font-family:var(--disp);font-size:42px;margin:8px 0}
+  .win p{font-size:22px;font-weight:900;color:var(--amber);margin:4px 0}
+  .vlap{position:absolute;left:0;right:0;top:18%;height:130px;overflow:hidden;pointer-events:none}
+  .vlap .finish{position:absolute;right:8%;top:0;font-size:76px}
+  .vlap .car{position:absolute;left:-160px;top:16px;font-size:92px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+  .vlap.go .car{animation:drive 2.2s cubic-bezier(.3,0,.2,1) forwards}
+  @keyframes drive{0%{left:-160px}100%{left:82%}}
+  footer{text-align:center;margin-top:26px;color:var(--dim);font-size:13px}
+  canvas.confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:650}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="./">🏠 回到首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<canvas class="confetti" id="cf"></canvas>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="onlyR"><feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/></filter>
+  <filter id="onlyG"><feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"/></filter>
+  <filter id="onlyB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter>
+</svg>
+
+<div class="win" id="win">
+  <div class="vlap" id="vlap"><div class="finish">🏁</div><div class="car">🚂</div></div>
+  <div class="big">🕵️</div>
+  <h2>結案！三案全破</h2>
+  <p>物體的顏色 ＝ 它反射什麼光</p>
+  <p style="color:#cfe4f5;font-size:17px">選擇性反射・白光＝紅＋綠＋藍</p>
+  <div style="margin-top:12px"><a class="btn next" href="../games/light-color-quiz.html">🎮 去顏色大搶答</a> <button class="btn ghost" onclick="document.getElementById('win').classList.remove('show')">✖ 關閉</button></div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="emblem">🕵️</div>
+    <h1>顏色偵探・結案報告</h1>
+    <div class="sub">三個生活案件，用證據破案</div>
+    <div class="tip">👆 先回顧證據，再一案一案選出答案，全破就結案</div>
+  </header>
+
+  <h2 class="sec">🔍 證據回顧・換光看看</h2>
+  <div class="ev"><img id="evimg" src="img/fruits.jpg" alt=""><div class="lbl" id="evlbl">⚪ 白光</div></div>
+  <div class="lights">
+    <div class="lb on" onclick="light(this,'none','⚪ 白光','白光下，每個東西都反射自己的顏色','White light')"><div class="dot" style="background:#fff"></div>白光</div>
+    <div class="lb" onclick="light(this,'onlyR','🔴 紅光','只有紅光：紅色的東西亮，其他變暗','Red light')"><div class="dot" style="background:#ff3b3b"></div>紅光</div>
+    <div class="lb" onclick="light(this,'onlyG','🟢 綠光','只有綠光：紅蘋果沒有綠光可反射，變黑','Green light')"><div class="dot" style="background:#28e05a"></div>綠光</div>
+    <div class="lb" onclick="light(this,'onlyB','🔵 藍光','只有藍光：藍色的東西才亮','Blue light')"><div class="dot" style="background:#3b8dff"></div>藍光</div>
+  </div>
+  <div class="evsay" id="evsay">物體的顏色，是它反射的光。</div>
+
+  <h2 class="sec">📁 案件</h2>
+  <div id="cases"></div>
+
+  <div class="close">
+    <button class="btn go" id="closeBtn" onclick="closeCase()" disabled>🕵️ 結案！</button>
+    <div class="files">
+      <a class="file" href="files/06_顏色偵探_結案報告單.docx">📝 結案報告單 🔵🟠（Word）</a>
+      <a class="file" href="../games/light-color-quiz.html" target="_blank" rel="noopener">🎮 顏色大搶答</a>
+      <a class="file" href="camera.html" target="_blank" rel="noopener">🪄 魔法相機再驗證</a>
+    </div>
+  </div>
+
+  <details>
+    <summary>👩‍🏫 老師逐格操作卡（投影用）</summary>
+    <div class="tc">
+      ① 證據回顧：點紅／綠／藍光，問「蘋果怎麼了？」→ 🔵指出變黑的東西／🟠說「因為只反射紅光」。補名詞：<b>選擇性反射</b>。<br>
+      ② 案件一（夜間工人）：先問「你會選哪件背心？」等 5 秒 → 點選 → 揭曉：螢光黃綠反射最多光。<br>
+      ③ 案件二（大太陽）：白衣反射光、黑衣吸收光變熱 → 連結「夏天穿淺色」的生活決定。<br>
+      ④ 案件三（紅綠燈）：紅光傳得遠、最醒目 → 代表停。<br>
+      ⑤ 三案全破 → 按「結案」→ 賽車衝線 → 全班說「物體的顏色＝反射什麼光」。發結案報告單：🔵貼證據到結論／🟠寫「因為___反射___光，所以___」。
+    </div>
+  </details>
+
+  <footer>🕵️ 顏色偵探・結案報告　｜　光與顏色 第3節・選擇性反射的生活應用　｜　Ka-IV-11・ah-IV-2　｜　竹東國中自然科</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function tone(f,t,d,ty="triangle",v=.22){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);
+  o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function glide(f1,f2,t,d,ty="sine",v=.2){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=ty;o.frequency.setValueAtTime(f1,t);
+  o.frequency.exponentialRampToValueAtTime(f2,t+d);o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function noise(t,d,v=.15,hp=800){const a=ac();if(!a)return;const n=Math.floor(a.sampleRate*d),buf=a.createBuffer(1,n,a.sampleRate),ch=buf.getChannelData(0);
+  for(let i=0;i<n;i++)ch[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource();s.buffer=buf;const f=a.createBiquadFilter();f.type="highpass";f.frequency.value=hp;
+  const g=a.createGain();g.gain.value=v;s.connect(f);f.connect(g);g.connect(a.destination);s.start(t);}
+const sClick=()=>{const a=ac();if(a)glide(400,900,a.currentTime,.15,"sine",.15);};
+const sRight=()=>{const a=ac();if(!a)return;const t=a.currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.08,.2,"triangle",.28));tone(2093,t+.34,.25,"sine",.12);};
+const sWrong=()=>{const a=ac();if(a)glide(360,220,a.currentTime,.28,"sine",.18);};
+const sWin=()=>{const a=ac();if(!a)return;const t=a.currentTime;[[523,0],[523,.12],[523,.24],[659,.38],[784,.54],[1047,.72]].forEach(([f,dt])=>tone(f,t+dt,.3,"triangle",.3));
+  for(let i=0;i<6;i++)glide(120+i*40,400+i*60,t+.9+i*.15,.14,"sawtooth",.12);noise(t+1.8,.3,.08,3000);};
+function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.88;
+  u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.85;speechSynthesis.speak(e);}};speechSynthesis.speak(u);}catch(e){}}
+
+/* evidence */
+function light(el,f,lbl,say,en){ac();sClick();document.querySelectorAll(".lb").forEach(x=>x.classList.remove("on"));el.classList.add("on");
+  $("evimg").style.filter=f==="none"?"none":"url(#"+f+")";$("evlbl").textContent=lbl;$("evsay").textContent=say;speak(lbl.replace(/^\S+\s/,""),en);}
+
+/* cases */
+const CASES=[
+  {img:"img/case-vest.jpg",tag:"案件一・夜間工人",q:"晚上在馬路邊工作，穿哪件背心最安全？",
+   opts:[["螢光黃綠","#c8ff3a"],["黑色","#111"],["深藍色","#123a7a"]],ok:0,
+   why:"螢光黃綠反射最多光，車燈一照就發亮，遠遠就看得到。",tz:"反射最多光",te:"Reflects the most light",hint:"想想：哪個顏色被車燈照到會最亮？"},
+  {img:"img/case-shirts.jpg",tag:"案件二・大太陽",q:"大太陽底下，穿白衣還是黑衣比較涼？",
+   opts:[["白衣","#fff"],["黑衣","#111"]],ok:0,
+   why:"白色把光反射掉；黑色把光吸收，變成熱，所以黑衣比較熱。",tz:"反射 vs 吸收",te:"Reflect vs absorb",hint:"想想：黑色的東西曬太陽會怎樣？"},
+  {img:"img/case-traffic.jpg",tag:"案件三・紅綠燈",q:"「停」為什麼用紅燈？",
+   opts:[["紅光傳得遠、最醒目","#ff3b3b"],["因為紅色好看","#ff9ad0"],["隨便選的","#888"]],ok:0,
+   why:"紅光在霧和雨裡傳得最遠、最容易被看到，所以用來代表「危險・停」。",tz:"紅光傳得遠",te:"Red light travels far",hint:"想想：下大雨的時候哪個燈最清楚？"},
+];
+let solved=0;
+function build(){
+  $("cases").innerHTML=CASES.map((c,i)=>{
+    const order=c.opts.map((o,k)=>({o,k})).sort(()=>Math.random()-.5);
+    return '<div class="case" id="case'+i+'"><div class="ph"><img src="'+c.img+'" alt=""><div class="tag">'+c.tag+'</div></div><div class="body">'+
+      '<div class="q">'+c.q+'</div><div class="opts">'+order.map(({o,k})=>'<div class="opt" onclick="pick('+i+','+k+',this)"><span class="sw" style="background:'+o[1]+'"></span>'+o[0]+'</div>').join("")+'</div>'+
+      '<div class="fb" id="fb'+i+'"></div></div></div>';}).join("");
+}
+function pick(i,k,el){
+  const c=CASES[i]; const box=$("case"+i); if(box.classList.contains("done"))return;
+  if(k===c.ok){ box.classList.add("done"); el.classList.add("right"); box.querySelectorAll(".opt").forEach(o=>o.classList.add("disabled"));
+    sRight(); confetti(90); speak(c.opts[c.ok][0]+"。"+c.why, c.te);
+    $("fb"+i).innerHTML="✅ 破案！"+c.why+"<span class='term'>"+c.tz+" · "+c.te+"</span>"; $("fb"+i).className="fb";
+    solved++; if(solved>=CASES.length){$("closeBtn").disabled=false;$("closeBtn").classList.add("pulse");}
+  }else{ el.classList.add("wrong"); sWrong(); $("fb"+i).innerHTML="💡 "+c.hint; $("fb"+i).className="fb hint"; setTimeout(()=>el.classList.remove("wrong"),400); }
+}
+function closeCase(){ $("closeBtn").disabled=true; $("closeBtn").classList.remove("pulse");
+  const vl=$("vlap"); vl.classList.remove("go"); void vl.offsetWidth; vl.classList.add("go");
+  $("win").classList.add("show"); sWin(); bigConfetti(); setTimeout(bigConfetti,700); setTimeout(bigConfetti,1400);
+  speak("結案！物體的顏色，就是它反射什麼光","Case closed"); }
+
+/* confetti */
+const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
+function size(){cv.width=innerWidth;cv.height=innerHeight;}size();addEventListener("resize",size);
+const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
+function mk(x,y){return{x,y,vx:(Math.random()-.5)*10,vy:Math.random()*-9-3,g:.3+Math.random()*.2,s:6+Math.random()*8,c:COL[Math.floor(Math.random()*COL.length)],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0};}
+function confetti(n=70){for(let i=0;i<n;i++)parts.push(mk(innerWidth/2,innerHeight*.35));run();}
+function bigConfetti(){for(let i=0;i<220;i++)parts.push(mk(Math.random()*innerWidth,-20));run();}
+let raf=null;function run(){if(!raf)raf=requestAnimationFrame(loop);}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;
+  cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});
+  parts=parts.filter(p=>p.y<cv.height+30&&p.life<260);if(parts.length)raf=requestAnimationFrame(loop);else{raf=null;cx.clearRect(0,0,cv.width,cv.height);}}
+build();
+</script>
+</body>
+</html>
