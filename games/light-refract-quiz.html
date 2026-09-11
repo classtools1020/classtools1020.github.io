@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>折射大搶答・光的折射</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--bg1:#05101f;--bg2:#0a2036;--bg3:#0e3350;--panel:#0f2841;--line:rgba(120,170,210,.28);--amber:#ffc93c;--teal:#42e0c8;--aqua:#3ec2ff;--ink:#eaf6ff;--dim:#9db8cf;--red:#ff5a5a;--blue:#4aa8ff;--green:#28e07a;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);background:radial-gradient(120% 80% at 50% -10%,rgba(62,194,255,.12),transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3));min-height:100vh;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1000px;margin:0 auto;padding:14px 14px 40px}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .score{display:flex;align-items:stretch;gap:12px;justify-content:center;margin:8px 0 4px}
+  .team{flex:1;max-width:320px;background:var(--panel);border:3px solid var(--line);border-radius:18px;padding:10px 12px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+  .team.a{border-color:rgba(255,90,90,.6)} .team.b{border-color:rgba(74,168,255,.6)}
+  .team .who{font-family:var(--disp);font-size:22px;font-weight:700}
+  .team .pts{font-family:var(--disp);font-size:34px;font-weight:700;min-width:56px;text-align:center}
+  .team.a .pts{color:var(--red)} .team.b .pts{color:var(--blue)}
+  .pm{display:flex;flex-direction:column;gap:4px}
+  .pm button{width:38px;height:30px;border-radius:8px;border:2px solid var(--line);background:#13314f;color:#fff;font-size:18px;font-weight:900;cursor:pointer;line-height:1}
+  .vs{align-self:center;font-family:var(--disp);font-size:22px;color:var(--dim)}
+  .progress{text-align:center;margin:8px 0}
+  .dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:#26425f;margin:0 3px}
+  .dot.done{background:var(--teal)} .dot.now{background:var(--amber);transform:scale(1.3)}
+  .card{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:26px 22px;margin-top:8px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  .qnum{display:inline-block;background:var(--amber);color:#08131f;font-family:var(--disp);font-weight:700;font-size:18px;border-radius:999px;padding:4px 16px;margin-bottom:12px}
+  .q{font-size:30px;font-weight:900;line-height:1.35;margin-bottom:18px}
+  .opts{display:grid;gap:14px}
+  .opt{display:flex;align-items:center;gap:14px;background:#13314f;border:3px solid var(--line);border-radius:16px;padding:18px 20px;cursor:pointer;font-size:26px;font-weight:800;transition:transform .1s,border-color .1s}
+  .opt:hover{transform:translateY(-2px);border-color:var(--amber)}
+  .opt .k{font-family:var(--disp);background:#0a2036;border-radius:10px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--amber);flex:0 0 auto}
+  .opt.correct{border-color:var(--green);background:rgba(40,224,122,.18)} .opt.wrong{border-color:var(--red);background:rgba(255,90,90,.16);animation:shake .35s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .opt.disabled{pointer-events:none;opacity:.85}
+  .feedback{margin-top:16px;border-radius:16px;padding:16px 18px;font-size:19px;font-weight:800;display:none}
+  .feedback.show{display:block} .feedback.ok{background:rgba(40,224,122,.15);border:2px solid var(--green)} .feedback.hint{background:rgba(255,201,60,.14);border:2px solid var(--amber)}
+  .feedback .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:16px;margin-left:6px}
+  .row{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+  .btn{font-family:var(--disp);font-weight:700;font-size:20px;border:none;border-radius:16px;padding:14px 28px;cursor:pointer}
+  .btn.next{background:linear-gradient(180deg,var(--teal),#1fbfa8);color:#063} .btn.ghost{background:var(--panel);border:2px solid var(--line);color:var(--ink)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .award{font-size:16px;color:var(--dim);font-weight:800;text-align:center;margin-top:10px}
+  .end{text-align:center;padding:20px} .end .big{font-family:var(--disp);font-size:44px;font-weight:700;margin:10px 0} .end .fin{font-size:24px;font-weight:900;margin:6px 0}
+  footer{text-align:center;margin-top:22px;color:var(--dim);font-size:13px}
+  @media(max-width:560px){.q{font-size:24px}.opt{font-size:21px}.team .who{font-size:18px}.team .pts{font-size:28px}}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="../light-refract/">🏠 回到首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<div class="wrap">
+  <div class="score">
+    <div class="team a"><div class="pm"><button onclick="pt(0,1)">＋</button><button onclick="pt(0,-1)">－</button></div><div class="who">🚂 A隊</div><div class="pts" id="pa">0</div></div>
+    <div class="vs">VS</div>
+    <div class="team b"><div class="who">🤖 B隊</div><div class="pts" id="pb">0</div><div class="pm"><button onclick="pt(1,1)">＋</button><button onclick="pt(1,-1)">－</button></div></div>
+  </div>
+  <div class="progress"><span id="dots"></span></div>
+  <div class="card" id="card"></div>
+  <footer>🥤 折射大搶答　｜　任務四 光的折射・Ka-IV-8　｜　竹東國中自然科</footer>
+</div>
+<script src="fx.js"></script>
+<script>
+const Q=[
+ {q:"吸管放進水裡，看起來會？",o:["彎了、像斷掉","變更長","變成紅色"],c:0,hint:"光進水會轉彎，所以吸管看起來彎。",tz:"折射",te:"Refraction"},
+ {q:"把吸管拿出來，吸管真的？",o:["沒斷","斷了","變短"],c:0,hint:"是光讓它看起來彎，吸管本身沒事。",tz:"看起來彎",te:"Appears bent"},
+ {q:"光從空氣進到水裡，會怎樣？",o:["方向改變","消失不見","變成兩道"],c:0,hint:"換一種介質，光的方向就改變。",tz:"折射",te:"Refraction"},
+ {q:"光進到水裡方向改變，這叫？",o:["折射","反射","色散"],c:0,hint:"反射是彈回來；折射是穿進去轉彎。",tz:"折射",te:"Refraction"},
+ {q:"碗裡的硬幣，倒水以後看起來？",o:["浮上來了","沉下去","不見了"],c:0,hint:"光在水面轉彎，把硬幣的影像抬高。",tz:"視深變淺",te:"Apparent depth"},
+ {q:"游泳池看起來比實際？",o:["淺","深","一樣"],c:0,hint:"和硬幣一樣，看起來被抬高了。",tz:"視深",te:"Apparent depth"},
+ {q:"用網子撈水裡的東西，要往哪撈？",o:["更深一點","看到的地方","更淺一點"],c:0,hint:"看到的位置比真的位置高。",tz:"折射的應用",te:"Application"},
+ {q:"光從空氣進水，折射角和入射角比起來？",o:["比較小","比較大","一樣"],c:0,hint:"進水後光往法線靠近。",tz:"折射角",te:"Angle of refraction"},
+ {q:"眼鏡的鏡片幫我們看清楚，是利用光的？",o:["折射","反射","影子"],c:0,hint:"鏡片讓光轉彎，剛好聚到眼睛裡。",tz:"透鏡",te:"Lens"},
+ {q:"光碰到鏡子彈回來叫反射；光進水轉彎叫？",o:["折射","色散","直進"],c:0,hint:"彈回來＝反射，穿過去轉彎＝折射。",tz:"折射 vs 反射",te:"Refraction vs reflection"},
+];
+const KEYS=["A","B","C","D"];let idx=0,scores=[0,0];const $=id=>document.getElementById(id);
+function pt(t,d){scores[t]=Math.max(0,scores[t]+d);$(t?"pb":"pa").textContent=scores[t];if(d>0){FX.sound.coin();FX.confetti(30,t?innerWidth*.75:innerWidth*.25);}}
+function dots(){let s="";for(let i=0;i<Q.length;i++){let c="dot";if(i<idx)c+=" done";if(i===idx)c+=" now";s+='<span class="'+c+'"></span>';}$("dots").innerHTML=s;}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function render(){dots();if(idx>=Q.length)return end();const item=Q[idx];const order=shuffle(item.o.map((t,i)=>({t,ok:i===item.c})));
+  $("card").innerHTML='<div class="qnum">第 '+(idx+1)+' 題 / '+Q.length+'</div><div class="q">'+item.q+'</div><div class="opts">'+order.map((op,i)=>'<div class="opt" data-ok="'+op.ok+'" onclick="pick(this)"><span class="k">'+KEYS[i]+'</span><span>'+op.t+'</span></div>').join("")+'</div><div class="feedback" id="fb"></div><div class="row"><button class="btn next" id="nextBtn" onclick="next()" disabled>➡ 下一題</button></div><div class="award">答對了 → 幫答對的隊伍加分：上面的 🚂＋ 或 🤖＋</div>';}
+function pick(el){const item=Q[idx];if(el.dataset.ok==="true"){document.querySelectorAll(".opt").forEach(o=>o.classList.add("disabled"));el.classList.add("correct");FX.sound.powerup();FX.confetti(90);
+  const fb=$("fb");fb.className="feedback ok show";fb.innerHTML="✅ 答對了！<span class='term'>"+item.tz+" · "+item.te+"</span><br><span style='font-size:16px;font-weight:700;color:#cfe4f5'>"+item.hint+"</span>";$("nextBtn").disabled=false;}
+  else{el.classList.add("wrong");FX.sound.wrongsoft();const fb=$("fb");fb.className="feedback hint show";fb.innerHTML="💡 再想一下："+item.hint;setTimeout(()=>el.classList.remove("wrong"),400);}}
+function next(){if(idx<Q.length)idx++;if(idx===5){FX.levelup({level:2,label:"折射偵探晉級",onDone:render});return;}render();}
+function end(){let msg,emo;if(scores[0]>scores[1]){msg="🚂 A隊 獲勝！";emo="🚂";}else if(scores[1]>scores[0]){msg="🤖 B隊 獲勝！";emo="🤖";}else{msg="平手！兩隊都好棒！";emo="🤝";}
+  $("card").innerHTML='<div class="end"><div style="font-size:70px">'+emo+'</div><div class="big">🎉 全部答完！</div><div class="fin">🚂 A隊 '+scores[0]+' 分　｜　🤖 B隊 '+scores[1]+' 分</div><div class="fin" style="color:var(--amber)">'+msg+'</div><div class="row"><button class="btn next" onclick="FX.wheel({title:\'🎡 幸運轉盤・全班獎勵\'})">🎡 轉幸運轉盤</button><button class="btn ghost" onclick="restart()">🔄 再玩一次</button><a class="btn ghost" href="../light-refract/" style="text-decoration:none">🏠 回首頁</a></div></div>';
+  FX.sound.clear();FX.confetti(160);setTimeout(()=>FX.wheel({title:"🎡 幸運轉盤・全班獎勵",onDone:()=>FX.badge({id:"rquiz",emoji:"🥤",name:"折射搶答王",desc:"10 題全部挑戰完成"})}),1200);}
+function restart(){idx=0;scores=[0,0];$("pa").textContent=0;$("pb").textContent=0;render();}
+render();
+</script>
+</body>
+</html>

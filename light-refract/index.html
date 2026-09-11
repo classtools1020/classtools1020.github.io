@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>光線特勤隊・任務四｜總入口</title>
+<style>
+  :root{--bg1:#05101f;--bg2:#0a2036;--bg3:#0e3350;--amber:#ffc93c;--amber2:#ff9f1c;--teal:#42e0c8;--aqua:#3ec2ff;
+    --ink:#eaf6ff;--dim:#9db8cf;--card:#0f2841;--line:rgba(120,170,210,.28);--shadow:rgba(0,0,0,.45)}
+  *{box-sizing:border-box}html,body{margin:0;padding:0}
+  body{font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -10%,rgba(62,194,255,.12),transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3));min-height:100vh}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 18px 64px}
+  header.hero{text-align:center;padding:26px 10px 10px}
+  .emblem{font-size:80px;line-height:1;filter:drop-shadow(0 8px 18px rgba(62,194,255,.4))}
+  .eyebrow{font-size:16px;font-weight:900;letter-spacing:.3em;color:var(--amber);margin-top:6px}
+  h1{font-size:46px;margin:4px 0}
+  .sub{font-size:24px;color:var(--aqua);font-weight:900}
+  .en{font-size:15px;color:var(--dim);font-weight:700;margin-top:6px}
+  h2.sec{font-size:24px;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
+  h2.sec::after{content:"";flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--aqua),transparent)}
+  .tasknav{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:4px 0 8px}
+  .tasknav a{display:inline-flex;align-items:center;gap:8px;border-radius:16px;padding:12px 18px;text-decoration:none;font-weight:900;font-size:18px;box-shadow:0 6px 16px var(--shadow);border:3px solid rgba(66,224,200,.6);color:var(--ink);background:#0f2841}
+  .tasknav a.here{border-color:var(--amber);color:var(--amber);background:#1a2f4f}
+  .hero-exp{display:block;position:relative;border-radius:22px;overflow:hidden;text-decoration:none;box-shadow:0 8px 26px var(--shadow);border:2px solid rgba(62,194,255,.5);min-height:220px;margin-top:16px}
+  .hero-exp img{width:100%;height:100%;min-height:220px;object-fit:cover;display:block;position:absolute;inset:0}
+  .hero-exp .ov{position:relative;background:linear-gradient(90deg,rgba(4,8,16,.9),rgba(4,8,16,.35));padding:34px 26px;min-height:220px;display:flex;flex-direction:column;justify-content:center}
+  .hero-exp .t{font-size:34px;font-weight:900;color:#fff} .hero-exp .s{font-size:18px;font-weight:800;color:#ffd86b;margin-top:8px} .hero-exp .s2{font-size:15px;font-weight:700;color:#cfe4f5;margin-top:6px}
+  .lesson{background:linear-gradient(160deg,#123152,#0c2742);border:3px solid rgba(62,194,255,.4);border-radius:24px;padding:18px 18px 16px;margin-top:16px;box-shadow:0 10px 26px var(--shadow)}
+  .lesson.b{border-color:rgba(66,224,200,.45)} .lesson.c{border-color:rgba(255,93,143,.5)}
+  .lesson .lh{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+  .lesson .no{font-weight:900;font-size:15px;letter-spacing:.15em;color:#08131f;background:linear-gradient(180deg,#7fdcff,#2aa7e8);border-radius:999px;padding:4px 14px}
+  .lesson.b .no{background:linear-gradient(180deg,#7ff0e0,#2fc9b3)} .lesson.c .no{background:linear-gradient(180deg,#ff9ad0,#d95cff)}
+  .lesson .lt{font-size:26px;font-weight:900} .lesson .ld{font-size:14px;color:var(--dim);font-weight:700;width:100%}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .stepb{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;background:#0f2841;border:2px solid var(--line);border-radius:16px;padding:14px 8px;text-decoration:none;color:var(--ink);min-height:96px;transition:transform .1s,border-color .1s}
+  .stepb:hover{transform:translateY(-3px);border-color:var(--amber)}
+  .stepb .si{font-size:34px;line-height:1} .stepb .st{font-size:17px;font-weight:900} .stepb .sd{font-size:12px;color:var(--dim);font-weight:700}
+  .stepb.ppt{border-color:rgba(255,201,60,.6);background:linear-gradient(160deg,#1c3a63,#0f2841)} .stepb.ws{border-style:dashed}
+  .docs{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .docs a{display:inline-flex;align-items:center;gap:8px;background:#0f2841;border:2px solid rgba(255,201,60,.5);border-radius:14px;padding:10px 16px;text-decoration:none;color:var(--ink);font-weight:900}
+  footer{text-align:center;margin-top:40px;font-size:14px;color:var(--dim)}
+  @media(max-width:720px){h1{font-size:34px}.tasknav a{font-size:15px;padding:10px 12px}}
+</style>
+</head>
+<body>
+<a href="/light/" class="mainmenu-btn" style="position:fixed;right:12px;top:12px;z-index:99999;background:#0f2841;border:2px solid #42e0c8;color:#42e0c8;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)">🗂️ 主選單</a>
+<div class="wrap">
+  <header class="hero">
+    <div class="emblem">🥤</div>
+    <div class="eyebrow">光線特勤隊</div>
+    <h1>任務四</h1>
+    <div class="sub">吸管真的斷了嗎？</div>
+    <div class="en">光的折射（翰林 4-3・Ka-IV-8）｜三堂：看懂 → 動手 → 應用</div>
+  </header>
+  <div class="tasknav">
+    <a href="../light-shadow/">🔦 任務一・光與影子</a><a href="../light-reflection/">🪞 任務二・光的反射</a><a href="../light-color/">🌈 任務三・光與顏色</a><a class="here" href="../light-refract/">🥤 任務四・光的折射</a>
+  </div>
+  <div class="docs" style="margin-top:14px">
+    <a href="files/01_折射_三堂教案台詞.docx">📘 三堂教案逐字台詞（Word）</a>
+    <span style="font-size:13px;color:var(--dim);font-weight:700;align-self:center">🔔 右下角鈴鐺＝集合口令；🔇 旁白預設關閉</span>
+  </div>
+  <script src="../games/fx.js"></script>
+
+  <a class="hero-exp" href="lab.html">
+    <img src="img/straw.jpg" alt="">
+    <div class="ov"><div class="t">🥤 折射實驗室</div><div class="s">站1 吸管入水　站2 消失的硬幣　站3 光線轉彎模擬器</div><div class="s2">三個小任務：破案章・開寶箱・折射偵探勳章｜真實照片＋音效，無旁白</div></div>
+  </a>
+
+  <h2 class="sec">🗓️ 三堂課・照順序點</h2>
+  <div class="lesson a">
+    <div class="lh"><span class="no">第1節</span><span class="lt">吸管真的斷了嗎？</span><span class="ld">看懂母題｜折射・視深｜每桌一杯水一支吸管</span></div>
+    <div class="steps">
+      <a class="stepb ppt" href="https://gamma.app/docs/roocidjl8llmyvv" target="_blank" rel="noopener"><span class="si">🖥️</span><span class="st">① 簡報</span><span class="sd">謎題→哪裡彎→沒斷</span></a>
+      <a class="stepb" href="https://www.youtube.com/watch?v=vncul9LxgT0" target="_blank" rel="noopener"><span class="si">🎬</span><span class="st">② 影片 90 秒</span><span class="sd">光的折射（全播）</span></a>
+      <a class="stepb" href="lab.html" target="_blank" rel="noopener"><span class="si">🥤</span><span class="st">③ 折射實驗室</span><span class="sd">吸管・硬幣・模擬器</span></a>
+      <a class="stepb" href="https://www.youtube.com/watch?v=JpgvgHPlK8s" target="_blank" rel="noopener"><span class="si">🎬</span><span class="st">④ 均一 折射</span><span class="sd">播 0:00–2:30</span></a>
+      <a class="stepb ws" href="files/04_折射_學習單_照片版.docx"><span class="si">📝</span><span class="st">⑤ 學習單</span><span class="sd">🔵圈／🟠寫（Word）</span></a>
+    </div>
+  </div>
+  <div class="lesson b">
+    <div class="lh"><span class="no">第2節</span><span class="lt">折射動手做</span><span class="ld">動手探究｜預測→做→修正｜每桌杯水吸管、碗硬幣；老師手電筒＋牛奶水</span></div>
+    <div class="steps">
+      <a class="stepb ppt" href="https://gamma.app/docs/k9mwy8yaaejmfup" target="_blank" rel="noopener"><span class="si">🖥️</span><span class="st">① 簡報</span><span class="sd">先猜→做→改</span></a>
+      <a class="stepb" href="lab.html" target="_blank" rel="noopener"><span class="si">🥤</span><span class="st">② 實驗室對照</span><span class="sd">做完用模擬器驗證</span></a>
+      <a class="stepb ws" href="files/04_折射_學習單_照片版.docx"><span class="si">📝</span><span class="st">③ 紀錄單</span><span class="sd">貼順序・寫因果句</span></a>
+    </div>
+  </div>
+  <div class="lesson c">
+    <div class="lh"><span class="no">第3節</span><span class="lt">折射偵探・生活結案</span><span class="ld">整理應用｜游泳池安全・撈東西・眼鏡與放大鏡</span></div>
+    <div class="steps">
+      <a class="stepb ppt" href="https://gamma.app/docs/zz1nwuqrxb8a2c3" target="_blank" rel="noopener"><span class="si">🖥️</span><span class="st">① 簡報</span><span class="sd">三個生活案件</span></a>
+      <a class="stepb" href="../games/light-refract-quiz.html" target="_blank" rel="noopener"><span class="si">🎮</span><span class="st">② 折射大搶答</span><span class="sd">🚂A隊 vs 🤖B隊・轉盤</span></a>
+      <a class="stepb ws" href="files/04_折射_學習單_照片版.docx"><span class="si">📝</span><span class="st">③ 結案報告</span><span class="sd">🟠遷移題（Word）</span></a>
+    </div>
+  </div>
+
+  <footer>🥤 光線特勤隊・任務四　｜　竹東國中自然科　｜　一頁直達所有教材</footer>
+</div>
+</body>
+</html>
