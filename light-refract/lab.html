@@ -229,7 +229,8 @@ function drawFish(x,cx,cy,w,alpha){if(!fishImg.complete||!fishImg.naturalWidth){
 function xpNet(c,i){const x=addCanvas();const st=$("xpStage");st.insertAdjacentHTML("beforeend",`<div class="score" id="sc">🐟 0 / 3</div>`);
   const SHIFT=95;let real={x:600,y:420},net={x:300,y:150},caught=0,busy=false,reveal=false,scoop=0,caughtFish=null,tries=0;
   function spawn(){real={x:320+Math.random()*420,y:380+Math.random()*90};reveal=false;}
-  function draw(){x.clearRect(0,0,960,540);
+  const bg=st.querySelector("img.bg");bg.addEventListener("load",()=>draw());fishImg.addEventListener("load",()=>draw());
+  function draw(){x.clearRect(0,0,960,540);if(bg.complete&&bg.naturalWidth){const f=cover(bg,960,540);x.drawImage(bg,f.x,f.y,f.w,f.h);}
     x.strokeStyle="rgba(255,255,255,.55)";x.lineWidth=2;x.setLineDash([8,8]);x.beginPath();x.moveTo(0,270);x.lineTo(960,270);x.stroke();x.setLineDash([]);
     x.fillStyle="rgba(255,255,255,.8)";x.font="900 16px 'Noto Sans TC',sans-serif";x.fillText("水面",12,262);
     // 看到的魚（影像，較高、半透明）
