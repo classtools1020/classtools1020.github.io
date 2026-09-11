@@ -36,7 +36,7 @@
 <a class="fixbtn home" href="lab.html">🥤 回實驗室</a>
 <a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
 <canvas id="view"></canvas>
-<div class="title"><h1>3D 吸管杯</h1><div class="s">水的折射率 1.33・光線是真的算出來的</div></div>
+<div class="title"><h1>3D 吸管杯</h1><div class="s">水的折射率 1.33・水下的影像被抬高（視深）</div></div>
 <div class="lbl" id="lbl">還沒有水，先倒水</div>
 <div class="hintdrag">👆 拖曳＝轉杯子</div>
 <div class="bar">
@@ -51,7 +51,7 @@ const $=id=>document.getElementById(id);
 const cv=$("view");const R=new THREE.WebGLRenderer({canvas:cv,antialias:true});R.setPixelRatio(Math.min(2,devicePixelRatio));R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;R.outputColorSpace=THREE.SRGBColorSpace;
 const S=new THREE.Scene();S.background=new THREE.Color(0x0a2036);S.fog=new THREE.Fog(0x0a2036,18,40);
 const cam=new THREE.PerspectiveCamera(38,1,.1,100);
-let theta=.6,phi=1.15,rad=8.5;const target=new THREE.Vector3(0,1.4,0);
+let theta=.6,phi=1.15,rad=10;const target=new THREE.Vector3(0,1.5,0);
 function placeCam(){cam.position.set(target.x+rad*Math.sin(phi)*Math.sin(theta),target.y+rad*Math.cos(phi),target.z+rad*Math.sin(phi)*Math.cos(theta));cam.lookAt(target);}
 function resize(){const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}addEventListener("resize",resize);resize();
 // 燈
@@ -70,15 +70,24 @@ const glassMat=new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,o
 const glass=new THREE.Mesh(new THREE.CylinderGeometry(RT,RB,H,64,1,true),glassMat);glass.position.y=H/2;S.add(glass);
 const base=new THREE.Mesh(new THREE.CylinderGeometry(RB,RB,.12,64),new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.35,roughness:.05,clearcoat:1}));base.position.y=.06;base.castShadow=true;S.add(base);
 // 水（真的折射：transmission + ior 1.33）
-const waterMat=new THREE.MeshPhysicalMaterial({color:0xcfefff,transmission:1,ior:1.33,thickness:1.8,roughness:.02,metalness:0,attenuationColor:new THREE.Color(0x9fd8ff),attenuationDistance:6});
-const water=new THREE.Mesh(new THREE.CylinderGeometry(RT-.05,RB-.04,1,64),waterMat);water.visible=false;S.add(water);
+const waterMat=new THREE.MeshPhysicalMaterial({color:0x9fd8ff,transparent:true,opacity:.42,roughness:.05,metalness:0,clearcoat:1,clearcoatRoughness:.05,depthWrite:false});
+const water=new THREE.Mesh(new THREE.CylinderGeometry(RT-.05,RB-.04,1,64),waterMat);water.visible=false;water.renderOrder=2;glass.renderOrder=3;S.add(water);
+const surf=new THREE.Mesh(new THREE.CircleGeometry(RT-.05,64),new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.35,roughness:0,clearcoat:1,side:THREE.DoubleSide,depthWrite:false}));surf.rotation.x=-Math.PI/2;surf.visible=false;surf.renderOrder=2;S.add(surf);
 let lvl=0,lvlT=0;
-function setWater(){const h=Math.max(.001,(H-.15)*lvl);water.scale.y=h;water.position.y=.12+h/2;water.visible=lvl>.01;waterMat.thickness=.6+h*.5;}
-// 吸管（紅白條紋）
+function setWater(){const h=Math.max(.001,(H-.15)*lvl);water.scale.y=h;water.position.y=.12+h/2;water.visible=lvl>.01;surf.visible=lvl>.01;surf.position.y=.12+h+.002;}
+// 吸管（紅白條紋）：分成水上段（真實位置）＋水下段（影像被抬高 1/1.33 ＝ 視深）
 function stripes(){const c=document.createElement("canvas");c.width=256;c.height=64;const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,256,64);g.fillStyle="#e3222b";for(let i=-64;i<256;i+=64){g.beginPath();g.moveTo(i,0);g.lineTo(i+32,0);g.lineTo(i+64,64);g.lineTo(i+32,64);g.closePath();g.fill();}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(1,6);t.rotation=Math.PI/2;return t;}
-const straw=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,4.6,32),new THREE.MeshStandardMaterial({map:stripes(),roughness:.35}));straw.castShadow=true;
-const strawPivot=new THREE.Group();strawPivot.position.set(-.55,.16,0);strawPivot.rotation.z=.34;straw.position.y=2.3;strawPivot.add(straw);S.add(strawPivot);
+const strawMat=new THREE.MeshStandardMaterial({map:stripes(),roughness:.35});const TILT=.34,SLEN=4.6,SR=.09,BASE=new THREE.Vector3(-.55,.16,0);
+const strawUp=new THREE.Mesh(new THREE.CylinderGeometry(SR,SR,1,32),strawMat);strawUp.castShadow=true;S.add(strawUp);
+const belowG=new THREE.Group();S.add(belowG);const strawDn=new THREE.Mesh(new THREE.CylinderGeometry(SR,SR,1,32),strawMat);belowG.add(strawDn);
+const AXIS=new THREE.Vector3(-Math.sin(TILT),Math.cos(TILT),0); // 吸管方向（rotation.z=.34）
 let strawLift=0;
+function placeStraw(){const b=BASE.clone();b.y+=strawLift;const yS=.12+(H-.15)*lvl;
+  let sS=(lvl>.01)?(yS-b.y)/AXIS.y:0;sS=Math.max(0,Math.min(SLEN,sS));
+  // 水上段
+  const upLen=SLEN-sS;strawUp.visible=upLen>.02;if(upLen>.02){strawUp.scale.set(1,upLen,1);strawUp.position.copy(b).addScaledVector(AXIS,sS+upLen/2);strawUp.rotation.z=TILT;}
+  // 水下段：以水面交點為原點，整段垂直壓縮 1/1.33（看起來被抬高）
+  belowG.visible=sS>.02;if(sS>.02){const P=b.clone().addScaledVector(AXIS,sS);belowG.position.copy(P);belowG.scale.set(1,1/1.33,1);strawDn.scale.set(1,sS,1);strawDn.position.copy(AXIS).multiplyScalar(-sS/2);strawDn.rotation.z=TILT;}}
 // 光線（真的用司乃耳定律算）
 const rayG=new THREE.Group();rayG.visible=false;S.add(rayG);
 function mkLine(col){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(),new THREE.Vector3()]);const l=new THREE.Line(g,new THREE.LineBasicMaterial({color:col}));l.frustumCulled=false;return l;}
@@ -108,8 +117,10 @@ function status(){const l=$("lbl");if(lvl<.05){l.textContent="還沒有水，先
   if(strawLift>.5){l.textContent="拿出來：直的！沒斷";l.className="lbl good";return;}
   if(phi<.45){l.textContent="正上方看：直的";l.className="lbl good";if(!seenTop){seenTop=true;FX.sound.coin();}}
   else{l.textContent="側面看：在水面「斷」了？";l.className="lbl warn";if(!seenBroken&&lvl>.5){seenBroken=true;FX.sound.wrongsoft&&FX.sound.wrongsoft();}}}
-function loop(){lvl+=(lvlT-lvl)*.05;setWater();straw.position.y=2.3+strawLift;
-  if(camT){camT.k+=.06;phi+=(camT.p-phi)*.12;if(camT.k>=1)camT=null;}
+let lastT=performance.now();
+function loop(){const now=performance.now(),dt=Math.min(.1,(now-lastT)/1000);lastT=now;const a=1-Math.pow(.05,dt);
+  lvl+=(lvlT-lvl)*a;setWater();placeStraw();
+  if(camT){camT.k+=dt*1.6;phi+=(camT.p-phi)*(1-Math.pow(.02,dt));if(camT.k>=1){phi=camT.p;camT=null;}}
   updRay();placeCam();status();R.render(S,cam);requestAnimationFrame(loop);}
 placeCam();loop();
 </script>

@@ -150,7 +150,8 @@ const $=id=>document.getElementById(id);
 function cover(im,W,H){const s=Math.max(W/im.width,H/im.height),w=im.width*s,h=im.height*s;return {x:(W-w)/2,y:(H-h)/2,w,h};}
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 /* ===================== 實體感：震動、水聲、金幣錢包 ===================== */
-function buzz(p){try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}
+let touched=false;addEventListener("pointerdown",()=>{touched=true;},{once:true,capture:true});
+function buzz(p){if(!touched)return;try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}
 let AC=null;function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;}
 function splashSound(v){const a=ac();if(!a)return;const n=Math.floor(a.sampleRate*.35),b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.2);
   const s=a.createBufferSource();s.buffer=b;const f=a.createBiquadFilter();f.type="bandpass";f.frequency.value=1400;f.Q.value=.6;const g=a.createGain();g.gain.value=v||.5;s.connect(f);f.connect(g);g.connect(a.destination);s.start();}
