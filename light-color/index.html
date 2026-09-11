@@ -27,6 +27,19 @@
   h2.sec{font-size:24px;margin:38px 0 14px;display:flex;align-items:center;gap:10px}
   h2.sec::after{content:"";flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--amber),transparent)}
 
+  .hero-exp{display:block;position:relative;border-radius:22px;overflow:hidden;text-decoration:none;
+    box-shadow:0 8px 26px var(--shadow);border:2px solid rgba(255,201,60,.5);min-height:210px}
+  .hero-exp img{width:100%;height:100%;min-height:210px;object-fit:cover;display:block;position:absolute;inset:0}
+  .hero-exp .ov{position:relative;background:linear-gradient(90deg,rgba(4,8,16,.9),rgba(4,8,16,.4));
+    padding:34px 26px;min-height:210px;display:flex;flex-direction:column;justify-content:center}
+  .hero-exp .ov .t{font-size:34px;font-weight:900;color:#fff}
+  .hero-exp .ov .s{font-size:18px;font-weight:800;color:#ffd86b;margin-top:8px}
+  .hero-exp .ov .s2{font-size:15px;font-weight:700;color:#cfe4f5;margin-top:6px}
+
+  .warm{display:flex;align-items:center;gap:14px;justify-content:center;background:linear-gradient(160deg,#123152,#0c2742);
+    border:2px solid rgba(66,224,200,.5);border-radius:16px;padding:14px 18px;margin-top:18px;text-decoration:none;color:var(--ink)}
+  .warm b{font-size:20px} .warm span.d{font-size:14px;font-weight:700;color:var(--dim);margin-left:10px}
+
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   .card{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
     background:var(--card);border-radius:22px;padding:28px 16px;text-decoration:none;color:var(--ink);
@@ -39,6 +52,16 @@
   .card.lab{background:linear-gradient(160deg,#14343f,#0c2742);border-color:rgba(66,224,200,.4)}
   .card.quiz{background:linear-gradient(160deg,#3a1740,#2a0c31);border-color:rgba(199,125,255,.5)}
   .newtag{display:inline-block;font-size:12px;font-weight:900;color:#08131f;background:linear-gradient(180deg,var(--amber),var(--amber2));border-radius:999px;padding:2px 10px;margin-top:8px;letter-spacing:.05em}
+
+  .expgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .expcard{display:block;position:relative;border-radius:20px;overflow:hidden;text-decoration:none;
+    box-shadow:0 8px 22px var(--shadow);border:2px solid rgba(255,201,60,.4);min-height:190px}
+  .expcard img{width:100%;height:100%;min-height:190px;object-fit:cover;display:block;position:absolute;inset:0}
+  .expcard .ov{position:relative;background:linear-gradient(90deg,rgba(4,10,20,.88),rgba(4,10,20,.30));
+    padding:26px 22px;min-height:190px;display:flex;flex-direction:column;justify-content:center}
+  .expcard .ov .t{font-size:27px;font-weight:900;color:#fff}
+  .expcard .ov .s{font-size:16px;font-weight:800;color:#ffd86b;margin-top:6px}
+  .expcard .ov .s2{font-size:13.5px;font-weight:700;color:#cfe4f5;margin-top:4px}
 
   .files{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
   .file{display:flex;align-items:center;gap:14px;background:var(--card);border:2px solid var(--line);
@@ -54,11 +77,11 @@
   .navb.here{border-color:var(--amber);color:var(--amber)}
 
   footer{text-align:center;margin-top:40px;font-size:14px;color:var(--dim)}
-  @media (max-width:720px){.cards{grid-template-columns:1fr}.files{grid-template-columns:1fr}h1{font-size:34px}}
+  @media (max-width:720px){.cards{grid-template-columns:1fr}.files{grid-template-columns:1fr}.expgrid{grid-template-columns:1fr}h1{font-size:34px}}
 </style>
 </head>
 <body>
-<a href="/light/" class="mainmenu-btn" style="position:fixed;right:12px;top:12px;z-index:99999;background:#0f2841;border:2px solid #42e0c8;color:#42e0c8;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:'Noto Sans TC','Microsoft JhengHei',system-ui,sans-serif">🗂️ 主選單</a>
+<a href="/light/" class="mainmenu-btn" style="position:fixed;right:12px;top:12px;z-index:99999;background:#0f2841;border:2px solid #42e0c8;color:#42e0c8;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:Noto Sans TC,Microsoft JhengHei,system-ui,sans-serif">🗂️ 主選單</a>
 <div class="wrap">
 
   <header class="hero">
@@ -66,12 +89,22 @@
     <div class="eyebrow">光線特勤隊</div>
     <h1>任務三</h1>
     <div class="sub">白光藏著七彩！</div>
-    <div class="en">一頁直達：實驗・簡報　｜　光與顏色（色散・選擇性反射）</div>
+    <div class="en">一頁直達：舞臺・簡報・搶答・實驗　｜　光與顏色（色散・選擇性反射）</div>
   </header>
 
-  <a href="reflect-recap.html" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:14px;justify-content:center;background:linear-gradient(160deg,#123152,#0c2742);border:2px solid rgba(66,224,200,.5);border-radius:16px;padding:14px 18px;margin-top:22px;text-decoration:none;color:var(--ink)">
+  <h2 class="sec">⭐ 本課重點體驗</h2>
+  <a class="hero-exp" href="stage.html" target="_blank" rel="noopener">
+    <img src="img/stagelights.png" alt="混光魔法舞臺">
+    <div class="ov">
+      <div class="t">🎭 混光魔法舞臺</div>
+      <div class="s">按 🔴🟢🔵 燈，物體真的會變色！紅蘋果照綠光竟然變暗</div>
+      <div class="s2">電影感臨場舞臺・素養五段故事線・老師帶課稿・🔵🟠雙軌</div>
+    </div>
+  </a>
+
+  <a class="warm" href="reflect-recap.html" target="_blank" rel="noopener">
     <span style="font-size:30px">🪞</span>
-    <span><span style="font-size:20px;font-weight:900">先暖身：30 秒反射複習</span><span style="font-size:14px;font-weight:700;color:var(--dim);margin-left:10px">開始顏色前先看，接上「物體的顏色＝光反射」</span></span>
+    <span><b>先暖身：30 秒反射複習</b><span class="d">開始顏色前先看，接上「物體的顏色＝光反射」</span></span>
   </a>
 
   <h2 class="sec">🎯 上課一鍵直達</h2>
@@ -83,19 +116,29 @@
       <div class="ico">🎮</div><div class="t">顏色大搶答</div><div class="d">兩隊搶答・計分板・答對灑花中英發音</div><div class="newtag">全新自製</div>
     </a>
     <a class="card lab" href="../games/light-color-lab.html" target="_blank" rel="noopener">
-      <div class="ico">🔬</div><div class="t">互動實驗室</div><div class="d">加色混合・三稜鏡色散・物體顏色</div><div class="newtag">全新自製</div>
+      <div class="ico">🔬</div><div class="t">互動實驗室</div><div class="d">加色混合・三稜鏡色散・物體顏色，音效灑花</div><div class="newtag">全新自製</div>
     </a>
   </div>
 
   <h2 class="sec">📸 真實互動・拿東西照照看</h2>
-  <a href="camera.html" target="_blank" rel="noopener" style="display:block;position:relative;border-radius:22px;overflow:hidden;text-decoration:none;box-shadow:0 8px 22px var(--shadow);border:2px solid rgba(255,201,60,.4);min-height:190px">
-    <img src="img/fruits.jpg" alt="顏色魔法相機" style="width:100%;height:100%;min-height:190px;object-fit:cover;display:block;position:absolute;inset:0">
-    <div style="position:relative;background:linear-gradient(90deg,rgba(4,10,20,.88),rgba(4,10,20,.30));padding:30px 24px;min-height:190px;display:flex;flex-direction:column;justify-content:center">
-      <div style="font-size:30px;font-weight:900;color:#fff">🪄 顏色魔法相機</div>
-      <div style="font-size:17px;font-weight:800;color:#ffd86b;margin-top:6px">開相機→舉起彩色的東西→切換紅／綠／藍光　👆 看它當場變色</div>
-      <div style="font-size:14px;font-weight:700;color:#cfe4f5;margin-top:4px">選擇性反射：紅色的東西在綠光下會變黑・可拍照存證灑花</div>
-    </div>
-  </a>
+  <div class="expgrid">
+    <a class="expcard" href="camera.html" target="_blank" rel="noopener">
+      <img src="img/fruits.jpg" alt="顏色魔法相機" onerror="this.src='img/fruits.png'">
+      <div class="ov">
+        <div class="t">🪄 顏色魔法相機</div>
+        <div class="s">開相機→舉起彩色的東西→切換紅／綠／藍光</div>
+        <div class="s2">選擇性反射：紅色的東西在綠光下會變黑・可拍照存證灑花</div>
+      </div>
+    </a>
+    <a class="expcard" href="photos.html" target="_blank" rel="noopener">
+      <img src="img/prism.png" alt="真實照片體驗館">
+      <div class="ov">
+        <div class="t">📸 真實照片體驗館</div>
+        <div class="s">三稜鏡・彩虹・舞台燈・彩色水果・泡泡</div>
+        <div class="s2">👆 點照片聽名字（中英文）＋科學說明＋音效</div>
+      </div>
+    </a>
+  </div>
 
   <h2 class="sec">🔬 名詞看得見・互動實驗</h2>
   <div class="files">
@@ -103,8 +146,8 @@
       <div class="fi">🔴</div><div><div class="ft">加色混合（三原色）</div><div class="fd">紅綠藍開關→黃/青/洋紅/白光，全開灑花🚂</div></div></a>
     <a class="file" href="../games/light-color-lab.html" target="_blank" rel="noopener">
       <div class="fi">🌈</div><div><div class="ft">三稜鏡色散</div><div class="fd">白光→三稜鏡→拆成七彩，這叫色散</div></div></a>
-    <a class="file" href="../games/light-color-lab.html" target="_blank" rel="noopener">
-      <div class="fi">🍎</div><div><div class="ft">物體的顏色</div><div class="fd">選擇性反射：蘋果只反射紅光、吸收其他</div></div></a>
+    <a class="file" href="stage.html" target="_blank" rel="noopener">
+      <div class="fi">🍎</div><div><div class="ft">物體的顏色</div><div class="fd">選擇性反射：蘋果只反射紅光，綠光下變暗（舞臺體驗）</div></div></a>
   </div>
 
   <h2 class="sec">🧭 任務導覽</h2>

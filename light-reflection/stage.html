@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#06070d">
+<title>光的反射・光的舞臺</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{
+    --bg:#06070d; --bg2:#0b0e1a; --panel:#10131f; --panel2:#161a2b; --line:rgba(120,150,210,.20);
+    --amber:#ffc93c; --teal:#42e0c8; --ink:#eef3ff; --dim:#9aa6c8;
+    --blue:#5aa0ff; --sel:#ff8ac2;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif; --body:'Noto Sans TC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);background:var(--bg);min-height:100vh;-webkit-tap-highlight-color:transparent}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;
+    background:linear-gradient(180deg,#0a0c16,#06070d);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .badge{width:42px;height:42px;border-radius:12px;background:radial-gradient(circle at 40% 35%,#ffe08a,var(--amber));
+    display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 18px rgba(255,201,60,.5)}
+  .brand .t1{font-family:var(--disp);font-weight:700;font-size:19px;line-height:1}
+  .brand .t2{font-size:12.5px;color:var(--dim);font-weight:700;margin-top:3px}
+  .topbtns{display:flex;gap:8px}
+  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--panel2);border:1px solid var(--line);
+    color:var(--ink);border-radius:999px;padding:8px 14px;font-weight:800;font-size:14px;cursor:pointer}
+  .pill.on{border-color:var(--teal);color:var(--teal)}
+  .pill .dot{width:9px;height:9px;border-radius:50%;background:var(--teal)}
+  .home{position:fixed;left:14px;bottom:14px;z-index:200;background:var(--panel);border:2px solid var(--amber);
+    color:var(--amber);font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+
+  .prog{display:flex;align-items:center;gap:14px;padding:12px 20px}
+  .prog .lb{font-size:12px;letter-spacing:.2em;color:var(--dim);font-weight:900;white-space:nowrap}
+  .bar{flex:1;height:8px;border-radius:8px;background:#1a1f30;overflow:hidden}
+  .bar>i{display:block;height:100%;width:50%;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--teal),var(--amber));transition:width .4s}
+  .prog .n{font-family:var(--disp);font-weight:700;color:var(--dim);font-size:15px}
+
+  .stagewrap{display:grid;grid-template-columns:1fr 350px;gap:18px;padding:6px 20px 30px;max-width:1340px;margin:0 auto}
+  @media(max-width:900px){.stagewrap{grid-template-columns:1fr}}
+  .stage{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);
+    background:radial-gradient(120% 90% at 50% 0%,#141a2e 0%,#080a12 60%);min-height:430px}
+  canvas#cv{width:100%;height:auto;display:block}
+  .arc{position:absolute;left:14px;top:14px;bottom:14px;width:112px;z-index:6;background:rgba(10,12,22,.72);
+    border:1px solid var(--line);border-radius:16px;padding:12px 8px;display:flex;flex-direction:column;gap:2px;backdrop-filter:blur(6px)}
+  .arc .h{font-size:11px;letter-spacing:.22em;color:var(--dim);font-weight:900;text-align:center;margin-bottom:6px}
+  .node{display:flex;align-items:center;gap:8px;padding:7px 6px;border-radius:10px;cursor:pointer;font-weight:800;font-size:14px;color:var(--dim)}
+  .node .num{width:24px;height:24px;border-radius:50%;border:2px solid #33405f;display:flex;align-items:center;justify-content:center;font-size:12px;font-family:var(--disp);flex:0 0 auto}
+  .node.done .num{background:var(--teal);border-color:var(--teal);color:#062a24}
+  .node.cur{color:var(--ink)} .node.cur .num{background:#14243f;border-color:var(--teal);color:var(--teal);box-shadow:0 0 10px rgba(66,224,200,.6)}
+  .node:hover{background:rgba(120,150,210,.08)}
+  .badge2{position:absolute;right:16px;top:16px;z-index:6;background:rgba(10,12,22,.72);border:1px solid var(--line);
+    border-radius:14px;padding:12px 16px;backdrop-filter:blur(6px);min-width:180px}
+  .badge2 .k{font-size:10.5px;letter-spacing:.2em;color:var(--dim);font-weight:900}
+  .badge2 .big{font-family:var(--disp);font-size:38px;font-weight:700;line-height:1;display:flex;align-items:baseline;gap:8px}
+  .badge2 .big small{font-size:14px;color:var(--dim);font-weight:800}
+  .badge2 .row{display:flex;justify-content:space-between;font-size:12.5px;font-weight:800;margin-top:8px}
+  .badge2 .row span:first-child{color:var(--dim)} .badge2 .row .amber{color:var(--amber)}
+
+  .ctrls{position:absolute;left:120px;right:16px;bottom:14px;z-index:6;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+  @media(max-width:900px){.ctrls{left:12px}}
+  .slider{display:flex;align-items:center;gap:10px;background:rgba(12,16,28,.8);border:1px solid var(--line);border-radius:12px;padding:8px 14px}
+  .slider label{font-weight:900;font-size:15px}
+  input[type=range]{width:min(40vw,240px);height:26px;accent-color:var(--amber)}
+  .val{font-family:var(--disp);font-size:22px;color:var(--amber);min-width:52px;text-align:center}
+  .tbtn{font-family:var(--disp);font-weight:700;font-size:15px;border:1px solid var(--line);background:rgba(12,16,28,.8);color:var(--ink);border-radius:12px;padding:9px 14px;cursor:pointer}
+  .tbtn.on{border-color:var(--teal);color:var(--teal)}
+
+  .mc{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px 18px;align-self:start}
+  .mc .eye{font-size:11px;letter-spacing:.25em;color:var(--dim);font-weight:900}
+  .teach{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0 4px}
+  .teach .who{color:var(--teal);font-weight:900;font-size:14px}
+  .teach .say{font-weight:800;font-size:17px;line-height:1.45;margin-top:6px}
+  .sel{margin-top:10px;font-size:13.5px;font-weight:800;color:var(--sel);background:rgba(255,138,194,.1);
+    border:1px solid rgba(255,138,194,.3);border-radius:10px;padding:8px 10px}
+  .teach a{color:var(--amber);font-weight:900;font-size:14px;text-decoration:none;display:inline-block;margin-top:10px;cursor:pointer}
+  .mc h2{font-size:15px;color:var(--dim);font-weight:900;margin:18px 0 4px}
+  .mc .title{font-family:var(--disp);font-weight:700;font-size:32px;line-height:1.15;margin:2px 0}
+  .mc .desc{font-size:16px;font-weight:700;color:var(--dim);line-height:1.5;margin-top:8px}
+  .two{display:flex;gap:8px;justify-content:center;margin-top:14px;font-size:13px;color:var(--dim);font-weight:800;text-align:center}
+
+  .modal{position:fixed;inset:0;background:rgba(4,6,14,.9);display:none;align-items:center;justify-content:center;z-index:300;padding:18px}
+  .modal.show{display:flex}
+  .sheet{background:var(--panel);border:1px solid var(--line);border-radius:20px;max-width:660px;width:100%;max-height:86vh;overflow:auto;padding:22px}
+  .sheet h3{font-family:var(--disp);font-size:26px;margin:0 0 4px}
+  .sheet .step{border-left:3px solid var(--teal);padding:8px 0 8px 14px;margin:14px 0}
+  .sheet .step .s{font-weight:900;color:var(--teal);font-size:14px}
+  .sheet .step .l{font-weight:800;font-size:16px;margin-top:3px} .sheet .step .l b{color:var(--amber)}
+  .sheet .step .se{font-size:13px;color:var(--sel);font-weight:800;margin-top:4px}
+  .sheet .x{float:right;cursor:pointer;font-size:22px;color:var(--dim);font-weight:900}
+  canvas.confetti{position:fixed;inset:0;width:100vw;height:100vh;background:transparent;pointer-events:none;z-index:250}
+</style>
+</head>
+<body>
+<a href="/light/" class="mainmenu-btn" style="position:fixed;right:12px;top:12px;z-index:99999;background:#0f2841;border:2px solid #42e0c8;color:#42e0c8;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:Noto Sans TC,Microsoft JhengHei,system-ui,sans-serif">🗂️ 主選單</a>
+<a class="home" href="./">🏠 回到首頁</a>
+<canvas class="confetti" id="cf"></canvas>
+
+<div class="top">
+  <div class="brand"><div class="badge">✦</div>
+    <div><div class="t1">光線特勤隊</div><div class="t2">任務二・光的反射</div></div></div>
+  <div class="topbtns"><span class="pill on"><span class="dot"></span>操作層</span>
+    <span class="pill" id="soundBtn">🔊 音效</span></div>
+</div>
+
+<div class="prog"><span class="lb">任務進度</span><div class="bar"><i id="progBar"></i></div><span class="n" id="progN">3 / 6</span></div>
+
+<div class="stagewrap">
+  <div class="stage">
+    <canvas id="cv" width="680" height="440"></canvas>
+    <div class="arc" id="arc"><div class="h">STORY ARC</div></div>
+    <div class="badge2">
+      <div class="k">LIGHT LAB ONLINE</div>
+      <div class="big" id="labNum">03 <small id="labStep">緝捕｜關卡</small></div>
+      <div class="row"><span>入射角</span><span class="amber" id="rIn">45°</span></div>
+      <div class="row"><span>反射角</span><span class="amber" id="rRef">45°</span></div>
+    </div>
+    <div class="ctrls" id="ctrls">
+      <div class="slider" id="angBox"><label>光照角度</label>
+        <input type="range" id="ang" min="10" max="80" value="45"><span class="val" id="angV">45°</span></div>
+      <div id="surfBox" style="display:none">
+        <button class="tbtn on" id="smooth">🪞 平滑鏡面</button>
+        <button class="tbtn" id="rough">🧱 粗糙面</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mc">
+    <div class="eye">MISSION CONTROL</div>
+    <div class="teach">
+      <div class="who">🎙️ 老師這樣說</div>
+      <div class="say" id="teachSay">拖動角度！光斜斜進去，就斜斜彈出來——入射角永遠等於反射角。</div>
+      <div class="sel" id="selBox">💗 SEL：請學生輪流拖，做到的人給自己拍拍手。</div>
+    </div>
+    <h2 id="mcTask">任務 3・探索</h2>
+    <div class="title" id="mcTitle">光怎麼<br>彈回來？</div>
+    <div class="desc" id="mcDesc">拖動角度，觀察入射光、法線、反射光。入射角＝反射角，這就是反射定律。</div>
+    <div class="two">🔵 拖動、指認亮線　｜　🟠 說出：入射角＝反射角</div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="sheet"><span class="x" id="modalX">✕</span>
+    <h3>🎬 光的反射・完整帶課稿</h3>
+    <div id="scriptBody"></div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let AC,sound=true;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
+function tone(f,t,d,ty="triangle",v=.2){if(!sound)return;const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();
+  o.type=ty;o.frequency.setValueAtTime(f,t);o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
+function blip(f){const a=ac();if(!a)return;tone(f||660,a.currentTime,.09,"square",.15);}
+function chime(){const a=ac();if(!a)return;const t=a.currentTime;[659,988,1319].forEach((f,i)=>tone(f,t+i*.07,.16));}
+$("soundBtn").onclick=()=>{sound=!sound;$("soundBtn").classList.toggle("on",sound);$("soundBtn").textContent=sound?"🔊 音效":"🔇 靜音";blip(700);};
+function speak(zh){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.9;speechSynthesis.speak(u);}catch(e){}}
+
+const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
+function csize(){cv.width=innerWidth;cv.height=innerHeight;}csize();addEventListener("resize",csize);
+const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
+function confetti(n=110){for(let i=0;i<n;i++)parts.push({x:Math.random()*innerWidth,y:-20,vx:(Math.random()-.5)*8,vy:Math.random()*3+2,g:.26,s:6+Math.random()*8,c:COL[Math.floor(Math.random()*COL.length)],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0});crun();}
+let craf=null;function crun(){if(!craf)craf=requestAnimationFrame(cl);}
+function cl(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});parts=parts.filter(p=>p.y<cv.height+30&&p.life<240);if(parts.length)craf=requestAnimationFrame(cl);else{craf=null;cx.clearRect(0,0,cv.width,cv.height);}}
+
+/* ===== stage canvas: reflection ===== */
+const c=$("cv"),x=c.getContext("2d");const W=680,H=440,P={x:340,y:330},L=250,NLEN=210;
+let theta=45,mode="law",tA=0,surf="smooth";
+const HITS=[150,270,390,510],INC=34*Math.PI/180,TILT=[-0.5,0.42,-0.32,0.55];
+$("ang").oninput=e=>{theta=+e.target.value;$("angV").textContent=theta+"°";$("rIn").textContent=theta+"°";$("rRef").textContent=theta+"°";blip(500+theta*4);};
+$("smooth").onclick=()=>{surf="smooth";$("smooth").classList.add("on");$("rough").classList.remove("on");blip(720);speak("鏡面反射");};
+$("rough").onclick=()=>{surf="rough";$("rough").classList.add("on");$("smooth").classList.remove("on");blip(500);speak("漫反射");};
+function rad(d){return d*Math.PI/180;}
+function ray(a,b,col,w){x.strokeStyle=col;x.lineWidth=w||5;x.lineCap="round";x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();
+  const mx=(a.x+b.x)/2,my=(a.y+b.y)/2,an=Math.atan2(b.y-a.y,b.x-a.x);x.fillStyle=col;x.beginPath();
+  x.moveTo(mx+12*Math.cos(an),my+12*Math.sin(an));x.lineTo(mx-8*Math.cos(an)-7*Math.sin(an),my-8*Math.sin(an)+7*Math.cos(an));
+  x.lineTo(mx-8*Math.cos(an)+7*Math.sin(an),my-8*Math.sin(an)-7*Math.cos(an));x.fill();}
+function lbl(t,px,py,col,sz){x.fillStyle=col||"#eef3ff";x.font="900 "+(sz||16)+"px 'Noto Sans TC',sans-serif";x.fillText(t,px,py);}
+function emo(e,px,py,sz){x.font=(sz||30)+"px serif";x.textAlign="center";x.textBaseline="middle";x.fillText(e,px,py);x.textAlign="left";x.textBaseline="alphabetic";}
+function drawLaw(){
+  const my=P.y;x.fillStyle="#16324e";x.fillRect(60,my,W-120,16);x.fillStyle="rgba(120,200,255,.35)";x.fillRect(60,my,W-120,4);
+  for(let i=66;i<W-66;i+=16){x.strokeStyle="rgba(120,170,210,.4)";x.lineWidth=2;x.beginPath();x.moveTo(i,my+16);x.lineTo(i-10,my+26);x.stroke();}
+  const inc={x:P.x-L*Math.sin(rad(theta)),y:P.y-L*Math.cos(rad(theta))},ref={x:P.x+L*Math.sin(rad(theta)),y:P.y-L*Math.cos(rad(theta))};
+  x.setLineDash([9,8]);x.strokeStyle="rgba(180,210,235,.75)";x.lineWidth=2.5;x.beginPath();x.moveTo(P.x,P.y);x.lineTo(P.x,P.y-NLEN);x.stroke();x.setLineDash([]);
+  x.strokeStyle="rgba(90,160,255,.9)";x.lineWidth=3;x.beginPath();x.arc(P.x,P.y,58,-Math.PI/2-rad(theta),-Math.PI/2);x.stroke();
+  x.strokeStyle="rgba(255,201,60,.9)";x.beginPath();x.arc(P.x,P.y,58,-Math.PI/2,-Math.PI/2+rad(theta));x.stroke();
+  ray(inc,P,"#5aa0ff",6);ray(P,ref,"#ffc93c",6);
+  let t=tA%1,px,py;if(t<.5){const k=t/.5;px=inc.x+(P.x-inc.x)*k;py=inc.y+(P.y-inc.y)*k;}else{const k=(t-.5)/.5;px=P.x+(ref.x-P.x)*k;py=P.y+(ref.y-P.y)*k;}
+  x.fillStyle="#fff";x.shadowColor="#ffe89a";x.shadowBlur=18;x.beginPath();x.arc(px,py,7,0,7);x.fill();x.shadowBlur=0;
+  emo("🔦",inc.x-2,inc.y-4,32);emo("👁️",ref.x,ref.y-2,28);
+  lbl("入射光",(inc.x+P.x)/2-72,(inc.y+P.y)/2,"#5aa0ff");lbl("反射光",(ref.x+P.x)/2+8,(ref.y+P.y)/2,"#ffc93c");
+  lbl("法線",P.x+8,P.y-NLEN+6,"#cfe4f5");lbl("入射角 "+theta+"°",P.x-120,P.y-72,"#5aa0ff",14);lbl("反射角 "+theta+"°",P.x+34,P.y-72,"#ffc93c",14);
+  x.fillStyle="#fff";x.beginPath();x.arc(P.x,P.y,5,0,7);x.fill();
+}
+function drawSurf(){
+  const sy=330;
+  if(surf==="smooth"){x.fillStyle="#16324e";x.fillRect(60,sy,W-120,18);x.fillStyle="rgba(120,200,255,.4)";x.fillRect(60,sy,W-120,5);}
+  else{x.fillStyle="#3a2f22";x.beginPath();x.moveTo(60,sy+30);let i=60,up=true;while(i<W-60){x.lineTo(i,sy+(up?0:16));up=!up;i+=22;}x.lineTo(W-60,sy+30);x.closePath();x.fill();}
+  const d={x:Math.sin(INC),y:Math.cos(INC)};
+  HITS.forEach((hx,i)=>{const hp={x:hx,y:sy},s={x:hp.x-190*d.x,y:hp.y-190*d.y};
+    x.strokeStyle="#5aa0ff";x.lineWidth=5;x.lineCap="round";x.beginPath();x.moveTo(s.x,s.y);x.lineTo(hp.x,hp.y);x.stroke();
+    let phi=surf==="smooth"?0:TILT[i];const n={x:Math.sin(phi),y:-Math.cos(phi)},dot=d.x*n.x+d.y*n.y,r={x:d.x-2*dot*n.x,y:d.y-2*dot*n.y},e={x:hp.x+190*r.x,y:hp.y+190*r.y};
+    x.strokeStyle="#ffc93c";x.beginPath();x.moveTo(hp.x,hp.y);x.lineTo(e.x,e.y);x.stroke();
+    const an=Math.atan2(e.y-hp.y,e.x-hp.x);x.fillStyle="#ffc93c";x.beginPath();x.moveTo(e.x,e.y);
+    x.lineTo(e.x-13*Math.cos(an)-8*Math.sin(an),e.y-13*Math.sin(an)+8*Math.cos(an));x.lineTo(e.x-13*Math.cos(an)+8*Math.sin(an),e.y-13*Math.sin(an)-8*Math.cos(an));x.fill();});
+  if(surf==="smooth"){emo("😊",600,90,40);lbl("整齊！看得到自己",380,66,"#42e0c8",17);}
+  else{emo("🙈",600,90,40);lbl("亂彈！看不到自己",380,66,"#ff9f6b",17);}
+}
+function loop(){tA+=0.006;x.clearRect(0,0,W,H);if(mode==="law")drawLaw();else drawSurf();requestAnimationFrame(loop);}
+loop();
+
+/* ===== story arc ===== */
+const ARC=[
+ {n:"01",t:"事件",mode:"law",task:"任務 1・懸念",title:"光去<br>哪了？",say:"老師拿手電筒照鏡子——光跑去哪了？（關燈前先預告）你在鏡子裡看過自己嗎？",
+  sel:"💗 SEL・自我覺察：問「照鏡子看到自己，是什麼感覺？」讓學生說出感受。",desc:"用真實現象開場：光碰到鏡子，會怎樣？先記住這個謎。"},
+ {n:"02",t:"猜想",mode:"law",task:"任務 2・預測",title:"會穿過<br>還是彈回？",say:"猜猜看：光碰到鏡子，是直直穿過去，還是彈回來？舉手或指一指。",
+  sel:"💗 SEL・社會覺察：每個猜想都鼓勵，「猜錯沒關係，等一下一起驗證」。",desc:"先大膽猜，再用光驗證。沒有標準答案的恐懼。"},
+ {n:"03",t:"緝捕",mode:"law",task:"任務 3・探索",title:"光怎麼<br>彈回來？",say:"拖動角度！光斜斜進去，就斜斜彈出來——入射角永遠等於反射角。",
+  sel:"💗 SEL・自我管理：請學生輪流拖，等待別人操作，做到的給自己拍拍手。",desc:"自己動手產生資料（探究實作）。入射角＝反射角＝反射定律。"},
+ {n:"04",t:"發展",mode:"surf",task:"任務 4・建構",title:"鏡子 vs<br>牆壁",say:"為什麼鏡子照得到自己、牆壁不行？切換平滑面和粗糙面看看光怎麼彈。",
+  sel:"💗 SEL・人際技巧：兩人一組，一人切換、一人說結果，合作完成。",desc:"平滑面→鏡面反射（整齊）；粗糙面→漫反射（亂彈）。破解迷思：牆也反射光，只是漫反射。"},
+ {n:"05",t:"生活",mode:"surf",task:"任務 5・遷移",title:"生活裡的<br>反射",say:"後照鏡、潛望鏡、平靜的水面都用反射！你在哪裡看過倒影？跟大家分享。",
+  sel:"💗 SEL・負責任決策：連結生活——過馬路看後照鏡，反射幫我們安全。",desc:"跨情境遷移：後照鏡、潛望鏡、水面倒影，把概念用到真實生活。"},
+ {n:"06",t:"解密",mode:"law",task:"任務 6・破解",title:"謎題<br>破解！",say:"回到開場：手電筒照鏡子，光反射、彈走了！進去角＝出來角。你們都是光線偵探！",
+  sel:"💗 SEL・自我覺察：問「今天你學會什麼？想跟誰分享？」給成就感。",desc:"首尾呼應：開場的謎被學生自己解開，恍然大悟。"},
+];
+let cur=2;const arc=$("arc");
+ARC.forEach((a,i)=>{const d=document.createElement("div");d.className="node";d.innerHTML='<span class="num">'+a.n+'</span>'+a.t;
+  d.onclick=()=>{cur=i;renderArc();blip(680);};arc.appendChild(d);});
+function renderArc(){
+  const a=ARC[cur];
+  document.querySelectorAll(".node").forEach((el,i)=>{el.classList.toggle("done",i<cur);el.classList.toggle("cur",i===cur);});
+  mode=a.mode;
+  $("angBox").style.display=(mode==="law")?"flex":"none";
+  $("surfBox").style.display=(mode==="surf")?"block":"none";
+  $("teachSay").textContent=a.say;speak(a.say);$("selBox").textContent=a.sel;
+  $("mcTask").textContent=a.task;$("mcTitle").innerHTML=a.title;$("mcDesc").innerHTML=a.desc;
+  $("labNum").innerHTML=a.n+' <small>'+a.t+'｜關卡</small>';
+  $("progN").textContent=(cur+1)+" / 6";$("progBar").style.width=((cur+1)/6*100)+"%";
+  if(a.n==="06"){chime();confetti(120);}
+}
+renderArc();
+
+/* full script */
+const SCRIPT=[
+ {s:"畫面①・事件（引起動機）",l:"你拿手電筒照鏡子，把光打到牆上。你說：<b>「光直直過去，碰到鏡子……跑到旁邊去了！」</b>（等 5 秒）",se:"💗 先問：「照鏡子看到自己，是什麼感覺？」讓學生命名感受。"},
+ {s:"畫面②・猜想",l:"你問：<b>「光碰到鏡子，會穿過去還是彈回來？」</b>請學生舉手或指一指。",se:"💗 每個猜想都鼓勵：「猜錯沒關係，我們一起驗證。」"},
+ {s:"畫面③・探索（反射定律）",l:"拖動角度滑桿。你說：<b>「光斜斜進去，就斜斜彈出來——入射角＝反射角！」</b>🟠請學生說因果句。",se:"💗 輪流操作，等待別人；做到就給自己拍拍手。"},
+ {s:"畫面④・建構（鏡面/漫反射）",l:"切換平滑面／粗糙面。你說：<b>「鏡子光滑→光整齊→看得到自己；牆粗糙→光亂彈→看不到。」</b>破解「只有鏡子會反射」的迷思。",se:"💗 兩人一組：一人切換、一人說結果，合作完成。"},
+ {s:"畫面⑤・生活（遷移）",l:"你說：<b>「後照鏡、潛望鏡、平靜的水面都用反射！」</b>問學生在哪看過倒影。",se:"💗 連結安全：過馬路看後照鏡，反射幫我們保護自己。"},
+ {s:"畫面⑥・解密（統整）",l:"回到開場：<b>「光碰鏡子反射、彈走了！進去角＝出來角。」</b>🎉撒花，稱讚大家是光線偵探。",se:"💗 問：「今天學會什麼？想跟誰分享？」給成就感收尾。"},
+];
+const _sl=$("scriptLink");if(_sl){_sl.onclick=()=>{$("scriptBody").innerHTML=SCRIPT.map(s=>'<div class="step"><div class="s">'+s.s+'</div><div class="l">'+s.l+'</div><div class="se">'+s.se+'</div></div>').join("");$("modal").classList.add("show");};}
+$("modalX").onclick=()=>$("modal").classList.remove("show");
+$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("show");};
+</script>
+</body>
+</html>
