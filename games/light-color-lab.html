@@ -174,7 +174,7 @@ function cloop(){cx.clearRect(0,0,cv.width,cv.height);
   parts=parts.filter(p=>p.y<cv.height+30&&p.life<260);
   if(parts.length)craf=requestAnimationFrame(cloop);else{craf=null;cx.clearRect(0,0,cv.width,cv.height);}}
 function trainGo(){const t=$("train");t.classList.remove("go");void t.offsetWidth;t.classList.add("go");choo();}
-function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
+function speak(zh,en){try{if(localStorage.getItem('voice')!=='on')return;}catch(e){return;}if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
   u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.85;speechSynthesis.speak(e);}};
   speechSynthesis.speak(u);}catch(e){}}

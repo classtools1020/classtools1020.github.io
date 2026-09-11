@@ -211,7 +211,7 @@ function sfxWrong(){const a=ac();if(!a)return;const t=a.currentTime;tone(196,t,.
 function sfxWin(){const a=ac();if(!a)return;const t=a.currentTime;[523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.12,.28,"triangle",.3));}
 
 /* ---------- speech ---------- */
-function speak(zh,en){
+function speak(zh,en){try{if(localStorage.getItem('voice')!=='on')return;}catch(e){return;}
   if(!('speechSynthesis' in window))return;
   try{speechSynthesis.cancel();
     const u1=new SpeechSynthesisUtterance(zh);u1.lang="zh-TW";u1.rate=.85;

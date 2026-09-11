@@ -245,7 +245,7 @@ function sWin(){const a=ac();if(!a)return;const t=a.currentTime;                
   noise(t+.72,.2,.08,3000);}
 
 /* ---------- speech ---------- */
-function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
+function speak(zh,en){try{if(localStorage.getItem('voice')!=='on')return;}catch(e){return;}if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
   u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.85;speechSynthesis.speak(e);}};
   speechSynthesis.speak(u);}catch(e){}}

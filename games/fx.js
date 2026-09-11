@@ -31,7 +31,22 @@
     boom(){const t=now();noise(t,.5,.22,120);glide(120,40,t,.5,"sine",.3);},
     robot(){const t=now();[440,660,550,880].forEach((f,i)=>tone(f,t+i*.09,.12,"square",.12));glide(300,900,t+.4,.25,"sawtooth",.06);},
   };
-  FX.speak=(zh,en)=>{if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.9;
+  /* 🍄 瑪利歐風清脆音效（方波＋短包絡） */
+  const sq=(f,t,d,v=.13)=>tone(f,t,d,"square",v);
+  FX.sound.coin=()=>{const t=now();sq(988,t,.07,.14);sq(1319,t+.07,.32,.14);};                       // 叮～
+  FX.sound.jump=()=>{const t=now();glide(330,880,t,.14,"square",.1);};                               // 啾
+  FX.sound.powerup=()=>{const t=now();[523,659,784,1047,1319,1568,2093].forEach((f,i)=>sq(f,t+i*.045,.06,.12));};  // 吃蘑菇
+  FX.sound.oneup=()=>{const t=now();[1319,1568,2637,2093,2349,3136].forEach((f,i)=>sq(f,t+i*.09,.1,.12));};      // 1UP
+  FX.sound.clear=()=>{const t=now();[[784,0],[1047,.1],[1319,.2],[1568,.3],[2093,.45],[1568,.6],[2093,.7]].forEach(([f,dt])=>sq(f,t+dt,.14,.13));
+    [[1047,.95],[1319,1.05],[1568,1.15],[2093,1.3]].forEach(([f,dt])=>tone(f,t+dt,.5,"triangle",.16));};        // 過關
+  FX.sound.blip=()=>{sq(1200,now(),.04,.09);};
+  FX.sound.wrongsoft=()=>{const t=now();sq(392,t,.1,.1);sq(311,t+.11,.18,.1);};
+  // 舊名稱改接新音色，所有頁面自動變清脆
+  FX.sound.right=FX.sound.powerup; FX.sound.fanfare=FX.sound.clear; FX.sound.levelup=FX.sound.oneup; FX.sound.sparkle=FX.sound.coin; FX.sound.click=FX.sound.blip; FX.sound.wrong=FX.sound.wrongsoft; FX.sound.pop=FX.sound.jump;
+
+  /* 🔇 旁白預設關閉（老師：太吵）；右下角 🔈 可開啟 */
+  FX.voiceOn=()=>{try{return localStorage.getItem("voice")==="on";}catch(e){return false;}};
+  FX.speak=(zh,en)=>{if(!FX.voiceOn())return;if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.9;
     u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.85;speechSynthesis.speak(e);}};speechSynthesis.speak(u);}catch(e){}};
 
   /* ---------- styles ---------- */
@@ -171,7 +186,12 @@
   // 每個載入 fx.js 的頁面自動有一顆浮動 🔔 按鈕（右下角）
   function bell(){if(document.getElementById("fxbell"))return;const b=document.createElement("button");b.id="fxbell";b.title="集合口令";b.textContent="🔔";
     b.style.cssText="position:fixed;right:14px;bottom:84px;z-index:9500;width:56px;height:56px;border-radius:50%;border:3px solid #42e0c8;background:#0f2841;font-size:26px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.5)";
-    b.onclick=()=>FX.attention();document.body.appendChild(b);}
+    b.onclick=()=>FX.attention();document.body.appendChild(b);
+    const v=document.createElement("button");v.id="fxvoice";v.title="旁白開關";
+    v.style.cssText="position:fixed;right:14px;bottom:150px;z-index:9500;width:44px;height:44px;border-radius:50%;border:2px solid rgba(120,170,210,.5);background:#0f2841;font-size:20px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.5)";
+    const paint=()=>{v.textContent=FX.voiceOn()?"🔈":"🔇";v.style.opacity=FX.voiceOn()?"1":".7";};paint();
+    v.onclick=()=>{try{localStorage.setItem("voice",FX.voiceOn()?"off":"on");}catch(e){}paint();FX.sound.blip();if(FX.voiceOn())FX.speak("旁白開啟","");};
+    document.body.appendChild(v);}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bell);else bell();
 
   window.FX=FX;

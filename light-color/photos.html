@@ -87,7 +87,7 @@ function tone(f,t,d,ty="triangle",v=.22){const a=ac();if(!a)return;const o=a.cre
   o.type=ty;o.frequency.setValueAtTime(f,t);o.connect(g);g.connect(a.destination);
   g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
 function ding(){const a=ac();if(!a)return;const t=a.currentTime;[784,1047,1319].forEach((f,i)=>tone(f,t+i*.08,.16));}
-function speak(zh,en){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
+function speak(zh,en){try{if(localStorage.getItem('voice')!=='on')return;}catch(e){return;}if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.85;
   u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.82;speechSynthesis.speak(e);}};
   speechSynthesis.speak(u);}catch(e){}}

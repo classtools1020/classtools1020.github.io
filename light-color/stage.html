@@ -3,343 +3,164 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#06070d">
+<meta name="theme-color" content="#05101f">
 <title>混光魔法・光的舞臺</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
 <style>
-  :root{
-    --bg:#06070d; --bg2:#0b0e1a; --panel:#10131f; --panel2:#161a2b; --line:rgba(120,150,210,.20);
-    --amber:#ffc93c; --teal:#42e0c8; --ink:#eef3ff; --dim:#9aa6c8;
-    --r:#ff3b3b; --g:#28d24e; --b:#3a86ff;
-    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif; --body:'Noto Sans TC',system-ui,sans-serif;
-  }
-  *{box-sizing:border-box} html,body{margin:0}
-  body{font-family:var(--body);color:var(--ink);background:var(--bg);min-height:100vh;-webkit-tap-highlight-color:transparent}
+  :root{--bg1:#05101f;--bg2:#0a2036;--bg3:#0e3350;--panel:#0f2841;--line:rgba(120,170,210,.28);
+    --amber:#ffc93c;--teal:#42e0c8;--ink:#eaf6ff;--dim:#9db8cf;
+    --disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;
+    background:radial-gradient(120% 80% at 50% -10%,rgba(255,201,60,.10),transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3))}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 60px}
+  header{text-align:center;padding:6px 0 2px}
+  .emblem{font-size:46px;filter:drop-shadow(0 8px 18px rgba(255,201,60,.35))}
+  h1{font-family:var(--disp);font-size:28px;margin:2px 0}
+  .sub{color:var(--teal);font-weight:900;font-size:18px}
 
-  /* top bar */
-  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;
-    background:linear-gradient(180deg,#0a0c16,#06070d);border-bottom:1px solid var(--line)}
-  .brand{display:flex;align-items:center;gap:12px}
-  .badge{width:42px;height:42px;border-radius:12px;background:radial-gradient(circle at 40% 35%,#ffe08a,var(--amber));
-    display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 0 18px rgba(255,201,60,.5)}
-  .brand .t1{font-family:var(--disp);font-weight:700;font-size:19px;line-height:1}
-  .brand .t2{font-size:12.5px;color:var(--dim);font-weight:700;margin-top:3px}
-  .topbtns{display:flex;gap:8px}
-  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--panel2);border:1px solid var(--line);
-    color:var(--ink);border-radius:999px;padding:8px 14px;font-weight:800;font-size:14px;cursor:pointer}
-  .pill.on{border-color:var(--teal);color:var(--teal)}
-  .pill .dot{width:9px;height:9px;border-radius:50%;background:var(--teal)}
-  .home{position:fixed;left:14px;bottom:14px;z-index:200;background:var(--panel);border:2px solid var(--amber);
-    color:var(--amber);font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+  /* ===== 舞台 ===== */
+  .stage{position:relative;margin-top:14px;border-radius:26px;overflow:hidden;border:3px solid var(--line);
+    background:radial-gradient(120% 90% at 50% 0%,#1a2140 0%,#0a0d18 60%,#06080f 100%);box-shadow:0 16px 40px rgba(0,0,0,.6);aspect-ratio:16/9}
+  .curtain{position:absolute;inset:0;pointer-events:none;background:
+    linear-gradient(90deg,rgba(120,20,40,.55),transparent 12%),linear-gradient(-90deg,rgba(120,20,40,.55),transparent 12%)}
+  .cone{position:absolute;top:-8%;width:44%;height:100%;mix-blend-mode:screen;opacity:0;transition:opacity .35s;filter:blur(6px);pointer-events:none}
+  .cone.r{left:8%;background:conic-gradient(from 180deg at 50% 0,transparent 70deg,rgba(255,50,50,.75) 90deg,transparent 110deg)}
+  .cone.g{left:28%;background:conic-gradient(from 180deg at 50% 0,transparent 70deg,rgba(40,230,90,.7) 90deg,transparent 110deg)}
+  .cone.b{left:48%;background:conic-gradient(from 180deg at 50% 0,transparent 70deg,rgba(60,140,255,.75) 90deg,transparent 110deg)}
+  .cone.on{opacity:1}
+  .lamp{position:absolute;top:2%;width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.4);background:#222;box-shadow:0 0 0 rgba(0,0,0,0);transition:.3s}
+  .lamp.r{left:30%}.lamp.g{left:50%;transform:translateX(-50%)}.lamp.b{right:30%}
+  .lamp.r.on{background:#ff3b3b;box-shadow:0 0 26px #ff3b3b}.lamp.g.on{background:#28e05a;box-shadow:0 0 26px #28e05a}.lamp.b.on{background:#3b8dff;box-shadow:0 0 26px #3b8dff}
+  .floor{position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(0deg,rgba(255,255,255,.07),transparent);border-top:1px solid rgba(255,255,255,.08)}
+  .objs{position:absolute;left:4%;right:4%;bottom:9%;display:flex;justify-content:space-around;align-items:flex-end;gap:2%}
+  .obj{width:17%;text-align:center;position:relative}
+  .obj img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block;mix-blend-mode:screen;transition:filter .35s;filter:drop-shadow(0 14px 16px rgba(0,0,0,.7))}
+  .obj .nm{margin-top:4px;font-family:var(--disp);font-weight:700;font-size:min(3.2vw,17px);background:rgba(0,0,0,.55);border-radius:8px;padding:2px 8px;display:inline-block}
+  .obj .tag{position:absolute;top:-8px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:min(2.6vw,12px);font-weight:900;border-radius:999px;padding:3px 9px;transition:.25s}
+  .obj .tag.see{background:rgba(66,224,200,.92);color:#06231e}.obj .tag.dark{background:rgba(90,100,130,.7);color:#e8eefc}
+  .lightname{position:absolute;left:50%;top:12%;transform:translateX(-50%);font-family:var(--disp);font-weight:700;font-size:min(7vw,40px);text-shadow:0 4px 16px rgba(0,0,0,.9);white-space:nowrap;transition:.3s}
 
-  /* progress */
-  .prog{display:flex;align-items:center;gap:14px;padding:12px 20px}
-  .prog .lb{font-size:12px;letter-spacing:.2em;color:var(--dim);font-weight:900;white-space:nowrap}
-  .bar{flex:1;height:8px;border-radius:8px;background:#1a1f30;overflow:hidden}
-  .bar>i{display:block;height:100%;width:66%;border-radius:8px;
-    background:linear-gradient(90deg,var(--b),var(--teal),#c77dff);transition:width .4s}
-  .prog .n{font-family:var(--disp);font-weight:700;color:var(--dim);font-size:15px}
+  /* ===== 三顆燈 ===== */
+  .lights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  .lb{border:3px solid var(--line);border-radius:20px;padding:14px 8px 12px;cursor:pointer;text-align:center;background:var(--panel);transition:transform .1s,box-shadow .2s;color:var(--ink);user-select:none}
+  .lb:active{transform:scale(.96)}
+  .lb .dot{width:46px;height:46px;border-radius:50%;margin:0 auto 6px;border:3px solid rgba(255,255,255,.35);background:#2a3550;transition:.25s}
+  .lb .n{font-family:var(--disp);font-weight:700;font-size:22px}
+  .lb.r.on{border-color:#ff3b3b;box-shadow:0 0 0 3px rgba(255,59,59,.3)}.lb.r.on .dot{background:#ff3b3b;box-shadow:0 0 22px #ff3b3b}
+  .lb.g.on{border-color:#28e05a;box-shadow:0 0 0 3px rgba(40,224,90,.3)}.lb.g.on .dot{background:#28e05a;box-shadow:0 0 22px #28e05a}
+  .lb.b.on{border-color:#3b8dff;box-shadow:0 0 0 3px rgba(59,141,255,.3)}.lb.b.on .dot{background:#3b8dff;box-shadow:0 0 22px #3b8dff}
+  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .btn{font-family:var(--disp);font-weight:700;font-size:18px;border:none;border-radius:16px;padding:12px 22px;cursor:pointer}
+  .btn.ghost{background:var(--panel);border:2px solid var(--line);color:var(--ink)}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);color:#08131f;box-shadow:0 6px 0 #c9860f}
+  .btn.go:active{transform:translateY(4px);box-shadow:0 2px 0 #c9860f}
 
-  /* layout */
-  .stagewrap{display:grid;grid-template-columns:1fr 340px;gap:18px;padding:6px 20px 30px;max-width:1320px;margin:0 auto}
-  @media(max-width:900px){.stagewrap{grid-template-columns:1fr}}
-
-  /* stage */
-  .stage{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);
-    background:radial-gradient(120% 90% at 50% 0%,#141a2e 0%,#080a12 60%);min-height:440px;isolation:isolate}
-  .arc{position:absolute;left:14px;top:14px;bottom:14px;width:112px;z-index:6;
-    background:rgba(10,12,22,.72);border:1px solid var(--line);border-radius:16px;padding:12px 8px;
-    display:flex;flex-direction:column;gap:2px;backdrop-filter:blur(6px)}
-  .arc .h{font-size:11px;letter-spacing:.22em;color:var(--dim);font-weight:900;text-align:center;margin-bottom:6px}
-  .node{display:flex;align-items:center;gap:8px;padding:7px 6px;border-radius:10px;cursor:pointer;font-weight:800;font-size:14px;color:var(--dim)}
-  .node .num{width:24px;height:24px;border-radius:50%;border:2px solid #33405f;display:flex;align-items:center;justify-content:center;
-    font-size:12px;font-family:var(--disp);flex:0 0 auto}
-  .node.done .num{background:var(--teal);border-color:var(--teal);color:#062a24}
-  .node.cur{color:var(--ink)} .node.cur .num{background:#14243f;border-color:var(--teal);color:var(--teal);box-shadow:0 0 10px rgba(66,224,200,.6)}
-  .node:hover{background:rgba(120,150,210,.08)}
-
-  .badge2{position:absolute;right:16px;top:16px;z-index:6;background:rgba(10,12,22,.72);border:1px solid var(--line);
-    border-radius:14px;padding:12px 16px;backdrop-filter:blur(6px);min-width:186px}
-  .badge2 .k{font-size:10.5px;letter-spacing:.2em;color:var(--dim);font-weight:900}
-  .badge2 .big{font-family:var(--disp);font-size:40px;font-weight:700;line-height:1;display:flex;align-items:baseline;gap:8px}
-  .badge2 .big small{font-size:15px;color:var(--dim);font-weight:800}
-  .badge2 .row{display:flex;justify-content:space-between;font-size:12.5px;font-weight:800;margin-top:8px}
-  .badge2 .row span:first-child{color:var(--dim)}
-  .badge2 .row .amber{color:var(--amber)}
-
-  /* spotlights */
-  .cones{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
-  .cone{position:absolute;top:-6%;width:34%;height:96%;mix-blend-mode:screen;transition:opacity .3s;filter:blur(3px)}
-  .cone.r{left:20%;background:conic-gradient(from 180deg at 50% 0,transparent 78deg,rgba(255,59,59,.55) 90deg,transparent 102deg)}
-  .cone.g{left:33%;background:conic-gradient(from 180deg at 50% 0,transparent 78deg,rgba(40,210,78,.5) 90deg,transparent 102deg)}
-  .cone.b{left:46%;background:conic-gradient(from 180deg at 50% 0,transparent 78deg,rgba(58,134,255,.55) 90deg,transparent 102deg)}
-
-  /* objects */
-  .floor{position:absolute;left:0;right:0;bottom:0;height:40%;z-index:2;
-    background:linear-gradient(0deg,rgba(120,150,210,.10),transparent);
-    border-top:1px solid rgba(120,150,210,.12)}
-  .objs{position:absolute;left:120px;right:12px;bottom:10%;z-index:3;display:flex;justify-content:space-around;align-items:flex-end;gap:6px}
-  @media(max-width:900px){.objs{left:12px}}
-  .obj{width:16.5%;max-width:130px;text-align:center;position:relative}
-  .obj img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))}
-  .obj .nm{margin-top:4px;font-family:var(--disp);font-weight:700;font-size:15px;
-    background:rgba(0,0,0,.5);border-radius:8px;padding:2px 8px;display:inline-block}
-  .obj .tag{position:absolute;top:-30px;left:50%;transform:translateX(-50%);white-space:nowrap;
-    font-size:12px;font-weight:900;border-radius:999px;padding:3px 9px;transition:.2s}
-  .obj .tag.see{background:rgba(66,224,200,.9);color:#06231e}
-  .obj .tag.dark{background:rgba(120,130,160,.55);color:#0a0e18}
-
-  /* the relight overlay (multiply) */
-  .light{position:absolute;left:120px;right:12px;bottom:10%;top:6%;z-index:4;mix-blend-mode:multiply;
-    pointer-events:none;transition:background .25s;border-radius:12px}
-  @media(max-width:900px){.light{left:12px}}
-
-  .stagebtn{position:absolute;left:120px;bottom:14px;z-index:6;font-family:var(--disp);font-weight:700;font-size:15px;
-    background:rgba(12,16,28,.8);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:9px 16px;cursor:pointer}
-  @media(max-width:900px){.stagebtn{left:12px}}
-  /* 手機版：STORY ARC 與 LIGHT LAB 面板改成靜態排在舞臺上方，不再浮在物件上面 */
-  @media(max-width:900px){
-    .stage{min-height:560px;padding-top:6px}
-    .mainmenu-btn{top:auto!important;bottom:150px!important}
-    .arc{position:static;width:auto;height:auto;margin:8px 10px 0;padding:8px 6px;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:4px;backdrop-filter:none}
-    .arc .h{width:100%;margin-bottom:2px}
-    .node{font-size:12.5px;padding:4px 7px;gap:5px}
-    .node .num{width:20px;height:20px;font-size:11px}
-    .badge2{position:static;margin:8px 10px 0;min-width:0}
-    .badge2 .big{font-size:30px}
-    .home{left:auto;right:12px;bottom:12px;font-size:14px;padding:7px 12px;opacity:.94}
-  }
-
-  /* mission control */
-  .mc{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px 18px;align-self:start}
-  .mc .eye{font-size:11px;letter-spacing:.25em;color:var(--dim);font-weight:900}
-  .teach{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0 4px}
-  .teach .who{color:var(--teal);font-weight:900;font-size:14px}
-  .teach .say{font-weight:800;font-size:17px;line-height:1.45;margin-top:6px}
-  .teach a{color:var(--amber);font-weight:900;font-size:14px;text-decoration:none;display:inline-block;margin-top:10px;cursor:pointer}
-  .mc h2{font-size:15px;color:var(--dim);font-weight:900;margin:18px 0 4px}
-  .mc .title{font-family:var(--disp);font-weight:700;font-size:34px;line-height:1.15;margin:2px 0}
-  .mc .desc{font-size:16px;font-weight:700;color:var(--dim);line-height:1.5;margin-top:8px}
-  .lights{display:flex;gap:10px;margin-top:16px}
-  .lbtn{flex:1;font-family:var(--disp);font-weight:700;font-size:19px;border:2px solid;border-radius:14px;padding:14px 4px;
-    cursor:pointer;background:#0c1120;color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px}
-  .lbtn .d{width:14px;height:14px;border-radius:50%}
-  .lbtn.r{border-color:var(--r)} .lbtn.g{border-color:var(--g)} .lbtn.b{border-color:var(--b)}
-  .lbtn.r .d{background:var(--r)} .lbtn.g .d{background:var(--g)} .lbtn.b .d{background:var(--b)}
-  .lbtn.on.r{background:rgba(255,59,59,.9);color:#2a0000} .lbtn.on.g{background:rgba(40,210,78,.9);color:#052a10} .lbtn.on.b{background:rgba(58,134,255,.9);color:#001233}
-  .lbtn.off{opacity:.45}
-  .two{display:flex;gap:8px;justify-content:center;margin-top:12px;font-size:13px;color:var(--dim);font-weight:800}
-
-  /* modal */
-  .modal{position:fixed;inset:0;background:rgba(4,6,14,.9);display:none;align-items:center;justify-content:center;z-index:300;padding:18px}
-  .modal.show{display:flex}
-  .sheet{background:var(--panel);border:1px solid var(--line);border-radius:20px;max-width:640px;width:100%;max-height:86vh;overflow:auto;padding:22px}
-  .sheet h3{font-family:var(--disp);font-size:26px;margin:0 0 4px}
-  .sheet .step{border-left:3px solid var(--teal);padding:8px 0 8px 14px;margin:14px 0}
-  .sheet .step .s{font-weight:900;color:var(--teal);font-size:14px}
-  .sheet .step .l{font-weight:800;font-size:16px;margin-top:3px}
-  .sheet .step .l b{color:var(--amber)}
-  .sheet .x{float:right;cursor:pointer;font-size:22px;color:var(--dim);font-weight:900}
-  canvas.confetti{position:fixed;inset:0;width:100vw;height:100vh;background:transparent;pointer-events:none;z-index:250}
+  /* ===== 小任務卡（一次只顯示一個） ===== */
+  .quest{margin-top:16px;background:linear-gradient(160deg,#14304f,#0c2340);border:3px solid rgba(255,201,60,.45);border-radius:22px;padding:16px 18px;box-shadow:0 10px 28px rgba(0,0,0,.45)}
+  .quest .qh{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .quest .no{font-family:var(--disp);font-weight:700;color:#08131f;background:linear-gradient(180deg,#ffc93c,#ff9f1c);border-radius:999px;padding:4px 14px;font-size:15px}
+  .quest .dots .d{display:inline-block;width:11px;height:11px;border-radius:50%;background:#26425f;margin:0 3px}.quest .dots .d.done{background:var(--teal)}.quest .dots .d.now{background:var(--amber);transform:scale(1.3)}
+  .quest .q{font-size:24px;font-weight:900;margin:10px 0 6px;line-height:1.3}
+  .quest .h{font-size:15px;color:var(--dim);font-weight:800}
+  .quest .fb{margin-top:8px;font-size:17px;font-weight:900;min-height:24px;color:#ffe08a}
+  .quest .rail{font-size:14px;color:#9db8cf;font-weight:700;margin-top:6px}
+  footer{text-align:center;margin-top:24px;color:var(--dim);font-size:13px}
+  @media(max-width:560px){.lb .n{font-size:18px}.lb .dot{width:38px;height:38px}.quest .q{font-size:20px}}
 </style>
 </head>
 <body>
-<a href="/light/" class="mainmenu-btn" style="position:fixed;right:12px;top:12px;z-index:99999;background:#0f2841;border:2px solid #42e0c8;color:#42e0c8;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:Noto Sans TC,Microsoft JhengHei,system-ui,sans-serif">🗂️ 主選單</a>
-<a class="home" href="./">🏠 回到首頁</a>
-<script src="../games/fx.js"></script>
-<canvas class="confetti" id="cf"></canvas>
+<a class="fixbtn home" href="./">🏠 回到首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<svg width="0" height="0" style="position:absolute"><filter id="lit"><feColorMatrix id="mtx" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></svg>
 
-<div class="top">
-  <div class="brand">
-    <div class="badge">✦</div>
-    <div><div class="t1">光線特勤隊</div><div class="t2">任務三・混光魔法</div></div>
-  </div>
-  <div class="topbtns">
-    <span class="pill on"><span class="dot"></span>操作層</span>
-    <span class="pill" id="soundBtn">🔊 音效</span>
-  </div>
-</div>
+<div class="wrap">
+  <header>
+    <div class="emblem">🎭</div>
+    <h1>混光魔法・光的舞臺</h1>
+    <div class="sub">開燈，看東西真的變色</div>
+  </header>
 
-<div class="prog">
-  <span class="lb">任務進度</span>
-  <div class="bar"><i id="progBar"></i></div>
-  <span class="n" id="progN">4 / 6</span>
-</div>
-
-<div class="stagewrap">
-  <!-- STAGE -->
-  <div class="stage">
-    <div class="cones">
-      <div class="cone r" id="coneR"></div>
-      <div class="cone g" id="coneG"></div>
-      <div class="cone b" id="coneB"></div>
-    </div>
+  <div class="stage" id="stage">
+    <div class="curtain"></div>
+    <div class="cone r" id="coneR"></div><div class="cone g" id="coneG"></div><div class="cone b" id="coneB"></div>
+    <div class="lamp r" id="lampR"></div><div class="lamp g" id="lampG"></div><div class="lamp b" id="lampB"></div>
+    <div class="lightname" id="lightname">⚪ 白光</div>
     <div class="floor"></div>
-
-    <div class="arc" id="arc">
-      <div class="h">STORY ARC</div>
-    </div>
-
-    <div class="badge2">
-      <div class="k">LIGHT LAB ONLINE</div>
-      <div class="big" id="labNum">04 <small id="labStep">混｜混色實驗</small></div>
-      <div class="row"><span>目前光源</span><span class="amber" id="lightName">白光（紅+綠+藍）</span></div>
-      <div class="row"><span>學習模式</span><span>操作層</span></div>
-    </div>
-
     <div class="objs" id="objs"></div>
-    <div class="light" id="lightOverlay"></div>
-
-    <button class="stagebtn" id="allBtn">✨ 全部打開／全暗</button>
   </div>
 
-  <!-- MISSION CONTROL -->
-  <div class="mc">
-    <div class="eye">MISSION CONTROL</div>
-    <div class="teach">
-      <div class="who">🎙️ 老師這樣說</div>
-      <div class="say" id="teachSay">兩盞色光疊在一起，會不會得到新的顏色？請你親手配看。</div>
-    </div>
-    <h2 id="mcTask">任務 4・混光實驗</h2>
-    <div class="title" id="mcTitle">紅、綠、藍光<br>的混色魔法</div>
-    <div class="desc" id="mcDesc">開啟兩盞或三盞燈，觀察重疊後出現的色光。紅+綠=黃、綠+藍=青、紅+藍=洋紅、三色全開=白光。</div>
-    <div class="lights">
-      <button class="lbtn r on" id="lr"><span class="d"></span>紅光</button>
-      <button class="lbtn g on" id="lg"><span class="d"></span>綠光</button>
-      <button class="lbtn b on" id="lb"><span class="d"></span>藍光</button>
-    </div>
-    <div class="two">🔵 指認亮的物體　｜　🟠 說出：反射什麼光 → 看得見</div>
+  <div class="lights">
+    <div class="lb r on" id="bR" onclick="toggle('R')"><div class="dot"></div><div class="n">紅光</div></div>
+    <div class="lb g on" id="bG" onclick="toggle('G')"><div class="dot"></div><div class="n">綠光</div></div>
+    <div class="lb b on" id="bB" onclick="toggle('B')"><div class="dot"></div><div class="n">藍光</div></div>
   </div>
+  <div class="row"><button class="btn ghost" onclick="setAll(true)">✨ 全部打開</button><button class="btn ghost" onclick="setAll(false)">🌑 全暗</button></div>
+
+  <div class="quest" id="quest">
+    <div class="qh"><span class="no" id="qno">任務 1 / 3</span><span class="dots" id="qdots"></span></div>
+    <div class="q" id="qq"></div>
+    <div class="h" id="qh"></div>
+    <div class="row" style="justify-content:flex-start"><button class="btn go" id="qcheck" onclick="check()">✅ 我做好了，檢查！</button></div>
+    <div class="fb" id="qfb"></div>
+    <div class="rail" id="qrail"></div>
+  </div>
+
+  <footer>🎭 光的舞臺　｜　光與顏色・選擇性反射／加色混合　｜　Ka-IV-11　｜　竹東國中自然科</footer>
 </div>
 
-<!-- full script modal -->
-<div class="modal" id="modal">
-  <div class="sheet">
-    <span class="x" id="modalX">✕</span>
-    <h3>🎬 混光魔法・完整帶課稿</h3>
-    <div id="scriptBody"></div>
-  </div>
-</div>
-
+<script src="../games/fx.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-/* audio */
-let AC,sound=true;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC;}
-function tone(f,t,d,ty="triangle",v=.2){if(!sound)return;const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();
-  o.type=ty;o.frequency.setValueAtTime(f,t);o.connect(g);g.connect(a.destination);
-  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d);}
-function blip(f){const a=ac();if(!a)return;tone(f||660,a.currentTime,.09,"square",.16);}
-function chime(){const a=ac();if(!a)return;const t=a.currentTime;[659,988,1319].forEach((f,i)=>tone(f,t+i*.07,.16));}
-$("soundBtn").onclick=()=>{sound=!sound;$("soundBtn").classList.toggle("on",sound);$("soundBtn").textContent=sound?"🔊 音效":"🔇 靜音";blip(700);};
-function speak(zh){if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.88;speechSynthesis.speak(u);}catch(e){}}
-
-/* confetti */
-const cv=$("cf"),cx=cv.getContext("2d");let parts=[];
-function csize(){cv.width=innerWidth;cv.height=innerHeight;}csize();addEventListener("resize",csize);
-const COL=["#ff4d4d","#3aa0ff","#ffc93c","#28c76f","#ff8a5b","#c77dff"];
-function confetti(n=120){for(let i=0;i<n;i++)parts.push({x:Math.random()*innerWidth,y:-20,vx:(Math.random()-.5)*8,vy:Math.random()*3+2,
-  g:.26,s:6+Math.random()*8,c:COL[Math.floor(Math.random()*COL.length)],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:0});crun();}
-let craf=null;function crun(){if(!craf)craf=requestAnimationFrame(cl);}
-function cl(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.life++;
-  cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore();});
-  parts=parts.filter(p=>p.y<cv.height+30&&p.life<240);if(parts.length)craf=requestAnimationFrame(cl);else{craf=null;cx.clearRect(0,0,cv.width,cv.height);}}
-
-/* objects */
+/* 物件：反射哪些色光（真實照片；黑底用 screen 混合自動消失） */
 const OBJS=[
-  {k:"apple",nm:"蘋果",ref:["r"]},
-  {k:"banana",nm:"香蕉",ref:["r","g"]},
-  {k:"plant",nm:"植物",ref:["g"]},
-  {k:"shirt",nm:"白衣",ref:["r","g","b"]},
-  {k:"backpack",nm:"書包",ref:[]},
+  {n:"蘋果",img:"img/stage/apple.png",ref:"R"},
+  {n:"香蕉",img:"img/stage/banana.png",ref:"RG"},
+  {n:"植物",img:"img/stage/plant.png",ref:"G"},
+  {n:"白衣",img:"img/stage/shirt.png",ref:"RGB"},
+  {n:"書包",img:"img/stage/backpack.png",ref:""},
 ];
-const objsBox=$("objs");
-OBJS.forEach(o=>{
-  const d=document.createElement("div");d.className="obj";d.dataset.k=o.k;
-  d.innerHTML='<span class="tag see">看得見</span><img src="img/stage/'+o.k+'.png" alt="'+o.nm+'"><div class="nm">'+o.nm+'</div>';
-  objsBox.appendChild(d);
-});
-
-/* light state */
-const on={r:true,g:true,b:true};
-function lightName(){
-  const s=(on.r?"r":"")+(on.g?"g":"")+(on.b?"b":"");
-  return {rgb:"白光（紅+綠+藍）",rg:"黃光（紅+綠）",gb:"青光（綠+藍）",rb:"洋紅（紅+藍）",
-    r:"紅光",g:"綠光",b:"藍光","":"全暗（沒有光）"}[s]||"";
+const NAME={"000":"🌑 全暗","100":"🔴 紅光","010":"🟢 綠光","001":"🔵 藍光","110":"🟡 黃光","011":"🩵 青光","101":"🩷 洋紅光","111":"⚪ 白光"};
+let on={R:true,G:true,B:true};
+function key(){return (on.R?1:0)+""+(on.G?1:0)+""+(on.B?1:0);}
+function build(){$("objs").innerHTML=OBJS.map((o,i)=>`<div class="obj"><span class="tag" id="tag${i}"></span><img src="${o.img}" alt="" style="filter:url(#lit) drop-shadow(0 14px 16px rgba(0,0,0,.7))"><div class="nm">${o.n}</div></div>`).join("");}
+function render(){
+  ["R","G","B"].forEach(k=>{$("b"+k).classList.toggle("on",on[k]);$("cone"+k).classList.toggle("on",on[k]);$("lamp"+k).classList.toggle("on",on[k]);});
+  // 真實濾色：只保留開著的光的通道（物體只反射它有的顏色）
+  $("mtx").setAttribute("values",`${on.R?1:0} 0 0 0 0  0 ${on.G?1:0} 0 0 0  0 0 ${on.B?1:0} 0 0  0 0 0 1 0`);
+  $("lightname").textContent=NAME[key()];
+  OBJS.forEach((o,i)=>{const lit=[...o.ref].some(c=>on[c]);const t=$("tag"+i);
+    t.className="tag "+(lit?"see":"dark");t.textContent=lit?`反射${[...o.ref].filter(c=>on[c]).map(c=>({R:"紅",G:"綠",B:"藍"})[c]).join("")}光→看得見`:(o.ref?"沒有可反射的光→變暗":"吸收全部→變暗");});
 }
-function refName(ch){return {r:"紅光",g:"綠光",b:"藍光"}[ch];}
-let wasWhite=true;
-function update(){
-  const R=on.r?255:0,G=on.g?255:0,B=on.b?255:0;
-  $("lightOverlay").style.background="rgb("+R+","+G+","+B+")";
-  $("coneR").style.opacity=on.r?1:0;$("coneG").style.opacity=on.g?1:0;$("coneB").style.opacity=on.b?1:0;
-  ["r","g","b"].forEach(k=>$("l"+k).classList.toggle("on",on[k]));
-  ["r","g","b"].forEach(k=>$("l"+k).classList.toggle("off",!on[k]));
-  $("lightName").textContent=lightName();
-  // object tags
-  document.querySelectorAll(".obj").forEach(el=>{
-    const o=OBJS.find(x=>x.k===el.dataset.k);
-    const active=["r","g","b"].filter(c=>on[c]);
-    const seen=o.ref.filter(c=>active.includes(c));
-    const tag=el.querySelector(".tag");
-    if(active.length===0){tag.className="tag dark";tag.textContent="沒有光→全暗";}
-    else if(seen.length>0){tag.className="tag see";
-      tag.textContent="反射"+(seen.length===1?refName(seen[0]):"光")+"→看得見";}
-    else{tag.className="tag dark";tag.textContent=(o.ref.length===0?"吸收全部":"沒反射")+"→變暗";}
-  });
-  const s=(on.r?"r":"")+(on.g?"g":"")+(on.b?"b":"");
-  if(s==="rgb"&&!wasWhite){wasWhite=true;chime();confetti(120);}
-  if(s!=="rgb")wasWhite=false;
-}
-$("lr").onclick=()=>{on.r=!on.r;blip(720);update();speak(on.r?"紅光開":"紅光關");};
-$("lg").onclick=()=>{on.g=!on.g;blip(620);update();speak(on.g?"綠光開":"綠光關");};
-$("lb").onclick=()=>{on.b=!on.b;blip(520);update();speak(on.b?"藍光開":"藍光關");};
-$("allBtn").onclick=()=>{const anyOn=on.r||on.g||on.b;on.r=on.g=on.b=!anyOn;blip(660);update();};
-update();
+function toggle(k){on[k]=!on[k];on[k]?FX.sound.jump():FX.sound.blip();render();}
+function setAll(v){on={R:v,G:v,B:v};v?FX.sound.powerup():FX.sound.blip();render();}
 
-/* story arc */
-const ARC=[
-  {n:"01",t:"事件",say:"關燈！舞臺一片黑——為什麼什麼都看不到？",task:"任務 1・懸念",title:"黑漆漆的<br>舞臺之謎",desc:"沒有光，就看不到任何顏色。先記住這個謎，最後來破解。"},
-  {n:"02",t:"猜想",say:"猜猜看：只開一種顏色的燈，蘋果還會是紅的嗎？",task:"任務 2・預測",title:"顏色<br>會變嗎？",desc:"先大膽猜，等一下用燈光驗證。"},
-  {n:"03",t:"緝捕",say:"只開紅燈試試！蘋果亮、植物卻變暗，發生什麼事？",task:"任務 3・探索",title:"抓出<br>變色的兇手",desc:"物體只反射某些顏色的光——這就是選擇性反射。植物只反射綠光，紅燈下就變暗。"},
-  {n:"04",t:"混光",say:"兩盞色光疊在一起，會不會得到新的顏色？請你親手配看。",task:"任務 4・混光實驗",title:"紅、綠、藍光<br>的混色魔法",desc:"開兩盞或三盞燈：紅+綠=黃、綠+藍=青、紅+藍=洋紅、三色全開=白光。"},
-  {n:"05",t:"生活",say:"舞臺燈、手機螢幕、演唱會都用這招——紅綠藍混出所有顏色！",task:"任務 5・生活連結",title:"生活裡的<br>混光魔法",desc:"手機、電視、LED 大螢幕都是靠紅綠藍三色光混出全部顏色。放大鏡看螢幕就看得到 RGB 小點。"},
-  {n:"06",t:"解密",say:"回到開場：黑漆漆看不到，是因為沒有光被反射進眼睛。顏色＝光被選擇性反射！",task:"任務 6・破解",title:"謎題<br>破解！",desc:"顏色不是物體本身，而是它反射了哪種光、我們的眼睛收到什麼光。首尾呼應，恍然大悟。"},
+/* 三個小任務（結構化，一次一個） */
+const TASKS=[
+  {q:"任務 1：只開「紅光」。哪些東西還看得見？",h:"先關掉綠光和藍光，再看舞台上誰亮著。",need:"100",
+   ok:"答對！蘋果、香蕉、白衣都反射紅光，所以看得見；植物和書包變暗。",rail:"🔵 指出還亮的東西　🟠 說「因為___反射紅光」",reward:"stamp"},
+  {q:"任務 2：只開「綠光」。蘋果會怎樣？",h:"關紅光、關藍光、只留綠光，看蘋果。",need:"010",
+   ok:"蘋果變黑了！它只反射紅光，綠光照上去沒有紅光可反射。這叫選擇性反射。",rail:"🔵 指出蘋果變暗　🟠 說「因為蘋果只反射紅光」",reward:"chest"},
+  {q:"最終任務：三盞燈一起開。變成什麼光？",h:"紅＋綠＋藍全開。",need:"111",
+   ok:"白光！紅＋綠＋藍＝白光，這叫加色混合；白衣反射所有光，所以最亮。",rail:"🔵 指出最亮的東西　🟠 說「白光＝紅＋綠＋藍」",reward:"badge"},
 ];
-let cur=3;
-const arc=$("arc");
-ARC.forEach((a,i)=>{
-  const d=document.createElement("div");d.className="node";d.dataset.i=i;
-  d.innerHTML='<span class="num">'+a.n+'</span>'+a.t;
-  d.onclick=()=>{cur=i;renderArc();blip(680);};
-  arc.appendChild(d);
-});
-function renderArc(){
-  const a=ARC[cur];
-  document.querySelectorAll(".node").forEach((el,i)=>{
-    el.classList.toggle("done",i<cur);el.classList.toggle("cur",i===cur);
-  });
-  $("teachSay").textContent=a.say;speak(a.say);
-  $("mcTask").textContent=a.task;$("mcTitle").innerHTML=a.title;$("mcDesc").innerHTML=a.desc;
-  $("labNum").innerHTML=a.n+' <small>'+a.t+'｜關卡</small>';
-  $("progN").textContent=(cur+1)+" / 6";$("progBar").style.width=((cur+1)/6*100)+"%";
+let ti=0,done=[false,false,false];
+function qrender(){$("qno").textContent=`任務 ${ti+1} / ${TASKS.length}`;$("qdots").innerHTML=TASKS.map((_,k)=>`<span class="d${done[k]?" done":k===ti?" now":""}"></span>`).join("");
+  $("qq").textContent=TASKS[ti].q;$("qh").textContent=TASKS[ti].h;$("qfb").textContent="";$("qrail").textContent=TASKS[ti].rail;$("qcheck").style.display="";}
+function check(){
+  const T=TASKS[ti];
+  if(key()!==T.need){FX.sound.wrongsoft();$("qfb").textContent="💡 再看一下燈：目前是 "+NAME[key()]+"。"+T.h;return;}
+  done[ti]=true;$("qfb").textContent="✅ "+T.ok;$("qcheck").style.display="none";FX.sound.coin();FX.confetti(70);
+  const next=()=>{if(ti<TASKS.length-1){ti++;qrender();}else{$("qno").textContent="全部完成";$("qdots").innerHTML=TASKS.map(()=>'<span class="d done"></span>').join("");$("qq").textContent="舞臺燈光師任務完成！";$("qh").textContent="接下來：混光魔法（親手用手電筒合出白光）";}};
+  if(T.reward==="stamp")setTimeout(()=>FX.stamp({text:"答對",onDone:next}),300);
+  else if(T.reward==="chest")setTimeout(()=>FX.chest({title:"任務完成！開寶箱",gem:"🍎",gemName:"蘋果的祕密",gemColor:"#ff3b3b",sub:"蘋果只反射紅光",onDone:next}),300);
+  else setTimeout(()=>FX.badge({id:"stage",emoji:"🎭",name:"舞臺燈光師",desc:"白光＝紅＋綠＋藍",onDone:()=>{FX.fireworks(2500);next();}}),300);
 }
-renderArc();
-
-/* full script modal */
-const SCRIPT=[
-  {s:"畫面①・關燈",l:"你看到：舞臺全黑。你說：<b>「咦？東西都不見了！為什麼？」</b>（等 5 秒，讓學生反應）"},
-  {s:"畫面②・開白光",l:"你點右邊<b>紅、綠、藍全開</b>。你說：<b>「燈一開，蘋果、香蕉都回來了！」</b>🔵請學生指認亮起來的物體。"},
-  {s:"畫面③・只開紅光",l:"關掉綠、藍，只留<b>紅光</b>。你說：<b>「咦？植物變暗了，蘋果還是紅的！」</b>🟠請學生說：植物<b>沒反射紅光→變暗</b>。"},
-  {s:"畫面④・混光魔法",l:"開<b>紅+綠</b>問：<b>「兩個燈合起來變什麼色？」</b>（黃）。再試綠+藍（青）、紅+藍（洋紅）。這是<b>加色混合</b>。"},
-  {s:"畫面⑤・生活連結",l:"你說：<b>「手機螢幕、演唱會的燈，都是紅綠藍混出來的！」</b>可用放大鏡看螢幕的 RGB 小點。"},
-  {s:"畫面⑥・破解謎題",l:"回到開場：<b>「黑漆漆看不到，是因為沒有光反射進眼睛。顏色＝光被選擇性反射！」</b>🎉全開白光撒花收尾。"},
-];
-function openScript(){const b=$("scriptBody");b.innerHTML=SCRIPT.map(x=>'<div class="step"><div class="s">'+x.s+'</div><div class="l">'+x.l+'</div></div>').join("");$("modal").classList.add("show");}
-const _sl=$("scriptLink");if(_sl)_sl.onclick=openScript;
-$("modalX").onclick=()=>$("modal").classList.remove("show");
-$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.remove("show");};
+build();render();qrender();
 </script>
 </body>
 </html>
