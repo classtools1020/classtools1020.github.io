@@ -160,5 +160,19 @@
     const o=overlay(`<div class="fx-title">${isNew?"🎉 解鎖新勳章！":"🏅 勳章"}</div><div class="fx-ring"><div class="fx-badge">${emoji}</div></div><div class="fx-sub" style="font-size:min(7vw,32px)">${esc(name)}</div><div style="font-weight:800;color:#cfe4f5">${esc(desc)}</div><button class="fx-btn" id="fxok">收進勳章牆 🗂️</button>`);
     FX.sound.fanfare();FX.fireworks(1800);FX.speak("解鎖勳章，"+name,"");o.querySelector("#fxok").onclick=()=>{o.remove();onDone&&onDone();};};
 
+  /* ---------- 🔔 集合口令（拍手節奏＋語音，班級太吵時用） ---------- */
+  const clap=(t,v=.5)=>{const a=ac();if(!a)return;noise(t,.09,v,1500);tone(220,t,.05,"triangle",.12);};
+  FX.attention=({call="光線特勤隊！",response="集合！",pattern=[0,.32,.64,.9,1.06]}={})=>{ac();const t=now();
+    pattern.forEach(dt=>clap(t+dt));                       // 拍手：X X X XX（學生跟著拍）
+    setTimeout(()=>{FX.speak(call,"");},1400);
+    const o=document.createElement("div");o.className="fx-stamp";o.style.pointerEvents="none";
+    o.innerHTML=`<div class="s" style="color:#42e0c8;border-color:#42e0c8;font-size:min(14vw,80px);transform:rotate(0) scale(1);animation:none;line-height:1.2">👏 ${esc(call)}<br><span style="font-size:.6em;color:#ffc93c">→ ${esc(response)}</span></div>`;
+    document.body.appendChild(o);setTimeout(()=>o.remove(),3200);};
+  // 每個載入 fx.js 的頁面自動有一顆浮動 🔔 按鈕（右下角）
+  function bell(){if(document.getElementById("fxbell"))return;const b=document.createElement("button");b.id="fxbell";b.title="集合口令";b.textContent="🔔";
+    b.style.cssText="position:fixed;right:14px;bottom:14px;z-index:9500;width:56px;height:56px;border-radius:50%;border:3px solid #42e0c8;background:#0f2841;font-size:26px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.5)";
+    b.onclick=()=>FX.attention();document.body.appendChild(b);}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bell);else bell();
+
   window.FX=FX;
 })();
