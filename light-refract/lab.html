@@ -222,8 +222,12 @@ function hit(text){pop(text,"hit");FX.sound.coin();FX.confetti(40);FX.emojiBurst
 function miss(text){pop(text,"miss");FX.sound.wrongsoft();const st=$("xpStage");st.classList.remove("shake");void st.offsetWidth;st.classList.add("shake");}
 function stagePt(e){const r=$("xpStage").getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*960,y:(e.clientY-r.top)/r.height*540,inside:e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom};}
 function addCanvas(){$("xpStage").insertAdjacentHTML("beforeend",`<canvas id="xc" width="960" height="540"></canvas>`);return $("xc").getContext("2d");}
-function drawFish(x,cx,cy,w,alpha){if(!fishImg.complete||!fishImg.naturalWidth){x.globalAlpha=alpha;x.font=(w*.6)+"px serif";x.fillText("🐟",cx-w*.3,cy+w*.2);x.globalAlpha=1;return;}
-  const h=w*fishImg.height/fishImg.width;x.save();x.globalAlpha=alpha;x.globalCompositeOperation="screen";x.drawImage(fishImg,cx-w/2,cy-h/2,w,h);x.restore();}
+let fishCut=null; // 去黑底的魚（純黑背景 → 透明）
+function buildFishCut(){if(fishCut||!fishImg.naturalWidth)return;try{const S=512,o=document.createElement("canvas");o.width=S;o.height=S;const g=o.getContext("2d");g.drawImage(fishImg,0,0,S,S);
+  const d=g.getImageData(0,0,S,S),p=d.data;for(let k=0;k<p.length;k+=4){const m=Math.max(p[k],p[k+1],p[k+2]);p[k+3]=Math.max(0,Math.min(255,(m-28)*6));}g.putImageData(d,0,0);fishCut=o;}catch(e){}}
+fishImg.addEventListener("load",buildFishCut);
+function drawFish(x,cx,cy,w,alpha){buildFishCut();if(!fishCut){x.globalAlpha=alpha;x.font=(w*.6)+"px serif";x.fillText("🐟",cx-w*.3,cy+w*.2);x.globalAlpha=1;return;}
+  x.save();x.globalAlpha=alpha;x.shadowColor="rgba(0,0,0,.5)";x.shadowBlur=12;x.drawImage(fishCut,cx-w/2,cy-w/2,w,w);x.restore();}
 
 /* 1 夜市撈魚：網子跟著手指，點一下＝撈 */
 function xpNet(c,i){const x=addCanvas();const st=$("xpStage");st.insertAdjacentHTML("beforeend",`<div class="score" id="sc">🐟 0 / 3</div>`);
@@ -234,17 +238,17 @@ function xpNet(c,i){const x=addCanvas();const st=$("xpStage");st.insertAdjacentH
     x.strokeStyle="rgba(255,255,255,.55)";x.lineWidth=2;x.setLineDash([8,8]);x.beginPath();x.moveTo(0,270);x.lineTo(960,270);x.stroke();x.setLineDash([]);
     x.fillStyle="rgba(255,255,255,.8)";x.font="900 16px 'Noto Sans TC',sans-serif";x.fillText("水面",12,262);
     // 看到的魚（影像，較高、半透明）
-    drawFish(x,real.x,real.y-SHIFT,120,.75);
+    drawFish(x,real.x,real.y-SHIFT,170,.8);
     x.fillStyle="#42e0c8";x.font="900 18px 'Noto Sans TC',sans-serif";x.fillText("看到的魚",real.x+70,real.y-SHIFT);
-    if(reveal){drawFish(x,real.x,real.y,120,1);x.fillStyle="#ffd43b";x.fillText("真正的魚（更深）",real.x+70,real.y+8);
+    if(reveal){drawFish(x,real.x,real.y,170,1);x.fillStyle="#ffd43b";x.fillText("真正的魚（更深）",real.x+70,real.y+8);
       x.strokeStyle="#ffd43b";x.lineWidth=4;x.beginPath();x.moveTo(real.x-80,real.y-SHIFT+20);x.lineTo(real.x-80,real.y-20);x.stroke();x.beginPath();x.moveTo(real.x-92,real.y-34);x.lineTo(real.x-80,real.y-18);x.lineTo(real.x-68,real.y-34);x.stroke();}
-    if(caughtFish){drawFish(x,caughtFish.x,caughtFish.y,110,1);}
+    if(caughtFish){drawFish(x,caughtFish.x,caughtFish.y,150,1);}
     // 網子
     const r=50*(1-scoop*.25);x.strokeStyle="#ffd43b";x.lineWidth=7;x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=8;x.beginPath();x.arc(net.x,net.y,r,0,6.283);x.stroke();
     x.beginPath();x.moveTo(net.x+r*.7,net.y-r*.7);x.lineTo(net.x+r*.7+110,net.y-r*.7-110);x.stroke();x.shadowBlur=0;
     x.strokeStyle="rgba(255,212,59,.45)";x.lineWidth=2;for(let k=-2;k<=2;k++){x.beginPath();x.moveTo(net.x+k*r*.4,net.y-Math.sqrt(r*r-(k*r*.4)**2));x.lineTo(net.x+k*r*.4,net.y+Math.sqrt(r*r-(k*r*.4)**2));x.stroke();}
     if(scoop>0){x.strokeStyle="rgba(255,255,255,"+(1-scoop)+")";x.lineWidth=3;x.beginPath();x.arc(net.x,net.y,r+scoop*60,0,6.283);x.stroke();}}
-  spawn();draw();
+  spawn();draw();window._net={get real(){return real}};
   st.onpointermove=e=>{const p=stagePt(e);if(!p.inside||busy)return;net.x=p.x;net.y=p.y;draw();};
   st.onpointerdown=e=>{const p=stagePt(e);if(busy)return;net.x=p.x;net.y=p.y;busy=true;tries++;FX.sound.jump();
     let t=0;const iv=setInterval(()=>{t+=.12;scoop=Math.min(1,t);draw();if(t>=1){clearInterval(iv);scoop=0;
