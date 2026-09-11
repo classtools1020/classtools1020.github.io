@@ -170,7 +170,7 @@
     document.body.appendChild(o);setTimeout(()=>o.remove(),3200);};
   // 每個載入 fx.js 的頁面自動有一顆浮動 🔔 按鈕（右下角）
   function bell(){if(document.getElementById("fxbell"))return;const b=document.createElement("button");b.id="fxbell";b.title="集合口令";b.textContent="🔔";
-    b.style.cssText="position:fixed;right:14px;bottom:14px;z-index:9500;width:56px;height:56px;border-radius:50%;border:3px solid #42e0c8;background:#0f2841;font-size:26px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.5)";
+    b.style.cssText="position:fixed;right:14px;bottom:84px;z-index:9500;width:56px;height:56px;border-radius:50%;border:3px solid #42e0c8;background:#0f2841;font-size:26px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.5)";
     b.onclick=()=>FX.attention();document.body.appendChild(b);}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bell);else bell();
 
