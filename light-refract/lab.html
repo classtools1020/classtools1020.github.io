@@ -113,9 +113,9 @@
   <div class="card">
     <div class="real">
       <div class="ps"><canvas id="c1b" width="960" height="720"></canvas><div class="lbl">螢幕上的杯子</div></div>
-      <div class="ps" id="realFrame"><div class="empty" id="realEmpty"><span style="font-size:44px">📸</span>拍你桌上那杯真的水＋吸管</div><img id="realImg" alt="" style="display:none"><div class="lbl" id="realLbl" style="display:none">你的杯子</div></div>
+      <div class="ps" id="realFrame"><div class="empty" id="realEmpty"><span style="font-size:44px">📸</span>拍你桌上那杯真的水＋吸管</div><video id="realVid" autoplay playsinline muted style="display:none;object-fit:cover"></video><img id="realImg" alt="" style="display:none"><div class="lbl" id="realLbl" style="display:none">你的杯子</div></div>
     </div>
-    <div class="ctrl"><label class="btn cam">📸 用鏡頭拍下真的杯子<input type="file" accept="image/*" capture="environment" id="camIn"></label></div>
+    <div class="ctrl"><button class="btn cam" id="camOpen">📷 開鏡頭</button><button class="btn go" id="camShot" style="display:none">📸 拍！</button><button class="btn ghost" id="camAgain" style="display:none">🔄 再拍一張</button><label class="btn ghost" style="position:relative;overflow:hidden">📁 或選一張照片<input type="file" accept="image/*" capture="environment" id="camIn" style="position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0"></label></div>
     <div class="say" id="sayReal">把吸管放進真的水裡，從側邊看，拍一張——真的也「斷」了嗎？</div>
   </div>
 
@@ -214,9 +214,20 @@ $("water").oninput=e=>{FX.sound.blip();setWater(+e.target.value);};
   el.onpointermove=e=>{if(!drag)return;const dy=ly-e.clientY;ly=e.clientY;acc+=dy;if(Math.abs(acc)>4){setWater(water+acc*.5);acc=0;if(Date.now()-bt>90){bt=Date.now();bubbleSound();}}};
   el.onpointerup=el.onpointercancel=()=>{drag=false;};})();
 $("pullBtn").onclick=()=>{pulled=true;FX.sound.jump();splashSound(.4);drawS1();$("say1").innerHTML="沒斷！同一支吸管，是<b>光進水轉彎</b>讓它看起來彎<span class='term'>折射</span>";FX.stamp({text:"沒斷"});FX.confetti(60);addCoins(5);setTimeout(()=>{pulled=false;drawS1();},2200);};
-/* 真的杯子挑戰 */
-$("camIn").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);const im=$("realImg");im.src=url;im.style.display="block";$("realEmpty").style.display="none";$("realLbl").style.display="block";
-  FX.sound.powerup();buzz([80,50,80]);FX.confetti(80);addCoins(10);$("sayReal").innerHTML="真的杯子也一樣！同一支吸管，光進水轉彎就看起來斷了<span class='term'>折射</span>";setTimeout(()=>FX.stamp({text:"真的斷了？"}),400);};
+/* 真的杯子挑戰：網頁內開鏡頭即時預覽→拍 */
+let camStream=null;
+function realShow(src){const im=$("realImg");im.src=src;im.style.display="block";$("realVid").style.display="none";$("realEmpty").style.display="none";$("realLbl").style.display="block";
+  $("camShot").style.display="none";$("camAgain").style.display=camStream?"inline-block":"none";
+  FX.sound.powerup();buzz([80,50,80]);FX.confetti(80);addCoins(10);$("sayReal").innerHTML="真的杯子也一樣！同一支吸管，光進水轉彎就看起來斷了<span class='term'>折射</span>";setTimeout(()=>FX.stamp({text:"真的斷了？"}),400);}
+function camPreview(){$("realVid").style.display="block";$("realImg").style.display="none";$("realEmpty").style.display="none";$("realLbl").style.display="none";$("camShot").style.display="inline-block";$("camAgain").style.display="none";$("camOpen").style.display="none";$("sayReal").textContent="把真的杯子對準鏡頭，從側邊看吸管，按「📸 拍！」";}
+$("camOpen").onclick=async()=>{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("sayReal").textContent="這台裝置開不了鏡頭，請用「📁 或選一張照片」";return;}
+  try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1280}},audio:false});$("realVid").srcObject=camStream;camPreview();FX.sound.blip();}
+  catch(e){$("sayReal").textContent="鏡頭沒有打開（要按「允許」），或改用「📁 或選一張照片」";}};
+$("camShot").onclick=()=>{const v=$("realVid");if(!v.videoWidth)return;const c=document.createElement("canvas");c.width=v.videoWidth;c.height=v.videoHeight;c.getContext("2d").drawImage(v,0,0);
+  const fl=document.createElement("div");fl.style.cssText="position:fixed;inset:0;background:#fff;z-index:99990;pointer-events:none;opacity:.9;transition:opacity .4s";document.body.appendChild(fl);requestAnimationFrame(()=>fl.style.opacity="0");setTimeout(()=>fl.remove(),450);
+  FX.sound.blip();realShow(c.toDataURL("image/jpeg",.92));};
+$("camAgain").onclick=()=>{camPreview();};
+$("camIn").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;realShow(URL.createObjectURL(f));};
 
 /* ===================== 站 2：同一個碗＋硬幣浮現 ===================== */
 const img2=new Image();img2.src="img/bowl-empty.jpg";
