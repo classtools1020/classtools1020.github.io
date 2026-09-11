@@ -105,7 +105,7 @@
   <h2 class="sec">站 1・吸管放進水裡（同一個杯子，親眼看它「斷」）</h2>
   <div class="card">
     <div class="ps" id="ps1"><canvas id="c1" width="1280" height="720"></canvas><div class="lbl" id="s1lbl">還沒有水</div><div class="note" id="s1note">👆 手指在杯子上往上滑＝倒水，往下滑＝倒掉</div></div>
-    <div class="ctrl"><span class="lbl2">💧 水位</span><input type="range" id="water" min="0" max="100" value="0"><button class="btn ghost" id="pullBtn">🖐️ 拿出來看</button></div>
+    <div class="ctrl"><span class="lbl2">💧 水位</span><input type="range" id="water" min="0" max="100" value="0"><button class="btn ghost" id="pullBtn">🖐️ 拿出來看</button><a class="btn aqua" href="3d.html" style="text-decoration:none">🧊 3D 轉來轉去看</a></div>
     <div class="say" id="say1">先把水倒進去，看吸管會怎樣</div>
   </div>
 
@@ -113,9 +113,9 @@
   <div class="card">
     <div class="real">
       <div class="ps"><canvas id="c1b" width="960" height="720"></canvas><div class="lbl">螢幕上的杯子</div></div>
-      <div class="ps" id="realFrame"><div class="empty" id="realEmpty"><span style="font-size:44px">📸</span>拍你桌上那杯真的水＋吸管</div><video id="realVid" autoplay playsinline muted style="display:none;object-fit:cover"></video><img id="realImg" alt="" style="display:none"><div class="lbl" id="realLbl" style="display:none">你的杯子</div></div>
+      <div class="ps" id="realFrame"><div class="empty" id="realEmpty"><span style="font-size:44px">📸</span>拍你桌上那杯真的水＋吸管</div><video id="realVid" autoplay playsinline muted style="display:none;object-fit:cover"></video><img id="realImg" alt="" style="display:none"><canvas id="arC" width="960" height="720" style="z-index:2;pointer-events:none;display:none"></canvas><div class="lbl" id="realLbl" style="display:none">你的杯子</div></div>
     </div>
-    <div class="ctrl"><button class="btn cam" id="camOpen">📷 開鏡頭</button><button class="btn go" id="camShot" style="display:none">📸 拍！</button><button class="btn ghost" id="camAgain" style="display:none">🔄 再拍一張</button><label class="btn ghost" style="position:relative;overflow:hidden">📁 或選一張照片<input type="file" accept="image/*" capture="environment" id="camIn" style="position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0"></label></div>
+    <div class="ctrl"><button class="btn cam" id="camOpen">📷 開鏡頭</button><button class="btn go" id="camShot" style="display:none">📸 拍！</button><button class="btn ghost" id="camAgain" style="display:none">🔄 再拍一張</button><button class="btn ghost" id="arBtn" style="display:none">🔦 在真的杯子上畫光線</button><label class="btn ghost" style="position:relative;overflow:hidden">📁 或選一張照片<input type="file" accept="image/*" capture="environment" id="camIn" style="position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0"></label></div>
     <div class="say" id="sayReal">把吸管放進真的水裡，從側邊看，拍一張——真的也「斷」了嗎？</div>
   </div>
 
@@ -217,9 +217,9 @@ $("pullBtn").onclick=()=>{pulled=true;FX.sound.jump();splashSound(.4);drawS1();$
 /* 真的杯子挑戰：網頁內開鏡頭即時預覽→拍 */
 let camStream=null;
 function realShow(src){const im=$("realImg");im.src=src;im.style.display="block";$("realVid").style.display="none";$("realEmpty").style.display="none";$("realLbl").style.display="block";
-  $("camShot").style.display="none";$("camAgain").style.display=camStream?"inline-block":"none";
+  $("camShot").style.display="none";$("camAgain").style.display=camStream?"inline-block":"none";$("arBtn").style.display="inline-block";
   FX.sound.powerup();buzz([80,50,80]);FX.confetti(80);addCoins(10);$("sayReal").innerHTML="真的杯子也一樣！同一支吸管，光進水轉彎就看起來斷了<span class='term'>折射</span>";setTimeout(()=>FX.stamp({text:"真的斷了？"}),400);}
-function camPreview(){$("realVid").style.display="block";$("realImg").style.display="none";$("realEmpty").style.display="none";$("realLbl").style.display="none";$("camShot").style.display="inline-block";$("camAgain").style.display="none";$("camOpen").style.display="none";$("sayReal").textContent="把真的杯子對準鏡頭，從側邊看吸管，按「📸 拍！」";}
+function camPreview(){$("realVid").style.display="block";$("realImg").style.display="none";$("realEmpty").style.display="none";$("realLbl").style.display="none";$("camShot").style.display="inline-block";$("camAgain").style.display="none";$("camOpen").style.display="none";$("arBtn").style.display="inline-block";$("sayReal").textContent="把真的杯子對準鏡頭，從側邊看吸管，按「📸 拍！」";}
 $("camOpen").onclick=async()=>{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("sayReal").textContent="這台裝置開不了鏡頭，請用「📁 或選一張照片」";return;}
   try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1280}},audio:false});$("realVid").srcObject=camStream;camPreview();FX.sound.blip();}
   catch(e){$("sayReal").textContent="鏡頭沒有打開（要按「允許」），或改用「📁 或選一張照片」";}};
@@ -227,6 +227,24 @@ $("camShot").onclick=()=>{const v=$("realVid");if(!v.videoWidth)return;const c=d
   const fl=document.createElement("div");fl.style.cssText="position:fixed;inset:0;background:#fff;z-index:99990;pointer-events:none;opacity:.9;transition:opacity .4s";document.body.appendChild(fl);requestAnimationFrame(()=>fl.style.opacity="0");setTimeout(()=>fl.remove(),450);
   FX.sound.blip();realShow(c.toDataURL("image/jpeg",.92));};
 $("camAgain").onclick=()=>{camPreview();};
+/* AR：在鏡頭畫面／照片上疊光線，手指拖曳對準真的水面 */
+let arOn=false,arY=.55,arX=.5;
+function drawAR(){const c=$("arC"),x=c.getContext("2d"),W=c.width,H=c.height;x.clearRect(0,0,W,H);if(!arOn)return;
+  const px=arX*W,py=arY*H;
+  x.setLineDash([14,10]);x.strokeStyle="rgba(255,255,255,.9)";x.lineWidth=4;x.beginPath();x.moveTo(0,py);x.lineTo(W,py);x.stroke();x.setLineDash([]);
+  x.fillStyle="rgba(0,0,0,.55)";x.fillRect(12,py-40,80,32);x.fillRect(12,py+8,80,32);x.fillStyle="#fff";x.font="900 22px 'Noto Sans TC',sans-serif";x.fillText("空氣",24,py-15);x.fillText("水",34,py+33);
+  x.strokeStyle="rgba(255,255,255,.5)";x.lineWidth=2;x.setLineDash([6,6]);x.beginPath();x.moveTo(px,py-220);x.lineTo(px,py+260);x.stroke();x.setLineDash([]);
+  const i=Math.atan2(.3,.45),r=Math.asin(Math.sin(i)/1.33);const L=Math.min(py,H-py)*.9;
+  x.lineCap="round";x.lineWidth=9;x.strokeStyle="#ffd43b";x.shadowColor="#ffd43b";x.shadowBlur=14;x.beginPath();x.moveTo(px-Math.sin(i)*L,py-Math.cos(i)*L);x.lineTo(px,py);x.stroke();
+  x.strokeStyle="#3ef0ff";x.shadowColor="#3ef0ff";x.beginPath();x.moveTo(px,py);x.lineTo(px+Math.sin(r)*L,py+Math.cos(r)*L);x.stroke();x.shadowBlur=0;
+  x.setLineDash([6,8]);x.strokeStyle="rgba(255,212,59,.45)";x.lineWidth=4;x.beginPath();x.moveTo(px,py);x.lineTo(px+Math.sin(i)*L,py+Math.cos(i)*L);x.stroke();x.setLineDash([]);
+  x.fillStyle="#ffd43b";x.font="900 24px 'Noto Sans TC',sans-serif";x.fillText("光在這裡轉彎",px+20,py-14);
+  x.fillStyle="#fff";x.font="900 16px 'Noto Sans TC',sans-serif";x.fillText("👆 拖曳白線對準真的水面",W-300,H-20);}
+$("arBtn").onclick=()=>{arOn=!arOn;$("arC").style.display=arOn?"block":"none";$("arBtn").classList.toggle("on",arOn);FX.sound.blip();drawAR();$("sayReal").textContent=arOn?"把白線拖到真的水面，看光怎麼在那裡轉彎（黃→藍往中間靠）":"";};
+(function(){const fr=$("realFrame");let d=false;fr.style.touchAction="none";
+  fr.onpointerdown=e=>{if(!arOn)return;d=true;try{fr.setPointerCapture(e.pointerId);}catch(x){}mv(e);};
+  function mv(e){const r=fr.getBoundingClientRect();arX=clamp((e.clientX-r.left)/r.width,.15,.85);arY=clamp((e.clientY-r.top)/r.height,.15,.85);drawAR();}
+  fr.onpointermove=e=>{if(d)mv(e);};fr.onpointerup=fr.onpointercancel=()=>{d=false;};})();
 $("camIn").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;realShow(URL.createObjectURL(f));};
 
 /* ===================== 站 2：同一個碗＋硬幣浮現 ===================== */

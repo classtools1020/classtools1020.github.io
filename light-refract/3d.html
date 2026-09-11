@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>3D 吸管杯・轉來轉去看折射</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--panel:#0f2841;--line:rgba(120,170,210,.28);--amber:#ffc93c;--teal:#42e0c8;--aqua:#3ec2ff;--ink:#eaf6ff;--dim:#9db8cf;--disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0;height:100%}
+  body{font-family:var(--body);color:var(--ink);background:#05101f;overflow:hidden;-webkit-tap-highlight-color:transparent}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  #view{position:fixed;inset:0;touch-action:none;cursor:grab}
+  #view:active{cursor:grabbing}
+  .title{position:fixed;top:58px;left:0;right:0;text-align:center;pointer-events:none;z-index:5}
+  .title h1{font-family:var(--disp);font-size:min(6vw,26px);margin:0;text-shadow:0 2px 8px #000}
+  .title .s{color:var(--aqua);font-weight:900;font-size:min(4vw,16px);text-shadow:0 2px 8px #000}
+  .lbl{position:fixed;left:50%;top:110px;transform:translateX(-50%);background:rgba(0,0,0,.62);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(5.5vw,26px);padding:8px 20px;border-radius:14px;z-index:5;pointer-events:none;white-space:nowrap;transition:background .3s}
+  .lbl.warn{background:rgba(200,40,40,.85)}.lbl.good{background:rgba(20,150,90,.85)}
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:10px 10px 14px;background:linear-gradient(0deg,rgba(4,10,20,.95),rgba(4,10,20,.6),transparent);display:flex;flex-direction:column;gap:8px;align-items:center}
+  .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .btn{font-family:var(--disp);font-weight:700;font-size:min(4.2vw,17px);border:none;border-radius:14px;padding:10px 16px;cursor:pointer;color:#08131f}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);box-shadow:0 5px 0 #c9860f}.btn.go:active{transform:translateY(3px);box-shadow:0 2px 0 #c9860f}
+  .btn.aqua{background:linear-gradient(180deg,#7fdcff,#2aa7e8);box-shadow:0 5px 0 #1a7fb5}.btn.aqua:active{transform:translateY(3px);box-shadow:0 2px 0 #1a7fb5}
+  .btn.ghost{background:#13314f;border:2px solid var(--line);color:var(--ink)}
+  .btn.on{outline:3px solid var(--amber)}
+  .say{font-weight:900;color:#ffe08a;font-size:min(4.2vw,17px);text-align:center;text-shadow:0 2px 6px #000}
+  .hintdrag{position:fixed;right:14px;top:110px;background:rgba(0,0,0,.55);border-radius:12px;padding:6px 12px;font-weight:900;font-size:13px;color:#dbe9f7;z-index:5;pointer-events:none}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="lab.html">🥤 回實驗室</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<canvas id="view"></canvas>
+<div class="title"><h1>3D 吸管杯</h1><div class="s">水的折射率 1.33・光線是真的算出來的</div></div>
+<div class="lbl" id="lbl">還沒有水，先倒水</div>
+<div class="hintdrag">👆 拖曳＝轉杯子</div>
+<div class="bar">
+  <div class="row"><button class="btn aqua" id="pour">🫗 倒水</button><button class="btn ghost" id="empty">↩ 倒掉</button><button class="btn go" id="pull">🖐️ 拿出來看</button></div>
+  <div class="row"><button class="btn ghost" id="side">👁️ 側面看</button><button class="btn ghost" id="top">👁️ 正上方看</button><button class="btn ghost" id="low">👁️ 蹲下來看</button><button class="btn ghost" id="ray">🔦 畫光線</button></div>
+  <div class="say" id="say">先倒水，再從不同角度看吸管</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
+<script src="../games/fx.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const cv=$("view");const R=new THREE.WebGLRenderer({canvas:cv,antialias:true});R.setPixelRatio(Math.min(2,devicePixelRatio));R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;R.outputColorSpace=THREE.SRGBColorSpace;
+const S=new THREE.Scene();S.background=new THREE.Color(0x0a2036);S.fog=new THREE.Fog(0x0a2036,18,40);
+const cam=new THREE.PerspectiveCamera(38,1,.1,100);
+let theta=.6,phi=1.15,rad=8.5;const target=new THREE.Vector3(0,1.4,0);
+function placeCam(){cam.position.set(target.x+rad*Math.sin(phi)*Math.sin(theta),target.y+rad*Math.cos(phi),target.z+rad*Math.sin(phi)*Math.cos(theta));cam.lookAt(target);}
+function resize(){const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}addEventListener("resize",resize);resize();
+// 燈
+S.add(new THREE.HemisphereLight(0xe8f4ff,0x6b5b3a,1.2));
+const sun=new THREE.DirectionalLight(0xfff4e0,2.2);sun.position.set(5,9,4);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-6;sun.shadow.camera.right=6;sun.shadow.camera.top=6;sun.shadow.camera.bottom=-6;S.add(sun);
+S.add(new THREE.PointLight(0x9fd8ff,.6,20).translateY(5));
+// 桌子（格子＝看得出折射）
+function checker(a,b,n){const c=document.createElement("canvas");c.width=c.height=512;const g=c.getContext("2d");const s=512/n;for(let i=0;i<n;i++)for(let j=0;j<n;j++){g.fillStyle=(i+j)%2?a:b;g.fillRect(i*s,j*s,s,s);}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;}
+const tableTex=checker("#e9d9bd","#d9c4a0",8);tableTex.repeat.set(6,6);
+const table=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({map:tableTex,roughness:.9}));table.rotation.x=-Math.PI/2;table.receiveShadow=true;S.add(table);
+const wallTex=checker("#dfe9f3","#bfd0e2",10);wallTex.repeat.set(3,2);
+const wall=new THREE.Mesh(new THREE.PlaneGeometry(24,16),new THREE.MeshStandardMaterial({map:wallTex,roughness:1}));wall.position.set(0,8,-6);wall.receiveShadow=true;S.add(wall);
+// 玻璃杯
+const H=3.2,RT=1.1,RB=.9;
+const glassMat=new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.16,roughness:.03,metalness:0,clearcoat:1,clearcoatRoughness:.05,side:THREE.DoubleSide,depthWrite:false});
+const glass=new THREE.Mesh(new THREE.CylinderGeometry(RT,RB,H,64,1,true),glassMat);glass.position.y=H/2;S.add(glass);
+const base=new THREE.Mesh(new THREE.CylinderGeometry(RB,RB,.12,64),new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.35,roughness:.05,clearcoat:1}));base.position.y=.06;base.castShadow=true;S.add(base);
+// 水（真的折射：transmission + ior 1.33）
+const waterMat=new THREE.MeshPhysicalMaterial({color:0xcfefff,transmission:1,ior:1.33,thickness:1.8,roughness:.02,metalness:0,attenuationColor:new THREE.Color(0x9fd8ff),attenuationDistance:6});
+const water=new THREE.Mesh(new THREE.CylinderGeometry(RT-.05,RB-.04,1,64),waterMat);water.visible=false;S.add(water);
+let lvl=0,lvlT=0;
+function setWater(){const h=Math.max(.001,(H-.15)*lvl);water.scale.y=h;water.position.y=.12+h/2;water.visible=lvl>.01;waterMat.thickness=.6+h*.5;}
+// 吸管（紅白條紋）
+function stripes(){const c=document.createElement("canvas");c.width=256;c.height=64;const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,256,64);g.fillStyle="#e3222b";for(let i=-64;i<256;i+=64){g.beginPath();g.moveTo(i,0);g.lineTo(i+32,0);g.lineTo(i+64,64);g.lineTo(i+32,64);g.closePath();g.fill();}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(1,6);t.rotation=Math.PI/2;return t;}
+const straw=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,4.6,32),new THREE.MeshStandardMaterial({map:stripes(),roughness:.35}));straw.castShadow=true;
+const strawPivot=new THREE.Group();strawPivot.position.set(-.55,.16,0);strawPivot.rotation.z=.34;straw.position.y=2.3;strawPivot.add(straw);S.add(strawPivot);
+let strawLift=0;
+// 光線（真的用司乃耳定律算）
+const rayG=new THREE.Group();rayG.visible=false;S.add(rayG);
+function mkLine(col){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(),new THREE.Vector3()]);const l=new THREE.Line(g,new THREE.LineBasicMaterial({color:col}));l.frustumCulled=false;return l;}
+const inc=mkLine(0xffd43b),ref=mkLine(0x3ef0ff),str=mkLine(0xffd43b);str.material.transparent=true;str.material.opacity=.35;rayG.add(inc,ref,str);
+const normalLine=mkLine(0xffffff);normalLine.material.transparent=true;normalLine.material.opacity=.5;rayG.add(normalLine);
+const src=new THREE.Mesh(new THREE.SphereGeometry(.12,16,16),new THREE.MeshBasicMaterial({color:0xffd43b}));rayG.add(src);
+function updRay(){const yS=.12+(H-.15)*lvl;const P=new THREE.Vector3(.2,yS,.2);const L=new THREE.Vector3(2.6,yS+2.4,1.6);src.position.copy(L);
+  const d=P.clone().sub(L).normalize();const n=new THREE.Vector3(0,1,0);const eta=1/1.33;const cosi=-n.dot(d);const k=1-eta*eta*(1-cosi*cosi);
+  const t=d.clone().multiplyScalar(eta).add(n.clone().multiplyScalar(eta*cosi-Math.sqrt(Math.max(0,k))));
+  const len=(yS-.12)/Math.max(.05,-t.y);const E=P.clone().add(t.multiplyScalar(Math.min(len,3)));const S2=P.clone().add(d.clone().multiplyScalar(Math.min(len,3)));
+  inc.geometry.setFromPoints([L,P]);ref.geometry.setFromPoints([P,E]);str.geometry.setFromPoints([P,S2]);normalLine.geometry.setFromPoints([P.clone().add(new THREE.Vector3(0,1.2,0)),P.clone().add(new THREE.Vector3(0,-1.2,0))]);}
+// 互動
+let drag=false,lx=0,ly=0,moved=0;
+cv.onpointerdown=e=>{drag=true;lx=e.clientX;ly=e.clientY;moved=0;try{cv.setPointerCapture(e.pointerId);}catch(x){}};
+cv.onpointermove=e=>{if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);theta-=dx*.008;phi=Math.max(.15,Math.min(1.5,phi+dy*.006));if(moved%40<8)FX.sound.blip&&FX.sound.blip();};
+cv.onpointerup=cv.onpointercancel=()=>{drag=false;};
+let camT=null;function goView(p,t){camT={p,t,k:0};FX.sound.jump();}
+$("side").onclick=()=>goView(1.2,theta);$("top").onclick=()=>goView(.18,theta);$("low").onclick=()=>goView(1.5,theta);
+function bub(n){for(let i=0;i<n;i++)setTimeout(()=>FX.sound.blip(),i*120);}
+$("pour").onclick=()=>{lvlT=.72;bub(8);$("say").textContent="水漫上來了…轉轉看、換角度看";};
+$("empty").onclick=()=>{lvlT=0;FX.sound.blip();$("say").textContent="水倒掉了，吸管本來就是直的";};
+let pulling=false;$("pull").onclick=()=>{if(pulling)return;pulling=true;FX.sound.powerup();let k=0;const iv=setInterval(()=>{k+=.05;strawLift=Math.sin(Math.min(1,k)*Math.PI)*2.6;if(k>=1){clearInterval(iv);pulling=false;}},30);
+  $("say").textContent="拿出來：直的！沒斷——是光進水轉彎";FX.stamp&&FX.stamp({text:"沒斷"});FX.confetti&&FX.confetti(60);};
+let rayOn=false;$("ray").onclick=()=>{rayOn=!rayOn;rayG.visible=rayOn;$("ray").classList.toggle("on",rayOn);FX.sound.blip();$("say").textContent=rayOn?"黃＝空氣裡的光，藍＝進水後轉彎的光（往中間白線靠近）":"";};
+let seenBroken=false,seenTop=false;
+function status(){const l=$("lbl");if(lvl<.05){l.textContent="還沒有水，先倒水";l.className="lbl";return;}
+  if(strawLift>.5){l.textContent="拿出來：直的！沒斷";l.className="lbl good";return;}
+  if(phi<.45){l.textContent="正上方看：直的";l.className="lbl good";if(!seenTop){seenTop=true;FX.sound.coin();}}
+  else{l.textContent="側面看：在水面「斷」了？";l.className="lbl warn";if(!seenBroken&&lvl>.5){seenBroken=true;FX.sound.wrongsoft&&FX.sound.wrongsoft();}}}
+function loop(){lvl+=(lvlT-lvl)*.05;setWater();straw.position.y=2.3+strawLift;
+  if(camT){camT.k+=.06;phi+=(camT.p-phi)*.12;if(camT.k>=1)camT=null;}
+  updRay();placeCam();status();R.render(S,cam);requestAnimationFrame(loop);}
+placeCam();loop();
+</script>
+</body>
+</html>
