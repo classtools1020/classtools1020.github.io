@@ -43,6 +43,14 @@
   .cmp .shot .cnt{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.65);color:var(--amber);font-family:var(--disp);font-weight:700;font-size:22px;padding:4px 12px;border-radius:12px}
   .say{margin-top:10px;font-size:17px;font-weight:800;color:#ffe08a;text-align:center;min-height:24px}
   .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:14px;font-weight:900;margin-left:6px}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  @media(max-width:640px){.steps{grid-template-columns:repeat(2,1fr)}}
+  .steps div{background:#0b2036;border-radius:14px;padding:10px;text-align:center;font-weight:800;line-height:1.5;font-size:14px}
+  .steps span{display:block;font-size:34px}
+  .row{display:flex;align-items:center;gap:10px;margin:6px 0;font-weight:900}
+  .row .sw2{width:34px;height:34px;border-radius:10px;border:2px solid #fff;flex:none}
+  .row .bar{flex:1;height:18px;background:#1a2a44;border-radius:999px;overflow:hidden}.row .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffe08a,#fff)}
+  .row.best{color:var(--amber)}
   .why{margin-top:12px;background:#0b2036;border-left:6px solid var(--teal);border-radius:12px;padding:12px 14px;font-weight:700;line-height:1.6;font-size:16px}
   footer{text-align:center;margin-top:26px;color:var(--dim);font-size:13px}
 </style>
@@ -58,7 +66,20 @@
     <div class="ctrl"><button class="btn pink" id="open">🤳 開前鏡頭</button><button class="btn go" id="shotA" style="display:none">📸 拍 A</button><button class="btn go" id="shotB" style="display:none">📸 拍 B</button></div>
     <div class="grp"><span>🌞 暖色（黃底）</span><span>❄️ 冷色（藍底）</span></div>
     <div class="pal" id="pal"></div>
-    <div class="say" id="say">選一個顏色，畫面下方會出現那個顏色的「披布」；換幾個顏色，看臉哪一個比較亮、比較有精神</div>
+    <div class="say" id="say">選一個顏色，畫面下方會出現那個顏色的「披布」；換幾個顏色，看臉哪一個比較亮。<br><span style="color:#dbe9f7">🤖 想讓電腦也判定：拍 A、B 時手上拿<b>真的色紙</b>貼在下巴下，電腦會量臉頰亮度</span></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin:4px 0 6px;font-size:20px">🔬 真的鑑定模式：用真的色紙，讓鏡頭量給你看</h2>
+    <div class="steps">
+      <div><span>🧍</span>臉放在畫面中間<br>對準兩個綠圈，不要動</div>
+      <div><span>📏</span>先按「量基準」<br>（沒有色紙）</div>
+      <div><span>📄</span>拿<b>真的色紙</b>貼在下巴下<br>選它的顏色→按「量測」</div>
+      <div><span>🏆</span>每張紙量一次<br>最後按「判定」</div>
+    </div>
+    <div class="ctrl"><button class="btn ghost" id="modeBtn">🔬 進入鑑定模式</button><button class="btn aqua" id="baseBtn" style="display:none">📏 量基準（沒有色紙）</button><button class="btn go" id="measBtn" style="display:none">📏 量測這張色紙</button><button class="btn go" id="judgeBtn" style="display:none">🏆 判定</button><button class="btn ghost" id="clrBtn" style="display:none">↺ 清除</button></div>
+    <div id="res" style="margin-top:10px"></div>
+    <div class="say" id="say3"></div>
   </div>
 
   <div class="card">
@@ -80,17 +101,48 @@ $("pal").innerHTML=COLORS.map((c,i)=>`<div class="sw" style="background:${c[0]}"
 window.pick=i=>{col=COLORS[i][0];[...document.querySelectorAll(".sw")].forEach((s,k)=>s.classList.toggle("on",k===i));FX.sound.blip();$("lbl").textContent="披布："+COLORS[i][1]+(i<6?"（暖）":"（冷）");};
 $("open").onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:1280}},audio:false});}catch(e){$("say").textContent="鏡頭沒開（要按「允許」）。";return;}
   const v=$("vid");v.srcObject=stream;v.style.display="block";$("cv").style.display="block";$("empty").style.display="none";$("open").style.display="none";$("shotA").style.display="inline-block";$("shotB").style.display="inline-block";$("lbl").textContent="選一個顏色";FX.sound.jump();loop();};
-function draw(x,W,H){if(!col)return;x.fillStyle=col;x.beginPath();x.moveTo(0,H);x.lineTo(0,H*.72);x.quadraticCurveTo(W*.25,H*.60,W*.5,H*.66);x.quadraticCurveTo(W*.75,H*.60,W,H*.72);x.lineTo(W,H);x.closePath();x.fill();
+let lab=false;
+function guide(x,W,H){x.strokeStyle="rgba(80,255,140,.95)";x.lineWidth=5;[.36,.64].forEach(f=>{x.beginPath();x.ellipse(W*f,H*.56,W*.06,W*.07,0,0,6.283);x.stroke();});
+  x.strokeStyle="rgba(255,255,255,.5)";x.setLineDash([10,8]);x.lineWidth=3;x.beginPath();x.ellipse(W*.5,H*.5,W*.2,H*.36,0,0,6.283);x.stroke();x.setLineDash([]);
+  x.fillStyle="rgba(0,0,0,.55)";x.fillRect(W*.3,H*.86,W*.4,H*.09);x.fillStyle="#fff";x.font="900 "+Math.round(W/28)+"px 'Noto Sans TC',sans-serif";x.textAlign="center";x.fillText("色紙放這裡（下巴下）",W*.5,H*.925);x.textAlign="left";}
+function draw(x,W,H){if(lab){guide(x,W,H);return;}if(!col)return;x.fillStyle=col;x.beginPath();x.moveTo(0,H);x.lineTo(0,H*.72);x.quadraticCurveTo(W*.25,H*.60,W*.5,H*.66);x.quadraticCurveTo(W*.75,H*.60,W,H*.72);x.lineTo(W,H);x.closePath();x.fill();
   const g=x.createLinearGradient(0,H*.6,0,H);g.addColorStop(0,"rgba(255,255,255,.18)");g.addColorStop(1,"rgba(0,0,0,.25)");x.fillStyle=g;x.fill();}
 function loop(){const c=$("cv"),x=c.getContext("2d");x.clearRect(0,0,c.width,c.height);draw(x,c.width,c.height);raf=requestAnimationFrame(loop);}
 function snap(){const v=$("vid");const c=document.createElement("canvas");c.width=v.videoWidth||960;c.height=v.videoHeight||720;const x=c.getContext("2d");x.translate(c.width,0);x.scale(-1,1);x.drawImage(v,0,0);x.setTransform(1,0,0,1,0,0);draw(x,c.width,c.height);return c.toDataURL("image/jpeg",.9);}
 const votes={A:0,B:0};
-function shot(k){if(!$("vid").videoWidth)return;const d=snap();const s=$("s"+k);let im=s.querySelector("img");if(!im){im=document.createElement("img");s.prepend(im);}im.src=d;FX.sound.coin();FX.confetti(30);$("say").textContent="拍好了 "+k+"！換一個顏色再拍另一張，然後投票";}
+const meas={A:null,B:null};
+function shot(k){if(!$("vid").videoWidth)return;const d=snap();const s=$("s"+k);let im=s.querySelector("img");if(!im){im=document.createElement("img");s.prepend(im);}im.src=d;meas[k]=sampleCheeks();FX.sound.coin();FX.confetti(30);$("say").textContent="拍好了 "+k+"！換一個顏色再拍另一張，然後投票"+(meas[k]?"（電腦量到臉頰亮度 "+meas[k].L.toFixed(0)+"）":"");}
 $("shotA").onclick=()=>shot("A");$("shotB").onclick=()=>shot("B");
 window.vote=k=>{votes[k]++;$("c"+k).textContent=votes[k];FX.sound.blip();};
-$("reveal").onclick=()=>{const w=votes.A===votes.B?null:(votes.A>votes.B?"A":"B");if(!w){$("say2").textContent="平手！兩個都適合";FX.sound.blip();return;}
-  $("say2").innerHTML="🏆 大家覺得 <b>"+w+"</b> 讓臉比較亮——那個顏色反射的光跟你的皮膚最合<span class='term'>選擇性反射</span>";FX.sound.oneup();FX.confetti(120);FX.stamp&&FX.stamp({text:"最亮"+w});};
+$("reveal").onclick=()=>{const w=votes.A===votes.B?null:(votes.A>votes.B?"A":"B");
+  let robot="";if(meas.A&&meas.B){const d=meas.A.L-meas.B.L;const rw=Math.abs(d)<1.5?null:(d>0?"A":"B");
+    robot="<br>🤖 電腦量臉頰亮度：A "+meas.A.L.toFixed(0)+"　B "+meas.B.L.toFixed(0)+" → "+(rw?"<b>"+rw+"</b> 比較亮":"差不多")+(rw&&w&&rw!==w?"（跟投票不一樣！眼睛和儀器誰準？）":rw&&w?"（跟大家投的一樣 ✅）":"")+(rw?"":"，拿真的色紙再拍一次會更準");}
+  else robot="<br>🤖 電腦判定要先拍 A 和 B";
+  if(!w){$("say2").innerHTML="🗳️ 投票平手！"+robot;FX.sound.blip();return;}
+  $("say2").innerHTML="🏆 大家投 <b>"+w+"</b> 讓臉比較亮"+robot+"<span class='term'>選擇性反射</span>";FX.sound.oneup();FX.confetti(120);FX.stamp&&FX.stamp({text:"最亮"+w});};
 $("reset").onclick=()=>{votes.A=votes.B=0;$("cA").textContent=$("cB").textContent="0";$("say2").textContent="";FX.sound.blip();};
+
+/* ===== 真的鑑定模式：量臉頰的亮度（L*）與暖冷（b*） ===== */
+function rgb2lab(r,g,b){const f=v=>{v/=255;return v>.04045?Math.pow((v+.055)/1.055,2.4):v/12.92;};r=f(r);g=f(g);b=f(b);
+  let X=(r*.4124+g*.3576+b*.1805)/.95047,Y=(r*.2126+g*.7152+b*.0722),Z=(r*.0193+g*.1192+b*.9505)/1.08883;const t=v=>v>.008856?Math.cbrt(v):7.787*v+16/116;X=t(X);Y=t(Y);Z=t(Z);return {L:116*Y-16,a:500*(X-Y),b:200*(Y-Z)};}
+function sampleCheeks(){const v=$("vid");if(!v.videoWidth)return null;const W=v.videoWidth,H=v.videoHeight;const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");x.translate(W,0);x.scale(-1,1);x.drawImage(v,0,0);
+  let r=0,g=0,b=0,n=0;[.36,.64].forEach(f=>{const cx=W*f,cy=H*.56,rx=W*.05;const d=x.getImageData(cx-rx,cy-rx,rx*2,rx*2).data;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++;}});
+  return rgb2lab(r/n,g/n,b/n);}
+let base=null,tests=[];
+function render(){const best=tests.length?tests.reduce((p,q)=>q.L>p.L?q:p):null;
+  $("res").innerHTML=(base?`<div class="row"><div class="sw2" style="background:#888"></div><div style="width:120px">基準（沒色紙）</div><div class="bar"><i style="width:${Math.min(100,base.L)}%"></i></div><div>${base.L.toFixed(0)}</div></div>`:"")+
+    tests.map(t=>`<div class="row ${t===best?'best':''}"><div class="sw2" style="background:${t.col}"></div><div style="width:120px">${t.name}${t===best?' 🏆':''}</div><div class="bar"><i style="width:${Math.min(100,t.L)}%"></i></div><div>${t.L.toFixed(0)}${base?' ('+(t.L-base.L>=0?'+':'')+(t.L-base.L).toFixed(0)+')':''}</div></div>`).join("");}
+$("modeBtn").onclick=()=>{lab=!lab;$("modeBtn").textContent=lab?"👗 回披布模式":"🔬 進入鑑定模式";$("modeBtn").classList.toggle("on",lab);["baseBtn","measBtn","judgeBtn","clrBtn"].forEach(id=>$(id).style.display=lab?"inline-block":"none");FX.sound.jump();
+  $("say3").textContent=lab?(stream?"臉對準綠圈不要動，先按「量基準」":"先按上面「開前鏡頭」"):"";$("lbl").textContent=lab?"鑑定模式：光線要一樣、臉不要動":"披布模式";};
+$("baseBtn").onclick=()=>{const s=sampleCheeks();if(!s){$("say3").textContent="先開鏡頭";return;}base=s;FX.sound.coin();render();$("say3").textContent="基準量好了。拿真的色紙貼在下巴下，選那張紙的顏色，再按「量測」。臉頰底色："+(s.b>14?"偏暖 🌞（黃底）":s.b<8?"偏冷 ❄️（藍底）":"中性");};
+$("measBtn").onclick=()=>{if(!col){$("say3").textContent="先在下面選這張色紙的顏色";return;}const s=sampleCheeks();if(!s){$("say3").textContent="先開鏡頭";return;}const name=[...document.querySelectorAll(".sw")].find(e=>e.classList.contains("on"))?.textContent||"色紙";
+  tests=tests.filter(t=>t.col!==col);tests.push({col,name,L:s.L,b:s.b});FX.sound.coin();FX.emojiBurst&&FX.emojiBurst("✨",10,innerWidth/2,innerHeight*.4);render();$("say3").textContent=name+"：臉頰亮度 "+s.L.toFixed(0)+(base?"（比基準 "+(s.L-base.L>=0?"+":"")+(s.L-base.L).toFixed(0)+"）":"")+"。換下一張紙。";};
+$("judgeBtn").onclick=()=>{if(tests.length<2){$("say3").textContent="至少量 2 張色紙再判定";FX.sound.wrongsoft&&FX.sound.wrongsoft();return;}const best=tests.reduce((p,q)=>q.L>p.L?q:p),worst=tests.reduce((p,q)=>q.L<p.L?q:p);
+  const warmAvg=avg(tests.filter(t=>isWarm(t.col)).map(t=>t.L)),coolAvg=avg(tests.filter(t=>!isWarm(t.col)).map(t=>t.L));let tone=warmAvg==null||coolAvg==null?"":(warmAvg>coolAvg?"整體來說<b>暖色</b>讓你比較亮 🌞":"整體來說<b>冷色</b>讓你比較亮 ❄️");
+  $("say3").innerHTML="🏆 最亮：<b>"+best.name+"</b>（"+best.L.toFixed(0)+"）　最暗："+worst.name+"（"+worst.L.toFixed(0)+"）。"+tone+"<span class='term'>選擇性反射</span>";FX.sound.oneup();FX.confetti(120);FX.stamp&&FX.stamp({text:"最亮 "+best.name});render();};
+$("clrBtn").onclick=()=>{base=null;tests=[];render();$("say3").textContent="";FX.sound.blip();};
+function avg(a){return a.length?a.reduce((p,q)=>p+q,0)/a.length:null;}
+function isWarm(c){return COLORS.findIndex(k=>k[0]===c)<6;}
 </script>
 </body>
 </html>
