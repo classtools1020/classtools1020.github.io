@@ -88,6 +88,21 @@
   .xp .why{margin-top:8px;font-size:min(4.6vw,20px);font-weight:900;color:#ffe08a;text-align:center;max-width:900px;min-height:28px}
   .xp .ok{margin-top:10px}
   footer{text-align:center;margin-top:26px;color:var(--dim);font-size:13px}
+  /* 上課模式：一次只顯示一站 */
+  body.lesson .wrap{max-width:1100px;padding-top:70px;padding-bottom:120px}
+  body.lesson header,body.lesson footer{display:none}
+  body.lesson .st{display:none}body.lesson .st.cur{display:block;animation:fade .3s}
+  body.lesson .st.cur h2.sec{font-size:min(6vw,30px);justify-content:center}body.lesson .st.cur h2.sec::after{display:none}
+  body.lesson .card{padding:18px}
+  body.lesson .say{font-size:min(5vw,22px)}
+  .lnav{position:fixed;left:0;right:0;bottom:0;z-index:9200;display:none;gap:10px;justify-content:center;align-items:center;padding:12px;background:linear-gradient(0deg,rgba(4,10,20,.98),rgba(4,10,20,.85));border-top:2px solid var(--line)}
+  body.lesson .lnav{display:flex}
+  .lnav .btn{font-size:min(5vw,22px);padding:14px 26px}
+  .lnav .step{font-family:var(--disp);font-weight:700;font-size:min(5vw,22px);color:var(--amber);min-width:110px;text-align:center}
+  .lnav .dots{display:flex;gap:6px}.lnav .dots i{width:12px;height:12px;border-radius:50%;background:#2a4a6e;display:block}.lnav .dots i.on{background:var(--amber)}
+  .lexit{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:99999;display:none;background:#0f2841;border:2px solid var(--line);color:var(--ink);font-weight:900;font-size:15px;padding:8px 14px;border-radius:999px;cursor:pointer}
+  body.lesson .lexit{display:block}
+  body.lesson #hud{top:12px;right:150px}
 </style>
 </head>
 <body>
@@ -100,12 +115,13 @@
     <h1>折射實驗室・吸管真的斷了嗎？</h1>
     <div class="sub">光從空氣進到水裡，方向會改變</div>
     <div class="prog">🪙 折射魔法卡 <span id="pgTxt">0 / 6</span><div class="bar"><i id="pgBar"></i></div></div>
+    <div class="ctrl" style="margin-top:12px"><button class="btn go" id="lessonBtn">🎬 上課模式：一次只看一站</button></div>
   </header>
 
   <h2 class="sec">站 1・吸管放進水裡（同一個杯子，親眼看它「斷」）</h2>
   <div class="card">
     <div class="ps" id="ps1"><canvas id="c1" width="1280" height="720"></canvas><div class="lbl" id="s1lbl">還沒有水</div><div class="note" id="s1note">👆 手指在杯子上往上滑＝倒水，往下滑＝倒掉</div></div>
-    <div class="ctrl"><span class="lbl2">💧 水位</span><input type="range" id="water" min="0" max="100" value="0"><button class="btn ghost" id="pullBtn">🖐️ 拿出來看</button><a class="btn aqua" href="3d.html" style="text-decoration:none">🧊 3D 轉來轉去看</a></div>
+    <div class="ctrl"><span class="lbl2">💧 水位</span><input type="range" id="water" min="0" max="100" value="0"><button class="btn ghost" id="pullBtn">🖐️ 拿出來看</button></div>
     <div class="say" id="say1">先把水倒進去，看吸管會怎樣</div>
   </div>
 
@@ -153,6 +169,8 @@
   <footer>🥤 折射實驗室　｜　任務四 光的折射・Ka-IV-8　｜　竹東國中自然科</footer>
 </div>
 
+<button class="lexit" id="lexit">✖ 離開上課模式</button>
+<div class="lnav"><button class="btn ghost" id="lprev">⬅ 上一站</button><div><div class="step" id="lstep">站 1 / 6</div><div class="dots" id="ldots"></div></div><button class="btn go" id="lnext">下一站 ➡</button></div>
 <!-- 體驗覆蓋層 -->
 <div class="xp" id="xp"><button class="x" onclick="closeXp()">✖</button><h3 id="xpTitle"></h3><div class="hint" id="xpHint"></div><div class="stage" id="xpStage"></div><div class="ctrl" id="xpCtrl"></div><div class="why" id="xpWhy"></div><div class="ok" id="xpOk"></div></div>
 
@@ -451,6 +469,18 @@ $("tMiss").onclick=()=>{tM++;tally();FX.sound.wrongsoft();buzz(120);$("say5").te
 $("tReset").onclick=()=>{tH=0;tM=0;tally();FX.sound.blip();};
 tally();
 pg();
+/* ===================== 上課模式：一次一站 ===================== */
+(function(){const hs=[...document.querySelectorAll("h2.sec")];const sts=hs.map(h=>{const s=document.createElement("section");s.className="st";h.parentNode.insertBefore(s,h);const card=h.nextElementSibling;s.appendChild(h);s.appendChild(card);return s;});
+  const N=sts.length;let cur=+(localStorage.getItem("refractLessonCur")||0);if(cur>=N)cur=0;
+  $("ldots").innerHTML=sts.map(()=>"<i></i>").join("");
+  function show(i){cur=clamp(i,0,N-1);sts.forEach((s,k)=>s.classList.toggle("cur",k===cur));$("lstep").textContent="站 "+(cur+1)+" / "+N;[...$("ldots").children].forEach((d,k)=>d.classList.toggle("on",k===cur));
+    $("lprev").style.visibility=cur===0?"hidden":"visible";$("lnext").textContent=cur===N-1?"🏁 完成":"下一站 ➡";localStorage.setItem("refractLessonCur",cur);scrollTo(0,0);}
+  function enter(){document.body.classList.add("lesson");show(cur);FX.sound.jump();}
+  function exit(){document.body.classList.remove("lesson");sts.forEach(s=>s.classList.remove("cur"));FX.sound.blip();}
+  $("lessonBtn").onclick=enter;$("lexit").onclick=exit;
+  $("lprev").onclick=()=>{FX.sound.blip();show(cur-1);};
+  $("lnext").onclick=()=>{if(cur===N-1){FX.sound.clear&&FX.sound.clear();FX.fireworks&&FX.fireworks(2500);FX.confetti(120);setTimeout(exit,2600);return;}FX.sound.blip();show(cur+1);};
+  if(location.hash==="#lesson")enter();})();
 </script>
 </body>
 </html>
