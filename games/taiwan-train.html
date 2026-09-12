@@ -65,7 +65,7 @@
   .scene img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .scene img.bg.dim{filter:brightness(.3)}
   .scene .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.62);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4.5vw,22px);padding:6px 14px;border-radius:12px;z-index:5}
-  .objs{position:absolute;left:0;right:0;bottom:8%;display:flex;justify-content:space-evenly;align-items:flex-end;z-index:3}
+  .objs{position:absolute;left:0;right:0;bottom:8%;display:flex;justify-content:space-evenly;align-items:flex-end}
   .obj{width:18%;text-align:center;cursor:pointer;transition:transform .15s;position:relative}
   .obj img{width:100%;max-height:34vh;object-fit:contain;mix-blend-mode:screen;filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))}
   .obj.sel img{outline:4px solid var(--amber);outline-offset:6px;border-radius:12px}
@@ -154,7 +154,7 @@
 <script>
 const $=id=>document.getElementById(id);
 const IMG="/light-color/img/",TW="/light-color/img/tw/";
-const OBJ=[{n:"蘋果",img:IMG+"stage/apple.png",ref:"R",em:"🍎"},{n:"香蕉",img:IMG+"stage/banana.png",ref:"RG",em:"🍌"},{n:"植物",img:IMG+"stage/plant.png",ref:"G",em:"🪴"},{n:"白衣",img:IMG+"stage/shirt.png",ref:"RGB",em:"👕"}];
+const OBJ=[{n:"蘋果",img:IMG+"stage/apple.png",ref:"R",em:"🍎"},{n:"香蕉",img:IMG+"stage/banana.png",ref:"RG",em:"🍌"},{n:"植物",img:IMG+"stage/plant.png",ref:"G",em:"🌿"},{n:"白衣",img:IMG+"stage/shirt.png",ref:"RGB",em:"👕"}];
 const LIGHT={white:[1,1,1],red:[1,0,0],green:[0,1,0],blue:[0,0,1],none:[0,0,0]},LN={white:"⚪ 白光",red:"🔴 紅光",green:"🟢 綠光",blue:"🔵 藍光",none:"🌑 沒有光"};
 function setLight(k){if(!LIGHT[k])k="white";const [r,g,b]=LIGHT[k];$("lmtx").setAttribute("values",`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`);const l=document.querySelector("#xpBody .lbl");if(l)l.textContent=LN[k];}
 function dark(ref,k){const need={red:"R",green:"G",blue:"B"}[k];return need&&!ref.includes(need);}
