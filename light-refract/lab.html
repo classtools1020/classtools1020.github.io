@@ -40,6 +40,7 @@
   .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);color:#08131f;box-shadow:0 6px 0 #c9860f}.btn.go:active{transform:translateY(4px);box-shadow:0 2px 0 #c9860f}
   .btn.aqua{background:linear-gradient(180deg,#7fdcff,#2aa7e8);color:#062a3d;box-shadow:0 6px 0 #1a7fb5}.btn.aqua:active{transform:translateY(4px);box-shadow:0 2px 0 #1a7fb5}
   .btn.ghost{background:#13314f;border:2px solid var(--line);color:var(--ink)}
+  .btn.on{outline:3px solid var(--amber)}
   .btn.cam{background:linear-gradient(180deg,#ff8fb1,#e0457b);color:#fff;box-shadow:0 6px 0 #9c2a55;position:relative;overflow:hidden}
   .btn.cam input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
   input[type=range]{width:min(70vw,360px);accent-color:var(--aqua)}
@@ -121,7 +122,7 @@
   <h2 class="sec">站 1・吸管放進水裡（同一個杯子，親眼看它「斷」）</h2>
   <div class="card">
     <div class="ps" id="ps1"><canvas id="c1" width="1280" height="720"></canvas><div class="lbl" id="s1lbl">還沒有水</div><div class="note" id="s1note">👆 手指在杯子上往上滑＝倒水，往下滑＝倒掉</div></div>
-    <div class="ctrl"><span class="lbl2">💧 水位</span><input type="range" id="water" min="0" max="100" value="0"><button class="btn ghost" id="pullBtn">🖐️ 拿出來看</button></div>
+    <div class="ctrl"><span class="lbl2">💧 水位</span><input type="range" id="water" min="0" max="100" value="0"><button class="btn ghost" id="pullBtn">🖐️ 拿出來看</button><button class="btn aqua" id="cmpBtn">↔ 左右對照</button></div>
     <div class="say" id="say1">先把水倒進去，看吸管會怎樣</div>
   </div>
 
@@ -233,17 +234,27 @@ function drawStraw(c,lvl,label,tea){const x=c.getContext("2d"),W=c.width,H=c.hei
     if(label){x.fillStyle="#ffd43b";x.font="900 "+Math.round(W/48)+"px 'Noto Sans TC',sans-serif";x.fillText("← 光在這裡轉彎",gr+16,wy+8);}
   }
   return {gl,gr,gt,gb,wy};}
-let water=0,pulled=false,s1done=false;
-function drawS1(){const lvl=pulled?0:water/100;drawStraw($("c1"),lvl,true);drawStraw($("c1b"),lvl,false);
-  $("s1lbl").textContent=pulled?"拿出來：直的！沒斷":(lvl>.5?"看起來在水面「斷」了？":lvl>0?"水慢慢漫上來…":"還沒有水");}
+let water=0,pulled=false,s1done=false,cmp=false,div=.5;
+const cmpC=document.createElement("canvas");cmpC.width=1280;cmpC.height=720;
+function drawS1(){const lvl=pulled?0:water/100;const c=$("c1");
+  if(cmp){ // 左右對照：同一張照片，左＝沒有水、右＝有水，拖中間的線比較
+    const x=c.getContext("2d"),W=c.width,H=c.height;drawStraw(c,Math.max(lvl,.75),false);drawStraw(cmpC,0,false);
+    const dx=Math.round(div*W);x.drawImage(cmpC,0,0,dx,H,0,0,dx,H);
+    x.fillStyle="#fff";x.fillRect(dx-3,0,6,H);x.beginPath();x.arc(dx,H/2,34,0,6.283);x.fill();x.fillStyle="#08131f";x.font="900 28px sans-serif";x.textAlign="center";x.fillText("↔",dx,H/2+10);
+    x.font="900 34px 'Noto Sans TC',sans-serif";x.fillStyle="rgba(0,0,0,.6)";x.fillRect(dx-230,H-70,200,52);x.fillRect(dx+30,H-70,200,52);x.fillStyle="#fff";x.fillText("沒有水：直的",dx-130,H-32);x.fillStyle="#ffd43b";x.fillText("有水：斷了？",dx+130,H-32);x.textAlign="left";
+    $("s1lbl").textContent="左右對照：同一支吸管";}
+  else{drawStraw(c,lvl,true);$("s1lbl").textContent=pulled?"拿出來：直的！沒斷":(lvl>.5?"看起來在水面「斷」了？":lvl>0?"水慢慢漫上來…":"還沒有水");}
+  drawStraw($("c1b"),lvl,false);}
 img1.onload=drawS1;
 function setWater(v){water=clamp(Math.round(v),0,100);$("water").value=water;pulled=false;drawS1();
   $("say1").innerHTML=water>50?"吸管看起來彎了、斷了？按「拿出來看」！":"再多倒一點水";
   if(water>50&&!s1done){s1done=true;FX.sound.powerup();buzz([60,40,60]);setTimeout(()=>FX.stamp({text:"斷了？"}),200);}}
 $("water").oninput=e=>{FX.sound.blip();setWater(+e.target.value);};
-(function(){const el=$("ps1");let drag=false,ly=0,acc=0,bt=0;el.onpointerdown=e=>{drag=true;ly=e.clientY;try{el.setPointerCapture(e.pointerId);}catch(x){}};
-  el.onpointermove=e=>{if(!drag)return;const dy=ly-e.clientY;ly=e.clientY;acc+=dy;if(Math.abs(acc)>4){setWater(water+acc*.5);acc=0;if(Date.now()-bt>90){bt=Date.now();bubbleSound();}}};
+(function(){const el=$("ps1");let drag=false,ly=0,acc=0,bt=0;el.onpointerdown=e=>{drag=true;ly=e.clientY;try{el.setPointerCapture(e.pointerId);}catch(x){}if(cmp){const r=el.getBoundingClientRect();div=clamp((e.clientX-r.left)/r.width,.08,.92);drawS1();}};
+  el.onpointermove=e=>{if(!drag)return;if(cmp){const r=el.getBoundingClientRect();div=clamp((e.clientX-r.left)/r.width,.08,.92);drawS1();if(Date.now()-bt>120){bt=Date.now();FX.sound.blip();}return;}
+    const dy=ly-e.clientY;ly=e.clientY;acc+=dy;if(Math.abs(acc)>4){setWater(water+acc*.5);acc=0;if(Date.now()-bt>90){bt=Date.now();bubbleSound();}}};
   el.onpointerup=el.onpointercancel=()=>{drag=false;};})();
+$("cmpBtn").onclick=()=>{cmp=!cmp;$("cmpBtn").classList.toggle("on",cmp);FX.sound.jump();drawS1();$("s1note").textContent=cmp?"↔ 拖中間的線：左邊沒有水、右邊有水，同一支吸管":"👆 手指在杯子上往上滑＝倒水，往下滑＝倒掉";$("say1").innerHTML=cmp?"同一支吸管：有水那邊看起來斷了，沒水那邊是直的<span class='term'>折射</span>":"先把水倒進去，看吸管會怎樣";};
 $("pullBtn").onclick=()=>{pulled=true;FX.sound.jump();splashSound(.4);drawS1();$("say1").innerHTML="沒斷！同一支吸管，是<b>光進水轉彎</b>讓它看起來彎<span class='term'>折射</span>";FX.stamp({text:"沒斷"});FX.confetti(60);addCoins(5);setTimeout(()=>{pulled=false;drawS1();},2200);};
 /* 真的杯子挑戰：網頁內開鏡頭即時預覽→拍 */
 let camStream=null;
