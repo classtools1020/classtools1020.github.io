@@ -67,7 +67,7 @@
   .scene .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.62);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4.5vw,22px);padding:6px 14px;border-radius:12px;z-index:5}
   .objs{position:absolute;left:0;right:0;bottom:8%;display:flex;justify-content:space-evenly;align-items:flex-end}
   .obj{width:18%;text-align:center;cursor:pointer;transition:transform .15s;position:relative}
-  .obj img{width:100%;max-height:34vh;object-fit:contain;mix-blend-mode:screen;filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))}
+  .obj img{width:100%;max-height:34vh;object-fit:contain;mix-blend-mode:screen;-webkit-user-drag:none;user-select:none;filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))}
   .obj.sel img{outline:4px solid var(--amber);outline-offset:6px;border-radius:12px}
   .obj.sel{transform:translateY(-8px) scale(1.06)}
   .obj .nm{font-weight:900;font-size:min(4vw,18px);background:rgba(0,0,0,.6);border-radius:10px;padding:2px 10px;display:inline-block;margin-top:4px}
@@ -221,23 +221,15 @@ function xSpot(c){$("xpQ").textContent=(c.light==="green"?"綠光照上去會變
   function loop(t){if(!busy){x+=dir*(t-t0)/1000*.3;if(x>.78){x=.78;dir=-1;}if(x<0){x=0;dir=1;}sp.style.left=(x*100)+"%";}t0=t;raf=requestAnimationFrame(loop);}raf=requestAnimationFrame(loop);
   $("fire").onclick=()=>{if(busy)return;busy=true;S.tap();const objs=[...sc.querySelectorAll(".obj")];const r=sc.getBoundingClientRect();const cx=r.left+r.width*(x+.11);let hitI=-1;objs.forEach((o,i)=>{const b=o.getBoundingClientRect();if(cx>=b.left-10&&cx<=b.right+10)hitI=i;});
     setLight(c.light);later(()=>{if(hitI===c.target){objs[hitI].classList.add("pick");clear(c);}else{wrong(hitI<0?"燈要照到東西再按":"看！"+LN[c.light]+"下"+OBJ[hitI].n+(dark(OBJ[hitI].ref,c.light)?"變黑了，但題目要的是另一個":"還是亮的")+"，再等燈掃到對的");later(()=>{setLight("white");busy=false;},1500);}},600);};}
-/* 📦 裝貨車 */
-function xLoad(c){$("xpQ").textContent="這個東西會反射哪種光？點它，再點對的車廂（或直接拖過去）";const objs=[0,2,3],wags=[["🔴","紅光車廂","R","只反射紅光"],["🟢","綠光車廂","G","只反射綠光"],["⚪","全部光車廂","RGB","什麼光都反射"]];
-  $("xpBody").innerHTML=`<div class="scene" id="sc"><img class="bg dim" src="${TW+c.img}" alt=""><div class="lbl">⚪ 白光</div><div class="wagons">${wags.map((w,i)=>`<div class="wag" data-w="${i}"><span class="big">${w[0]}🚃</span>${w[1]}<small style="opacity:.8">${w[3]}</small></div>`).join("")}</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt="" draggable="false"><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;
-  $("fb").textContent="👆 先點一個貨物";const sc=$("sc");let dragEl=null,sel=null,done=0,sx=0,sy=0,moved=false,ghost=null;
-  function judge(o,w,x,y){const ref=OBJ[+o.dataset.i].ref;if(wags[+w.dataset.w][2]===ref){w.classList.add("full");w.innerHTML=`<span class="big">${OBJ[+o.dataset.i].em}🚃</span>${wags[+w.dataset.w][1]}`;o.classList.add("gone");o.style.visibility="hidden";S.coin();FX.emojiBurst("✨",8,x||innerWidth/2,y||innerHeight/2);done++;$("fb").textContent=OBJ[+o.dataset.i].n+" 上車！"+(done<3?"再點下一個貨物":"");if(done===3)clear(c);return true;}
-    wrong(OBJ[+o.dataset.i].n+"不是這節。想一想：它是什麼顏色？就反射那種光");return false;}
-  function select(o){sel=o;document.querySelectorAll("#sc .obj").forEach(x=>x.classList.toggle("sel",x===o));S.tap();$("fb").textContent="選了「"+OBJ[+o.dataset.i].n+"」→ 再點它會反射哪種光的車廂";}
-  sc.onpointerdown=e=>{const o=e.target.closest(".obj");const w=e.target.closest(".wag");
-    if(w){if(sel&&!sel.classList.contains("gone")){judge(sel,w,e.clientX,e.clientY);if(sel.classList.contains("gone"))sel=null;document.querySelectorAll("#sc .obj").forEach(x=>x.classList.remove("sel"));}else{S.tap();$("fb").textContent="先點一個貨物，再點車廂";}return;}
-    if(!o||o.classList.contains("gone"))return;dragEl=o;sx=e.clientX;sy=e.clientY;moved=false;try{sc.setPointerCapture(e.pointerId);}catch(x){}};
-  sc.onpointermove=e=>{if(!dragEl)return;if(!moved&&Math.hypot(e.clientX-sx,e.clientY-sy)<8)return;
-    if(!moved){moved=true;ghost=document.createElement("div");ghost.style.cssText="position:fixed;z-index:9999;pointer-events:none;width:120px;transform:translate(-50%,-50%) scale(1.1);filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))";ghost.innerHTML=`<img src="${OBJ[+dragEl.dataset.i].img}" style="width:100%;mix-blend-mode:screen">`;document.body.appendChild(ghost);dragEl.style.opacity=".35";S.tap();}
-    ghost.style.left=e.clientX+"px";ghost.style.top=e.clientY+"px";document.querySelectorAll(".wag").forEach(w=>{const b=w.getBoundingClientRect();w.classList.toggle("over",e.clientX>=b.left&&e.clientX<=b.right&&e.clientY>=b.top&&e.clientY<=b.bottom);});};
-  sc.onpointerup=sc.onpointercancel=e=>{if(!dragEl)return;const o=dragEl;dragEl=null;if(ghost){ghost.remove();ghost=null;}o.style.opacity="";
-    if(!moved){select(o);return;}
-    const w=[...document.querySelectorAll(".wag")].find(w=>w.classList.contains("over"));document.querySelectorAll(".wag").forEach(w=>w.classList.remove("over"));
-    if(w)judge(o,w,e.clientX,e.clientY);else $("fb").textContent="放到車廂上面才算喔";};}
+/* 📦 裝貨車：一次一個東西，按燈按鈕（不用拖） */
+function xLoad(c){const order=[0,2,3];let k=0;const wag={R:"🔴 紅光車廂",G:"🟢 綠光車廂",RGB:"⚪ 全部光車廂"};
+  function round(){const i=order[k];const o=OBJ[i];$("xpQ").textContent="「"+o.n+"」要上哪一節車廂？按按看它反射哪種光";
+    $("xpBody").innerHTML=`<div class="scene" id="sc"><img class="bg dim" src="${TW+c.img}" alt=""><div class="lbl">⚪ 白光</div><div class="objs" style="justify-content:center"><div class="obj" style="width:32%"><img src="${o.img}" alt=""><div class="nm">${o.n}</div></div></div><div class="wagons" style="top:4%;justify-content:center;gap:8px;pointer-events:none">${order.slice(0,k).map(j=>`<div class="wag full" style="width:22%;height:26%"><span class="big">${OBJ[j].em}🚃</span></div>`).join("")}</div></div><div class="lamps" id="lamps"><div class="lamp" data-r="R">🔴<small style="font-size:14px">只反射紅光</small></div><div class="lamp" data-r="G">🟢<small style="font-size:14px">只反射綠光</small></div><div class="lamp" data-r="RGB">⚪<small style="font-size:14px">全部都反射</small></div></div>`;
+    $("fb").textContent="👆 按一個燈，看"+o.n+"會怎樣";setLight("white");let busy=false;
+    document.querySelectorAll("#lamps .lamp").forEach(l=>{l.style.flexDirection="column";l.onclick=()=>{if(busy)return;busy=true;const r=l.dataset.r;const lt={R:"red",G:"green",RGB:"white"}[r];S.tap();setLight(lt);
+      later(()=>{if(r===o.ref){l.classList.add("on");$("fb").textContent=o.n+"在"+LN[lt]+"下還是亮的 → 上 "+wag[r]+"！";S.coin();FX.emojiBurst("✨",10,innerWidth/2,innerHeight*.4);k++;later(()=>{if(k>=order.length)clear(c);else round();},900);}
+        else{const isDark=dark(o.ref,lt);wrong(isDark?("看！"+LN[lt]+"下"+o.n+"變黑了，它不反射這種光"):(o.n+"什麼光都亮，它不是只反射"+LN[lt].substr(2)));later(()=>{setLight("white");busy=false;},1500);}},700);};});}
+  round();}
 /* 💡 燈光記憶 */
 function xMem(c){$("xpQ").textContent="注意看！等一下燈會變色，記住誰變黑了";$("xpBody").innerHTML=scene([0,1,2,3]);setLight("white");$("fb").textContent="👀 3 秒後燈會變色…";let phase=0;
   later(()=>{setLight(c.light);$("fb").textContent="現在是"+LN[c.light]+"！記住誰變黑";},2500);

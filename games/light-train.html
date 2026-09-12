@@ -52,7 +52,7 @@
   .scene .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.62);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4.5vw,22px);padding:6px 14px;border-radius:12px;z-index:5}
   .objs{position:absolute;left:0;right:0;bottom:8%;display:flex;justify-content:space-evenly;align-items:flex-end}
   .obj{width:18%;text-align:center;cursor:pointer;transition:transform .15s;position:relative}
-  .obj img{width:100%;max-height:34vh;object-fit:contain;mix-blend-mode:screen;filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))}
+  .obj img{width:100%;max-height:34vh;object-fit:contain;mix-blend-mode:screen;-webkit-user-drag:none;user-select:none;pointer-events:none;filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))}
   .obj.sel img{outline:4px solid var(--amber);outline-offset:6px;border-radius:12px}
   .obj.sel{transform:translateY(-8px) scale(1.06)}
   .obj .nm{font-weight:900;font-size:min(4vw,18px);background:rgba(0,0,0,.6);border-radius:10px;padding:2px 10px;display:inline-block;margin-top:4px}
@@ -187,13 +187,14 @@ function xLoad(s){$("xpQ").textContent="這個東西會反射哪種光？點它�
   function select(o){sel=o;document.querySelectorAll("#sc .obj").forEach(x=>x.classList.toggle("sel",x===o));FX.sound.blip();$("fb").textContent="選了「"+OBJ[+o.dataset.i].n+"」→ 再點它會反射哪種光的車廂";}
   sc.onpointerdown=e=>{const o=e.target.closest(".obj");const w=e.target.closest(".wag");
     if(w){if(sel&&!sel.classList.contains("gone")){judge(sel,w,e.clientX,e.clientY);if(sel.classList.contains("gone"))sel=null;document.querySelectorAll("#sc .obj").forEach(x=>x.classList.remove("sel"));}else{FX.sound.blip();$("fb").textContent="先點一個貨物，再點車廂";}return;}
-    if(!o||o.classList.contains("gone"))return;dragEl=o;sx=e.clientX;sy=e.clientY;moved=false;try{sc.setPointerCapture(e.pointerId);}catch(x){}};
+    if(!o||o.classList.contains("gone"))return;e.preventDefault();dragEl=o;sx=e.clientX;sy=e.clientY;moved=false;try{sc.setPointerCapture(e.pointerId);}catch(x){}};
+  sc.addEventListener("touchmove",e=>{if(dragEl)e.preventDefault();},{passive:false});sc.ondragstart=e=>e.preventDefault();
   sc.onpointermove=e=>{if(!dragEl)return;if(!moved&&Math.hypot(e.clientX-sx,e.clientY-sy)<8)return;
     if(!moved){moved=true;ghost=document.createElement("div");ghost.style.cssText="position:fixed;z-index:9999;pointer-events:none;width:120px;transform:translate(-50%,-50%) scale(1.1);filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))";ghost.innerHTML=`<img src="${OBJ[+dragEl.dataset.i].img}" style="width:100%;mix-blend-mode:screen">`;document.body.appendChild(ghost);dragEl.style.opacity=".35";FX.sound.blip();}
     ghost.style.left=e.clientX+"px";ghost.style.top=e.clientY+"px";document.querySelectorAll(".wag").forEach(w=>{const b=w.getBoundingClientRect();w.classList.toggle("over",e.clientX>=b.left&&e.clientX<=b.right&&e.clientY>=b.top&&e.clientY<=b.bottom);});};
   sc.onpointerup=sc.onpointercancel=e=>{if(!dragEl)return;const o=dragEl;dragEl=null;if(ghost){ghost.remove();ghost=null;}o.style.opacity="";
     if(!moved){select(o);return;}
-    const w=[...document.querySelectorAll(".wag")].find(w=>w.classList.contains("over"));document.querySelectorAll(".wag").forEach(w=>w.classList.remove("over"));
+    let w=[...document.querySelectorAll(".wag")].find(w=>w.classList.contains("over"));if(!w){w=[...document.querySelectorAll(".wag")].find(w=>{const b=w.getBoundingClientRect();return e.clientX>=b.left-40&&e.clientX<=b.right+40&&e.clientY>=b.top-60&&e.clientY<=b.bottom+60;});}document.querySelectorAll(".wag").forEach(w=>w.classList.remove("over"));
     if(w)judge(o,w,e.clientX,e.clientY);else $("fb").textContent="放到車廂上面才算喔";};}
 /* 💡 燈光記憶 */
 function xMem(s){$("xpBody").innerHTML=scene([0,1,2,3]);setLight("white");$("fb").textContent="👀 注意看，3 秒後燈會變色…";let phase=0;
