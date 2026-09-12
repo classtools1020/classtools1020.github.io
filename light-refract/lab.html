@@ -234,14 +234,14 @@ function drawStraw(c,lvl,label,tea){const x=c.getContext("2d"),W=c.width,H=c.hei
     if(label){x.fillStyle="#ffd43b";x.font="900 "+Math.round(W/48)+"px 'Noto Sans TC',sans-serif";x.fillText("← 光在這裡轉彎",gr+16,wy+8);}
   }
   return {gl,gr,gt,gb,wy};}
-let water=0,pulled=false,s1done=false,cmp=false,div=.5;
+let water=0,pulled=false,s1done=false,cmp=false,div=.28;
 const cmpC=document.createElement("canvas");cmpC.width=1280;cmpC.height=720;
 function drawS1(){const lvl=pulled?0:water/100;const c=$("c1");
   if(cmp){ // 左右對照：同一張照片，左＝沒有水、右＝有水，拖中間的線比較
     const x=c.getContext("2d"),W=c.width,H=c.height;drawStraw(c,Math.max(lvl,.75),false);drawStraw(cmpC,0,false);
     const dx=Math.round(div*W);x.drawImage(cmpC,0,0,dx,H,0,0,dx,H);
     x.fillStyle="#fff";x.fillRect(dx-3,0,6,H);x.beginPath();x.arc(dx,H/2,34,0,6.283);x.fill();x.fillStyle="#08131f";x.font="900 28px sans-serif";x.textAlign="center";x.fillText("↔",dx,H/2+10);
-    x.font="900 34px 'Noto Sans TC',sans-serif";x.fillStyle="rgba(0,0,0,.6)";x.fillRect(dx-230,H-70,200,52);x.fillRect(dx+30,H-70,200,52);x.fillStyle="#fff";x.fillText("沒有水：直的",dx-130,H-32);x.fillStyle="#ffd43b";x.fillText("有水：斷了？",dx+130,H-32);x.textAlign="left";
+    x.font="900 34px 'Noto Sans TC',sans-serif";const lx=clamp(dx-130,120,W-120),rx=clamp(dx+130,120,W-120);x.fillStyle="rgba(0,0,0,.6)";x.fillRect(lx-100,78,200,52);x.fillRect(rx-100,78,200,52);x.fillStyle="#fff";x.fillText("沒有水：直的",lx,116);x.fillStyle="#ffd43b";x.fillText("有水：斷了？",rx,116);x.textAlign="left";
     $("s1lbl").textContent="左右對照：同一支吸管";}
   else{drawStraw(c,lvl,true);$("s1lbl").textContent=pulled?"拿出來：直的！沒斷":(lvl>.5?"看起來在水面「斷」了？":lvl>0?"水慢慢漫上來…":"還沒有水");}
   drawStraw($("c1b"),lvl,false);}
