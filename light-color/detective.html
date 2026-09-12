@@ -141,7 +141,7 @@ function renderPhoto(item){const p=$("photo");
   setLight("white");}
 function render(){picked=null;solved=false;dots();const item=Q[qi];
   $("qi").textContent=qi+1;$("qn").textContent=item.type==="boss"?"👑 魔王關":"關卡 "+(qi+1);$("q").textContent=item.q;$("fb").innerHTML="";$("hint").textContent="";$("next").disabled=true;$("next").classList.remove("pulse");
-  $("boss").classList.toggle("show",item.type==="boss");$("foe").classList.toggle("show",item.type==="boss");if(item.type==="boss"){$("bossFace").textContent=item.face;$("foe").textContent=item.face;$("bossName").textContent=item.name;hp=100;$("hp").style.width="100%";FX.sound.boom();document.body.classList.add("shake");setTimeout(()=>document.body.classList.remove("shake"),500);}
+  $("boss").classList.toggle("show",item.type==="boss");$("foe").classList.toggle("show",item.type==="boss");if(item.type==="boss"){$("bossFace").textContent=item.face;$("foe").textContent=item.face;$("bossName").textContent=item.name;hp=100;$("hp").style.width="100%";FX.sound.pop();}
   renderPhoto(item);
   if(item.type==="objs"&&!item.opts){$("opts").innerHTML="";$("hint").textContent="👆 直接點照片裡的東西";}
   else{const order=item.opts.map((o,i)=>({o,i})).sort(()=>Math.random()-.5);
@@ -167,14 +167,14 @@ function heroGrow(){const h=$("hero");const sc=Math.min(2.2,1+streak*.15);h.styl
 function heroJump(){const h=$("hero");h.style.setProperty("--jh",Math.min(92,30+streak*10)+"px");h.classList.remove("jump");void h.offsetWidth;h.classList.add("jump");FX.sound.jump();
   coins+=1+Math.floor(streak/3);$("coinrow").textContent="🪙 "+coins;FX.emojiBurst("🪙",6+streak,innerWidth*.25,innerHeight*.35);}
 function heroAttack(){const h=$("hero"),f=$("foe");h.classList.remove("dash");void h.offsetWidth;h.classList.add("dash");
-  setTimeout(()=>{f.classList.remove("hit");void f.offsetWidth;f.classList.add("hit");FX.sound.boom();FX.emojiBurst("💥",16,innerWidth*.72,innerHeight*.3);},380);}
+  setTimeout(()=>{f.classList.remove("hit");void f.offsetWidth;f.classList.add("hit");FX.sound.pop();FX.emojiBurst("💥",16,innerWidth*.72,innerHeight*.3);},380);}
 function heroWrong(){FX.sound.wrongsoft();$("pw").textContent="🤖 小幫手 沒關係，再試一次";}
 function win(item,el){solved=true;streak++;score+=item.type==="boss"?500:100+streak*10;$("score").textContent=score;$("streak").textContent=streak;
   if(item.type==="boss"){heroAttack();}else{heroJump();}heroGrow();
   if(streak===3){FX.sound.powerup();FX.emojiBurst("🍄",10,innerWidth*.25,innerHeight*.3);}if(streak===6){FX.sound.oneup();FX.emojiBurst("⭐",14,innerWidth*.25,innerHeight*.3);}
   document.querySelectorAll(".opt").forEach(o=>{o.classList.add("disabled");if(+o.dataset.i===item.ok)o.classList.add("right");});
   $("fb").innerHTML="✅ "+item.why+"<span class='term'>"+item.tz+"</span>";$("next").disabled=false;$("next").classList.add("pulse");
-  if(item.type==="boss"){$("hp").style.width="0%";FX.sound.boom();document.body.classList.add("shake");setTimeout(()=>document.body.classList.remove("shake"),500);
+  if(item.type==="boss"){$("hp").style.width="0%";FX.sound.pop();
     setTimeout(()=>{FX.sound.clear();FX.fireworks(2200);if(qi===3)FX.stamp({text:"打敗！"});else if(qi===7)FX.chest({title:"舞台魔王掉落寶物",gem:"💎",gemName:"白光寶石",gemColor:"#fff",sub:"紅＋綠＋藍＝白光"});else FX.badge({id:"detective",emoji:"🎨",name:"顏色偵探大師",desc:"12 關真實照片破案全破"});},600);}
   else{FX.sound.powerup();FX.confetti(80);if(streak===3)FX.sound.oneup();if(qi===5)FX.mascot({emoji:"🤖",name:"機器人小幫手",lines:["連對好厲害！","記住：物體的顏色＝它反射什麼光"]});}
 }

@@ -28,7 +28,7 @@
     tick(){tone(1200,now(),.03,"square",.1);},
     fanfare(){const t=now();[[523,0],[523,.12],[523,.24],[659,.38],[784,.54],[1047,.72]].forEach(([f,dt])=>tone(f,t+dt,.3,"triangle",.3));noise(t+.8,.3,.08,3000);},
     levelup(){const t=now();[392,523,659,784,1047,1319].forEach((f,i)=>tone(f,t+i*.07,.35,"triangle",.25));glide(1000,2500,t+.5,.4,"sine",.12);},
-    boom(){const t=now();noise(t,.5,.22,120);glide(120,40,t,.5,"sine",.3);},
+    boom(){const t=now();if(FX.calm){glide(523,784,t,.25,"sine",.12);glide(659,988,t+.12,.3,"sine",.1);return;}noise(t,.5,.22,120);glide(120,40,t,.5,"sine",.3);},
     robot(){const t=now();[440,660,550,880].forEach((f,i)=>tone(f,t+i*.09,.12,"square",.12));glide(300,900,t+.4,.25,"sawtooth",.06);},
   };
   /* 🍄 瑪利歐風清脆音效（方波＋短包絡） */
@@ -46,6 +46,8 @@
 
   /* 🔇 旁白預設關閉（老師：太吵）；右下角 🔈 可開啟 */
   FX.voiceOn=()=>{try{return localStorage.getItem("voice")==="on";}catch(e){return false;}};
+  // 溫和模式（預設開）：爆炸音改成柔和鈴聲，避免嚇到對聲音敏感的同學；localStorage calm="off" 可關
+  FX.calm=(()=>{try{return localStorage.getItem("calm")!=="off";}catch(e){return true;}})();
   FX.speak=(zh,en)=>{if(!FX.voiceOn())return;if(!('speechSynthesis'in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(zh);u.lang="zh-TW";u.rate=.9;
     u.onend=()=>{if(en){const e=new SpeechSynthesisUtterance(en);e.lang="en-US";e.rate=.85;speechSynthesis.speak(e);}};speechSynthesis.speak(u);}catch(e){}};
 

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>光之環島列車・從台北出發</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--panel:#0f2841;--line:rgba(120,170,210,.28);--amber:#ffc93c;--teal:#42e0c8;--aqua:#3ec2ff;--ink:#eaf6ff;--dim:#9db8cf;--disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;user-select:none;background:radial-gradient(120% 80% at 50% -10%,rgba(62,194,255,.12),transparent 55%),linear-gradient(165deg,#05101f,#0a2036 55%,#0e3350)}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .wrap{max-width:1040px;margin:0 auto;padding:60px 12px 40px}
+  h1{font-family:var(--disp);text-align:center;font-size:min(7vw,30px);margin:4px 0 2px}
+  .sub{text-align:center;color:var(--aqua);font-weight:900;margin-bottom:8px;font-size:16px}
+  .hud{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+  .pill{background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:8px 16px;font-family:var(--disp);font-weight:700;font-size:18px}
+  .pill b{color:var(--amber)}
+  .pill.train{border-color:var(--amber);background:linear-gradient(180deg,#2a4a6e,#0f2841)}
+  .pill.btn{cursor:pointer;border-color:var(--teal);color:var(--teal)}
+  .board{display:grid;grid-template-columns:1fr 1.15fr;gap:14px}
+  @media(max-width:780px){.board{grid-template-columns:1fr}}
+  /* 台灣地圖 */
+  .map{position:relative;background:linear-gradient(180deg,#0b2a45,#0d3a5a);border:3px solid var(--line);border-radius:24px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  .map svg{position:absolute;inset:0;width:100%;height:100%}
+  .city{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:#1b3a5c;border:4px solid #5b7a9c;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.5);transition:transform .2s}
+  .city .n{position:absolute;left:58px;top:50%;transform:translateY(-50%);white-space:nowrap;font-weight:900;font-size:14px;color:#eaf6ff;text-shadow:0 2px 4px #000}
+  .city.l .n{left:auto;right:58px}
+  .city.done{background:#1f6b3a;border-color:#6be59a}.city.now{border-color:var(--amber);background:#5a3f0c;animation:pulse 1.2s infinite}.city.lock{opacity:.5;filter:grayscale(.7)}
+  .city.sp{border-color:#ff9ad0;box-shadow:0 0 0 3px rgba(255,154,208,.35),0 6px 14px rgba(0,0,0,.5)}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+  .train{position:absolute;font-size:38px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.6));transform:translate(-50%,-50%);pointer-events:none;z-index:3;transition:none}
+  .smoke{position:absolute;font-size:20px;pointer-events:none;animation:smoke 1.1s forwards;z-index:2}
+  @keyframes smoke{from{opacity:.9;transform:translate(0,0) scale(.6)}to{opacity:0;transform:translate(-26px,-60px) scale(1.5)}}
+  /* 右側：明信片／說明 */
+  .side{display:flex;flex-direction:column;gap:10px}
+  .card{background:var(--panel);border:3px solid var(--line);border-radius:22px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  .post{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:16/9;background:#08111d;border:2px solid var(--line)}
+  .post img{width:100%;height:100%;object-fit:cover;display:block}
+  .post .cap{position:absolute;left:0;right:0;bottom:0;padding:10px 14px;background:linear-gradient(0deg,rgba(4,10,20,.92),transparent);font-weight:900;font-size:min(4.5vw,20px)}
+  .post .stamp{position:absolute;right:10px;top:10px;background:rgba(255,255,255,.92);color:#b3261e;font-family:var(--disp);font-weight:700;font-size:16px;padding:4px 10px;border:3px double #b3261e;border-radius:6px;transform:rotate(8deg)}
+  .fact{margin-top:10px;font-weight:800;line-height:1.6;font-size:16px}
+  .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:14px;font-weight:900;margin-left:6px}
+  .say{text-align:center;font-weight:900;font-size:min(4.6vw,19px);color:#ffe08a;min-height:26px}
+  .ctrl{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+  .btn{font-family:var(--disp);font-weight:700;font-size:min(5vw,20px);border:none;border-radius:16px;padding:12px 22px;cursor:pointer;color:#08131f}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);box-shadow:0 6px 0 #c9860f}.btn.go:active{transform:translateY(4px);box-shadow:0 2px 0 #c9860f}
+  .btn.ghost{background:#13314f;border:2px solid var(--line);color:var(--ink)}
+  .btn.big{font-size:min(7vw,28px);padding:16px 36px;border-radius:24px}
+  .speed{display:flex;gap:6px;justify-content:center;margin-top:6px}
+  .speed span{padding:4px 12px;border-radius:999px;background:#13314f;font-weight:900;font-size:14px;opacity:.5}
+  .speed span.on{opacity:1;background:var(--amber);color:#08131f}
+  /* 關卡覆蓋層 */
+  .xp{position:fixed;inset:0;z-index:9300;background:#03081a;display:none;flex-direction:column;align-items:center;padding:12px;overflow:auto}
+  .xp.show{display:flex;animation:fade .3s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .xp .x{position:absolute;right:14px;top:14px;width:46px;height:46px;border-radius:50%;border:2px solid var(--amber);background:#0f2841;color:var(--amber);font-weight:900;font-size:22px;cursor:pointer;z-index:2}
+  .xp h3{font-family:var(--disp);font-size:min(6vw,26px);margin:6px 48px 4px;text-align:center}
+  .xp .q{font-weight:900;color:var(--aqua);font-size:min(5vw,22px);text-align:center;margin-bottom:8px;max-width:900px}
+  .scene{position:relative;width:min(96vw,900px);aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:3px solid var(--line);background:#08111d;touch-action:none}
+  .scene img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .scene img.bg.dim{filter:brightness(.3)}
+  .scene .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.62);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4.5vw,22px);padding:6px 14px;border-radius:12px;z-index:5}
+  .objs{position:absolute;left:0;right:0;bottom:8%;display:flex;justify-content:space-evenly;align-items:flex-end;z-index:3}
+  .obj{width:18%;text-align:center;cursor:pointer;transition:transform .15s;position:relative}
+  .obj img{width:100%;max-height:34vh;object-fit:contain;filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))}
+  .obj .nm{font-weight:900;font-size:min(4vw,18px);background:rgba(0,0,0,.6);border-radius:10px;padding:2px 10px;display:inline-block;margin-top:4px}
+  .obj.pick{transform:translateY(-10px) scale(1.08)}.obj.pick img{outline:4px solid var(--amber);outline-offset:6px;border-radius:12px}
+  .obj.drag{z-index:9;pointer-events:none}
+  .spot{position:absolute;top:0;bottom:0;width:22%;background:radial-gradient(ellipse at 50% 60%,rgba(255,255,220,.55),rgba(255,255,220,.15) 55%,transparent 75%);z-index:2;pointer-events:none;mix-blend-mode:screen}
+  .wagons{position:absolute;left:0;right:0;top:6%;display:flex;justify-content:space-evenly;z-index:2}
+  .wag{width:26%;height:32%;border-radius:14px;border:4px dashed rgba(255,255,255,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;font-size:min(4vw,18px);background:rgba(0,0,0,.35);transition:background .2s,border-color .2s}
+  .wag.over{border-color:var(--amber);background:rgba(255,201,60,.2)}.wag.full{border-style:solid;border-color:#6be59a;background:rgba(40,160,90,.35)}
+  .wag .big{font-size:min(9vw,44px)}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:min(96vw,900px);margin-top:10px}
+  @media(max-width:520px){.opts{grid-template-columns:1fr}}
+  .opt{background:var(--panel);border:3px solid var(--line);border-radius:16px;padding:14px;font-weight:900;font-size:min(5vw,21px);cursor:pointer;display:flex;align-items:center;gap:10px}
+  .opt .sw{width:30px;height:30px;border-radius:8px;border:2px solid #fff;flex:none}
+  .opt.wrong{border-color:#ffb27a}.opt.right{border-color:#6be59a;background:#1f4d33}
+  .lamps{display:flex;gap:14px;justify-content:center;margin-top:10px}
+  .lamp{width:min(24vw,110px);aspect-ratio:1;border-radius:22px;border:4px solid rgba(255,255,255,.3);font-size:min(9vw,44px);cursor:pointer;background:#13314f;display:flex;align-items:center;justify-content:center;transition:transform .1s}
+  .lamp.on{border-color:#fff;transform:scale(1.06)}
+  .mixc{width:min(40vw,180px);aspect-ratio:1;border-radius:50%;margin:12px auto 0;border:6px solid rgba(255,255,255,.4);transition:background .3s,box-shadow .3s}
+  .balloons{position:absolute;inset:0;z-index:3}
+  .bal{position:absolute;width:14%;aspect-ratio:1/1.25;border-radius:50% 50% 50% 50%/45% 45% 55% 55%;cursor:pointer;box-shadow:inset -10px -14px 20px rgba(0,0,0,.25),0 8px 14px rgba(0,0,0,.4);animation:float 3s ease-in-out infinite;display:flex;align-items:flex-end;justify-content:center;font-weight:900;color:#fff;text-shadow:0 1px 3px #000;padding-bottom:6px}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  .bal.pop{animation:balpop .4s forwards}
+  @keyframes balpop{to{transform:scale(1.6);opacity:0}}
+  .fb{margin-top:10px;font-weight:900;font-size:min(4.8vw,20px);color:#ffe08a;text-align:center;min-height:28px;max-width:900px}
+  .pop{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.3);font-family:var(--disp);font-weight:700;font-size:min(10vw,58px);color:#ffd43b;text-shadow:0 4px 0 #000,0 0 30px rgba(0,0,0,.8);pointer-events:none;z-index:9400;animation:pop 1s ease-out forwards;white-space:nowrap}
+  .pop.soft{color:#ffe0b3;font-size:min(7vw,40px)}
+  @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-60%) scale(1)}}
+  /* 到站明信片全螢幕 */
+  .arrive{position:fixed;inset:0;z-index:9450;background:#03081a;display:none;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:10px}
+  .arrive.show{display:flex;animation:fade .4s}
+  .arrive .big{position:relative;width:min(96vw,900px);aspect-ratio:16/9;border-radius:22px;overflow:hidden;border:4px solid #fff;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+  .arrive .big img{width:100%;height:100%;object-fit:cover;display:block;animation:kb 6s ease-out forwards}
+  @keyframes kb{from{transform:scale(1)}to{transform:scale(1.08)}}
+  .arrive .big .stamp{position:absolute;right:16px;top:16px;background:rgba(255,255,255,.92);color:#b3261e;font-family:var(--disp);font-weight:700;font-size:min(5vw,22px);padding:6px 14px;border:3px double #b3261e;border-radius:6px;transform:rotate(8deg);animation:stampin .5s cubic-bezier(.2,1.6,.4,1)}
+  @keyframes stampin{from{transform:rotate(8deg) scale(3);opacity:0}to{transform:rotate(8deg) scale(1);opacity:1}}
+  .arrive h2{font-family:var(--disp);font-size:min(8vw,34px);margin:0;text-align:center}
+  .arrive .fact{max-width:900px;text-align:center;font-size:min(4.8vw,20px)}
+  /* 扭蛋／圖鑑 */
+  .gacha{position:fixed;inset:0;z-index:9500;background:rgba(3,8,26,.96);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+  .gacha.show{display:flex}
+  .capsule{font-size:min(40vw,160px);animation:wob .6s infinite;cursor:pointer}
+  @keyframes wob{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+  .capsule.open{animation:openc .6s forwards}
+  @keyframes openc{to{transform:scale(1.6);opacity:0}}
+  .prize{font-size:min(36vw,150px);animation:prize .8s cubic-bezier(.2,1.6,.4,1) forwards;transform:scale(0)}
+  @keyframes prize{to{transform:scale(1)}}
+  .ptitle{font-family:var(--disp);font-size:min(8vw,34px);color:var(--amber);text-align:center}
+  .book{position:fixed;inset:0;z-index:9500;background:rgba(3,8,26,.97);display:none;flex-direction:column;align-items:center;padding:60px 14px 20px;overflow:auto}
+  .book.show{display:flex}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:min(96vw,720px)}
+  .cell{aspect-ratio:1;background:var(--panel);border:3px solid var(--line);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:min(12vw,52px);gap:4px}
+  .cell.miss{filter:grayscale(1);opacity:.35}.cell small{font-size:13px;font-weight:900;color:var(--dim)}
+  .cell.got{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,201,60,.3)}
+  footer{text-align:center;margin-top:20px;color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="/light-color/">🏠 回到首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<svg width="0" height="0" style="position:absolute"><filter id="lightf" color-interpolation-filters="sRGB"><feColorMatrix id="lmtx" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></svg>
+<div class="wrap">
+  <h1>🚆 光之環島列車・從台北出發</h1>
+  <div class="sub">答對就開到下一個城市，每一站都有台灣真的看得到的光與顏色</div>
+  <div class="hud"><span class="pill train" id="trainPill">🚃 區間車</span><span class="pill">🚉 <b id="stn">1</b> / 11</span><span class="pill">🪙 <b id="coins">0</b></span><span class="pill btn" id="bookBtn">📖 明信片 <b id="bookN">0</b>/10</span></div>
+  <div class="speed"><span id="sp0" class="on">🚃 區間車</span><span id="sp1">🚄 自強號 ×2</span><span id="sp2">🚅 高鐵 ×3</span></div>
+  <div class="board">
+    <div class="map" id="map"><svg viewBox="0 0 600 800" preserveAspectRatio="xMidYMid meet"><path id="tw" d="M 330 60 C 380 50 430 80 445 130 C 460 190 470 260 455 330 C 445 400 420 470 395 540 C 375 600 350 660 315 710 C 295 740 270 760 250 745 C 225 720 205 680 190 640 C 165 570 150 500 145 430 C 140 350 150 280 175 220 C 200 160 250 110 290 80 C 305 70 315 65 330 60 Z" fill="#1f5c3a" stroke="#6be59a" stroke-width="5" opacity=".95"/><path id="rail" d="" fill="none" stroke="#3b2a1a" stroke-width="16" stroke-linecap="round"/><path id="rail2" d="" fill="none" stroke="#e9c98a" stroke-width="5" stroke-dasharray="14 12" stroke-linecap="round"/></svg><div class="train" id="train">🚆</div></div>
+    <div class="side">
+      <div class="card"><div class="post" id="post"><img id="postImg" src="" alt=""><div class="stamp" id="postStamp" style="display:none"></div><div class="cap" id="postCap">🚉 台北車站・準備出發</div></div><div class="fact" id="fact">按「進站闖關」，答對火車就往下一站開。連對會升級成自強號、高鐵，跑更快、金幣更多。</div></div>
+      <div class="say" id="say">從台北出發！</div>
+      <div class="ctrl"><button class="btn go big" id="goBtn">▶ 進站闖關</button><button class="btn ghost" id="resetBtn">↺ 重新出發</button></div>
+    </div>
+  </div>
+  <footer>🚆 光之環島列車　｜　任務三 光與顏色・Ka-IV-10／11　｜　原創角色・溫和音效版・竹東國中自然科</footer>
+</div>
+
+<div class="xp" id="xp"><button class="x" onclick="closeXp()">✖</button><h3 id="xpT"></h3><div class="q" id="xpQ"></div><div id="xpBody"></div><div class="fb" id="fb"></div><div class="ctrl" id="xpCtrl"></div></div>
+<div class="arrive" id="arrive"><h2 id="arT"></h2><div class="big"><img id="arImg" src="" alt=""><div class="stamp" id="arStamp"></div></div><div class="fact" id="arFact"></div><button class="btn go big" id="arOk">🚆 繼續環島</button></div>
+<div class="gacha" id="gacha"><div class="ptitle" id="gT">🎁 特別站禮物！點一下</div><div class="capsule" id="cap">🎁</div><div class="prize" id="prize" style="display:none"></div><div class="ptitle" id="pName"></div><button class="btn go" id="gOk" style="display:none">收下 📖</button></div>
+<div class="book" id="book"><button class="x fixbtn" style="right:14px;top:12px;border:2px solid var(--amber);color:var(--amber)" onclick="$('book').classList.remove('show')">✖ 關閉</button><div class="ptitle" style="margin-bottom:12px">📖 環島明信片</div><div class="grid" id="grid"></div></div>
+
+<script src="fx.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const IMG="/light-color/img/",TW="/light-color/img/tw/";
+const OBJ=[{n:"蘋果",img:IMG+"stage/apple.png",ref:"R",em:"🍎"},{n:"香蕉",img:IMG+"stage/banana.png",ref:"RG",em:"🍌"},{n:"植物",img:IMG+"stage/plant.png",ref:"G",em:"🪴"},{n:"白衣",img:IMG+"stage/shirt.png",ref:"RGB",em:"👕"}];
+const LIGHT={white:[1,1,1],red:[1,0,0],green:[0,1,0],blue:[0,0,1],none:[0,0,0]},LN={white:"⚪ 白光",red:"🔴 紅光",green:"🟢 綠光",blue:"🔵 藍光",none:"🌑 沒有光"};
+function setLight(k){if(!LIGHT[k])k="white";const [r,g,b]=LIGHT[k];$("lmtx").setAttribute("values",`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`);const l=document.querySelector("#xpBody .lbl");if(l)l.textContent=LN[k];}
+function dark(ref,k){const need={red:"R",green:"G",blue:"B"}[k];return need&&!ref.includes(need);}
+/* ===== 溫和音效（沒有爆炸、沒有震動） ===== */
+let AC=null;function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;}
+function tone(f,d,t0,vol,type){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(t0||0);o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.15,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.02);}
+const S={tap:()=>tone(880,.08,0,.08),ok:()=>{tone(523,.25,0,.12);tone(659,.25,.1,.12);tone(784,.35,.2,.12);},no:()=>{tone(494,.18,0,.08);tone(392,.28,.15,.08);},coin:()=>{tone(1319,.12,0,.1);tone(1760,.25,.08,.1);},
+  whistle:()=>{tone(660,.5,0,.07,"triangle");tone(880,.5,.15,.07,"triangle");},chug:n=>{for(let i=0;i<n;i++)tone(110,.06,i*.18,.05,"triangle");},arrive:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.4,i*.12,.1));},up:()=>{[659,784,988,1319].forEach((f,i)=>tone(f,.3,i*.08,.1));}};
+/* ===== 環島路線：11 站（台北→…→台北） ===== */
+const CITIES=[
+ {n:"台北",em:"🏙️",x:330,y:105,img:"taipei.jpg",t:"台北 101 的夜燈",fact:"101 晚上會換顏色，因為燈本身就是光源，發什麼顏色的光就是什麼顏色。",tz:"光源",k:"quiz",q:{q:"晚上的 101 是紅色、藍色、綠色一直換，因為？",opts:[["燈本身發出不同顏色的光","#ffe600"],["大樓自己會變色","#888"]],ok:0}},
+ {n:"桃園",em:"✈️",x:290,y:150,img:"taoyuan.jpg",t:"桃園機場的紅色夕陽",fact:"傍晚陽光要穿過很厚的空氣，藍光被散掉，剩下紅橙光到我們眼睛，所以夕陽是紅的。",tz:"色散・紅光傳得遠",k:"spot",light:"green",target:0},
+ {n:"新竹・竹東",em:"🏡",x:258,y:200,img:"hsinchu.jpg",t:"家鄉站！內灣線小火車",fact:"我們的家鄉站。內灣線的小火車漆成鮮豔的顏色，是因為車身反射那些顏色的光。特別站：禮物加倍！",tz:"選擇性反射",k:"load",sp:true},
+ {n:"台中",em:"🌅",x:225,y:290,img:"taichung.jpg",t:"高美濕地的鏡面反射",fact:"淺淺的水面像鏡子，把夕陽和風車倒著映出來——光碰到平滑的水面會反射。",tz:"反射",k:"quiz",q:{q:"水面像鏡子一樣有倒影，是因為光在水面？",opts:[["反射回來","#3ec2ff"],["被水喝掉","#888"]],ok:0}},
+ {n:"嘉義・阿里山",em:"🌄",x:225,y:390,img:"alishan.jpg",t:"阿里山日出與森林小火車",fact:"日出時太陽在很低的地方，光穿過厚厚的空氣，只剩紅橙光——跟夕陽一樣的道理。特別站：森林小火車射擊！",tz:"紅光傳得遠",k:"spot",light:"blue",target:3,sp:true},
+ {n:"台南",em:"🧂",x:200,y:490,img:"tainan.jpg",t:"井仔腳鹽田的白",fact:"鹽田白得刺眼，因為白色反射所有顏色的光，光越強看起來越白。",tz:"反射所有光",k:"mem",light:"green",target:0},
+ {n:"高雄",em:"🌉",x:215,y:580,img:"kaohsiung.jpg",t:"愛河的燈光倒影",fact:"橋上的彩燈映在河面上，河水把燈光反射給我們的眼睛，所以有一條一條的光。",tz:"反射",k:"mix",goal:"黃光",goalRGB:[1,1,0]},
+ {n:"台東",em:"🎈",x:330,y:600,img:"taitung.jpg",t:"鹿野高台的熱氣球",fact:"熱氣球五顏六色，每一個只反射自己那個顏色的光。特別站：戳熱氣球！",tz:"選擇性反射",k:"balloon",sp:true},
+ {n:"花蓮",em:"🌊",x:395,y:470,img:"hualien.jpg",t:"七星潭的藍色大海",fact:"海水把紅光吸掉、把藍光散射回來，所以深深的海是藍色的。",tz:"吸收與散射",k:"quiz",q:{q:"七星潭的海為什麼是藍色？",opts:[["海水把藍光送回我們眼睛","#3ec2ff"],["海裡有藍色顏料","#888"]],ok:0}},
+ {n:"宜蘭",em:"🌈",x:400,y:250,img:"yilan.jpg",t:"雨後的彩虹與龜山島",fact:"雨後空氣裡的小水滴像小三稜鏡，把白光分成七彩——這就是色散。",tz:"色散",k:"mix",goal:"白光",goalRGB:[1,1,1]},
+ {n:"台北・終點",em:"🏁",x:330,y:105,img:"taipei.jpg",t:"環島完成！",fact:"你把台灣的光和顏色都看過一遍了：光源、反射、選擇性反射、色散、加色混合。",tz:"物體的顏色＝它反射什麼光",k:"final",q:{q:"最後一題：東西的顏色到底是什麼？",opts:[["它反射什麼光","#ffe600"],["它自己會發光","#e53935"]],ok:0}},
+];
+const POSTS=CITIES.slice(0,10).map(c=>[c.em,c.n]);
+let cur=+(localStorage.getItem("twCur")||0),coins=+(localStorage.getItem("twCoins")||0),streak=+(localStorage.getItem("twStreak")||0),posts=JSON.parse(localStorage.getItem("twPosts")||"[]");
+function speed(){return streak>=4?2:streak>=2?1:0;}
+function hud(){$("stn").textContent=Math.min(11,cur+1);$("coins").textContent=coins;$("bookN").textContent=posts.length;const s=speed();$("trainPill").textContent=["🚃 區間車","🚄 自強號 ×2","🚅 高鐵 ×3"][s];[0,1,2].forEach(i=>$("sp"+i).classList.toggle("on",i===s));$("train").textContent=["🚆","🚄","🚅"][s];
+  localStorage.setItem("twCur",cur);localStorage.setItem("twCoins",coins);localStorage.setItem("twStreak",streak);}
+function pop(t,soft){const p=document.createElement("div");p.className="pop"+(soft?" soft":"");p.textContent=t;document.body.appendChild(p);setTimeout(()=>p.remove(),1050);}
+/* 地圖 */
+function mapPt(i){const m=$("map").getBoundingClientRect();const vw=600,vh=800;const s=Math.min(m.width/vw,m.height/vh);const ox=(m.width-vw*s)/2,oy=(m.height-vh*s)/2;return {x:ox+CITIES[i].x*s,y:oy+CITIES[i].y*s};}
+(function rail(){const d=CITIES.map((c,i)=>(i?"L":"M")+c.x+" "+c.y).join(" ");$("rail").setAttribute("d",d);$("rail2").setAttribute("d",d);})();
+function drawMap(){document.querySelectorAll(".city").forEach(e=>e.remove());CITIES.forEach((c,i)=>{if(i===10)return;const p=mapPt(i);const d=document.createElement("div");d.className="city"+(c.sp?" sp":"")+(i<cur?" done":i===cur?" now":" lock")+(c.x<300?" l":"");d.style.left=p.x+"px";d.style.top=p.y+"px";d.innerHTML=(i<cur?"✅":c.em)+`<span class="n">${c.n}${c.sp?" ⭐":""}</span>`;
+    d.onclick=()=>{if(i===cur)openXp();else if(i<cur){S.tap();showPost(i);}else{S.tap();$("say").textContent="先到前面的站";}};$("map").appendChild(d);});placeTrain(Math.min(cur,10));}
+function placeTrain(i){const p=mapPt(i);const t=$("train");t.style.left=p.x+"px";t.style.top=p.y+"px";}
+function moveTrain(from,to,done){const a=mapPt(from),b=mapPt(to);let k=0;const sp=speed();const step=[.014,.022,.034][sp];S.whistle();S.chug(sp===2?4:8);
+  const iv=setInterval(()=>{k+=step;const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;const x=a.x+(b.x-a.x)*e,y=a.y+(b.y-a.y)*e;const t=$("train");t.style.left=x+"px";t.style.top=y+"px";
+    if(Math.random()<(sp===2?.15:.35)){const s=document.createElement("div");s.className="smoke";s.textContent=sp===2?"✨":"💨";s.style.left=(x-8)+"px";s.style.top=(y-30)+"px";$("map").appendChild(s);setTimeout(()=>s.remove(),1100);}
+    if(k>=1){clearInterval(iv);done&&done();}},25);}
+function showPost(i){const c=CITIES[i];$("postImg").src=TW+c.img;$("postCap").textContent="📮 "+c.n+"・"+c.t;$("postStamp").style.display=posts.includes(i)?"block":"none";$("postStamp").textContent=c.n;$("fact").innerHTML=c.fact+`<span class="term">${c.tz}</span>`;}
+addEventListener("resize",drawMap);
+$("goBtn").onclick=()=>openXp();
+$("resetBtn").onclick=()=>{if(!confirm("重新從台北出發？（明信片會保留）"))return;cur=0;coins=0;streak=0;hud();drawMap();showPost(0);$("postCap").textContent="🚉 台北車站・準備出發";$("say").textContent="從台北出發！";S.tap();};
+/* 關卡 */
+let timers=[],raf=0;function later(f,ms){timers.push(setTimeout(f,ms));}
+function closeXp(){$("xp").classList.remove("show");timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(raf);$("xpBody").innerHTML="";S.tap();}
+function scene(objs,bg){return `<div class="scene" id="sc"><img class="bg dim" src="${bg||IMG+"wall.jpg"}" alt=""><div class="lbl">⚪ 白光</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt="" draggable="false"><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;}
+function openXp(){const c=CITIES[cur];if(!c)return;S.tap();$("xpT").textContent=`${c.em} 第 ${cur+1} 站・${c.n}${c.sp?" ⭐特別站":""}`;$("xpQ").textContent="";$("fb").innerHTML="";$("xpCtrl").innerHTML="";$("xpBody").innerHTML="";$("xp").classList.add("show");
+  ({quiz:xQuiz,final:xQuiz,spot:xSpot,load:xLoad,mem:xMem,mix:xMix,balloon:xBalloon})[c.k](c);}
+function wrong(msg){streak=0;hud();S.no();pop("再試一次",true);$("fb").textContent=msg||"💡 再想一次（答錯不扣分）";}
+function clear(c){S.ok();streak++;const mult=[1,2,3][speed()];const earn=10*mult;coins+=earn;hud();pop("+"+earn+" 🪙"+(mult>1?"（×"+mult+"）":""));FX.confetti(60);
+  $("fb").innerHTML="✅ 答對了！";later(()=>{closeXp();advance(c);},900);}
+function advance(c){const from=cur;cur++;hud();const s=speed();if(s>0&&streak===2)pop("🚄 升級自強號！");if(streak===4)pop("🚅 升級高鐵！");if(streak===2||streak===4)S.up();
+  $("say").textContent="🚆 嘟嘟——開往 "+CITIES[Math.min(cur,10)].n;
+  moveTrain(from,Math.min(cur,10),()=>{drawMap();arrive(from);});}
+function arrive(i){const c=CITIES[i];if(!posts.includes(i)){posts.push(i);localStorage.setItem("twPosts",JSON.stringify(posts));}hud();showPost(i);
+  $("arT").textContent=c.em+" "+c.n+"・"+c.t;$("arImg").src=TW+c.img;$("arStamp").textContent=c.n;$("arFact").innerHTML=c.fact+`<span class="term">${c.tz}</span>`;$("arrive").classList.add("show");S.arrive();later(()=>FX.stamp&&FX.stamp({text:c.n}),300);
+  $("arOk").onclick=()=>{$("arrive").classList.remove("show");S.tap();if(c.sp)later(()=>gift(c),300);if(cur>=10){later(finale,c.sp?1500:400);}else $("say").textContent="到 "+CITIES[cur].n+" 了！點亮亮的站繼續";};}
+function finale(){$("say").textContent="🏁 環島完成！你是光之列車長";FX.badge({id:"taiwan",emoji:"🚆",name:"光之環島列車長",desc:"從台北出發環島一圈・光與顏色 10 站",onDone:()=>FX.balloons&&FX.balloons()});}
+/* 選擇題（真實照片＋照片切光驗證） */
+function xQuiz(c){const q=c.q;$("xpQ").textContent=q.q;$("xpBody").innerHTML=`<div class="scene"><img class="bg" src="${TW+c.img}" alt=""></div><div class="opts">${q.opts.map((o,i)=>({o,i})).sort(()=>Math.random()-.5).map(({o,i})=>`<div class="opt" data-i="${i}"><span class="sw" style="background:${o[1]}"></span>${o[0]}</div>`).join("")}</div>`;
+  document.querySelectorAll(".opt").forEach(el=>el.onclick=()=>{if(+el.dataset.i===q.ok){el.classList.add("right");document.querySelectorAll(".opt").forEach(o=>o.onclick=null);clear(c);}else{el.classList.add("wrong");wrong();later(()=>el.classList.remove("wrong"),600);}});}
+/* 🎯 照光射擊 */
+function xSpot(c){$("xpQ").textContent=(c.light==="green"?"綠光照上去會變黑的東西":"藍光照上去「還會亮」的東西")+"——燈掃到它時，按！";$("xpBody").innerHTML=scene([0,1,2,3])+`<div class="ctrl"><button class="btn go big" id="fire">🔦 按！</button></div>`;const sc=$("sc");const sp=document.createElement("div");sp.className="spot";sc.appendChild(sp);let x=0,dir=1,t0=performance.now(),busy=false;
+  function loop(t){if(!busy){x+=dir*(t-t0)/1000*.3;if(x>.78){x=.78;dir=-1;}if(x<0){x=0;dir=1;}sp.style.left=(x*100)+"%";}t0=t;raf=requestAnimationFrame(loop);}raf=requestAnimationFrame(loop);
+  $("fire").onclick=()=>{if(busy)return;busy=true;S.tap();const objs=[...sc.querySelectorAll(".obj")];const r=sc.getBoundingClientRect();const cx=r.left+r.width*(x+.11);let hitI=-1;objs.forEach((o,i)=>{const b=o.getBoundingClientRect();if(cx>=b.left-10&&cx<=b.right+10)hitI=i;});
+    setLight(c.light);later(()=>{if(hitI===c.target){objs[hitI].classList.add("pick");clear(c);}else{wrong(hitI<0?"燈要照到東西再按":"看！"+LN[c.light]+"下"+OBJ[hitI].n+(dark(OBJ[hitI].ref,c.light)?"變黑了，但題目要的是另一個":"還是亮的")+"，再等燈掃到對的");later(()=>{setLight("white");busy=false;},1500);}},600);};}
+/* 📦 裝貨車 */
+function xLoad(c){$("xpQ").textContent="把貨物拖進正確的車廂：它會反射哪種光？";const objs=[0,2,3],wags=[["🔴","紅光車廂","R"],["🟢","綠光車廂","G"],["⚪","全部光車廂","RGB"]];
+  $("xpBody").innerHTML=`<div class="scene" id="sc"><img class="bg dim" src="${TW+c.img}" alt=""><div class="lbl">⚪ 白光</div><div class="wagons">${wags.map((w,i)=>`<div class="wag" data-w="${i}"><span class="big">${w[0]}🚃</span>${w[1]}</div>`).join("")}</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt="" draggable="false"><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;
+  const sc=$("sc");let dragEl=null,ox=0,oy=0,done=0;
+  sc.onpointerdown=e=>{const o=e.target.closest(".obj");if(!o||o.classList.contains("gone"))return;dragEl=o;o.classList.add("drag");const b=o.getBoundingClientRect();ox=e.clientX-b.left-b.width/2;oy=e.clientY-b.top-b.height/2;try{sc.setPointerCapture(e.pointerId);}catch(x){}S.tap();mv(e);};
+  function mv(e){if(!dragEl)return;const r=sc.getBoundingClientRect();dragEl.style.position="absolute";dragEl.style.left=(e.clientX-r.left-ox)+"px";dragEl.style.top=(e.clientY-r.top-oy)+"px";dragEl.style.transform="translate(-50%,-50%) scale(1.15)";dragEl.style.width="18%";
+    document.querySelectorAll(".wag").forEach(w=>{const b=w.getBoundingClientRect();w.classList.toggle("over",e.clientX>=b.left&&e.clientX<=b.right&&e.clientY>=b.top&&e.clientY<=b.bottom);});}
+  sc.onpointermove=mv;
+  sc.onpointerup=sc.onpointercancel=e=>{if(!dragEl)return;const o=dragEl;dragEl=null;o.classList.remove("drag");const w=[...document.querySelectorAll(".wag")].find(w=>w.classList.contains("over"));document.querySelectorAll(".wag").forEach(w=>w.classList.remove("over"));
+    const ref=OBJ[+o.dataset.i].ref;if(w&&wags[+w.dataset.w][2]===ref){w.classList.add("full");w.innerHTML=`<span class="big">${OBJ[+o.dataset.i].em}🚃</span>${wags[+w.dataset.w][1]}`;o.classList.add("gone");o.style.display="none";S.coin();FX.emojiBurst("✨",8,e.clientX,e.clientY);done++;$("fb").textContent=OBJ[+o.dataset.i].n+" 上車！";if(done===3)clear(c);}
+    else{o.style.position="";o.style.left="";o.style.top="";o.style.transform="";o.style.width="";if(w)wrong(OBJ[+o.dataset.i].n+"在"+wags[+w.dataset.w][1].slice(0,2)+"下會怎樣？想一想它反射什麼光");}};}
+/* 💡 燈光記憶 */
+function xMem(c){$("xpQ").textContent="注意看！等一下燈會變色，記住誰變黑了";$("xpBody").innerHTML=scene([0,1,2,3]);setLight("white");$("fb").textContent="👀 3 秒後燈會變色…";let phase=0;
+  later(()=>{setLight(c.light);$("fb").textContent="現在是"+LN[c.light]+"！記住誰變黑";},2500);
+  later(()=>{setLight("white");phase=1;$("xpQ").textContent="剛剛"+LN[c.light]+"的時候，哪一個變黑了？點它！";$("fb").textContent="";},5500);
+  document.querySelectorAll("#sc .obj").forEach(o=>o.onclick=()=>{if(phase!==1)return;const i=+o.dataset.i;document.querySelectorAll("#sc .obj").forEach(x=>x.classList.remove("pick"));o.classList.add("pick");
+    if(i===c.target){phase=2;setLight(c.light);clear(c);}else{setLight(c.light);wrong("再看一次："+LN[c.light]+"下，"+OBJ[i].n+(dark(OBJ[i].ref,c.light)?"也黑，但它不是題目那個":"還是亮的"));later(()=>setLight("white"),1500);}});}
+/* 🧪 混光 */
+function xMix(c){$("xpQ").textContent="打開燈，做出「"+c.goal+"」！";$("xpBody").innerHTML=`<div class="scene" style="aspect-ratio:16/6"><img class="bg dim" src="${TW+c.img}" alt=""></div><div class="mixc" id="mixc"></div><div class="lamps">${[["🔴","red"],["🟢","green"],["🔵","blue"]].map(l=>`<div class="lamp" data-l="${l[1]}">${l[0]}</div>`).join("")}</div><div class="ctrl"><button class="btn go" id="chk">✅ 好了！</button></div>`;
+  const on={red:0,green:0,blue:0};function upd(){const r=on.red*255,g=on.green*255,b=on.blue*255;$("mixc").style.background=`rgb(${r},${g},${b})`;$("mixc").style.boxShadow=`0 0 60px rgba(${r},${g},${b},.8)`;}
+  document.querySelectorAll(".lamp").forEach(l=>l.onclick=()=>{on[l.dataset.l]^=1;l.classList.toggle("on",!!on[l.dataset.l]);S.tap();upd();});upd();
+  $("chk").onclick=()=>{const ok=on.red===c.goalRGB[0]&&on.green===c.goalRGB[1]&&on.blue===c.goalRGB[2];if(ok)clear(c);else{const n=on.red+on.green+on.blue;wrong(n===0?"先把燈打開":(c.goal==="黃光"?"黃光只要兩盞燈，想想是哪兩盞？":"白光要三盞燈全開！"));}};}
+/* 🎈 戳熱氣球：只戳「紅光下會變黑」的氣球 */
+function xBalloon(c){$("xpQ").textContent="紅光下會變黑的熱氣球有 3 顆，把它們戳破！";const B=[["#e53935","紅",false],["#2ecc40","綠",true],["#2f7bff","藍",true],["#ffe600","黃",false],["#ffffff","白",false],["#9b30ff","紫",true]];let need=3,got=0;
+  $("xpBody").innerHTML=`<div class="scene" id="sc"><img class="bg" src="${TW+c.img}" alt="" style="filter:brightness(.55)"><div class="lbl">🔴 紅光下誰會變黑？</div><div class="balloons">${B.map((b,i)=>`<div class="bal" data-i="${i}" style="background:${b[0]};left:${8+i*15}%;top:${18+(i%2)*28}%;animation-delay:${i*.4}s">${b[1]}</div>`).join("")}</div></div>`;
+  document.querySelectorAll(".bal").forEach(el=>el.onclick=()=>{const b=B[+el.dataset.i];if(b[2]){el.classList.add("pop");S.coin();FX.emojiBurst("✨",8,innerWidth/2,innerHeight*.4);got++;$("fb").textContent=b[1]+"色只反射"+b[1]+"光，紅光下沒東西可反射→黑！";if(got>=need)clear(c);}else{wrong(b[1]+"色的氣球反射紅光，紅光下還是亮的，不用戳");}});}
+/* 🎁 特別站禮物 */
+const GIFTS=[["🚂","內灣小火車票"],["🌄","阿里山日出票"],["🎈","熱氣球票"],["💎","白光寶石"],["🌈","彩虹徽章"],["🤖","機器人小幫手"]];
+let gifts=JSON.parse(localStorage.getItem("twGifts")||"[]");
+function gift(c){const left=GIFTS.map((g,i)=>i).filter(i=>!gifts.includes(i));if(!left.length)return;const pick=left[Math.floor(Math.random()*left.length)];
+  $("gacha").classList.add("show");$("cap").style.display="block";$("cap").className="capsule";$("prize").style.display="none";$("pName").textContent="";$("gOk").style.display="none";$("gT").textContent="🎁 "+c.n+" 特別站禮物！點一下";
+  $("cap").onclick=()=>{$("cap").className="capsule open";S.tap();later(()=>{$("cap").style.display="none";$("prize").style.display="block";$("prize").textContent=GIFTS[pick][0];$("pName").textContent="✨ "+GIFTS[pick][1];$("gT").textContent="🎉 收到了！";S.coin();FX.confetti(90);$("gOk").style.display="inline-block";},600);};
+  $("gOk").onclick=()=>{gifts.push(pick);localStorage.setItem("twGifts",JSON.stringify(gifts));coins+=20;hud();$("gacha").classList.remove("show");S.coin();};}
+$("bookBtn").onclick=()=>{$("grid").innerHTML=POSTS.map((p,i)=>`<div class="cell ${posts.includes(i)?"got":"miss"}">${p[0]}<small>${posts.includes(i)?p[1]:"？？？"}</small></div>`).join("")+GIFTS.map((g,i)=>`<div class="cell ${gifts.includes(i)?"got":"miss"}">${g[0]}<small>${gifts.includes(i)?g[1]:"禮物"}</small></div>`).join("");$("book").classList.add("show");S.tap();};
+hud();drawMap();showPost(0);if(cur===0)$("postCap").textContent="🚉 台北車站・準備出發";
+</script>
+</body>
+</html>
