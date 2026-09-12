@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>個人色彩鑑定相機・你適合哪個顏色？</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--panel:#0f2841;--line:rgba(120,170,210,.28);--amber:#ffc93c;--teal:#42e0c8;--aqua:#3ec2ff;--ink:#eaf6ff;--dim:#9db8cf;--disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;background:radial-gradient(120% 80% at 50% -10%,rgba(255,150,200,.14),transparent 55%),linear-gradient(165deg,#05101f,#0a2036 55%,#0e3350)}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 90px}
+  header{text-align:center;padding:40px 0 6px}
+  .emblem{font-size:46px}
+  h1{font-family:var(--disp);font-size:28px;margin:2px 0}
+  .sub{color:#ffb3d1;font-weight:900;font-size:18px}
+  .card{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.5);margin-top:14px}
+  .stage{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3;background:#08111d;border:2px solid var(--line);max-height:70vh;margin:0 auto}
+  .stage video,.stage canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .stage video{transform:scaleX(-1)}
+  .stage .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--dim);font-weight:900;font-size:20px}
+  .stage .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.62);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4.5vw,22px);padding:6px 14px;border-radius:12px;z-index:3;pointer-events:none}
+  .ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:12px}
+  .btn{font-family:var(--disp);font-weight:700;font-size:18px;border:none;border-radius:16px;padding:12px 20px;cursor:pointer;color:#08131f}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);box-shadow:0 6px 0 #c9860f}.btn.go:active{transform:translateY(4px);box-shadow:0 2px 0 #c9860f}
+  .btn.pink{background:linear-gradient(180deg,#ff9ec4,#e0457b);color:#fff;box-shadow:0 6px 0 #9c2a55}
+  .btn.ghost{background:#13314f;border:2px solid var(--line);color:var(--ink)}
+  .pal{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}
+  @media(max-width:520px){.pal{grid-template-columns:repeat(4,1fr)}}
+  .sw{aspect-ratio:1;border-radius:14px;border:4px solid transparent;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;font-weight:900;font-size:12px;color:#fff;text-shadow:0 1px 3px #000;transition:transform .12s}
+  .sw:active{transform:scale(.94)}.sw.on{border-color:#fff;box-shadow:0 0 0 3px var(--amber)}
+  .grp{display:flex;gap:10px;justify-content:center;margin-top:10px;font-weight:900;font-size:15px}
+  .grp span{padding:4px 12px;border-radius:999px;background:#13314f}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .cmp .shot{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/3;background:#08111d;border:3px solid var(--line)}
+  .cmp .shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .cmp .shot .v{position:absolute;left:0;right:0;bottom:0;padding:8px;display:flex;justify-content:center;gap:8px;background:linear-gradient(0deg,rgba(4,10,20,.9),transparent)}
+  .cmp .shot .cnt{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.65);color:var(--amber);font-family:var(--disp);font-weight:700;font-size:22px;padding:4px 12px;border-radius:12px}
+  .say{margin-top:10px;font-size:17px;font-weight:800;color:#ffe08a;text-align:center;min-height:24px}
+  .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:14px;font-weight:900;margin-left:6px}
+  .why{margin-top:12px;background:#0b2036;border-left:6px solid var(--teal);border-radius:12px;padding:12px 14px;font-weight:700;line-height:1.6;font-size:16px}
+  footer{text-align:center;margin-top:26px;color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="./">🏠 回到首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<div class="wrap">
+  <header><div class="emblem">👗</div><h1>個人色彩鑑定相機</h1><div class="sub">哪個顏色的衣服讓你的臉最亮？用光的反射來判斷</div></header>
+
+  <div class="card">
+    <div class="stage" id="stage"><div class="empty" id="empty"><span style="font-size:44px">🤳</span>按下面「開前鏡頭」，把臉放進畫面</div><video id="vid" autoplay playsinline muted style="display:none"></video><canvas id="cv" width="960" height="720" style="display:none"></canvas><div class="lbl" id="lbl">還沒開鏡頭</div></div>
+    <div class="ctrl"><button class="btn pink" id="open">🤳 開前鏡頭</button><button class="btn go" id="shotA" style="display:none">📸 拍 A</button><button class="btn go" id="shotB" style="display:none">📸 拍 B</button></div>
+    <div class="grp"><span>🌞 暖色（黃底）</span><span>❄️ 冷色（藍底）</span></div>
+    <div class="pal" id="pal"></div>
+    <div class="say" id="say">選一個顏色，畫面下方會出現那個顏色的「披布」；換幾個顏色，看臉哪一個比較亮、比較有精神</div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin:4px 0 6px;font-size:20px">🗳️ 全班投票：A 還是 B？</h2>
+    <div class="cmp"><div class="shot" id="sA"><div class="cnt" id="cA">0</div><div class="v"><button class="btn ghost" onclick="vote('A')">👍 A 比較亮</button></div></div><div class="shot" id="sB"><div class="cnt" id="cB">0</div><div class="v"><button class="btn ghost" onclick="vote('B')">👍 B 比較亮</button></div></div></div>
+    <div class="ctrl"><button class="btn go" id="reveal">🏆 公布結果</button><button class="btn ghost" id="reset">↺ 重來</button></div>
+    <div class="say" id="say2"></div>
+    <div class="why">🔬 為什麼會這樣？<br>布只反射它自己的顏色的光（<b>選擇性反射</b>），這些光會照到臉上、再從臉反射進眼睛。暖色布反射黃紅光，冷色布反射藍光；皮膚本來偏黃的人，被藍光一照反而顯得灰暗，被黃光照就亮起來——所以「適合的顏色」其實是<b>反射光和皮膚顏色相加</b>的結果。這也是服裝店、化妝師在做的「個人色彩鑑定」。</div>
+  </div>
+  <footer>👗 個人色彩鑑定相機　｜　任務三 光與顏色・Ka-IV-11 選擇性反射　｜　竹東國中自然科</footer>
+</div>
+<script src="../games/fx.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const COLORS=[["#ffd23f","暖黃"],["#ff7a1a","橘"],["#e8412c","暖紅"],["#c98a3a","駝"],["#7ab648","草綠"],["#f2c9a0","米"],
+              ["#3b6fe0","寶藍"],["#1fb6c9","湖水"],["#c23b7a","桃紅"],["#7a4fc9","紫"],["#eaf0f6","冷白"],["#222a38","黑"]];
+let col=null,stream=null,raf=0;
+$("pal").innerHTML=COLORS.map((c,i)=>`<div class="sw" style="background:${c[0]}" onclick="pick(${i})">${c[1]}</div>`).join("");
+window.pick=i=>{col=COLORS[i][0];[...document.querySelectorAll(".sw")].forEach((s,k)=>s.classList.toggle("on",k===i));FX.sound.blip();$("lbl").textContent="披布："+COLORS[i][1]+(i<6?"（暖）":"（冷）");};
+$("open").onclick=async()=>{try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:{ideal:1280}},audio:false});}catch(e){$("say").textContent="鏡頭沒開（要按「允許」）。";return;}
+  const v=$("vid");v.srcObject=stream;v.style.display="block";$("cv").style.display="block";$("empty").style.display="none";$("open").style.display="none";$("shotA").style.display="inline-block";$("shotB").style.display="inline-block";$("lbl").textContent="選一個顏色";FX.sound.jump();loop();};
+function draw(x,W,H){if(!col)return;x.fillStyle=col;x.beginPath();x.moveTo(0,H);x.lineTo(0,H*.72);x.quadraticCurveTo(W*.25,H*.60,W*.5,H*.66);x.quadraticCurveTo(W*.75,H*.60,W,H*.72);x.lineTo(W,H);x.closePath();x.fill();
+  const g=x.createLinearGradient(0,H*.6,0,H);g.addColorStop(0,"rgba(255,255,255,.18)");g.addColorStop(1,"rgba(0,0,0,.25)");x.fillStyle=g;x.fill();}
+function loop(){const c=$("cv"),x=c.getContext("2d");x.clearRect(0,0,c.width,c.height);draw(x,c.width,c.height);raf=requestAnimationFrame(loop);}
+function snap(){const v=$("vid");const c=document.createElement("canvas");c.width=v.videoWidth||960;c.height=v.videoHeight||720;const x=c.getContext("2d");x.translate(c.width,0);x.scale(-1,1);x.drawImage(v,0,0);x.setTransform(1,0,0,1,0,0);draw(x,c.width,c.height);return c.toDataURL("image/jpeg",.9);}
+const votes={A:0,B:0};
+function shot(k){if(!$("vid").videoWidth)return;const d=snap();const s=$("s"+k);let im=s.querySelector("img");if(!im){im=document.createElement("img");s.prepend(im);}im.src=d;FX.sound.coin();FX.confetti(30);$("say").textContent="拍好了 "+k+"！換一個顏色再拍另一張，然後投票";}
+$("shotA").onclick=()=>shot("A");$("shotB").onclick=()=>shot("B");
+window.vote=k=>{votes[k]++;$("c"+k).textContent=votes[k];FX.sound.blip();};
+$("reveal").onclick=()=>{const w=votes.A===votes.B?null:(votes.A>votes.B?"A":"B");if(!w){$("say2").textContent="平手！兩個都適合";FX.sound.blip();return;}
+  $("say2").innerHTML="🏆 大家覺得 <b>"+w+"</b> 讓臉比較亮——那個顏色反射的光跟你的皮膚最合<span class='term'>選擇性反射</span>";FX.sound.oneup();FX.confetti(120);FX.stamp&&FX.stamp({text:"最亮"+w});};
+$("reset").onclick=()=>{votes.A=votes.B=0;$("cA").textContent=$("cB").textContent="0";$("say2").textContent="";FX.sound.blip();};
+</script>
+</body>
+</html>

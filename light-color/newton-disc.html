@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>牛頓色盤・轉一轉變白色</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--panel:#0f2841;--line:rgba(120,170,210,.28);--amber:#ffc93c;--teal:#42e0c8;--aqua:#3ec2ff;--ink:#eaf6ff;--dim:#9db8cf;--disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;background:radial-gradient(120% 80% at 50% -10%,rgba(62,194,255,.12),transparent 55%),linear-gradient(165deg,#05101f,#0a2036 55%,#0e3350)}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 14px 90px}
+  header{text-align:center;padding:40px 0 6px}
+  h1{font-family:var(--disp);font-size:28px;margin:2px 0}.sub{color:var(--aqua);font-weight:900;font-size:18px}
+  .card{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.5);margin-top:14px}
+  h2{margin:4px 0 8px;font-size:20px}
+  .stage{position:relative;width:min(80vw,460px);aspect-ratio:1;margin:0 auto;touch-action:none;cursor:grab}
+  .stage canvas{width:100%;height:100%;display:block;border-radius:50%;box-shadow:0 14px 40px rgba(0,0,0,.6)}
+  .meter{margin:10px auto 0;max-width:460px;background:#0b2036;border-radius:999px;padding:6px 14px;display:flex;gap:10px;align-items:center;font-weight:900}
+  .meter .bar{flex:1;height:12px;background:#1a2a44;border-radius:999px;overflow:hidden}.meter .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff3b3b,#ffd23f,#42e0c8,#fff);transition:width .1s}
+  .ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:12px}
+  .btn{font-family:var(--disp);font-weight:700;font-size:18px;border:none;border-radius:16px;padding:12px 20px;cursor:pointer;color:#08131f}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);box-shadow:0 6px 0 #c9860f}.btn.go:active{transform:translateY(4px);box-shadow:0 2px 0 #c9860f}
+  .btn.aqua{background:linear-gradient(180deg,#7fdcff,#2aa7e8);box-shadow:0 6px 0 #1a7fb5}
+  .btn.ghost{background:#13314f;border:2px solid var(--line);color:var(--ink)}
+  .say{margin-top:10px;font-size:18px;font-weight:800;color:#ffe08a;text-align:center;min-height:26px}
+  .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:14px;font-weight:900;margin-left:6px}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:640px){.steps{grid-template-columns:repeat(2,1fr)}}
+  .steps div{background:#0b2036;border-radius:14px;padding:12px;text-align:center;font-weight:800;line-height:1.5}
+  .steps span{display:block;font-size:40px}
+  .print{background:#fff;color:#000;border-radius:14px;padding:14px;text-align:center}
+  .print svg{width:min(70vw,360px);height:auto}
+  footer{text-align:center;margin-top:26px;color:var(--dim);font-size:13px}
+  @media print{body{background:#fff}.fixbtn,.wrap>*:not(.printonly){display:none!important}.printonly{display:block!important}.printonly svg{width:18cm;height:18cm}}
+  .printonly{display:none}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="./">🏠 回到首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<div class="wrap">
+  <header><h1>🎡 牛頓色盤</h1><div class="sub">七種顏色轉很快，眼睛看到的是……白色？</div></header>
+
+  <div class="card">
+    <h2>① 數位版：用手指把它轉起來</h2>
+    <div class="stage" id="stage"><canvas id="cv" width="800" height="800"></canvas></div>
+    <div class="meter">🌀 速度 <div class="bar"><i id="spd"></i></div><span id="spdTxt">0</span></div>
+    <div class="ctrl"><button class="btn go" id="spin">🌀 用力轉！</button><button class="btn ghost" id="stop">🛑 停</button></div>
+    <div class="say" id="say">用手指往一個方向快速滑，或按「用力轉」</div>
+  </div>
+
+  <div class="card">
+    <h2>② 真的做一個（5 分鐘）</h2>
+    <div class="steps">
+      <div><span>🖨️</span>列印下面的色盤<br>（或畫在紙盤上）</div>
+      <div><span>🖍️</span>七個扇形塗上<br>紅橙黃綠藍靛紫</div>
+      <div><span>✂️</span>剪下來，中心<br>插鉛筆或牙籤</div>
+      <div><span>🌀</span>像陀螺一樣轉<br>看顏色不見了！</div>
+    </div>
+    <div class="ctrl"><button class="btn aqua" onclick="window.print()">🖨️ 列印色盤（A4 一張）</button></div>
+    <div class="print"><svg id="svgDisc" viewBox="-110 -110 220 220"></svg></div>
+  </div>
+
+  <div class="card">
+    <h2>③ 為什麼？</h2>
+    <div style="font-weight:700;line-height:1.7;font-size:17px">轉太快，眼睛來不及分開看每一個顏色，七種色光在眼睛裡<b>加在一起</b>，就像白光被三稜鏡分開的七彩再合回去——這是<b>色散的反過來</b>。<span class="term">色散 Ka-IV-10</span><span class="term">加色混合</span><br>生活裡的例子：電風扇的彩色葉片轉起來變灰白、旋轉的彩色陀螺、老式彩色電視就是用很小的紅綠藍點快速混出所有顏色。</div>
+  </div>
+  <footer>🎡 牛頓色盤　｜　任務三 光與顏色　｜　竹東國中自然科</footer>
+</div>
+<div class="printonly"><svg id="svgPrint" viewBox="-110 -110 220 220"></svg></div>
+<script src="../games/fx.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const COLS=["#ff2d2d","#ff8c1a","#ffe600","#2ecc40","#1e90ff","#3b3bd1","#9b30ff"];
+// 列印用 SVG（線稿＋淡色，讓學生自己塗）
+function svgDisc(el,fill){let s="";for(let i=0;i<7;i++){const a0=i/7*2*Math.PI-Math.PI/2,a1=(i+1)/7*2*Math.PI-Math.PI/2;const x0=Math.cos(a0)*100,y0=Math.sin(a0)*100,x1=Math.cos(a1)*100,y1=Math.sin(a1)*100;
+  s+=`<path d="M0 0 L${x0.toFixed(1)} ${y0.toFixed(1)} A100 100 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${fill?COLS[i]:"#fff"}" stroke="#000" stroke-width="1.2"/>`;
+  const am=(a0+a1)/2;s+=`<text x="${(Math.cos(am)*68).toFixed(1)}" y="${(Math.sin(am)*68+5).toFixed(1)}" font-size="13" text-anchor="middle" font-weight="900" fill="${fill?"#fff":"#000"}">${["紅","橙","黃","綠","藍","靛","紫"][i]}</text>`;}
+  s+=`<circle r="3" fill="#000"/>`;el.innerHTML=s;}
+svgDisc($("svgDisc"),true);svgDisc($("svgPrint"),false);
+// 數位色盤
+const cv=$("cv"),x=cv.getContext("2d"),R=380;let ang=0,vel=0,last=0,drag=false,la=0,lt=0,seenWhite=false;
+function drawDisc(a,alpha){x.save();x.translate(400,400);x.rotate(a);x.globalAlpha=alpha;for(let i=0;i<7;i++){x.fillStyle=COLS[i];x.beginPath();x.moveTo(0,0);x.arc(0,0,R,i/7*2*Math.PI,(i+1)/7*2*Math.PI);x.closePath();x.fill();}x.restore();}
+function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(!drag){vel*=Math.pow(.6,dt);if(Math.abs(vel)<.05)vel=0;}ang+=vel*dt;
+  x.clearRect(0,0,800,800);
+  const sp=Math.min(1,Math.abs(vel)/60); // 60 rad/s ≈ 白
+  const smear=Math.floor(sp*40);if(smear<2)drawDisc(ang,1);else{for(let k=0;k<smear;k++)drawDisc(ang-k*(vel*dt)/smear*1.5,1/smear);}
+  // 越快越接近白/灰
+  x.fillStyle="rgba(235,235,240,"+(sp*sp*.95)+")";x.beginPath();x.arc(400,400,R,0,6.283);x.fill();
+  x.fillStyle="#111";x.beginPath();x.arc(400,400,10,0,6.283);x.fill();
+  $("spd").style.width=(sp*100)+"%";$("spdTxt").textContent=Math.round(Math.abs(vel)*9.55)+" 轉/分";
+  $("say").textContent=sp>.85?"⚪ 變白了！七色加在一起＝白光":sp>.4?"越來越淡……再快一點":vel===0?"用手指往一個方向快速滑，或按「用力轉」":"轉起來了，還看得到顏色";
+  if(sp>.85&&!seenWhite){seenWhite=true;FX.sound.oneup();FX.confetti(100);FX.stamp&&FX.stamp({text:"變白了"});}
+  if(sp<.3)seenWhite=false;
+  requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+const st=$("stage");function pa(e){const r=st.getBoundingClientRect();return Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2));}
+st.onpointerdown=e=>{drag=true;la=pa(e);lt=performance.now();try{st.setPointerCapture(e.pointerId);}catch(x){}};
+st.onpointermove=e=>{if(!drag)return;const a=pa(e),t=performance.now();let d=a-la;if(d>Math.PI)d-=2*Math.PI;if(d<-Math.PI)d+=2*Math.PI;const dt=Math.max(1,t-lt)/1000;vel=d/dt;ang+=d;la=a;lt=t;if(Math.abs(d)>.2)FX.sound.blip();};
+st.onpointerup=st.onpointercancel=()=>{drag=false;};
+$("spin").onclick=()=>{vel=(vel>=0?1:-1)*Math.max(Math.abs(vel)+25,45);FX.sound.jump();};
+$("stop").onclick=()=>{vel=0;FX.sound.blip();};
+</script>
+</body>
+</html>
