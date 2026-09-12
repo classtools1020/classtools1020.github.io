@@ -114,7 +114,7 @@ const $=id=>document.getElementById(id);
 const OBJ=[{n:"蘋果",img:"img/stage/apple.png",ref:"R"},{n:"香蕉",img:"img/stage/banana.png",ref:"RG"},{n:"植物",img:"img/stage/plant.png",ref:"G"},{n:"白衣",img:"img/stage/shirt.png",ref:"RGB"}];
 const LIGHT={white:[1,1,1],red:[1,0,0],green:[0,1,0],blue:[0,0,1],none:[0,0,0]};
 const LN={white:"⚪ 白光",red:"🔴 紅光",green:"🟢 綠光",blue:"🔵 藍光",none:"🌑 沒有光"};
-function setLight(k){const [r,g,b]=LIGHT[k];$("lmtx").setAttribute("values",`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`);const l=$("photo").querySelector(".lbl");if(l)l.textContent=LN[k];
+function setLight(k){if(!LIGHT[k])k="white";const [r,g,b]=LIGHT[k];$("lmtx").setAttribute("values",`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`);const l=$("photo").querySelector(".lbl");if(l)l.textContent=LN[k];
   const d=$("photo").querySelector(".dark");if(d)d.style.opacity=k==="none"?"1":"0";}
 
 /* 關卡：type objs=點物件 / photo=看照片選答 / boss */
@@ -155,8 +155,10 @@ window.pickObj=i=>{if(solved)return;const item=Q[qi];FX.sound.blip();document.qu
 };
 window.choose=(i,el)=>{if(solved)return;const item=Q[qi];
   if(item.type==="objs"&&picked!==item.okObj){FX.sound.wrongsoft();$("fb").innerHTML="💡 先點照片裡正確的東西（"+OBJ[item.okObj].n+"）";return;}
-  if(i===item.ok){setLight(item.light);setTimeout(()=>win(item,el),item.light==="white"?0:600);}
-  else{el.classList.add("wrong");heroWrong();$("fb").innerHTML="💡 來看真的會怎樣…";setLight(item.light);setTimeout(()=>{setLight("white");el.classList.remove("wrong");$("fb").innerHTML="💡 再選一次（答錯不扣分）";},1500);streak=0;$("streak").textContent=0;heroGrow();}
+  // 「選光」題：切成學生選的那種光；其他題切成題目指定的光
+  const LMAP={"綠光":"green","紅光":"red","藍光":"blue","白光":"white"};const lt=item.pickLight?(LMAP[item.opts[i][0]]||"white"):(item.light||"white");
+  if(i===item.ok){setLight(lt);setTimeout(()=>win(item,el),lt==="white"?0:600);}
+  else{el.classList.add("wrong");heroWrong();$("fb").innerHTML="💡 來看真的會怎樣…";setLight(lt);setTimeout(()=>{setLight("white");el.classList.remove("wrong");$("fb").innerHTML="💡 再選一次（答錯不扣分）";},1500);streak=0;$("streak").textContent=0;heroGrow();}
 };
 /* 🎮 英雄跑道：答對→跳（越連對跳越高）、變大；連對3吃🍄、連對6拿⭐；魔王關→衝過去揍 */
 let coins=0;
