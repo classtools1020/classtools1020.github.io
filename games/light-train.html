@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>光之列車・顏色闖關大冒險</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--panel:#0f2841;--line:rgba(120,170,210,.28);--amber:#ffc93c;--teal:#42e0c8;--aqua:#3ec2ff;--ink:#eaf6ff;--dim:#9db8cf;--disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;user-select:none;background:radial-gradient(120% 80% at 50% -10%,rgba(255,201,60,.10),transparent 55%),linear-gradient(165deg,#05101f,#0a2036 55%,#0e3350)}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .wrap{max-width:1000px;margin:0 auto;padding:60px 12px 40px}
+  .hud{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+  .pill{background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:8px 16px;font-family:var(--disp);font-weight:700;font-size:18px}
+  .pill b{color:var(--amber)}
+  .pill.btn{cursor:pointer;border-color:var(--amber);color:var(--amber)}
+  h1{font-family:var(--disp);text-align:center;font-size:min(7vw,30px);margin:4px 0 2px}
+  .sub{text-align:center;color:var(--aqua);font-weight:900;margin-bottom:8px;font-size:16px}
+  /* 地圖 */
+  .map{position:relative;background:linear-gradient(180deg,#0b2a45,#0d3a5a);border:3px solid var(--line);border-radius:24px;overflow:hidden;aspect-ratio:16/9;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  .map svg{position:absolute;inset:0;width:100%;height:100%}
+  .stn{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:#1b3a5c;border:4px solid #5b7a9c;display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;transition:transform .2s;box-shadow:0 6px 14px rgba(0,0,0,.5)}
+  .stn .n{position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:900;font-size:13px;color:#dbe9f7;text-shadow:0 2px 4px #000}
+  .stn.done{background:#1f6b3a;border-color:#6be59a}.stn.now{border-color:var(--amber);background:#5a3f0c;animation:pulse 1.2s infinite}.stn.lock{opacity:.55;filter:grayscale(.6)}
+  .stn.boss{width:80px;height:80px;margin:-40px 0 0 -40px;font-size:40px;border-color:#ff6b6b;background:#4a1420}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+  .train{position:absolute;display:flex;flex-direction:row-reverse;align-items:flex-end;font-size:44px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.6));transform:translate(-50%,-110%);pointer-events:none;z-index:3;white-space:nowrap}
+  .train .w{font-size:34px;margin-right:-6px}
+  .smoke{position:absolute;font-size:22px;pointer-events:none;animation:smoke 1.2s forwards;z-index:2}
+  @keyframes smoke{from{opacity:.9;transform:translate(0,0) scale(.6)}to{opacity:0;transform:translate(-30px,-70px) scale(1.6)}}
+  .say{text-align:center;margin-top:10px;font-weight:900;font-size:min(4.6vw,19px);color:#ffe08a;min-height:26px}
+  .ctrl{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .btn{font-family:var(--disp);font-weight:700;font-size:min(5vw,20px);border:none;border-radius:16px;padding:12px 22px;cursor:pointer;color:#08131f}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);box-shadow:0 6px 0 #c9860f}.btn.go:active{transform:translateY(4px);box-shadow:0 2px 0 #c9860f}
+  .btn.aqua{background:linear-gradient(180deg,#7fdcff,#2aa7e8);box-shadow:0 6px 0 #1a7fb5}
+  .btn.ghost{background:#13314f;border:2px solid var(--line);color:var(--ink)}
+  .btn.big{font-size:min(7vw,30px);padding:18px 40px;border-radius:24px}
+  /* 關卡覆蓋層 */
+  .xp{position:fixed;inset:0;z-index:9300;background:#03081a;display:none;flex-direction:column;align-items:center;padding:12px;overflow:auto}
+  .xp.show{display:flex;animation:fade .25s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .xp .x{position:absolute;right:14px;top:14px;width:46px;height:46px;border-radius:50%;border:2px solid var(--amber);background:#0f2841;color:var(--amber);font-weight:900;font-size:22px;cursor:pointer;z-index:2}
+  .xp h3{font-family:var(--disp);font-size:min(6vw,28px);margin:6px 48px 4px;text-align:center}
+  .xp .q{font-weight:900;color:var(--aqua);font-size:min(5vw,22px);text-align:center;margin-bottom:8px;max-width:900px}
+  .scene{position:relative;width:min(96vw,900px);aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:3px solid var(--line);background:#08111d;touch-action:none}
+  .scene img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.3)}
+  .scene .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.62);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4.5vw,22px);padding:6px 14px;border-radius:12px;z-index:5}
+  .objs{position:absolute;left:0;right:0;bottom:8%;display:flex;justify-content:space-evenly;align-items:flex-end;z-index:3}
+  .obj{width:18%;text-align:center;cursor:pointer;transition:transform .15s;position:relative}
+  .obj img{width:100%;max-height:34vh;object-fit:contain;filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))}
+  .obj .nm{font-weight:900;font-size:min(4vw,18px);background:rgba(0,0,0,.6);border-radius:10px;padding:2px 10px;display:inline-block;margin-top:4px}
+  .obj.pick{transform:translateY(-10px) scale(1.08)}.obj.pick img{outline:4px solid var(--amber);outline-offset:6px;border-radius:12px}
+  .obj.drag{z-index:9;transform:scale(1.15);pointer-events:none}
+  .spot{position:absolute;top:0;bottom:0;width:22%;background:radial-gradient(ellipse at 50% 60%,rgba(255,255,220,.55),rgba(255,255,220,.15) 55%,transparent 75%);z-index:2;pointer-events:none;mix-blend-mode:screen}
+  .wagons{position:absolute;left:0;right:0;top:6%;display:flex;justify-content:space-evenly;z-index:2}
+  .wag{width:26%;height:32%;border-radius:14px;border:4px dashed rgba(255,255,255,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;font-size:min(4vw,18px);background:rgba(0,0,0,.35);transition:background .2s,border-color .2s}
+  .wag.over{border-color:var(--amber);background:rgba(255,201,60,.2)}.wag.full{border-style:solid;border-color:#6be59a;background:rgba(40,160,90,.35)}
+  .wag .big{font-size:min(9vw,44px)}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:min(96vw,900px);margin-top:10px}
+  .opt{background:var(--panel);border:3px solid var(--line);border-radius:16px;padding:14px;font-weight:900;font-size:min(5vw,22px);cursor:pointer;display:flex;align-items:center;gap:10px}
+  .opt .sw{width:30px;height:30px;border-radius:8px;border:2px solid #fff;flex:none}
+  .opt.wrong{border-color:#ff6b6b;animation:shakeX .4s}.opt.right{border-color:#6be59a;background:#1f4d33}
+  @keyframes shakeX{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .lamps{display:flex;gap:14px;justify-content:center;margin-top:10px}
+  .lamp{width:min(24vw,110px);aspect-ratio:1;border-radius:22px;border:4px solid rgba(255,255,255,.3);font-size:min(9vw,44px);cursor:pointer;background:#13314f;display:flex;align-items:center;justify-content:center;transition:transform .1s,box-shadow .2s}
+  .lamp.on{border-color:#fff;transform:scale(1.06)}
+  .mixc{width:min(40vw,180px);aspect-ratio:1;border-radius:50%;margin:12px auto 0;border:6px solid rgba(255,255,255,.4);box-shadow:0 0 40px rgba(255,255,255,.15);transition:background .3s,box-shadow .3s}
+  .hp{width:min(96vw,900px);height:22px;background:#3a1020;border-radius:999px;overflow:hidden;border:2px solid #ff6b6b;margin-top:8px}.hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff3b3b,#ff9f1c);transition:width .5s}
+  .bossface{font-size:min(20vw,90px);text-align:center;animation:bob 1.5s infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .fb{margin-top:10px;font-weight:900;font-size:min(4.8vw,20px);color:#ffe08a;text-align:center;min-height:28px;max-width:900px}
+  .term{display:inline-block;background:var(--teal);color:#063;border-radius:999px;padding:1px 12px;font-size:14px;font-weight:900;margin-left:6px}
+  .pop{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.3);font-family:var(--disp);font-weight:700;font-size:min(10vw,60px);color:#ffd43b;text-shadow:0 4px 0 #000,0 0 30px rgba(0,0,0,.8);pointer-events:none;z-index:9400;animation:pop 1s ease-out forwards;white-space:nowrap}
+  .pop.bad{color:#ff7b7b}
+  @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-60%) scale(1)}}
+  /* 扭蛋／圖鑑 */
+  .gacha{position:fixed;inset:0;z-index:9500;background:rgba(3,8,26,.96);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+  .gacha.show{display:flex}
+  .capsule{font-size:min(40vw,160px);animation:wob .5s infinite;cursor:pointer}
+  @keyframes wob{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+  .capsule.open{animation:openc .6s forwards}
+  @keyframes openc{to{transform:scale(1.6);opacity:0}}
+  .prize{font-size:min(36vw,150px);animation:prize .8s cubic-bezier(.2,1.6,.4,1) forwards;transform:scale(0)}
+  @keyframes prize{to{transform:scale(1)}}
+  .ptitle{font-family:var(--disp);font-size:min(8vw,34px);color:var(--amber)}
+  .book{position:fixed;inset:0;z-index:9500;background:rgba(3,8,26,.97);display:none;flex-direction:column;align-items:center;padding:60px 14px 20px;overflow:auto}
+  .book.show{display:flex}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:min(96vw,720px)}
+  .cell{aspect-ratio:1;background:var(--panel);border:3px solid var(--line);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:min(12vw,56px);gap:4px}
+  .cell.miss{filter:grayscale(1);opacity:.35}.cell small{font-size:13px;font-weight:900;color:var(--dim)}
+  .cell.got{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,201,60,.3)}
+  footer{text-align:center;margin-top:20px;color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="/light-color/">🏠 回到首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<svg width="0" height="0" style="position:absolute"><filter id="lightf" color-interpolation-filters="sRGB"><feColorMatrix id="lmtx" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></svg>
+<div class="wrap">
+  <h1>🚂 光之列車・顏色闖關大冒險</h1>
+  <div class="sub">開火車一站一站過關，車廂越接越長，收集 12 張貼紙</div>
+  <div class="hud"><span class="pill">🚉 第 <b id="stn">1</b> / 8 站</span><span class="pill">🪙 <b id="coins">0</b></span><span class="pill">🚃 車廂 <b id="wag">0</b></span><span class="pill btn" id="bookBtn">📖 貼紙圖鑑 <b id="bookN">0</b>/12</span></div>
+  <div class="map" id="map"><svg viewBox="0 0 1600 900" preserveAspectRatio="none"><path id="track" d="M 120 720 C 300 720 300 420 520 420 S 760 720 940 720 S 1180 420 1360 420 S 1480 250 1480 180" fill="none" stroke="#3b2a1a" stroke-width="34" stroke-linecap="round"/><path d="M 120 720 C 300 720 300 420 520 420 S 760 720 940 720 S 1180 420 1360 420 S 1480 250 1480 180" fill="none" stroke="#b08a5a" stroke-width="10" stroke-dasharray="26 22" stroke-linecap="round"/></svg><div class="train" id="train"><span>🚂</span></div></div>
+  <div class="say" id="say">點亮亮的那一站，開始闖關！</div>
+  <div class="ctrl"><button class="btn go big" id="goBtn">▶ 進站闖關</button><button class="btn ghost" id="resetBtn">↺ 重新開始</button></div>
+  <footer>🚂 光之列車　｜　任務三 光與顏色・Ka-IV-10／11　｜　原創角色・竹東國中自然科</footer>
+</div>
+
+<div class="xp" id="xp"><button class="x" onclick="closeXp()">✖</button><h3 id="xpT"></h3><div class="q" id="xpQ"></div><div id="xpBody"></div><div class="fb" id="fb"></div><div class="ctrl" id="xpCtrl"></div></div>
+<div class="gacha" id="gacha"><div class="ptitle" id="gT">🎰 扭蛋時間！點膠囊</div><div class="capsule" id="cap">🥚</div><div class="prize" id="prize" style="display:none"></div><div class="ptitle" id="pName"></div><button class="btn go" id="gOk" style="display:none">收進圖鑑 📖</button></div>
+<div class="book" id="book"><button class="x fixbtn" style="right:14px;top:12px;border:2px solid var(--amber);color:var(--amber)" onclick="$('book').classList.remove('show')">✖ 關閉</button><div class="ptitle" style="margin-bottom:12px">📖 貼紙圖鑑</div><div class="grid" id="grid"></div></div>
+
+<script src="fx.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const IMG="/light-color/img/";
+const OBJ=[{n:"蘋果",img:IMG+"stage/apple.png",ref:"R",em:"🍎"},{n:"香蕉",img:IMG+"stage/banana.png",ref:"RG",em:"🍌"},{n:"植物",img:IMG+"stage/plant.png",ref:"G",em:"🪴"},{n:"白衣",img:IMG+"stage/shirt.png",ref:"RGB",em:"👕"}];
+const LIGHT={white:[1,1,1],red:[1,0,0],green:[0,1,0],blue:[0,0,1],none:[0,0,0]},LN={white:"⚪ 白光",red:"🔴 紅光",green:"🟢 綠光",blue:"🔵 藍光",none:"🌑 沒有光"};
+function setLight(k){if(!LIGHT[k])k="white";const [r,g,b]=LIGHT[k];$("lmtx").setAttribute("values",`${r} 0 0 0 0  0 ${g} 0 0 0  0 0 ${b} 0 0  0 0 0 1 0`);const l=document.querySelector("#xpBody .lbl");if(l)l.textContent=LN[k];}
+function dark(ref,k){const need={red:"R",green:"G",blue:"B"}[k];return need&&!ref.includes(need);}
+const STICKERS=[["🚂","光之小火車"],["🚃","紅光車廂"],["🚃","綠光車廂"],["🚃","藍光車廂"],["🤖","機器人小幫手"],["💎","白光寶石"],["🌈","彩虹票"],["🔦","探照燈"],["🍎","紅光蘋果"],["🪴","綠光植物"],["👑","隧道魔王勳章"],["⛈️","暴風雨勳章"]];
+let stickers=JSON.parse(localStorage.getItem("trainStickers")||"[]"),coins=+(localStorage.getItem("trainCoins")||0),cur=+(localStorage.getItem("trainCur")||0),wag=cur;
+/* 8 站 */
+const ST=[
+ {k:"spot",icon:"🎯",n:"照光射擊站",light:"green",target:0,q:"綠光照上去會變黑的東西——燈掃到它時，按！",why:"紅蘋果只反射紅光，綠光裡沒有紅光可以反射，所以變黑。",tz:"選擇性反射",cele:"coin"},
+ {k:"load",icon:"📦",n:"裝貨車站",q:"把貨物拖進正確的車廂：它會反射哪種光？",why:"蘋果反射紅光、植物反射綠光、白衣反射所有光。",tz:"選擇性反射",cele:"chest"},
+ {k:"mem",icon:"💡",n:"燈光記憶站",light:"green",target:0,q:"注意看！等一下燈會變色，記住誰變黑了",why:"綠光下，只反射紅光的蘋果變黑。",tz:"選擇性反射",cele:"stamp"},
+ {k:"boss",icon:"👑",n:"隧道魔王",face:"👑",qs:[{q:"隧道裡完全沒有光，紅蘋果看起來是？",opts:[["黑黑的，看不到顏色","#111"],["還是紅色","#e53935"]],ok:0},{q:"藍光下，哪一個還是亮的？",opts:[["白衣","#fff"],["紅蘋果","#e53935"]],ok:0}],why:"沒有光就沒有顏色；白衣反射所有光所以哪種光下都亮。",tz:"顏色來自光",cele:"boss"},
+ {k:"mix",icon:"🧪",n:"混光配方站",goal:"黃光",goalRGB:[1,1,0],q:"打開燈，做出「黃光」！",why:"紅光＋綠光＝黃光，色光相加會變亮。",tz:"加色混合",cele:"mascot"},
+ {k:"spot",icon:"🎯",n:"照光射擊站 II",light:"blue",target:3,q:"藍光照上去「還會亮」的東西——燈掃到它時，按！",why:"白衣反射所有顏色的光，藍光下也亮。",tz:"反射所有光",cele:"balloons"},
+ {k:"mix",icon:"🧪",n:"混光配方站 II",goal:"白光",goalRGB:[1,1,1],q:"做出「白光」！",why:"紅＋綠＋藍＝白光，光的三原色。",tz:"光的三原色",cele:"levelup"},
+ {k:"boss",icon:"⛈️",n:"暴風雨魔王",face:"⛈️",qs:[{q:"晚上在路邊工作，穿哪件最安全？",opts:[["螢光黃綠背心","#c8ff3a"],["黑色外套","#111"]],ok:0},{q:"東西的顏色，到底是什麼？",opts:[["它反射什麼光","#ffe600"],["它自己會發光","#e53935"]],ok:0}],why:"物體的顏色＝它反射什麼光。破案！",tz:"選擇性反射",cele:"final"},
+];
+const POS=[[120,720],[300,560],[520,420],[730,600],[940,720],[1150,560],[1360,420],[1480,180]];
+function hud(){$("stn").textContent=Math.min(8,cur+1);$("coins").textContent=coins;$("wag").textContent=wag;$("bookN").textContent=stickers.length;localStorage.setItem("trainCoins",coins);localStorage.setItem("trainCur",cur);}
+function addCoins(n){coins+=n;hud();FX.sound.coin();}
+function pop(t,bad){const p=document.createElement("div");p.className="pop"+(bad?" bad":"");p.textContent=t;document.body.appendChild(p);setTimeout(()=>p.remove(),1050);}
+function buzz(p){try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}
+/* 汽笛 */
+let AC=null;function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;}
+function whistle(){const a=ac();if(!a)return;[[660,0],[880,.18]].forEach(([f,d])=>{const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+d;o.type="triangle";o.frequency.setValueAtTime(f,t);o.frequency.linearRampToValueAtTime(f*1.05,t+.3);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.25,t+.05);g.gain.setValueAtTime(.25,t+.35);g.gain.exponentialRampToValueAtTime(.001,t+.6);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+.62);});}
+function chug(n){const a=ac();if(!a)return;for(let i=0;i<n;i++){const t=a.currentTime+i*.16;const b=a.createBuffer(1,a.sampleRate*.08,a.sampleRate),d=b.getChannelData(0);for(let k=0;k<d.length;k++)d[k]=(Math.random()*2-1)*Math.pow(1-k/d.length,3);const s=a.createBufferSource();s.buffer=b;const g=a.createGain();g.gain.value=.25;s.connect(g);g.connect(a.destination);s.start(t);}}
+/* 地圖 */
+function mapPt(i){const m=$("map").getBoundingClientRect();return {x:POS[i][0]/1600*m.width,y:POS[i][1]/900*m.height};}
+function drawMap(){document.querySelectorAll(".stn").forEach(e=>e.remove());ST.forEach((s,i)=>{const p=mapPt(i);const d=document.createElement("div");d.className="stn"+(s.k==="boss"?" boss":"")+(i<cur?" done":i===cur?" now":" lock");d.style.left=p.x+"px";d.style.top=p.y+"px";d.innerHTML=(i<cur?"✅":s.icon)+`<span class="n">${i+1}. ${s.n}</span>`;d.onclick=()=>{if(i===cur)openXp();else if(i<cur){FX.sound.blip();$("say").textContent="這站已經過了 ✅";}else{FX.sound.wrongsoft();$("say").textContent="先過前面的站";}};$("map").appendChild(d);});
+  placeTrain(Math.min(cur,7));}
+function placeTrain(i){const p=mapPt(i);const t=$("train");t.style.left=p.x+"px";t.style.top=(p.y-6)+"px";t.innerHTML="<span>🚂</span>"+"<span class='w'>🚃</span>".repeat(Math.min(wag,7));}
+function moveTrain(from,to,done){const a=mapPt(from),b=mapPt(to);let k=0;whistle();chug(10);const iv=setInterval(()=>{k+=.02;const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;const x=a.x+(b.x-a.x)*e,y=a.y+(b.y-a.y)*e;const t=$("train");t.style.left=x+"px";t.style.top=(y-6)+"px";
+    if(Math.random()<.35){const s=document.createElement("div");s.className="smoke";s.textContent="💨";s.style.left=(x-10)+"px";s.style.top=(y-50)+"px";$("map").appendChild(s);setTimeout(()=>s.remove(),1200);}
+    if(k>=1){clearInterval(iv);FX.sound.blip();done&&done();}},25);}
+addEventListener("resize",drawMap);
+$("goBtn").onclick=()=>{if(cur>=8){finale();return;}openXp();};
+$("resetBtn").onclick=()=>{if(!confirm("重新開始？（貼紙圖鑑會保留）"))return;cur=0;wag=0;coins=0;hud();drawMap();$("say").textContent="點亮亮的那一站，開始闖關！";FX.sound.blip();};
+/* 關卡 */
+let timers=[],raf=0;function later(f,ms){timers.push(setTimeout(f,ms));}
+function closeXp(){$("xp").classList.remove("show");timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(raf);$("xpBody").innerHTML="";FX.sound.blip();}
+function scene(objs){return `<div class="scene" id="sc"><img class="bg" src="${IMG}wall.jpg" alt=""><div class="lbl">⚪ 白光</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt=""><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;}
+function openXp(){const s=ST[cur];if(!s)return;FX.sound.jump();$("xpT").textContent=`${s.icon} 第 ${cur+1} 站・${s.n}`;$("xpQ").textContent=s.q||"";$("fb").innerHTML="";$("xpCtrl").innerHTML="";$("xpBody").innerHTML="";$("xp").classList.add("show");
+  ({spot:xSpot,load:xLoad,mem:xMem,boss:xBoss,mix:xMix})[s.k](s);}
+function clear(s){FX.sound.right&&FX.sound.right();buzz([40,30,40]);$("fb").innerHTML="✅ "+s.why+`<span class="term">${s.tz}</span>`;addCoins(10);
+  $("xpCtrl").innerHTML=`<button class="btn go big" id="nx">🚂 開車！下一站</button>`;$("nx").onclick=()=>{closeXp();advance(s);};
+  const cel={coin:()=>{FX.confetti(80);FX.emojiBurst("🪙",16,innerWidth/2,innerHeight*.4);},chest:()=>FX.chest({title:"貨物裝好了！開寶箱",gem:"📦",gemName:"車廂鑰匙",gemColor:"#ffd25a",sub:"每個貨物都到對的車廂"}),stamp:()=>FX.stamp({text:"記住了"}),
+    boss:()=>{FX.sound.clear();FX.fireworks(2500);},mascot:()=>FX.mascot({emoji:"🤖",name:"機器人小幫手",lines:["紅＋綠＝黃！","色光加在一起會變亮。"]}),balloons:()=>FX.balloons&&FX.balloons(),levelup:()=>FX.levelup&&FX.levelup({title:"LEVEL UP！白光配方解鎖"}),final:()=>{FX.sound.clear();FX.fireworks(3000);}}[s.cele];later(()=>cel&&cel(),500);}
+function advance(s){const from=cur;cur++;wag++;hud();document.querySelectorAll(".stn")[from].className="stn done"+(s.k==="boss"?" boss":"");document.querySelectorAll(".stn")[from].innerHTML="✅"+`<span class="n">${from+1}. ${s.n}</span>`;
+  $("say").textContent="🚂 嘟嘟——開往下一站，車廂＋1！";moveTrain(from,Math.min(cur,7),()=>{drawMap();if(cur%2===0)later(()=>gacha(),400);if(cur>=8)later(finale,cur%2===0?4500:600);else $("say").textContent="到站！點亮亮的那一站繼續";});}
+function finale(){$("say").textContent="🏁 終點站！全部過關，你是光之列車長";FX.badge({id:"train",emoji:"🚂",name:"光之列車長",desc:"8 站全破・顏色來自光",onDone:()=>FX.fireworks(3000)});}
+/* 🎯 照光射擊 */
+function xSpot(s){$("xpBody").innerHTML=scene([0,1,2,3])+`<div class="ctrl"><button class="btn go big" id="fire">🔦 按！</button></div>`;const sc=$("sc");const sp=document.createElement("div");sp.className="spot";sc.appendChild(sp);let x=0,dir=1,t0=performance.now(),busy=false;
+  function loop(t){if(!busy){x+=dir*(t-t0)/1000*.32;if(x>.78){x=.78;dir=-1;}if(x<0){x=0;dir=1;}sp.style.left=(x*100)+"%";}t0=t;raf=requestAnimationFrame(loop);}raf=requestAnimationFrame(loop);
+  $("fire").onclick=()=>{if(busy)return;busy=true;const objs=[...sc.querySelectorAll(".obj")];const r=sc.getBoundingClientRect();const cx=r.left+r.width*(x+.11);let hitI=-1;objs.forEach((o,i)=>{const b=o.getBoundingClientRect();if(cx>=b.left-10&&cx<=b.right+10)hitI=i;});
+    setLight(s.light);FX.sound.whoosh&&FX.sound.whoosh();
+    later(()=>{if(hitI===s.target){objs[hitI].classList.add("pick");pop("命中！");clear(s);}
+      else{pop(hitI<0?"沒照到東西":"不是它",true);FX.sound.wrongsoft();buzz(100);$("fb").textContent=hitI<0?"燈要照到東西再按":"看！"+LN[s.light]+"下"+OBJ[hitI].n+(dark(OBJ[hitI].ref,s.light)?"變黑了，但題目要的是另一個":"還是亮的")+"——再等燈掃到對的那個";later(()=>{setLight("white");busy=false;},1500);}},600);};}
+/* 📦 裝貨車：拖曳 */
+function xLoad(s){const objs=[0,2,3],wags=[["🔴","紅光車廂","R"],["🟢","綠光車廂","G"],["⚪","全部光車廂","RGB"]];
+  $("xpBody").innerHTML=`<div class="scene" id="sc"><img class="bg" src="${IMG}wall.jpg" alt=""><div class="lbl">⚪ 白光</div><div class="wagons">${wags.map((w,i)=>`<div class="wag" data-w="${i}"><span class="big">${w[0]}🚃</span>${w[1]}</div>`).join("")}</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt="" draggable="false"><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;
+  const sc=$("sc");let dragEl=null,ox=0,oy=0,done=0;
+  sc.onpointerdown=e=>{const o=e.target.closest(".obj");if(!o||o.classList.contains("gone"))return;dragEl=o;o.classList.add("drag");const b=o.getBoundingClientRect();ox=e.clientX-b.left-b.width/2;oy=e.clientY-b.top-b.height/2;try{sc.setPointerCapture(e.pointerId);}catch(x){}FX.sound.blip();mv(e);};
+  function mv(e){if(!dragEl)return;const r=sc.getBoundingClientRect();dragEl.style.position="absolute";dragEl.style.left=(e.clientX-r.left-ox)+"px";dragEl.style.top=(e.clientY-r.top-oy)+"px";dragEl.style.transform="translate(-50%,-50%) scale(1.15)";dragEl.style.width="18%";
+    document.querySelectorAll(".wag").forEach(w=>{const b=w.getBoundingClientRect();w.classList.toggle("over",e.clientX>=b.left&&e.clientX<=b.right&&e.clientY>=b.top&&e.clientY<=b.bottom);});}
+  sc.onpointermove=mv;
+  sc.onpointerup=sc.onpointercancel=e=>{if(!dragEl)return;const o=dragEl;dragEl=null;o.classList.remove("drag");const w=[...document.querySelectorAll(".wag")].find(w=>w.classList.contains("over"));document.querySelectorAll(".wag").forEach(w=>w.classList.remove("over"));
+    const ref=OBJ[+o.dataset.i].ref;if(w&&wags[+w.dataset.w][2]===ref){w.classList.add("full");w.innerHTML=`<span class="big">${OBJ[+o.dataset.i].em}🚃</span>${wags[+w.dataset.w][1]}`;o.classList.add("gone");o.style.display="none";FX.sound.coin();FX.emojiBurst("✨",8,e.clientX,e.clientY);done++;$("fb").textContent=OBJ[+o.dataset.i].n+" 上車！";if(done===3)clear(s);}
+    else{o.style.position="";o.style.left="";o.style.top="";o.style.transform="";o.style.width="";if(w){FX.sound.wrongsoft();buzz(100);pop("不是這節",true);$("fb").textContent=OBJ[+o.dataset.i].n+"在"+wags[+w.dataset.w][1].slice(0,2)+"下會怎樣？想一想它反射什麼光";}}};}
+/* 💡 燈光記憶 */
+function xMem(s){$("xpBody").innerHTML=scene([0,1,2,3]);setLight("white");$("fb").textContent="👀 注意看，3 秒後燈會變色…";let phase=0;
+  later(()=>{setLight(s.light);$("fb").textContent="現在是"+LN[s.light]+"！記住誰變黑";FX.sound.boom();},2500);
+  later(()=>{setLight("white");phase=1;$("xpQ").textContent="剛剛"+LN[s.light]+"的時候，哪一個變黑了？點它！";$("fb").textContent="";},5500);
+  document.querySelectorAll("#sc .obj").forEach(o=>o.onclick=()=>{if(phase!==1)return;const i=+o.dataset.i;document.querySelectorAll("#sc .obj").forEach(x=>x.classList.remove("pick"));o.classList.add("pick");
+    if(i===s.target){phase=2;setLight(s.light);pop("答對！");later(()=>clear(s),500);}else{FX.sound.wrongsoft();buzz(100);pop("再想想",true);setLight(s.light);$("fb").textContent="再看一次："+LN[s.light]+"下，"+OBJ[i].n+(dark(OBJ[i].ref,s.light)?"也黑，但它不是題目那個":"還是亮的");later(()=>setLight("white"),1500);}});}
+/* 🧪 混光配方 */
+function xMix(s){$("xpBody").innerHTML=`<div class="mixc" id="mixc"></div><div class="lamps">${[["🔴","red"],["🟢","green"],["🔵","blue"]].map(l=>`<div class="lamp" data-l="${l[1]}">${l[0]}</div>`).join("")}</div><div class="ctrl"><span style="font-weight:900;font-size:18px">目標：<b style="color:${s.goal==="白光"?"#fff":"#ffe600"}">${s.goal}</b></span><button class="btn go" id="chk">✅ 好了！</button></div>`;
+  const on={red:0,green:0,blue:0};function upd(){const r=on.red*255,g=on.green*255,b=on.blue*255;$("mixc").style.background=`rgb(${r},${g},${b})`;$("mixc").style.boxShadow=`0 0 60px rgba(${r},${g},${b},.8)`;}
+  document.querySelectorAll(".lamp").forEach(l=>l.onclick=()=>{on[l.dataset.l]^=1;l.classList.toggle("on",!!on[l.dataset.l]);FX.sound.click&&FX.sound.click();upd();});upd();
+  $("chk").onclick=()=>{const ok=on.red===s.goalRGB[0]&&on.green===s.goalRGB[1]&&on.blue===s.goalRGB[2];if(ok){pop("配方正確！");clear(s);}else{FX.sound.wrongsoft();buzz(100);pop("還不是",true);const n=on.red+on.green+on.blue;$("fb").textContent=n===0?"先把燈打開":(s.goal==="黃光"?"黃光只要兩盞燈，想想是哪兩盞？":"白光要三盞燈全開！");}};}
+/* 👑 魔王 */
+function xBoss(s){let hp=100,qi=0;$("xpBody").innerHTML=`<div class="bossface">${s.face}</div><div class="hp"><i id="hp"></i></div><div class="opts" id="opts"></div>`;FX.sound.boom();document.body.style.animation="none";
+  function ask(){const q=s.qs[qi];$("xpQ").textContent=q.q;const order=q.opts.map((o,i)=>({o,i})).sort(()=>Math.random()-.5);$("opts").innerHTML=order.map(({o,i})=>`<div class="opt" data-i="${i}"><span class="sw" style="background:${o[1]}"></span>${o[0]}</div>`).join("");
+    document.querySelectorAll(".opt").forEach(el=>el.onclick=()=>{if(+el.dataset.i===q.ok){el.classList.add("right");hp-=50;$("hp").style.width=hp+"%";FX.sound.boom();FX.emojiBurst("💥",14,innerWidth/2,innerHeight*.3);buzz([60,40,60]);pop("打中！");qi++;if(qi>=s.qs.length){later(()=>{$("xpQ").textContent="魔王逃走了！";clear(s);},700);}else later(ask,900);}
+      else{el.classList.add("wrong");FX.sound.wrongsoft();buzz(100);$("fb").textContent="💡 再想一次（答錯不扣血）";later(()=>el.classList.remove("wrong"),600);}});}
+  ask();}
+/* 🎰 扭蛋 */
+function gacha(){const left=STICKERS.map((s,i)=>i).filter(i=>!stickers.includes(i));if(!left.length)return;const pick=left[Math.floor(Math.random()*left.length)];
+  $("gacha").classList.add("show");$("cap").style.display="block";$("cap").className="capsule";$("prize").style.display="none";$("pName").textContent="";$("gOk").style.display="none";$("gT").textContent="🎰 扭蛋時間！點膠囊";FX.sound.rattle&&FX.sound.rattle();
+  $("cap").onclick=()=>{$("cap").className="capsule open";FX.sound.pop&&FX.sound.pop();later(()=>{$("cap").style.display="none";$("prize").style.display="block";$("prize").textContent=STICKERS[pick][0];$("pName").textContent="✨ "+STICKERS[pick][1];$("gT").textContent="🎉 抽到了！";FX.sound.sparkle&&FX.sound.sparkle();FX.confetti(100);$("gOk").style.display="inline-block";},600);};
+  $("gOk").onclick=()=>{stickers.push(pick);localStorage.setItem("trainStickers",JSON.stringify(stickers));hud();$("gacha").classList.remove("show");FX.sound.coin();};}
+$("bookBtn").onclick=()=>{$("grid").innerHTML=STICKERS.map((s,i)=>`<div class="cell ${stickers.includes(i)?"got":"miss"}">${s[0]}<small>${stickers.includes(i)?s[1]:"？？？"}</small></div>`).join("");$("book").classList.add("show");FX.sound.blip();};
+hud();drawMap();
+</script>
+</body>
+</html>
