@@ -52,7 +52,9 @@
   .scene .lbl{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.62);color:#fff;font-family:var(--disp);font-weight:700;font-size:min(4.5vw,22px);padding:6px 14px;border-radius:12px;z-index:5}
   .objs{position:absolute;left:0;right:0;bottom:8%;display:flex;justify-content:space-evenly;align-items:flex-end;z-index:3}
   .obj{width:18%;text-align:center;cursor:pointer;transition:transform .15s;position:relative}
-  .obj img{width:100%;max-height:34vh;object-fit:contain;filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))}
+  .obj img{width:100%;max-height:34vh;object-fit:contain;mix-blend-mode:screen;filter:url(#lightf) drop-shadow(0 12px 14px rgba(0,0,0,.6))}
+  .obj.sel img{outline:4px solid var(--amber);outline-offset:6px;border-radius:12px}
+  .obj.sel{transform:translateY(-8px) scale(1.06)}
   .obj .nm{font-weight:900;font-size:min(4vw,18px);background:rgba(0,0,0,.6);border-radius:10px;padding:2px 10px;display:inline-block;margin-top:4px}
   .obj.pick{transform:translateY(-10px) scale(1.08)}.obj.pick img{outline:4px solid var(--amber);outline-offset:6px;border-radius:12px}
   .obj.drag{z-index:9;transform:scale(1.15);pointer-events:none}
@@ -160,7 +162,7 @@ $("resetBtn").onclick=()=>{if(!confirm("重新開始？（貼紙圖鑑會保留�
 let timers=[],raf=0;function later(f,ms){timers.push(setTimeout(f,ms));}
 function closeXp(){$("xp").classList.remove("show");timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(raf);$("xpBody").innerHTML="";FX.sound.blip();}
 function scene(objs){return `<div class="scene" id="sc"><img class="bg" src="${IMG}wall.jpg" alt=""><div class="lbl">⚪ 白光</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt=""><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;}
-function openXp(){const s=ST[cur];if(!s)return;FX.sound.jump();$("xpT").textContent=`${s.icon} 第 ${cur+1} 站・${s.n}`;$("xpQ").textContent=s.q||"";$("fb").innerHTML="";$("xpCtrl").innerHTML="";$("xpBody").innerHTML="";$("xp").classList.add("show");
+function openXp(){const s=ST[cur];if(!s)return;FX.sound.jump();$("xpT").textContent=`${s.icon} 第 ${cur+1} 站・${s.n}`;$("xpQ").textContent=s.q||"";$("fb").innerHTML="";$("xpCtrl").innerHTML="";$("xpBody").innerHTML="";$("xp").classList.add("show");setLight("white");
   ({spot:xSpot,load:xLoad,mem:xMem,boss:xBoss,mix:xMix})[s.k](s);}
 function clear(s){FX.sound.right&&FX.sound.right();buzz([40,30,40]);$("fb").innerHTML="✅ "+s.why+`<span class="term">${s.tz}</span>`;addCoins(10);
   $("xpCtrl").innerHTML=`<button class="btn go big" id="nx">🚂 開車！下一站</button>`;$("nx").onclick=()=>{closeXp();advance(s);};
@@ -177,16 +179,22 @@ function xSpot(s){$("xpBody").innerHTML=scene([0,1,2,3])+`<div class="ctrl"><but
     later(()=>{if(hitI===s.target){objs[hitI].classList.add("pick");pop("命中！");clear(s);}
       else{pop(hitI<0?"沒照到東西":"不是它",true);FX.sound.wrongsoft();buzz(100);$("fb").textContent=hitI<0?"燈要照到東西再按":"看！"+LN[s.light]+"下"+OBJ[hitI].n+(dark(OBJ[hitI].ref,s.light)?"變黑了，但題目要的是另一個":"還是亮的")+"——再等燈掃到對的那個";later(()=>{setLight("white");busy=false;},1500);}},600);};}
 /* 📦 裝貨車：拖曳 */
-function xLoad(s){const objs=[0,2,3],wags=[["🔴","紅光車廂","R"],["🟢","綠光車廂","G"],["⚪","全部光車廂","RGB"]];
-  $("xpBody").innerHTML=`<div class="scene" id="sc"><img class="bg" src="${IMG}wall.jpg" alt=""><div class="lbl">⚪ 白光</div><div class="wagons">${wags.map((w,i)=>`<div class="wag" data-w="${i}"><span class="big">${w[0]}🚃</span>${w[1]}</div>`).join("")}</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt="" draggable="false"><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;
-  const sc=$("sc");let dragEl=null,ox=0,oy=0,done=0;
-  sc.onpointerdown=e=>{const o=e.target.closest(".obj");if(!o||o.classList.contains("gone"))return;dragEl=o;o.classList.add("drag");const b=o.getBoundingClientRect();ox=e.clientX-b.left-b.width/2;oy=e.clientY-b.top-b.height/2;try{sc.setPointerCapture(e.pointerId);}catch(x){}FX.sound.blip();mv(e);};
-  function mv(e){if(!dragEl)return;const r=sc.getBoundingClientRect();dragEl.style.position="absolute";dragEl.style.left=(e.clientX-r.left-ox)+"px";dragEl.style.top=(e.clientY-r.top-oy)+"px";dragEl.style.transform="translate(-50%,-50%) scale(1.15)";dragEl.style.width="18%";
-    document.querySelectorAll(".wag").forEach(w=>{const b=w.getBoundingClientRect();w.classList.toggle("over",e.clientX>=b.left&&e.clientX<=b.right&&e.clientY>=b.top&&e.clientY<=b.bottom);});}
-  sc.onpointermove=mv;
-  sc.onpointerup=sc.onpointercancel=e=>{if(!dragEl)return;const o=dragEl;dragEl=null;o.classList.remove("drag");const w=[...document.querySelectorAll(".wag")].find(w=>w.classList.contains("over"));document.querySelectorAll(".wag").forEach(w=>w.classList.remove("over"));
-    const ref=OBJ[+o.dataset.i].ref;if(w&&wags[+w.dataset.w][2]===ref){w.classList.add("full");w.innerHTML=`<span class="big">${OBJ[+o.dataset.i].em}🚃</span>${wags[+w.dataset.w][1]}`;o.classList.add("gone");o.style.display="none";FX.sound.coin();FX.emojiBurst("✨",8,e.clientX,e.clientY);done++;$("fb").textContent=OBJ[+o.dataset.i].n+" 上車！";if(done===3)clear(s);}
-    else{o.style.position="";o.style.left="";o.style.top="";o.style.transform="";o.style.width="";if(w){FX.sound.wrongsoft();buzz(100);pop("不是這節",true);$("fb").textContent=OBJ[+o.dataset.i].n+"在"+wags[+w.dataset.w][1].slice(0,2)+"下會怎樣？想一想它反射什麼光";}}};}
+function xLoad(s){$("xpQ").textContent="這個東西會反射哪種光？點它，再點對的車廂（或直接拖過去）";const objs=[0,2,3],wags=[["🔴","紅光車廂","R","只反射紅光"],["🟢","綠光車廂","G","只反射綠光"],["⚪","全部光車廂","RGB","什麼光都反射"]];
+  $("xpBody").innerHTML=`<div class="scene" id="sc"><img class="bg" src="${IMG}wall.jpg" alt=""><div class="lbl">⚪ 白光</div><div class="wagons">${wags.map((w,i)=>`<div class="wag" data-w="${i}"><span class="big">${w[0]}🚃</span>${w[1]}<small style="opacity:.8">${w[3]}</small></div>`).join("")}</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt="" draggable="false"><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;
+  $("fb").textContent="👆 先點一個貨物";const sc=$("sc");let dragEl=null,sel=null,done=0,sx=0,sy=0,moved=false,ghost=null;
+  function judge(o,w,x,y){const ref=OBJ[+o.dataset.i].ref;if(wags[+w.dataset.w][2]===ref){w.classList.add("full");w.innerHTML=`<span class="big">${OBJ[+o.dataset.i].em}🚃</span>${wags[+w.dataset.w][1]}`;o.classList.add("gone");o.style.visibility="hidden";FX.sound.coin();FX.emojiBurst("✨",8,x||innerWidth/2,y||innerHeight/2);done++;$("fb").textContent=OBJ[+o.dataset.i].n+" 上車！"+(done<3?"再點下一個貨物":"");if(done===3)clear(s);return true;}
+    FX.sound.wrongsoft();pop("不是這節",true);$("fb").textContent=OBJ[+o.dataset.i].n+"不是這節。想一想：它是什麼顏色？就反射那種光";return false;}
+  function select(o){sel=o;document.querySelectorAll("#sc .obj").forEach(x=>x.classList.toggle("sel",x===o));FX.sound.blip();$("fb").textContent="選了「"+OBJ[+o.dataset.i].n+"」→ 再點它會反射哪種光的車廂";}
+  sc.onpointerdown=e=>{const o=e.target.closest(".obj");const w=e.target.closest(".wag");
+    if(w){if(sel&&!sel.classList.contains("gone")){judge(sel,w,e.clientX,e.clientY);if(sel.classList.contains("gone"))sel=null;document.querySelectorAll("#sc .obj").forEach(x=>x.classList.remove("sel"));}else{FX.sound.blip();$("fb").textContent="先點一個貨物，再點車廂";}return;}
+    if(!o||o.classList.contains("gone"))return;dragEl=o;sx=e.clientX;sy=e.clientY;moved=false;try{sc.setPointerCapture(e.pointerId);}catch(x){}};
+  sc.onpointermove=e=>{if(!dragEl)return;if(!moved&&Math.hypot(e.clientX-sx,e.clientY-sy)<8)return;
+    if(!moved){moved=true;ghost=document.createElement("div");ghost.style.cssText="position:fixed;z-index:9999;pointer-events:none;width:120px;transform:translate(-50%,-50%) scale(1.1);filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))";ghost.innerHTML=`<img src="${OBJ[+dragEl.dataset.i].img}" style="width:100%;mix-blend-mode:screen">`;document.body.appendChild(ghost);dragEl.style.opacity=".35";FX.sound.blip();}
+    ghost.style.left=e.clientX+"px";ghost.style.top=e.clientY+"px";document.querySelectorAll(".wag").forEach(w=>{const b=w.getBoundingClientRect();w.classList.toggle("over",e.clientX>=b.left&&e.clientX<=b.right&&e.clientY>=b.top&&e.clientY<=b.bottom);});};
+  sc.onpointerup=sc.onpointercancel=e=>{if(!dragEl)return;const o=dragEl;dragEl=null;if(ghost){ghost.remove();ghost=null;}o.style.opacity="";
+    if(!moved){select(o);return;}
+    const w=[...document.querySelectorAll(".wag")].find(w=>w.classList.contains("over"));document.querySelectorAll(".wag").forEach(w=>w.classList.remove("over"));
+    if(w)judge(o,w,e.clientX,e.clientY);else $("fb").textContent="放到車廂上面才算喔";};}
 /* 💡 燈光記憶 */
 function xMem(s){$("xpBody").innerHTML=scene([0,1,2,3]);setLight("white");$("fb").textContent="👀 注意看，3 秒後燈會變色…";let phase=0;
   later(()=>{setLight(s.light);$("fb").textContent="現在是"+LN[s.light]+"！記住誰變黑";FX.sound.boom();},2500);
