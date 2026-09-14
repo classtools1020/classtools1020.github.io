@@ -59,9 +59,17 @@
 <a class="fixbtn home" href="/light/">🏠 主入口</a>
 <a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
 <div class="wrap">
-  <div class="steps"><span id="st0" class="on">① 心情</span><span id="st1">② 泡泡呼吸</span><span id="st2">③ 今天做什麼</span></div>
+  <div class="steps"><span id="stg" class="on">👋 打招呼</span><span id="st0">① 心情</span><span id="st1">② 泡泡呼吸</span><span id="st2">③ 今天做什麼</span></div>
 
-  <section class="page show" id="p0">
+  <section class="page show" id="pg">
+    <h1>👋 光線特勤隊，集合！</h1>
+    <div class="sub">老師拍手口令，大家接「集合！」，然後選一個打招呼的方式</div>
+    <div class="moods" id="greets"></div>
+    <div class="note">每次上課都一樣：口令 → 打招呼 → 心情 → 泡泡 → 出發</div>
+    <div class="ctrl"><button class="btn ghost" id="callBtn">🔔 播放集合口令</button><button class="btn go big" id="toMood">下一步 ➡ 心情打卡</button></div>
+  </section>
+
+  <section class="page" id="p0">
     <h1 id="moodTitle">🙂 今天心情怎麼樣？</h1>
     <div class="sub">點一張臉就好，不用說話</div>
     <div class="moods" id="moods"></div>
@@ -110,7 +118,12 @@ let c1=load("mood-"+today)||MOODS.map(()=>0),c2=load("mood2-"+today)||MOODS.map(
 function renderMoods(host,bars,counts,key){$(host).innerHTML=MOODS.map((m,i)=>`<div class="mood" data-i="${i}"><span>${m[0]}</span>${m[1]}</div>`).join("");
   const draw=()=>{const mx=Math.max(1,...counts);$(bars).innerHTML=MOODS.map((m,i)=>`<div class="bar"><b>${counts[i]||""}</b><i style="height:${counts[i]/mx*100}%"></i><small>${m[0]}</small></div>`).join("");};draw();
   $(host).querySelectorAll(".mood").forEach(el=>el.onclick=()=>{const i=+el.dataset.i;counts[i]++;localStorage.setItem(key,JSON.stringify(counts));el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");tap();FX.emojiBurst(MOODS[i][0],6,innerWidth/2,innerHeight*.4);draw();if(END)compare();});}
-function goto(n){[0,1,2,3].forEach(k=>$("p"+k).classList.toggle("show",k===n));[0,1,2].forEach(k=>{$("st"+k).className=k<n?"done":k===n?"on":"";});scrollTo(0,0);}
+function goto(n){$("pg").classList.toggle("show",n===-1);[0,1,2,3].forEach(k=>$("p"+k).classList.toggle("show",k===n));$("stg").className=n>-1?"done":"on";[0,1,2].forEach(k=>{$("st"+k).className=k<n?"done":k===n?"on":"";});scrollTo(0,0);}
+const GREETS=[["👋","揮手"],["✋","擊掌"],["👊","碰拳"],["🙂","點頭"],["🫶","比愛心"],["🤫","今天不用"]];
+$("greets").innerHTML=GREETS.map((g,i)=>`<div class="mood" data-i="${i}"><span>${g[0]}</span>${g[1]}</div>`).join("");
+$("greets").querySelectorAll(".mood").forEach(el=>el.onclick=()=>{el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");tap();FX.emojiBurst(GREETS[+el.dataset.i][0],6,innerWidth/2,innerHeight*.4);});
+$("callBtn").onclick=()=>{ac();if(FX.attention)FX.attention();else chimeOk();};
+$("toMood").onclick=()=>{tap();goto(0);};
 renderMoods("moods","bars",c1,"mood-"+today);
 $("toBreath").onclick=()=>{tap();goto(1);};
 /* 泡泡呼吸：吸 4s → 停 2s → 吐 6s，三輪 */
