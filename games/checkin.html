@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>開場儀式・心情打卡與光之泡泡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--panel:#0f2841;--line:rgba(120,170,210,.28);--amber:#ffc93c;--teal:#42e0c8;--aqua:#3ec2ff;--ink:#eaf6ff;--dim:#9db8cf;--disp:'Fredoka','Noto Sans TC',system-ui,sans-serif;--body:'Noto Sans TC',system-ui,sans-serif}
+  *{box-sizing:border-box}html,body{margin:0;height:100%}
+  body{font-family:var(--body);color:var(--ink);min-height:100vh;-webkit-tap-highlight-color:transparent;user-select:none;background:radial-gradient(120% 80% at 50% -10%,rgba(62,194,255,.14),transparent 55%),linear-gradient(165deg,#05101f,#0a2036 55%,#0e3350);transition:background 2s}
+  .fixbtn{position:fixed;top:12px;z-index:99999;background:#0f2841;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+  .home{left:12px;border:2px solid var(--amber);color:var(--amber)} .menu{right:12px;border:2px solid var(--teal);color:var(--teal)}
+  .wrap{max-width:980px;margin:0 auto;padding:60px 14px 40px;min-height:100vh;display:flex;flex-direction:column}
+  .steps{display:flex;gap:8px;justify-content:center;margin-bottom:10px}
+  .steps span{padding:6px 14px;border-radius:999px;background:#13314f;font-weight:900;font-size:15px;opacity:.5}
+  .steps span.on{opacity:1;background:var(--amber);color:#08131f}.steps span.done{opacity:1;background:#1f6b3a}
+  .page{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:fade .5s}
+  .page.show{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  h1{font-family:var(--disp);font-size:min(8vw,36px);margin:0 0 6px}
+  .sub{color:var(--aqua);font-weight:900;font-size:min(4.6vw,20px);margin-bottom:18px}
+  /* 心情 */
+  .moods{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;max-width:900px}
+  .mood{width:min(28vw,150px);aspect-ratio:1;border-radius:26px;background:var(--panel);border:4px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s,border-color .2s;font-weight:900;font-size:min(4vw,18px)}
+  .mood span{font-size:min(16vw,72px);line-height:1}
+  .mood:active{transform:scale(.94)}.mood.tap{border-color:var(--amber);animation:bump .5s}
+  @keyframes bump{30%{transform:scale(1.12)}}
+  .bars{display:flex;gap:14px;align-items:flex-end;justify-content:center;height:150px;margin-top:20px;width:min(96vw,700px)}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .bar i{display:block;width:70%;background:linear-gradient(180deg,var(--aqua),#1b6fa8);border-radius:10px 10px 4px 4px;transition:height .5s;min-height:4px}
+  .bar b{font-family:var(--disp);font-size:22px;color:var(--amber);margin-bottom:4px}.bar small{font-size:22px;margin-top:6px}
+  .note{color:var(--dim);font-weight:800;margin-top:10px;font-size:15px}
+  /* 泡泡 */
+  .bubwrap{position:relative;width:min(80vw,420px);aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+  .bubble{width:38%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 32% 30%,rgba(255,255,255,.95),rgba(180,230,255,.55) 30%,rgba(90,170,255,.35) 60%,rgba(60,120,220,.25) 100%);box-shadow:0 0 60px rgba(120,200,255,.55),inset 0 0 40px rgba(255,255,255,.35);border:3px solid rgba(255,255,255,.7);transition:transform .2s linear;position:relative}
+  .bubble::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(255,120,180,.25),rgba(255,220,120,.25),rgba(120,255,180,.25),rgba(120,200,255,.25),rgba(200,140,255,.25),rgba(255,120,180,.25));mix-blend-mode:screen;animation:spin 12s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ring{position:absolute;inset:0;border-radius:50%;border:2px dashed rgba(255,255,255,.25)}
+  .cue{font-family:var(--disp);font-size:min(10vw,44px);margin-top:10px;min-height:56px}
+  .rounds{display:flex;gap:10px;justify-content:center;margin-top:6px}.rounds i{width:16px;height:16px;border-radius:50%;background:#2a4a6e;display:block}.rounds i.on{background:var(--teal)}
+  /* 今日任務 */
+  .plan{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:900px}
+  .pl{background:var(--panel);border:3px solid var(--line);border-radius:20px;padding:14px 12px;width:min(40vw,170px);font-weight:900;font-size:min(4vw,17px);display:flex;flex-direction:column;align-items:center;gap:6px}
+  .pl span{font-size:min(12vw,52px)}.pl b{color:var(--amber);font-family:var(--disp)}
+  .ctrl{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+  .btn{font-family:var(--disp);font-weight:700;font-size:min(5.5vw,22px);border:none;border-radius:18px;padding:14px 28px;cursor:pointer;color:#08131f}
+  .btn.go{background:linear-gradient(180deg,var(--amber),#ff9f1c);box-shadow:0 6px 0 #c9860f}.btn.go:active{transform:translateY(4px);box-shadow:0 2px 0 #c9860f}
+  .btn.ghost{background:#13314f;border:2px solid var(--line);color:var(--ink)}
+  .btn.big{font-size:min(7vw,30px);padding:18px 40px;border-radius:26px}
+  .stampbox{font-family:var(--disp);font-size:min(12vw,56px);color:var(--amber);margin:10px 0}
+  footer{text-align:center;color:var(--dim);font-size:13px;margin-top:20px}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="/light/">🏠 主入口</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<div class="wrap">
+  <div class="steps"><span id="st0" class="on">① 心情</span><span id="st1">② 泡泡呼吸</span><span id="st2">③ 今天做什麼</span></div>
+
+  <section class="page show" id="p0">
+    <h1 id="moodTitle">🙂 今天心情怎麼樣？</h1>
+    <div class="sub">點一張臉就好，不用說話</div>
+    <div class="moods" id="moods"></div>
+    <div class="bars" id="bars"></div>
+    <div class="note">每個人點一次；不想說也可以按 🤫</div>
+    <div class="ctrl"><button class="btn go big" id="toBreath">下一步 ➡ 泡泡呼吸</button></div>
+  </section>
+
+  <section class="page" id="p1">
+    <h1>🫧 光之泡泡・跟著它呼吸</h1>
+    <div class="sub">泡泡變大就吸氣，變小就慢慢吐氣，三次</div>
+    <div class="bubwrap"><div class="ring"></div><div class="bubble" id="bub"></div></div>
+    <div class="cue" id="cue">準備好了嗎？</div>
+    <div class="rounds" id="rounds"><i></i><i></i><i></i></div>
+    <div class="ctrl"><button class="btn go big" id="startBreath">▶ 開始</button><button class="btn ghost" id="skipBreath">跳過</button></div>
+  </section>
+
+  <section class="page" id="p2">
+    <h1 id="planTitle">🗺️ 今天要做什麼</h1>
+    <div class="sub" id="planSub">做完一項，畫面底下會打勾一項</div>
+    <div class="plan" id="plan"></div>
+    <div class="ctrl"><button class="btn go big" id="goBtn">🚀 出發！</button></div>
+  </section>
+
+  <section class="page" id="p3">
+    <h1>🌙 下課前・心情再打卡</h1>
+    <div class="sub">上完課，現在心情怎麼樣？點一張臉</div>
+    <div class="moods" id="moods2"></div>
+    <div class="bars" id="bars2"></div>
+    <div class="note" id="cmp"></div>
+    <div class="ctrl"><button class="btn go big" id="finish">✅ 今天完成，蓋章！</button></div>
+  </section>
+  <footer>🧘 開場／收尾儀式　｜　自然課固定流程　｜　竹東國中自然科</footer>
+</div>
+<script src="fx.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const MOODS=[["😄","很好"],["🙂","還可以"],["😐","普通"],["😴","有點累"],["😟","不太好"],["🤫","不想說"]];
+let AC=null;function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;}
+function tone(f,d,t0,vol){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(t0||0);o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol||.1,t+.05);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.05);}
+const tap=()=>tone(880,.15,0,.06),chimeUp=()=>{[523,659,784].forEach((f,i)=>tone(f,.9,i*.25,.06));},chimeDown=()=>{[784,659,523].forEach((f,i)=>tone(f,1.1,i*.35,.06));},chimeOk=()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.5,i*.12,.08));};
+const END=location.hash==="#end";
+const today=new Date().toISOString().slice(0,10);
+function load(k){try{return JSON.parse(localStorage.getItem(k)||"null");}catch(e){return null;}}
+let c1=load("mood-"+today)||MOODS.map(()=>0),c2=load("mood2-"+today)||MOODS.map(()=>0);
+function renderMoods(host,bars,counts,key){$(host).innerHTML=MOODS.map((m,i)=>`<div class="mood" data-i="${i}"><span>${m[0]}</span>${m[1]}</div>`).join("");
+  const draw=()=>{const mx=Math.max(1,...counts);$(bars).innerHTML=MOODS.map((m,i)=>`<div class="bar"><b>${counts[i]||""}</b><i style="height:${counts[i]/mx*100}%"></i><small>${m[0]}</small></div>`).join("");};draw();
+  $(host).querySelectorAll(".mood").forEach(el=>el.onclick=()=>{const i=+el.dataset.i;counts[i]++;localStorage.setItem(key,JSON.stringify(counts));el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");tap();FX.emojiBurst(MOODS[i][0],6,innerWidth/2,innerHeight*.4);draw();if(END)compare();});}
+function goto(n){[0,1,2,3].forEach(k=>$("p"+k).classList.toggle("show",k===n));[0,1,2].forEach(k=>{$("st"+k).className=k<n?"done":k===n?"on":"";});scrollTo(0,0);}
+renderMoods("moods","bars",c1,"mood-"+today);
+$("toBreath").onclick=()=>{tap();goto(1);};
+/* 泡泡呼吸：吸 4s → 停 2s → 吐 6s，三輪 */
+let breathing=false;
+function breathe(){if(breathing)return;breathing=true;$("startBreath").style.display="none";const b=$("bub"),cue=$("cue");let r=0;
+  function round(){if(r>=3){cue.textContent="很好，準備好了 ✨";b.style.transition="transform 1s";b.style.transform="scale(1)";chimeOk();FX.confetti(30);breathing=false;setTimeout(()=>goto(2),1600);return;}
+    document.querySelectorAll("#rounds i")[r].classList.add("on");
+    cue.textContent="吸氣…… 🌬️";b.style.transition="transform 4s ease-in-out";b.style.transform="scale(2.3)";chimeUp();document.body.style.background="radial-gradient(120% 80% at 50% -10%,rgba(120,200,255,.28),transparent 55%),linear-gradient(165deg,#05101f,#0a2036 55%,#0e3350)";
+    setTimeout(()=>{cue.textContent="停一下…… ✋";},4000);
+    setTimeout(()=>{cue.textContent="慢慢吐氣…… 🫧";b.style.transition="transform 6s ease-in-out";b.style.transform="scale(1)";chimeDown();document.body.style.background="";},6000);
+    setTimeout(()=>{r++;round();},12500);}
+  round();}
+$("startBreath").onclick=()=>{ac();breathe();};$("skipBreath").onclick=()=>{tap();goto(2);};
+/* 今天要做什麼：讀主入口的流程 */
+let flow=load("flow");if(flow&&Date.now()-flow.t>12*3600*1000)flow=null;
+const ICON=s=>/簡報/.test(s)?"🖥️":/影片|🎬/.test(s)?"🎬":/學習單|列印/.test(s)?"📝":/相機/.test(s)?"📷":/搶答|闖關|列車|遊戲|挑戰|大富翁/.test(s)?"🎮":/儀式|心情/.test(s)?"🧘":/實驗|魔法|舞臺|關卡|結案/.test(s)?"🔬":"⭐";
+const items=flow?flow.steps.filter(s=>!/儀式/.test(s.label)):[{label:"看簡報"},{label:"動手做"},{label:"玩遊戲"},{label:"學習單"}];
+$("plan").innerHTML=items.slice(0,6).map((s,i)=>`<div class="pl"><b>${i+1}</b><span>${ICON(s.label)}</span>${s.label.replace(/^🎬 /,"").slice(0,14)}</div>`).join("");
+if(flow)$("planTitle").textContent="🗺️ "+flow.title+"・今天要做什麼";
+$("goBtn").onclick=()=>{chimeOk();FX.confetti(60);setTimeout(()=>{if(flow){const i=(flow.i||0)+1;const nx=flow.steps[i];if(nx){flow.i=i;localStorage.setItem("flow",JSON.stringify(flow));if(/gamma\.app|youtube\.com|\.docx$/i.test(nx.url)){window.open(nx.url,"_blank");location.href="/light/";}else location.href=nx.url;return;}}location.href="/light/";},700);};
+/* 收尾 */
+function compare(){const s1=c1.reduce((p,q)=>p+q,0),s2=c2.reduce((p,q)=>p+q,0);const good=a=>a[0]+a[1];if(!s1||!s2){$("cmp").textContent="";return;}
+  const d=good(c2)/s2-good(c1)/s1;$("cmp").textContent=d>0.05?"🌈 比上課前更多人心情變好了！":d<-0.05?"今天有點累，沒關係，下次會更好":"心情跟上課前差不多，穩穩的";}
+if(END){goto(3);renderMoods("moods2","bars2",c2,"mood2-"+today);compare();}
+$("finish").onclick=()=>{chimeOk();FX.stamp&&FX.stamp({text:"今天完成"});FX.confetti(80);setTimeout(()=>{if(FX.flowEnd)FX.flowEnd();},1200);};
+</script>
+</body>
+</html>
