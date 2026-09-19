@@ -66,7 +66,8 @@ const tag = (st) => `<span class="tag ${STATUS[st][1]}">${STATUS[st][0]}</span>`
 function renderLogin(err = '') {
   $('#savebar').hidden = true;
   if (!API_URL) {
-    view.innerHTML = '<div class="card login"><h2>後台尚未設定</h2><p>請管理者依 backend/部署說明.md 部署 Apps Script，並把網址填入 config.js。</p></div>';
+    view.innerHTML = `<div class="card login"><h2>後台尚未啟用</h2><p>登打功能需要先完成一次「Apps Script 部署」（約 5 分鐘），做完後這裡就會出現登入畫面。</p>
+      <ol style="margin:12px 0 0 18px;line-height:1.8"><li>打開雲端硬碟「115適應體育」資料夾的試算表「115第23屆適應體育 成績資料庫」</li><li>擴充功能 → Apps Script → 貼上「Code.gs.txt」內容 → 儲存</li><li>選 setup → 執行 → 授權</li><li>部署 → 新增部署作業 → 網頁應用程式（執行身分：我；存取：任何人）→ 部署</li><li>把網址傳給 Claude 填入網站</li></ol></div>`;
     return;
   }
   view.innerHTML = `<div class="card login"><h2>工作人員登入</h2><p class="help">輸入管理者給您的認證碼，不需要帳號或 Email。</p>

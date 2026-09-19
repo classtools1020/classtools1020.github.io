@@ -11,7 +11,12 @@ const DIVISIONS = [
   { id: 2, code: 'junior', name: '國中組', award_places: 3, spirit_places: 3 },
 ];
 const KNOCKOUT = ['沙包投擲賽'];
+// 115 計畫的競賽項目（固定；資料尚未載入時也先顯示，狀態為「成績尚未公告」）
+const ITEMS = ['探囊取物大奔走(男)', '探囊取物大奔走(女)', '階梯球', '速速配', '顆星連珠', '弓箭標靶', '草地投籃', '九宮格', '舀杯高手', '看你多搖擺', '目標一致', '沙包投擲賽', '精神總錦標'];
 const $ = (s) => document.querySelector(s);
+function emptyData() {
+  return { announcement: '', divisions: DIVISIONS, items: ITEMS.map((name, i) => ({ id: i + 1, name, kind: name === '精神總錦標' ? 'spirit' : KNOCKOUT.includes(name) ? 'knockout' : 'ranked', score_unit: null })), results: [] };
+}
 
 const state = { data: null, lastText: null, changedAt: null, divisionId: 1, itemId: '', query: '', view: 'list', lastOk: null, failing: false };
 try { state.view = localStorage.getItem('asr115:view') || 'list'; } catch { /* ignore */ }
@@ -118,7 +123,7 @@ async function fetchResults() {
   catch { return setFailure('無法連線'); }
   if (!res.ok) return setFailure(`回應 ${res.status}`);
   const text = await res.text();
-  if (text.trim().startsWith('<')) return setFailure('試算表尚未開放「知道連結的任何人可檢視」');
+  if (text.trim().startsWith('<')) { state.failing = false; renderStatus(); return; }
   if (text !== state.lastText) {
     state.lastText = text;
     state.changedAt = new Date();
@@ -156,6 +161,7 @@ function setFailure(msg) {
 }
 function renderStatus() {
   const el = $('#update-status');
+  if (!API_URL && !srcOverride) { el.innerHTML = '<span class="dot wait"></span>後台尚未啟用，成績公布後將顯示於此'; return; }
   if (state.failing) el.innerHTML = '<span class="dot err"></span>更新失敗';
   else if (state.data?.results.length) el.innerHTML = `<span class="dot"></span>最後更新：${fmtTime(state.changedAt)}　<span class="help">每 20 秒自動檢查</span>`;
   else el.innerHTML = '<span class="dot"></span>目前尚無已公布成績　<span class="help">每 20 秒自動檢查</span>';
@@ -269,5 +275,7 @@ $('#btn-copy-url').addEventListener('click', async () => {
 document.addEventListener('visibilitychange', () => { if (!document.hidden) fetchResults(); });
 window.addEventListener('online', fetchResults);
 
+state.data = emptyData();
+renderAll();
 fetchResults();
 setInterval(fetchResults, POLL_MS);
