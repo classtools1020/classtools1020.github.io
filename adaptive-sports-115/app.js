@@ -1,6 +1,7 @@
 /* 成績公告頁。資料來源：Google 試算表「競賽紀錄總表（成績登打）」，格式與紙本紀錄總表相同：
  * 每個組別一個區塊，列＝項目，欄＝第一名（學校、成績）… 最右欄「公布」打 V 才顯示。 */
-import { renderResultsTable, renderSpiritList, renderRankCell, esc, fmtTime, FLAG_SVG } from './results-table.js';
+import { renderResultsTable, renderSpiritList, esc, fmtTime, FLAG_SVG } from './results-table.js';
+import { API_URL as CONFIG_API } from './config.js';
 
 const SHEET_ID = '1fmH2pcOlCmnwuMq2v0_FGvCwq513Dyk3hflEJ8oixMY';
 const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
@@ -14,7 +15,9 @@ const $ = (s) => document.querySelector(s);
 
 const state = { data: null, lastText: null, changedAt: null, divisionId: 1, itemId: '', query: '', view: 'list', lastOk: null, failing: false };
 try { state.view = localStorage.getItem('asr115:view') || 'list'; } catch { /* ignore */ }
-const srcOverride = ['localhost', '127.0.0.1'].includes(location.hostname) ? new URLSearchParams(location.search).get('src') : null;
+const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+const srcOverride = isLocal ? new URLSearchParams(location.search).get('src') : null;
+const API_URL = (isLocal && new URLSearchParams(location.search).get('api')) || CONFIG_API;
 
 // ---------- CSV ----------
 function parseCsv(text) {
@@ -90,8 +93,26 @@ function buildData(text) {
   return { announcement, divisions: DIVISIONS, items, results };
 }
 
+/** 後台（Apps Script）回傳的 JSON 整理成頁面結構。 */
+function buildFromApi(api) {
+  const items = api.items.map((name, i) => ({ id: i + 1, name, kind: name === '精神總錦標' ? 'spirit' : KNOCKOUT.includes(name) ? 'knockout' : 'ranked', score_unit: null }));
+  const results = [];
+  for (const d of DIVISIONS) {
+    for (const it of items) {
+      const rows = api.results.filter((r) => r.division === d.name && r.item === it.name && r.published);
+      if (!rows.length) continue;
+      const count = {};
+      rows.forEach((r) => { count[r.rank] = (count[r.rank] || 0) + 1; });
+      results.push({ division_id: d.id, item_id: it.id, revision: 1, published_at: null,
+        rows: rows.map((r) => ({ rank: Number(r.rank), tied: count[r.rank] > 1, school: r.school, label: '', score: r.score || null, remark: null })).sort((a, b) => a.rank - b.rank) });
+    }
+  }
+  return { announcement: api.announcement || '', divisions: DIVISIONS, items, results, updated_at: api.updated_at || '' };
+}
+
 // ---------- 讀取 ----------
 async function fetchResults() {
+  if (API_URL && !srcOverride) return fetchFromApi();
   let res;
   try { res = await fetch(srcOverride || `${SHEET_CSV}&_=${Date.now()}`, { cache: 'no-store' }); }
   catch { return setFailure('無法連線'); }
@@ -102,6 +123,25 @@ async function fetchResults() {
     state.lastText = text;
     state.changedAt = new Date();
     state.data = buildData(text);
+    renderAll();
+  }
+  setOk();
+}
+async function fetchFromApi() {
+  let res;
+  try { res = await fetch(`${API_URL}${API_URL.includes('?') ? '&' : '?'}action=public&_=${Date.now()}`, { redirect: 'follow' }); }
+  catch { return setFailure('無法連線'); }
+  if (!res.ok) return setFailure(`回應 ${res.status}`);
+  const text = await res.text();
+  let api;
+  try { api = JSON.parse(text); } catch { return setFailure('後台回應格式錯誤'); }
+  if (!api.ok) return setFailure(api.error || '後台錯誤');
+  const key = JSON.stringify([api.results, api.announcement]);
+  if (key !== state.lastText) {
+    state.lastText = key;
+    state.changedAt = api.updated_at ? new Date(api.updated_at.replace(' ', 'T') + '+08:00') : new Date();
+    if (Number.isNaN(state.changedAt.getTime())) state.changedAt = new Date();
+    state.data = buildFromApi(api);
     renderAll();
   }
   setOk();

@@ -343,3 +343,21 @@ table.grid tr.g-spirit .flag { width: 16px; height: 16px; vertical-align: -3px; 
   .hero-sub { background: none; }
   table.grid { min-width: 0; }
 }
+
+/* 登打頁：名次列 */
+.rank-rows { display: grid; gap: 10px; margin: 10px 0 16px; }
+.rank-row { display: grid; grid-template-columns: 84px 1fr; gap: 10px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: #fafbfd; }
+.rank-row.r1 { border-color: #e2c765; background: #fffbea; }
+.rank-row.r2 { border-color: #b9c2cc; background: #f6f7f9; }
+.rank-row.r3 { border-color: #dcae8f; background: #fdf3ec; }
+.rank-label { display: flex; flex-direction: column; align-items: center; gap: 2px; padding-top: 4px; }
+.rank-label .num { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 6px; border: 1px solid var(--line); background: #fff; font-size: 20px; font-weight: 800; color: var(--navy); }
+.rank-row.r1 .num { color: var(--gold); border-color: #e2c765; } .rank-row.r2 .num { color: var(--silver); } .rank-row.r3 .num { color: var(--bronze); border-color: #dcae8f; }
+.rank-label .medal { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.rank-fields { display: grid; gap: 8px; }
+.rank-school { display: flex; gap: 8px; }
+.rank-school select { flex: 1; font-size: 17px; font-weight: 600; }
+.rank-extra { display: flex; gap: 8px; }
+.rank-extra input { flex: 1; }
+@media (min-width: 760px) { .rank-fields { grid-template-columns: 1.4fr 1fr; align-items: start; } .rank-school:not(:first-child) { grid-column: 1; } .rank-extra { grid-column: 2; grid-row: 1; } }
+.editor-head .btn { margin-right: 4px; }
