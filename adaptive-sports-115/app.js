@@ -14,6 +14,7 @@ const KNOCKOUT = ['沙包投擲賽'];
 // 115 計畫的競賽項目（固定；資料尚未載入時也先顯示，狀態為「成績尚未公告」）
 const ITEMS = ['探囊取物大奔走(男)', '探囊取物大奔走(女)', '階梯球', '速速配', '顆星連珠', '弓箭標靶', '草地投籃', '九宮格', '舀杯高手', '看你多搖擺', '目標一致', '沙包投擲賽', '精神總錦標'];
 const $ = (s) => document.querySelector(s);
+const editLink = (d, item) => `<a class="btn btn-sm btn-ghost edit-link no-print" href="staff.html?division=${encodeURIComponent(d.name)}&item=${encodeURIComponent(item.name)}&from=public" aria-label="登打 ${esc(d.name)} ${esc(item.name)}">✎ 登打</a>`;
 function emptyData() {
   return { announcement: '', divisions: DIVISIONS, items: ITEMS.map((name, i) => ({ id: i + 1, name, kind: name === '精神總錦標' ? 'spirit' : KNOCKOUT.includes(name) ? 'knockout' : 'ranked', score_unit: null })), results: [] };
 }
@@ -214,11 +215,11 @@ function renderList(d, q) {
     any = true;
     if (item.kind === 'spirit') {
       blocks.push(`<section class="section spirit" aria-labelledby="item-${item.id}">
-        <div class="section-head"><h2 id="item-${item.id}">${FLAG_SVG}${esc(item.name)}<span class="visually-hidden">（${esc(d.name)}）</span></h2><span class="tag tag-navy">前 ${d.spirit_places} 名頒錦旗</span></div>
+        <div class="section-head"><h2 id="item-${item.id}">${FLAG_SVG}${esc(item.name)}<span class="visually-hidden">（${esc(d.name)}）</span></h2><span class="tag tag-navy">前 ${d.spirit_places} 名頒錦旗</span><span class="meta">${editLink(d, item)}</span></div>
         ${renderSpiritList({ rows, division: d, query: q })}</section>`);
     } else {
       blocks.push(`<section class="section" aria-labelledby="item-${item.id}">
-        <div class="section-head"><h2 id="item-${item.id}">${esc(item.name)}</h2>${item.kind === 'knockout' ? '<span class="tag">單淘汰賽</span>' : ''}</div>
+        <div class="section-head"><h2 id="item-${item.id}">${esc(item.name)}</h2>${item.kind === 'knockout' ? '<span class="tag">單淘汰賽</span>' : ''}<span class="meta">${editLink(d, item)}</span></div>
         ${renderResultsTable({ rows, division: d, item, query: q })}</section>`);
     }
   }
@@ -241,7 +242,7 @@ function renderGrid(d, q) {
       if (!hits.length) return `<td class="g-cell">${published ? '' : '<span class="g-pending">未公告</span>'}</td>`;
       return `<td class="g-cell">${hits.map((x) => `<div class="g-school">${q && x.school.includes(q) ? `<mark>${esc(x.school)}</mark>` : esc(x.school)}${x.tied ? '<span class="tag">並列</span>' : ''}</div>${x.score ? `<div class="g-score">${esc(x.score)}</div>` : ''}`).join('')}</td>`;
     }).join('');
-    return `<tr class="${item.kind === 'spirit' ? 'g-spirit' : ''}"><th scope="row">${item.kind === 'spirit' ? FLAG_SVG : ''}${esc(item.name)}</th>${cells}</tr>`;
+    return `<tr class="${item.kind === 'spirit' ? 'g-spirit' : ''}"><th scope="row">${item.kind === 'spirit' ? FLAG_SVG : ''}${esc(item.name)}<br>${editLink(d, item)}</th>${cells}</tr>`;
   }).join('');
   return `<section class="section" aria-label="${esc(d.name)}競賽紀錄總表">
     <div class="section-head"><h2>${esc(d.name)}　競賽紀錄總表</h2><span class="meta">只顯示已公布項目；前三名以金、銀、銅標示</span></div>
