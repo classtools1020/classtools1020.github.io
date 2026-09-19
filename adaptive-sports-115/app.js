@@ -2,6 +2,7 @@
  * 每個組別一個區塊，列＝項目，欄＝第一名（學校、成績）… 最右欄「公布」打 V 才顯示。 */
 import { renderResultsTable, renderSpiritList, esc, fmtTime, FLAG_SVG } from './results-table.js';
 import { backend, loadPublic } from './api.js';
+import { confetti } from './celebrate.js';
 
 const SHEET_ID = '1fmH2pcOlCmnwuMq2v0_FGvCwq513Dyk3hflEJ8oixMY';
 const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
@@ -169,10 +170,12 @@ const currentDivision = () => DIVISIONS.find((d) => d.id === state.divisionId) |
 
 function trackNew() {
   const now = Date.now();
+  let fresh = 0;
   for (const r of state.data.results) {
     const key = `${r.division_id}:${r.item_id}:${JSON.stringify(r.rows)}`;
-    if (!state.seen.has(key)) state.seen.set(key, state.firstLoad ? 0 : now);
+    if (!state.seen.has(key)) { state.seen.set(key, state.firstLoad ? 0 : now); if (!state.firstLoad) fresh++; }
   }
+  if (fresh && !document.hidden) confetti();
   state.firstLoad = false;
 }
 function isNew(r) {
