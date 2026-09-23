@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050914">
+<title>中秋月光大搶答</title>
+<style>
+  :root{--gold:#ffd66b;--gold2:#ffb238;--ink:#f3f7ff;--dim:#9fb2d4;--line:rgba(150,180,230,.25);--ok:#47e08a;--no:#ff8a7a;--red:#ff6b6b;--blue:#5aa8ff}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:var(--ink);min-height:100vh;letter-spacing:.04em;overflow-x:hidden;
+    background:radial-gradient(70% 50% at 85% 5%,rgba(255,214,107,.16),transparent 60%),linear-gradient(175deg,#03060f,#081230 60%,#0d1b3d)}
+  #stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .top{position:relative;z-index:2;display:flex;align-items:center;gap:10px;padding:10px 14px}
+  .top a{font-weight:900;font-size:16px;color:var(--ink);background:#15264a;border:2px solid var(--line);border-radius:12px;padding:8px 12px;text-decoration:none}
+  h1{flex:1;text-align:center;margin:0;font-size:clamp(28px,4vw,44px)}
+  h1 img{width:1.2em;height:1.2em;vertical-align:-.25em}
+  main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 16px 40px}
+  .teams{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:6px 0 16px}
+  .team{display:flex;align-items:center;gap:14px;border-radius:22px;padding:12px 18px;background:#101d3a;border:4px solid var(--line);transition:all .3s}
+  .team.on{transform:scale(1.03);box-shadow:0 0 30px rgba(255,214,107,.45);border-color:var(--gold)}
+  .team img{width:64px;height:64px}
+  .team .nm{font-size:30px;font-weight:900;flex:1}
+  .team .pts{font-size:54px;font-weight:900;min-width:90px;text-align:center}
+  .team.a .pts{color:var(--red)}.team.b .pts{color:var(--blue)}
+  .team .turn{font-size:18px;font-weight:900;color:var(--gold);visibility:hidden}.team.on .turn{visibility:visible}
+  .pm button{display:block;width:40px;height:32px;margin:3px 0;border-radius:10px;border:2px solid var(--line);background:#1a2c55;color:#fff;font-size:20px;font-weight:900;cursor:pointer}
+  .board{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .tile{aspect-ratio:1.35;border-radius:22px;border:none;cursor:pointer;font:inherit;font-size:clamp(40px,6vw,70px);font-weight:900;color:#1b1300;position:relative;overflow:hidden;
+    background:linear-gradient(160deg,#ffe28a,#ffb238);box-shadow:0 8px 0 #a86a10,0 14px 26px rgba(0,0,0,.45);transition:transform .12s}
+  .tile:hover{transform:translateY(-4px) rotate(-1deg)}
+  .tile::after{content:"";position:absolute;inset:0;background:url(img/moon.jpg) center/140%;opacity:.13;mix-blend-mode:multiply}
+  .tile.used{background:#17284d;color:#4c5f86;box-shadow:none;cursor:default;transform:none}
+  .tile.used::after{display:none}
+  /* overlay */
+  .ov{position:fixed;inset:0;z-index:50;background:rgba(2,4,12,.9);display:none;align-items:center;justify-content:center;padding:16px}
+  .ov.on{display:flex;animation:pop .35s}
+  @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+  .qbox{width:min(1100px,100%);max-height:96vh;overflow:auto;background:linear-gradient(160deg,#16264d,#0c1633);border:3px solid var(--gold);border-radius:28px;padding:22px}
+  .qhead{display:flex;align-items:center;gap:14px}
+  .qhead img{width:74px;height:74px}
+  .qtag{font-size:20px;font-weight:900;color:var(--gold)}
+  .qtext{font-size:clamp(32px,4vw,50px);font-weight:900;line-height:1.3}
+  .qimg{display:block;max-height:34vh;max-width:100%;margin:12px auto;border-radius:20px;border:2px solid var(--line)}
+  .opts{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .opt{font:inherit;cursor:pointer;min-width:220px;flex:1;max-width:340px;border-radius:22px;border:4px solid var(--line);background:#0d1834;color:var(--ink);padding:14px;font-size:clamp(24px,2.8vw,32px);font-weight:900;text-align:center;transition:transform .1s}
+  .opt:hover{transform:translateY(-3px);border-color:var(--gold)}
+  .opt .ph{height:130px;border-radius:14px;background:#000 center/cover;margin-bottom:8px}
+  .opt canvas{display:block;margin:0 auto 8px;width:130px;height:130px}
+  .opt .em{font-size:52px;display:block;letter-spacing:.08em}
+  .opt.right{border-color:var(--ok);background:rgba(71,224,138,.18);box-shadow:0 0 30px rgba(71,224,138,.5)}
+  .opt.wrong{border-color:var(--no);opacity:.55;animation:shake .35s}
+  @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .fb{font-size:28px;font-weight:900;text-align:center;min-height:44px;margin-top:14px}
+  .fb .term{display:inline-block;font-size:.7em;color:#7cc8ff;border:2px solid rgba(124,200,255,.5);border-radius:10px;padding:1px 10px;margin-left:8px}
+  .row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .btn{font:inherit;font-weight:900;font-size:24px;border:none;border-radius:18px;padding:12px 24px;cursor:pointer;color:#1b1300;background:linear-gradient(180deg,var(--gold),var(--gold2));box-shadow:0 6px 0 #a86a10}
+  .btn.ghost{background:#17284d;color:var(--ink);box-shadow:0 6px 0 #0a1530;border:2px solid var(--line)}
+  .celebrate{position:fixed;z-index:80;left:50%;top:45%;transform:translate(-50%,-50%);pointer-events:none;animation:cel 1.8s forwards}
+  .celebrate img{width:min(40vw,260px)}
+  @keyframes cel{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-60%) scale(1)}}
+  /* 月光列車 */
+  .tp{position:fixed;left:0;right:0;top:34%;z-index:90;pointer-events:none;height:170px}
+  .tp .cars{position:absolute;left:100%;top:40px;white-space:nowrap;font-size:84px;animation:tpgo 3.6s linear forwards}
+  .tp .car{display:inline-grid;place-items:center;width:1.25em;height:.95em;margin-left:.08em;border-radius:.16em;background:linear-gradient(180deg,#d8453a,#8e1f18);border:4px solid #ffd66b;vertical-align:middle}
+  .tp .car b{font-size:.6em}
+  .tp .sign{position:absolute;left:50%;top:-60px;transform:translateX(-50%);font-size:clamp(30px,4vw,54px);font-weight:900;color:#1b1300;background:linear-gradient(180deg,#ffe28a,#ffb238);padding:8px 28px;border-radius:999px;white-space:nowrap;box-shadow:0 8px 0 #a86a10;animation:sign 3.6s forwards;opacity:0}
+  @keyframes tpgo{to{transform:translateX(calc(-100vw - 110%))}}
+  @keyframes sign{10%,85%{opacity:1}100%{opacity:0}}
+  @media(max-width:760px){.board{grid-template-columns:repeat(3,1fr)}.teams{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<script src="https://classtools1020.github.io/games/fx.js"></script>
+<div class="top"><a href="index.html">🌕 月光之謎</a><h1><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31b/512.webp" alt=""> 中秋月光大搶答</h1><a href="https://classtools1020.github.io/light/">🗂️ 主選單</a></div>
+<main>
+  <div class="teams">
+    <div class="team a on" id="ta"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f682/512.webp" alt=""><div><div class="nm">火車隊</div><div class="turn">▶ 輪到你們</div></div><div class="pts" id="pa">0</div><div class="pm"><button onclick="pt(0,1)">＋</button><button onclick="pt(0,-1)">－</button></div></div>
+    <div class="team b" id="tb"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.webp" alt=""><div><div class="nm">火箭隊</div><div class="turn">▶ 輪到你們</div></div><div class="pts" id="pb">0</div><div class="pm"><button onclick="pt(1,1)">＋</button><button onclick="pt(1,-1)">－</button></div></div>
+  </div>
+  <div class="board" id="board"></div>
+</main>
+<div class="ov" id="ov"><div class="qbox" id="qbox"></div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const NOTO=c=>`https://fonts.gstatic.com/s/e/notoemoji/latest/${c}/512.webp`;
+const SUN="radial-gradient(circle,#fff8d0 0 18%,#ffcc33 32%,#ff8a00 48%,#1a0a00 72%)";
+const moonImg=new Image();moonImg.src="img/moon.jpg";
+const Q=[
+ {q:"月亮會自己發光嗎？",img:"img/moon.jpg",o:[{t:"會",em:"💡"},{t:"不會",em:"🌑"}],c:1,why:"月亮是石頭，反射太陽光。",term:"反射"},
+ {q:"月亮的光，是從哪裡來的？",o:[{t:"太陽",bg:SUN},{t:"蠟燭",bg:"url(img/candle.jpg)"},{t:"地球",bg:"url(img/earth.jpg)"}],c:0,why:"太陽光照到月亮，再反射到我們眼睛。",term:"光源"},
+ {q:"哪一個「不是」光源？",o:[{t:"太陽",bg:SUN},{t:"蠟燭",bg:"url(img/candle.jpg)"},{t:"月亮",bg:"url(img/moon.jpg)"}],c:2,why:"光源＝自己會發光。月亮只會反射。",term:"光源"},
+ {q:"真的月亮表面是什麼？",img:"img/rock.jpg",o:[{t:"石頭和沙",em:"⛰️"},{t:"起司",em:"🧀"},{t:"燈泡",em:"💡"}],c:0,why:"太空人登陸月球：灰色的石頭和沙。",term:"漫反射"},
+ {q:"中秋節的月亮長什麼樣子？",o:[{t:"眉月",ph:40},{t:"滿月",ph:180},{t:"上弦月",ph:90}],c:1,why:"中秋前後是滿月，圓圓的！",term:"滿月"},
+ {q:"中秋滿月時，誰在中間？",o:[{t:"月亮",em:"☀️🌕🌍"},{t:"地球",em:"☀️🌍🌕"},{t:"太陽",em:"🌍☀️🌕"}],c:1,why:"太陽→地球→月亮排一直線，地球在中間。",term:"月相"},
+ {q:"月亮變形，是被地球的影子擋住嗎？",noto:"1f914",o:[{t:"是",em:"🙆"},{t:"不是",em:"🙅"}],c:1,why:"是我們看到「被照亮的那一半」多或少。（被地球影子擋住＝月食）",term:"月相"},
+ {q:"右半邊亮的半個月亮叫？",o:[{t:"上弦月",ph:90},{t:"下弦月",ph:270},{t:"滿月",ph:180}],c:0,why:"農曆初七、初八，右半邊亮＝上弦月。",term:"上弦月"},
+ {q:"完全看不見月亮的那天叫？",o:[{t:"新月",ph:0},{t:"滿月",ph:180},{t:"眉月",ph:40}],c:0,why:"月亮在太陽和地球中間，亮面背對我們。",term:"新月"},
+ {q:"月光下，地上有我的影子嗎？",img:"img/shadow.jpg",o:[{t:"有",em:"👤"},{t:"沒有",em:"🚫"}],c:0,why:"月光也走直線，被身體擋住就有影子。",term:"光的直進"},
+ {bonus:"🚂 月光列車加速！",pts:3,noto:"1f682"},
+ {bonus:"🎁 中秋禮物！",pts:2,noto:"1f389"}
+];
+let turn=0,scores=[0,0],used=new Set(),cur=null;
+const order=[...Q.keys()].sort(()=>Math.random()-.5);
+function board(){$("#board").innerHTML=order.map((qi,k)=>`<button class="tile ${used.has(qi)?"used":""}" onclick="openQ(${qi},this)">${used.has(qi)?"✓":k+1}</button>`).join("");}
+function setTurn(t){turn=t;$("#ta").classList.toggle("on",t===0);$("#tb").classList.toggle("on",t===1);}
+function pt(t,d){scores[t]=Math.max(0,scores[t]+d);$(t?"#pb":"#pa").textContent=scores[t];if(d>0){try{FX.sound.coin();FX.confetti(40,t?innerWidth*.75:innerWidth*.25,120)}catch(e){}}}
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="zh-TW";u.rate=.9;speechSynthesis.speak(u);}catch(e){}}
+function drawPhase(x,cx,cy,r,a){x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.clip();x.drawImage(moonImg,cx-r*1.02,cy-r*1.02,r*2.04,r*2.04);
+  const k=Math.cos(a*Math.PI/180),wax=(a%360)<180;x.fillStyle="rgba(4,6,14,.9)";x.beginPath();
+  for(let i=0;i<=60;i++){const y=-r+2*r*i/60,s=Math.sqrt(Math.max(0,1-(y/r)**2));x.lineTo(wax?cx-r*s:cx+r*s,cy+y);}
+  for(let i=60;i>=0;i--){const y=-r+2*r*i/60,s=Math.sqrt(Math.max(0,1-(y/r)**2));x.lineTo(wax?cx+r*k*s:cx-r*k*s,cy+y);}
+  x.closePath();x.fill();x.restore();x.strokeStyle="rgba(160,180,220,.4)";x.lineWidth=2;x.beginPath();x.arc(cx,cy,r,0,7);x.stroke();}
+function openQ(qi){if(used.has(qi))return;cur=qi;const it=Q[qi];const who=turn?"火箭隊":"火車隊";try{FX.sound.whoosh()}catch(e){}
+  if(it.bonus){$("#qbox").innerHTML=`<div class="center" style="text-align:center"><img src="${NOTO(it.noto)}" style="width:200px"><div class="qtext">${it.bonus}</div><div class="qtext" style="color:var(--gold)">${who} ＋${it.pts} 分</div><div class="row"><button class="btn" onclick="closeQ(true)">太棒了 ➡</button></div></div>`;
+    $("#ov").classList.add("on");pt(turn,it.pts);train(`${who} ＋${it.pts}！`);return;}
+  const head=`<div class="qhead"><img src="${NOTO(it.noto||"1f914")}" alt=""><div><div class="qtag">${who}・第 ${used.size+1} 題</div><div class="qtext">${it.q}</div></div><button class="btn ghost" style="margin-left:auto;font-size:20px" onclick="say('${it.q}')">🔊</button></div>`;
+  const img=it.img?`<img class="qimg" src="${it.img}" alt="">`:"";
+  const opts=it.o.map((o,k)=>`<button class="opt" onclick="pick(${k},this)">${o.bg?`<div class="ph" style="background:${o.bg} center/cover"></div>`:o.ph!=null?`<canvas width="260" height="260" data-ph="${o.ph}"></canvas>`:o.em?`<span class="em">${o.em}</span>`:""}${o.t}</button>`).join("");
+  $("#qbox").innerHTML=head+img+`<div class="opts">${opts}</div><div class="fb" id="fb"></div><div class="row"><button class="btn ghost" onclick="closeQ(false)">⏭ 跳過／沒人答對</button></div>`;
+  $("#qbox").querySelectorAll("canvas[data-ph]").forEach(c=>drawPhase(c.getContext("2d"),130,130,120,+c.dataset.ph));
+  $("#ov").classList.add("on");say(it.q);}
+function pick(k,el){const it=Q[cur];if(k===it.c){$("#qbox").querySelectorAll(".opt").forEach(o=>o.disabled=true);el.classList.add("right");
+    $("#fb").style.color="var(--ok)";$("#fb").innerHTML=`✅ ${it.why}<span class="term">${it.term}</span>`;
+    try{FX.sound.powerup()}catch(e){}celebrate();pt(turn,1);
+    $("#qbox").querySelector(".row").innerHTML=`<button class="btn" onclick="closeQ(true)">➡ 回到題板</button>`;}
+  else{el.classList.add("wrong");try{FX.sound.wrongsoft()}catch(e){}$("#fb").style.color="var(--no)";$("#fb").textContent="💡 再想一想，換一個試試！";}}
+function celebrate(){const d=document.createElement("div");d.className="celebrate";d.innerHTML=`<img src="${NOTO(["1f973","1f929","1f389"][Math.floor(Math.random()*3)])}" alt="">`;document.body.appendChild(d);
+  try{FX.confetti(120)}catch(e){}setTimeout(()=>d.remove(),1900);}
+function closeQ(){used.add(cur);$("#ov").classList.remove("on");setTurn(1-turn);board();
+  if(used.size===Q.length)setTimeout(end,500);}
+/* 月光列車 */
+let AC;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;}
+function whistle(){const a=ac();if(!a)return;const t=a.currentTime;[[523,659],[587,740]].forEach((p,k)=>p.forEach(f=>{const o=a.createOscillator(),g=a.createGain(),s=t+k*.55;o.type="sine";o.frequency.value=f;o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(.07,s+.05);g.gain.linearRampToValueAtTime(0,s+.5);o.start(s);o.stop(s+.52);}));}
+function train(text){const w=document.createElement("div");w.className="tp";w.innerHTML=`<div class="sign">${text}</div><div class="cars">🚂${["🥮","🌕","🍊","🥮"].map(c=>`<span class="car"><b>${c}</b></span>`).join("")}</div>`;
+  document.body.appendChild(w);whistle();setTimeout(()=>{try{FX.confetti(100)}catch(e){}},800);setTimeout(()=>w.remove(),3800);}
+function end(){const w=scores[0]>scores[1]?"🚂 火車隊獲勝！":scores[1]>scores[0]?"🚀 火箭隊獲勝！":"🤝 平手！兩隊都好棒！";
+  $("#qbox").innerHTML=`<div style="text-align:center"><img src="${NOTO("1f973")}" style="width:180px"><div class="qtext">全部答完！</div><div class="qtext">🚂 ${scores[0]} 分　｜　🚀 ${scores[1]} 分</div><div class="qtext" style="color:var(--gold)">${w}</div>
+    <div class="row"><button class="btn" onclick="try{FX.wheel({title:'🎡 中秋幸運轉盤'})}catch(e){}">🎡 幸運轉盤</button><button class="btn ghost" onclick="location.reload()">🔄 再玩一次</button><a class="btn ghost" style="text-decoration:none" href="index.html">🌕 回月光之謎</a></div></div>`;
+  $("#ov").classList.add("on");train("🎉 中秋快樂！月光大搶答完成");try{FX.fireworks(2500);FX.sound.clear()}catch(e){}}
+/* stars */
+(function(){const c=$("#stars"),x=c.getContext("2d");function r(){c.width=innerWidth;c.height=innerHeight;for(let i=0;i<150;i++){x.fillStyle=`rgba(255,255,255,${Math.random()*.6+.1})`;x.beginPath();x.arc(Math.random()*c.width,Math.random()*c.height,Math.random()*1.4+.2,0,7);x.fill();}}r();addEventListener("resize",r);})();
+board();
+</script>
+</body>
+</html>
