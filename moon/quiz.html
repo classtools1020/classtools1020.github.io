@@ -121,7 +121,8 @@ function openQ(qi){if(used.has(qi))return;cur=qi;const it=Q[qi];const who=turn?"
   const img=it.img?`<img class="qimg" src="${it.img}" alt="">`:"";
   const opts=it.o.map((o,k)=>`<button class="opt" onclick="pick(${k},this)">${o.bg?`<div class="ph" style="background:${o.bg} center/cover"></div>`:o.ph!=null?`<canvas width="260" height="260" data-ph="${o.ph}"></canvas>`:o.em?`<span class="em">${o.em}</span>`:""}${o.t}</button>`).join("");
   $("#qbox").innerHTML=head+img+`<div class="opts">${opts}</div><div class="fb" id="fb"></div><div class="row"><button class="btn ghost" onclick="closeQ(false)">⏭ 跳過／沒人答對</button></div>`;
-  $("#qbox").querySelectorAll("canvas[data-ph]").forEach(c=>drawPhase(c.getContext("2d"),130,130,120,+c.dataset.ph));
+  const drawAll=()=>$("#qbox").querySelectorAll("canvas[data-ph]").forEach(c=>{const x=c.getContext("2d");x.clearRect(0,0,260,260);drawPhase(x,130,130,120,+c.dataset.ph);});
+  if(moonImg.complete&&moonImg.naturalWidth)drawAll();else moonImg.addEventListener("load",drawAll,{once:true});
   $("#ov").classList.add("on");say(it.q);}
 function pick(k,el){const it=Q[cur];if(k===it.c){$("#qbox").querySelectorAll(".opt").forEach(o=>o.disabled=true);el.classList.add("right");
     $("#fb").style.color="var(--ok)";$("#fb").innerHTML=`✅ ${it.why}<span class="term">${it.term}</span>`;
