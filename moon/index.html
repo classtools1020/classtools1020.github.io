@@ -189,7 +189,7 @@
   <div class="hint" id="hint2"></div>
   <div class="bins">
     <div class="bin src" data-bin="src"><h3>☀️ 自己會發光<span class="term">光源</span></h3></div>
-    <div class="bin ref" data-bin="ref"><h3>🪞 靠反射才看得到</h3></div>
+    <div class="bin ref" data-bin="ref"><h3>🌕 靠反射才看得到</h3></div>
   </div>
   <div class="reveal card" id="r2">
     <div class="finale">
@@ -322,11 +322,11 @@ function drawRoom(){const c=$("#room"),x=c.getContext("2d"),W=c.width,H=c.height
   x.save();x.translate(fx,fy);x.rotate(Math.atan2(py-fy,px-fx));x.fillStyle="#3a4150";x.fillRect(-40,-18,110,36);x.fillStyle=room.torch?"#fff6c8":"#6b7383";x.fillRect(66,-24,18,48);x.restore();
   x.fillStyle="#8fa0bd";x.font="bold 30px sans-serif";x.fillText("🔦 手電筒",20,380);
   // 蠟燭
-  const cx0=420,cy0=420;
+  const cx0=520,cy0=560;
   if(room.candle){const g=x.createRadialGradient(cx0,cy0-40,5,cx0,cy0-40,260);g.addColorStop(0,"rgba(255,190,90,.55)");g.addColorStop(1,"rgba(255,160,60,0)");x.fillStyle=g;x.fillRect(0,0,W,H);}
   if(IMG.candle.complete){x.save();x.beginPath();x.roundRect(cx0-80,cy0-110,160,160,20);x.clip();x.filter=room.candle?"none":"brightness(0.12)";
     x.drawImage(IMG.candle,270,200,420,420,cx0-80,cy0-110,160,160);x.restore();x.filter="none";}
-  if(!room.candle){x.fillStyle="#555";x.font="bold 26px sans-serif";x.fillText("（沒點）",cx0-48,cy0+90);}
+  if(!room.candle){x.fillStyle="#555";x.font="bold 26px sans-serif";x.fillText("（沒點）",cx0+95,cy0);}
   // 柚子
   if(IMG.pomelo.complete){x.save();x.beginPath();x.arc(px,py,pr,0,7);x.clip();x.filter=`brightness(${lit})`;x.drawImage(IMG.pomelo,90,70,480,520,px-pr,py-pr*1.08,pr*2,pr*2.16);x.restore();x.filter="none";}
   // 眼睛
@@ -421,7 +421,7 @@ function spin(){if(spinning)return;spinning=true;const s=A,t0=performance.now();
 /* ---------- 5 月光列車 ---------- */
 const ROUNDS=[
   {t:"pick",say:"哪一個是中秋節的月亮？",q:"🔵 哪一個是中秋節的月亮？",opts:[{ph:90,l:"上弦月"},{ph:180,l:"滿月"},{ph:40,l:"眉月"}],ans:1,why:"中秋前後是滿月，圓圓的！"},
-  {t:"pick",say:"月亮自己會發光嗎？",q:"🔵 月亮自己會發光嗎？",opts:[{e:"💡",l:"會"},{e:"🪞",l:"不會，反射太陽光"}],ans:1,why:"月亮是石頭，反射太陽光。"},
+  {t:"pick",say:"月亮自己會發光嗎？",q:"🔵 月亮自己會發光嗎？",opts:[{e:"💡",l:"會"},{e:"🌑",l:"不會，反射太陽光"}],ans:1,why:"月亮是石頭，反射太陽光。"},
   {t:"drag",say:"把月亮拖到看不見月亮的位置，新月。",q:"🟠 把月亮拖到「看不見月亮」的位置（新月）",target:0,why:"月亮在太陽和地球中間，亮面朝太陽，背對我們 → 看不見。"},
   {t:"pick",say:"中秋節滿月的時候，誰在中間？",q:"🟠 中秋滿月時，誰在中間？",opts:[{e:"☀️ 🌕 🌍",l:"月亮在中間"},{e:"☀️ 🌍 🌕",l:"地球在中間"},{e:"🌍 ☀️ 🌕",l:"太陽在中間"}],ans:1,why:"太陽 → 地球 → 月亮：地球在中間，月亮亮的那面整個朝向我們。"},
   {t:"drag",say:"把月亮拖到上弦月，右半邊亮的位置。",q:"🟠 把月亮拖到「右半邊亮」的位置（上弦月）",target:90,why:"月亮走到四分之一圈，我們看到亮面的一半。"}
