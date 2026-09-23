@@ -27,6 +27,8 @@
   .moods{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;max-width:900px}
   .mood{width:min(28vw,150px);aspect-ratio:1;border-radius:26px;background:var(--panel);border:4px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s,border-color .2s;font-weight:900;font-size:min(4vw,18px)}
   .mood span{font-size:min(16vw,72px);line-height:1}
+  .mood img.nf{width:min(18vw,92px);height:min(18vw,92px);display:block;margin-bottom:4px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));transition:transform .2s}
+  .mood:hover img.nf{transform:scale(1.1)}
   .mood:active{transform:scale(.94)}.mood.tap{border-color:var(--amber);animation:bump .5s}
   @keyframes bump{30%{transform:scale(1.12)}}
   .bars{display:flex;gap:14px;align-items:flex-end;justify-content:center;height:150px;margin-top:20px;width:min(96vw,700px)}
@@ -115,13 +117,25 @@ const END=location.hash==="#end";
 const today=new Date().toISOString().slice(0,10);
 function load(k){try{return JSON.parse(localStorage.getItem(k)||"null");}catch(e){return null;}}
 let c1=load("mood-"+today)||MOODS.map(()=>0),c2=load("mood2-"+today)||MOODS.map(()=>0);
-function renderMoods(host,bars,counts,key){$(host).innerHTML=MOODS.map((m,i)=>`<div class="mood" data-i="${i}"><span>${m[0]}</span>${m[1]}</div>`).join("");
+/* 會動的臉（Google Noto 動態表情，開源授權）＋每種心情專屬音效＋唸出來 */
+const CP={"😄":"1f604","🙂":"1f642","😐":"1f610","😴":"1f634","😟":"1f61f","🤫":"1f92b","👋":"1f44b","✋":"270b","👊":"1f44a","🫶":"1faf6"};
+const face=e=>CP[e]?`<img class="nf" alt="${e}" src="https://fonts.gstatic.com/s/e/notoemoji/latest/${CP[e]}/512.webp" onerror="this.outerHTML='${e}'">`:e;
+function note(f,s,d,ty,v,f2){const a=ac();if(!a)return;const t=a.currentTime+s,o=a.createOscillator(),g=a.createGain();o.type=ty||"triangle";o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+  o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v||.14,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d+.05);}
+function shh(){const a=ac();if(!a)return;const n=Math.floor(a.sampleRate*.7),b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);for(let j=0;j<n;j++)d[j]=(Math.random()*2-1)*Math.sin(Math.PI*j/n)*.3;
+  const s=a.createBufferSource(),h=a.createBiquadFilter();h.type="highpass";h.frequency.value=2500;s.buffer=b;s.connect(h);h.connect(a.destination);s.start();}
+const MSND=[()=>[523,659,784,1047].forEach((f,k)=>note(f,k*.09,.35)),()=>[587,784].forEach((f,k)=>note(f,k*.14,.4)),()=>note(440,0,.45,"sine"),
+  ()=>{note(520,0,1.1,"sine",.12,260);},()=>[392,330].forEach((f,k)=>note(f,k*.25,.5,"sine",.1)),shh];
+const GSND=[()=>[660,880].forEach((f,k)=>note(f,k*.12,.3)),()=>{note(1200,0,.12,"square",.08);note(900,.05,.2)},()=>note(160,0,.25,"sine",.3,80),
+  ()=>[523,659].forEach((f,k)=>note(f,k*.16,.3,"sine")),()=>[784,988,1175].forEach((f,k)=>note(f,k*.1,.45,"sine",.1)),shh];
+function sayW(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="zh-TW";u.rate=.9;speechSynthesis.speak(u);}catch(e){}}
+function renderMoods(host,bars,counts,key){$(host).innerHTML=MOODS.map((m,i)=>`<div class="mood" data-i="${i}"><span>${face(m[0])}</span>${m[1]}</div>`).join("");
   const draw=()=>{const mx=Math.max(1,...counts);$(bars).innerHTML=MOODS.map((m,i)=>`<div class="bar"><b>${counts[i]||""}</b><i style="height:${counts[i]/mx*100}%"></i><small>${m[0]}</small></div>`).join("");};draw();
-  $(host).querySelectorAll(".mood").forEach(el=>el.onclick=()=>{const i=+el.dataset.i;counts[i]++;localStorage.setItem(key,JSON.stringify(counts));el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");tap();FX.emojiBurst(MOODS[i][0],6,innerWidth/2,innerHeight*.4);draw();if(END)compare();});}
+  $(host).querySelectorAll(".mood").forEach(el=>el.onclick=()=>{const i=+el.dataset.i;counts[i]++;localStorage.setItem(key,JSON.stringify(counts));el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");MSND[i]();setTimeout(()=>sayW(MOODS[i][1]),350);FX.emojiBurst(MOODS[i][0],10,innerWidth/2,innerHeight*.4);draw();if(END)compare();});}
 function goto(n){$("pg").classList.toggle("show",n===-1);[0,1,2,3].forEach(k=>$("p"+k).classList.toggle("show",k===n));$("stg").className=n>-1?"done":"on";[0,1,2].forEach(k=>{$("st"+k).className=k<n?"done":k===n?"on":"";});scrollTo(0,0);}
 const GREETS=[["👋","揮手"],["✋","擊掌"],["👊","碰拳"],["🙂","點頭"],["🫶","比愛心"],["🤫","今天不用"]];
-$("greets").innerHTML=GREETS.map((g,i)=>`<div class="mood" data-i="${i}"><span>${g[0]}</span>${g[1]}</div>`).join("");
-$("greets").querySelectorAll(".mood").forEach(el=>el.onclick=()=>{el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");tap();FX.emojiBurst(GREETS[+el.dataset.i][0],6,innerWidth/2,innerHeight*.4);});
+$("greets").innerHTML=GREETS.map((g,i)=>`<div class="mood" data-i="${i}"><span>${face(g[0])}</span>${g[1]}</div>`).join("");
+$("greets").querySelectorAll(".mood").forEach(el=>el.onclick=()=>{el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");const gi=+el.dataset.i;GSND[gi]();setTimeout(()=>sayW(GREETS[gi][1]),300);FX.emojiBurst(GREETS[gi][0],10,innerWidth/2,innerHeight*.4);});
 $("callBtn").onclick=()=>{ac();if(FX.attention)FX.attention();else chimeOk();};
 $("toMood").onclick=()=>{tap();goto(0);};
 renderMoods("moods","bars",c1,"mood-"+today);
