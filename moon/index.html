@@ -152,7 +152,7 @@
       <p class="big">中秋節晚上，<br>月亮亮到地上有影子。</p>
       <p class="big" style="color:var(--gold)">月亮，是一盞燈嗎？</p>
       <p class="dim" style="font-size:20px">Mid-Autumn Moonlight Mystery</p>
-      <div class="row" style="margin-top:18px"><button class="btn" onclick="trainPass('🌕 月光偵探隊 出發！',['🔦','🥮','🌕','🍊']);setTimeout(()=>go(1),3000)">▶ 開始調查</button></div>
+      <div class="row" style="margin-top:18px"><a class="btn ghost" style="text-decoration:none" href="https://www.youtube.com/watch?v=99Q8H1ygkk0" target="_blank" rel="noopener">🎬 月亮升起來了（16秒）</a><button class="btn" onclick="trainPass('🌕 月光偵探隊 出發！',['🔦','🥮','🌕','🍊']);setTimeout(()=>go(1),3000)">▶ 開始調查</button></div>
       <div class="plan"><div><span>🧐</span>猜謎</div><div><span>🔦</span>暗房</div><div><span>🗂️</span>分類</div><div><span>🌓</span>月相</div><div><span>🚂</span>列車</div><div><span>🎉</span>破案</div></div>
     </div>
     <div class="moonimg" role="img" aria-label="滿月照片"></div>
@@ -180,7 +180,7 @@
 <section class="scene" data-name="🔦 線索1">
   <div class="row" style="justify-content:space-between">
     <div><div class="kicker">線索 1｜暗房實驗</div><h2>柚子，自己會亮嗎？</h2></div>
-    <div class="big" style="font-size:24px">🍊 柚子＝假裝是月亮</div>
+    <div class="big" style="font-size:24px">🍊 柚子＝假裝是月亮<br><span class="dim" style="font-size:20px">沒有柚子？用淺色的球、橘子、揉成團的白紙都可以</span></div>
   </div>
   <canvas class="stage" id="room" width="1280" height="620" aria-label="暗房模擬：手電筒、蠟燭、柚子"></canvas>
   <div class="ctrl">
@@ -188,7 +188,7 @@
     <button class="btn ghost" id="bTorch" onclick="room.torch=!room.torch;drawRoom()">🔦 手電筒</button>
     <button class="btn ghost" id="bRays" onclick="room.rays=!room.rays;drawRoom()">➡️ 看光怎麼走</button>
   </div>
-  <div class="center"><button class="btn" onclick="clue(1)">🔍 我發現了！</button></div>
+  <div class="center" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap"><a class="btn ghost" style="text-decoration:none" href="https://www.youtube.com/watch?v=L9WeNTjX9oQ" target="_blank" rel="noopener">🎬 月球的光從哪裡來？（1:03）</a><button class="btn" onclick="clue(1)">🔍 我發現了！</button></div>
   <div class="reveal card" id="r1">
     <p class="big">🕯️ 蠟燭：自己會亮 → <span style="color:var(--gold2)">光源</span><span class="term">光源 light source</span></p>
     <p class="big">🍊 柚子：要有光照到才看得見 → 光<span style="color:var(--aqua)">反射</span>到眼睛<span class="term">反射 reflection</span></p>
@@ -225,7 +225,7 @@
 <section class="scene" data-name="🌓 線索3">
   <div class="kicker">線索 3｜月亮為什麼會變形？</div>
   <h2>拖動月亮，繞地球走一圈</h2>
-  <div class="mission" id="mis">🎯 任務：把月亮拖到「中秋節滿月」的位置！</div>
+  <div style="text-align:right;margin:-4px 0 10px"><a class="btn ghost sm" style="text-decoration:none" href="https://www.youtube.com/watch?v=MdZs8VUiK_0" target="_blank" rel="noopener">🎬 月相怎麼來？（3:57）</a></div><div class="mission" id="mis">🎯 任務：把月亮拖到「中秋節滿月」的位置！</div>
   <div class="sim">
     <div><canvas class="stage" id="orbit" width="820" height="620" aria-label="太陽、地球、月亮的俯視圖，可拖曳月亮"></canvas></div>
     <div class="view card">
@@ -513,7 +513,7 @@ function redrawAll(){if(cur===2)drawRoom();if(cur===4)drawOrbit();if(cur===5&&ga
 
 /* ---------- 老師台詞（speaker notes） ---------- */
 const NOTES=[
-`<h3>🌕 開場（動機 3 分）｜固定開場儀式做完再進來</h3>
+`<h3>🌕 開場（動機 3 分）｜固定開場儀式做完再進來</h3>🎬 先播「滿月初升縮時」（16 秒，全播）：真的月亮從地平線升起，播完問「月亮是一盞燈嗎？」<br>
 <div class="q2">「後天就是中秋節！中秋節晚上的月亮，亮到地上可以看到自己的影子。」（停 3 秒，指月亮照片）<br>「今天我們是光線特勤隊，要破一個案子：<b>月亮，是一盞燈嗎？</b>」</div>
 <b class="bl">🔵</b> 指月亮照片／點頭搖頭　<b class="or">🟠</b> 說出「我覺得月亮___，因為___」<br>
 迷思概念診斷：多數學生以為「月亮會自己發光」「月亮變形是被地球影子遮住」。今天兩個都要破。`,
@@ -522,7 +522,7 @@ const NOTES=[
 等待 5–8 秒讓每位學生反應；無口語學生用指的，老師代按。<b>不要公布答案</b>，按「封起來」。<br>
 預告句：「等一下會把燈關暗一點點做實驗，數 3、2、1 才關。」`,
 `<h3>🔦 線索1 暗房（探索 8 分）｜真實操作＋網頁對照</h3>
-教具：柚子 1 顆、手電筒 1 支、（可選）電子蠟燭。<br>
+教具：柚子 1 顆、手電筒 1 支、（可選）電子蠟燭。<b>沒有柚子</b>：用淺色的球（排球、躲避球、保麗龍球）、橘子、柳丁，或把白紙揉成一團都可以，淺色、圓的就行。<br>🎬 做完暗房後播「月球的光是怎麼來的？」（華視，1:03，全播）：卡通選擇題＋老師講解「行星和衛星都不會自己發光」。<br>
 <div class="q2">「我要關燈了，3、2、1。」（拉窗簾，不必全黑；怕黑的同學可坐安靜角）<br>「現在看得到柚子嗎？」→「開手電筒照它——看得到了！柚子自己會亮嗎？」</div>
 網頁：先全關 → 按蠟燭 → 再按手電筒 → 按「看光怎麼走」。<br>
 <b class="bl">🔵</b> 指出「會自己亮的」（蠟燭）；拿手電筒去照柚子。<b class="or">🟠</b> 說因果句：「因為手電筒的光照到柚子，<b>反射</b>到眼睛，所以看得到。」<br>
@@ -535,7 +535,7 @@ const NOTES=[
 `<h3>🌓 線索3 月相（建構＋應用 10 分）｜真人模擬</h3>
 真人版：一位同學當「地球」站中間（頭＝眼睛），手電筒放教室一側當「太陽」固定不動，另一位拿柚子當「月亮」繞著「地球」慢慢走一圈。<br>
 <div class="q2">「地球看看月亮，亮的地方變多還是變少？」「走到哪裡，柚子整個亮起來？」→ 地球在中間＝滿月。</div>
-網頁：學生上台拖月亮，完成任務「中秋滿月」。按「今天 9/23」→ 盈凸月，「今晚抬頭看，快圓了，還缺一點點」。<br>
+🎬 先播 LIS「月相變化成因」（3:57，全播）：示範日地月模型、從地球視角看被照亮的部分；拖曳前播。<br>網頁：學生上台拖月亮，完成任務「中秋滿月」。按「今天 9/23」→ 盈凸月，「今晚抬頭看，快圓了，還缺一點點」。<br>
 加分知識：俗話「十五的月亮十六圓」——月亮最圓的時刻不一定剛好在十五。<br>
 迷思破解：月亮變形<b>不是</b>被地球影子擋住（那是月食），是我們看到「被太陽照亮的那一半」多或少。<br>
 專有名詞：<b>月相</b>、<b>公轉</b>、上弦月、下弦月、新月、滿月。`,
