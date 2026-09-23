@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中秋月光之謎｜學習單</title>
+<style>
+  @page{size:A4;margin:12mm}
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9edf3;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;color:#111;letter-spacing:.06em}
+  .bar{position:sticky;top:0;background:#0b1630;color:#fff;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:5}
+  .bar button,.bar a{font:inherit;font-weight:900;font-size:18px;border:none;border-radius:10px;padding:8px 14px;background:#ffd66b;color:#222;cursor:pointer;text-decoration:none}
+  .page{width:210mm;min-height:297mm;margin:14px auto;background:#fff;padding:12mm;box-shadow:0 4px 18px rgba(0,0,0,.18);page-break-after:always;font-size:24pt}
+  .page:last-child{page-break-after:auto}
+  h1{font-size:28pt;margin:0 0 4mm;display:flex;justify-content:space-between;align-items:center}
+  h1 small{font-size:14pt;font-weight:700}
+  .tag{display:inline-block;font-size:16pt;font-weight:900;border-radius:8px;padding:1mm 4mm;color:#fff}
+  .b{background:#1768c4}.o{background:#d97a00}.k{background:#333}
+  .name{font-size:16pt;margin-bottom:4mm}
+  .q{margin:5mm 0 2mm;font-weight:900}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm}
+  .cell{border:1.2mm solid #bbb;border-radius:4mm;text-align:center;padding:2mm;font-weight:900}
+  .cell .im{height:30mm;border-radius:3mm;background:#000 center/cover;margin-bottom:1mm}
+  .cell canvas{width:30mm;height:30mm;display:block;margin:0 auto 1mm}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .line{border-bottom:.6mm solid #333;display:inline-block;min-width:38mm}
+  .choice{display:inline-block;border:.6mm solid #333;border-radius:3mm;padding:0 3mm;margin:0 1mm;font-size:20pt}
+  .lineup{font-size:28pt}
+  .ans{color:#c0392b;font-weight:900}
+  .note{font-size:13pt;color:#555;letter-spacing:0}
+  @media print{body{background:#fff}.bar{display:none}.page{margin:0;box-shadow:none;width:auto;min-height:auto;padding:0}}
+</style>
+</head>
+<body>
+<div class="bar"><button onclick="print()">🖨️ 列印（A4）</button><a href="index.html">⬅ 回月光之謎</a><span style="font-size:15px">第1頁 🔵　第2頁 🟠　第3頁 答案卡（老師用，另張）</span></div>
+
+<div class="page">
+  <h1>🌕 中秋月光之謎 <span class="tag b">🔵 操作</span></h1>
+  <div class="name">名字：＿＿＿＿＿＿　日期：9/23</div>
+  <div class="q">1. 圈出「自己會發光」的 ⭕</div>
+  <div class="grid">
+    <div class="cell"><div class="im" style="background:radial-gradient(circle,#fff8d0 0 18%,#ffcc33 32%,#ff8a00 48%,#1a0a00 72%)"></div>太陽</div>
+    <div class="cell"><div class="im" style="background-image:url(img/candle.jpg)"></div>蠟燭</div>
+    <div class="cell"><div class="im" style="background-image:url(img/moon.jpg)"></div>月亮</div>
+    <div class="cell"><div class="im" style="background-image:url(img/pomelo.jpg)"></div>柚子</div>
+  </div>
+  <div class="q">2. 圈出「中秋節的月亮」⭕</div>
+  <div class="grid g3">
+    <div class="cell"><canvas data-ph="40" width="240" height="240"></canvas>眉月</div>
+    <div class="cell"><canvas data-ph="180" width="240" height="240"></canvas>滿月</div>
+    <div class="cell"><canvas data-ph="90" width="240" height="240"></canvas>上弦月</div>
+  </div>
+  <div class="q">3. 月亮的光從哪裡來？圈一個 ⭕</div>
+  <div class="grid g3">
+    <div class="cell"><div class="im" style="background:radial-gradient(circle,#fff8d0 0 18%,#ffcc33 32%,#ff8a00 48%,#1a0a00 72%)"></div>太陽</div>
+    <div class="cell"><div class="im" style="background-image:url(img/earth.jpg)"></div>地球</div>
+    <div class="cell"><div class="im" style="background-image:url(img/candle.jpg)"></div>蠟燭</div>
+  </div>
+  <p class="note">可用指認、貼紙、點頭代替圈選。概念、反應方式、提示層級分開記錄。</p>
+</div>
+
+<div class="page">
+  <h1>🌕 中秋月光之謎 <span class="tag o">🟠 推理</span></h1>
+  <div class="name">名字：＿＿＿＿＿＿　日期：9/23</div>
+  <div class="q">1. 圈出正確的詞，完成句子：</div>
+  <div>月亮<span class="choice">會</span><span class="choice">不會</span>自己發光，<br>我們看得到月亮，是因為月亮<br><span class="choice">反射</span><span class="choice">折射</span><span class="choice">吸收</span>了太陽光。</div>
+  <div class="q">2. 中秋滿月時，誰在中間？圈起來 ⭕</div>
+  <div class="grid g3">
+    <div class="cell lineup">☀️🌕🌍</div><div class="cell lineup">☀️🌍🌕</div><div class="cell lineup">🌍☀️🌕</div>
+  </div>
+  <div class="q">3. 連連看：</div>
+  <div class="grid">
+    <div class="cell"><canvas data-ph="180" width="240" height="240"></canvas></div>
+    <div class="cell"><canvas data-ph="90" width="240" height="240"></canvas></div>
+    <div class="cell"><canvas data-ph="270" width="240" height="240"></canvas></div>
+    <div class="cell"><canvas data-ph="40" width="240" height="240"></canvas></div>
+  </div>
+  <div class="grid" style="margin-top:6mm">
+    <div class="cell">下弦月</div><div class="cell">滿月</div><div class="cell">眉月</div><div class="cell">上弦月</div>
+  </div>
+  <div class="q">4. 中秋夜在月光下，地上有我的影子嗎？為什麼？</div>
+  <div>有／沒有，因為光走<span class="line"></span>，<br>被我的<span class="line"></span>擋住了。</div>
+</div>
+
+<div class="page">
+  <h1>🔑 答案卡（老師用） <span class="tag k">另張</span></h1>
+  <div class="q">🔵 操作</div>
+  <div>1. 太陽、蠟燭（光源）　2. 滿月　3. 太陽</div>
+  <div class="q">🟠 推理</div>
+  <div>1. 不會；<span class="ans">反射</span><br>2. ☀️🌍🌕 <span class="ans">地球在中間</span><br>3. 滿月—滿月、右半亮—上弦月、左半亮—下弦月、細細的—眉月<br>4. 有；光走<span class="ans">直線</span>，被<span class="ans">身體</span>擋住（光的直進）</div>
+  <p class="note">專有名詞：光源、反射、漫反射、月相、公轉、光的直進。<br>照片：Full Moon © Gregory H. Revera（CC BY-SA 3.0）；NASA（公有領域）；Wikimedia Commons。</p>
+</div>
+
+<script>
+const moon=new Image();moon.src="img/moon.jpg";
+function drawPhase(x,cx,cy,r,a){x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.clip();x.drawImage(moon,cx-r*1.02,cy-r*1.02,r*2.04,r*2.04);
+  const k=Math.cos(a*Math.PI/180),wax=(a%360)<180;x.fillStyle="rgba(10,12,20,.92)";x.beginPath();
+  for(let i=0;i<=60;i++){const y=-r+2*r*i/60,s=Math.sqrt(Math.max(0,1-(y/r)**2));x.lineTo(wax?cx-r*s:cx+r*s,cy+y);}
+  for(let i=60;i>=0;i--){const y=-r+2*r*i/60,s=Math.sqrt(Math.max(0,1-(y/r)**2));x.lineTo(wax?cx+r*k*s:cx-r*k*s,cy+y);}
+  x.closePath();x.fill();x.restore();x.strokeStyle="#888";x.lineWidth=3;x.beginPath();x.arc(cx,cy,r,0,7);x.stroke();}
+moon.onload=()=>document.querySelectorAll("canvas[data-ph]").forEach(c=>drawPhase(c.getContext("2d"),120,120,110,+c.dataset.ph));
+</script>
+</body>
+</html>
