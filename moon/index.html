@@ -114,6 +114,22 @@
   .credit a{color:#8aa3d0}
   @media (max-width:820px){.cover,.sim,.finale{grid-template-columns:1fr}.bins{grid-template-columns:1fr}.flow{display:none}.item{width:130px}}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  .tp{position:fixed;left:0;right:0;top:38%;z-index:60;pointer-events:none;height:170px}
+  .tp .tpcars{position:absolute;left:100%;top:40px;white-space:nowrap;font-size:76px;animation:tpgo 4s linear forwards;filter:drop-shadow(0 10px 18px rgba(0,0,0,.6))}
+  .tp.big .tpcars{font-size:104px}
+  .tp .car{display:inline-grid;place-items:center;width:1.25em;height:.95em;margin-left:.08em;border-radius:.16em;background:linear-gradient(180deg,#d8453a,#8e1f18);border:4px solid #ffd66b;vertical-align:middle;position:relative}
+  .tp .car b{font-size:.62em;line-height:1}
+  .tp .car::after{content:"";position:absolute;bottom:-.2em;left:.12em;right:.12em;height:.22em;background:radial-gradient(circle at 20% 50%,#222 0 .1em,transparent .11em),radial-gradient(circle at 80% 50%,#222 0 .1em,transparent .11em)}
+  .tp .tprail{position:absolute;left:0;right:0;top:150px;height:8px;background:repeating-linear-gradient(90deg,#8a7650 0 16px,#3a2f1e 16px 26px);opacity:0;animation:tprail 4s forwards}
+  .tp.big .tprail{top:170px}
+  .tp .tpsign{position:absolute;left:50%;top:-70px;transform:translateX(-50%) scale(.6);font-size:clamp(32px,4.4vw,58px);font-weight:900;color:#1b1300;background:linear-gradient(180deg,#ffe28a,#ffb238);padding:10px 30px;border-radius:999px;box-shadow:0 8px 0 #a86a10,0 16px 40px rgba(0,0,0,.5);opacity:0;animation:tpsign 4s forwards;white-space:nowrap}
+  @keyframes tpgo{from{transform:translateX(0)}to{transform:translateX(calc(-100vw - 110%))}}
+  @keyframes tprail{8%,85%{opacity:.9}100%{opacity:0}}
+  @keyframes tpsign{10%{opacity:1;transform:translateX(-50%) scale(1.08)}18%,82%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0}}
+  .flytok{position:fixed;z-index:70;font-size:120px;transform:translate(-50%,-50%) scale(1);transition:all 1s cubic-bezier(.5,-0.3,.4,1);pointer-events:none;filter:drop-shadow(0 0 20px #ffd66b)}
+  .plan{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .plan div{flex:1;min-width:92px;text-align:center;background:rgba(21,38,74,.85);border:2px solid var(--line);border-radius:18px;padding:10px 6px;font-weight:900;font-size:20px}
+  .plan div span{display:block;font-size:40px}
 </style>
 </head>
 <body>
@@ -136,7 +152,8 @@
       <p class="big">中秋節晚上，<br>月亮亮到地上有影子。</p>
       <p class="big" style="color:var(--gold)">月亮，是一盞燈嗎？</p>
       <p class="dim" style="font-size:20px">Mid-Autumn Moonlight Mystery</p>
-      <div class="row" style="margin-top:18px"><button class="btn" onclick="go(1)">▶ 開始調查</button></div>
+      <div class="row" style="margin-top:18px"><button class="btn" onclick="trainPass('🌕 月光偵探隊 出發！',['🔦','🥮','🌕','🍊']);setTimeout(()=>go(1),3000)">▶ 開始調查</button></div>
+      <div class="plan"><div><span>🧐</span>猜謎</div><div><span>🔦</span>暗房</div><div><span>🗂️</span>分類</div><div><span>🌓</span>月相</div><div><span>🚂</span>列車</div><div><span>🎉</span>破案</div></div>
     </div>
     <div class="moonimg" role="img" aria-label="滿月照片"></div>
   </div>
@@ -299,9 +316,10 @@ function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtteranc
 function sayScene(){say(cur===5&&game.q?game.q.say:SAY[cur]);}
 
 /* ---------- 1 投票 ---------- */
-const votes=[0,0];function vote(k){votes[k]++;$("#v"+k).textContent=votes[k]+" 票";SFX("pop");}
+const votes=[0,0];function vote(k){votes[k]++;$("#v"+k).textContent=votes[k]+" 票";SFX("pop");try{FX.confetti(25)}catch(e){}}
 function sealEnv(){$("#env").style.display="block";SFX("stamp");setTimeout(()=>go(2),1600);}
-function clue(n){const el=$("#c"+n);if(!el.classList.contains("got")){el.classList.add("got");SFX("powerup");try{FX.confetti(70)}catch(e){}}$("#r"+n).classList.add("on");
+function clue(n){const el=$("#c"+n);if(!el.classList.contains("got")){el.classList.add("got");SFX("powerup");flyToken(n);
+    setTimeout(()=>trainPass(`線索 ${n}／3 到手！`,[el.textContent,"🥮"]),700);}$("#r"+n).classList.add("on");
   setTimeout(()=>$("#r"+n).scrollIntoView({behavior:"smooth",block:"center"}),150);}
 
 /* ---------- 2 暗房 ---------- */
@@ -408,7 +426,7 @@ function drawOrbit(){const c=$("#orbit"),x=c.getContext("2d"),W=c.width,H=c.heig
   x.fillStyle="#ffd66b";x.font="bold 24px sans-serif";x.fillText("✋ 拖我",mx-38,my-mr-16);
   // 右側觀看
   const p=$("#phase").getContext("2d");p.clearRect(0,0,360,360);drawPhase(p,180,180,160,A);
-  $("#phn").textContent=phaseName(A);$("#phd").textContent="約農曆 "+lunarDay(A);
+  {const nm=phaseName(A);if(nm!==lastPh&&lastPh)SFX("blip");lastPh=nm;$("#phn").textContent=nm;}$("#phd").textContent="約農曆 "+lunarDay(A);
   if(!missionDone&&Math.abs(A-180)<20&&!spinning){missionDone=true;$("#mis").classList.add("ok");$("#mis").textContent="✅ 找到了！太陽 → 地球 → 月亮 排一直線 = 滿月";clue(3);}
 }
 function setA(v){A=v;drawOrbit();SFX("blip");}
@@ -431,7 +449,7 @@ function startGame(){game.started=true;game.i=0;const tr=$("#track");tr.querySel
   ROUNDS.forEach((r,i)=>{const s=document.createElement("div");s.className="st";s.id="st"+i;s.style.left=(12+i*19)+"%";s.textContent=i+1;tr.appendChild(s);});moveTrain(0);showRound();}
 function moveTrain(i){$("#train").style.left=(i===0?4:12+(i-1)*19+9)+"%";}
 function showRound(){const r=ROUNDS[game.i];game.q=r;const g=$("#game");
-  if(!r){g.innerHTML=`<div class="q">🎉 月光列車全線通車！</div><div class="center"><button class="btn" onclick="go(6)">✉️ 打開謎案信封 ➡</button></div>`;try{FX.fireworks(2500)}catch(e){}SFX("fanfare");return;}
+  if(!r){g.innerHTML=`<div class="q">🎉 月光列車全線通車！</div><div class="center"><button class="btn" onclick="go(6)">✉️ 打開謎案信封 ➡</button></div>`;SFX("fanfare");trainPass("🎉 月光列車全線通車！",["🥮","🌕","🍊","🥮"],true);return;}
   if(r.t==="pick"){g.innerHTML=`<div class="q">${r.q}</div><div class="opts">${r.opts.map((o,k)=>`<button class="opt" onclick="pick(${k},this)">${o.ph!=null?`<canvas width="200" height="200" data-ph="${o.ph}"></canvas>`:`<div class="lineup">${o.e}</div>`}${o.l}</button>`).join("")}</div><div class="hint" id="gh"></div>`;
     g.querySelectorAll("canvas[data-ph]").forEach(c=>drawPhase(c.getContext("2d"),100,100,90,+c.dataset.ph));}
   else{g.innerHTML=`<div class="q">${r.q}</div><div class="sim"><canvas class="stage" id="orbit2" width="820" height="520"></canvas><div class="view"><canvas id="phase2" width="300" height="300" style="width:100%;max-width:280px"></canvas><div class="phname" id="phn2"></div></div></div><div class="center" style="margin-top:12px"><button class="btn" onclick="checkDrag()">✅ 就是這裡！</button></div><div class="hint" id="gh"></div>`;
@@ -439,7 +457,7 @@ function showRound(){const r=ROUNDS[game.i];game.q=r;const g=$("#game");
   say(r.say);}
 function pick(k,el){const r=ROUNDS[game.i];if(k===r.ans){el.classList.add("right");win(r);}else{el.classList.add("wrong");SFX("wrongsoft");$("#gh").textContent="💡 再想一想，換一個試試！";}}
 function win(r){SFX("coin");$("#gh").style.color="var(--ok)";$("#gh").textContent="✅ "+r.why;$("#st"+game.i).classList.add("got");$("#st"+game.i).textContent="🥮";
-  try{FX.confetti(60)}catch(e){}game.i++;moveTrain(game.i);setTimeout(showRound,2600);}
+  try{FX.confetti(60)}catch(e){}whistle();game.i++;moveTrain(game.i);setTimeout(showRound,2600);}
 function drawOrbit2(){const c=$("#orbit2");if(!c)return;const x=c.getContext("2d"),W=c.width,H=c.height,ex=W*.58,ey=H/2,R=180;
   x.fillStyle="#02040a";x.fillRect(0,0,W,H);const sg=x.createRadialGradient(0,ey,10,0,ey,140);sg.addColorStop(0,"#fff6c0");sg.addColorStop(.35,"#ffc233");sg.addColorStop(1,"rgba(255,140,0,0)");x.fillStyle=sg;x.fillRect(0,0,180,H);
   x.fillStyle="#fff";x.font="bold 26px sans-serif";x.fillText("☀️ 太陽",10,ey+110);
@@ -470,7 +488,26 @@ function drawFinal(t){const c=$("#final"),x=c.getContext("2d"),W=c.width,H=c.hei
   seg(170,170,mx-mr-10,my,"#ffe27a",k*2);seg(mx-mr*.7,my+mr*.6,ex+er+10,ey-20,"#7cc8ff",k*2-1);
   x.fillStyle="#ffe27a";x.font="bold 32px sans-serif";if(k>.3)x.fillText("① 太陽光照到月亮",360,130);x.fillStyle="#7cc8ff";if(k>.8)x.fillText("② 月亮把光反射給我們",790,330);
   if(k<1)requestAnimationFrame(drawFinal);else{SFX("sparkle");}}
-function finish(){try{FX.stamp({text:"破案",onDone:()=>{try{FX.badge({id:"moon-mystery",emoji:"🌕",name:"中秋月光偵探",desc:"破解：月亮不會自己發光"})}catch(e){}}})}catch(e){SFX("stamp");}}
+function finish(){trainPass("🏅 破案成功！中秋快樂",["🥮","🌕","🍊","🏅"],true);setTimeout(finish2,3600);}
+function finish2(){try{FX.stamp({text:"破案",onDone:()=>{try{FX.badge({id:"moon-mystery",emoji:"🌕",name:"中秋月光偵探",desc:"破解：月亮不會自己發光"})}catch(e){}}})}catch(e){SFX("stamp");}}
+
+/* ---------- 🚂 月光列車開過去（汽笛＋轟隆聲＋灑花） ---------- */
+let AC2;function ac2(){if(!AC2){try{AC2=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC2&&AC2.state==="suspended")AC2.resume();return AC2;}
+function whistle(){const a=ac2();if(!a)return;const t=a.currentTime;[[523,659],[587,740]].forEach((pair,k)=>{pair.forEach(f=>{const o=a.createOscillator(),g=a.createGain(),s=t+k*.55;o.type="sine";
+  o.frequency.setValueAtTime(f*.96,s);o.frequency.linearRampToValueAtTime(f,s+.08);o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(.07,s+.05);g.gain.linearRampToValueAtTime(0,s+.5);o.start(s);o.stop(s+.52);});});}
+function chug(sec){const a=ac2();if(!a)return;const t=a.currentTime;for(let i=0;i<sec*4;i++){const n=Math.floor(a.sampleRate*.09),b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);
+  for(let j=0;j<n;j++)d[j]=(Math.random()*2-1)*(1-j/n);const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=b;f.type="lowpass";f.frequency.value=700;
+  g.gain.value=i%2?.05:.09;s.connect(f);f.connect(g);g.connect(a.destination);s.start(t+i*.25);}}
+function trainPass(text,cargo,big){cargo=cargo||["🥮"];const w=document.createElement("div");w.className="tp"+(big?" big":"");
+  w.innerHTML=`<div class="tpsign">${text}</div><div class="tpcars"><span class="eng">🚂</span>${[0,1,2,3].map(i=>`<span class="car"><b>${cargo[i%cargo.length]}</b></span>`).join("")}</div><div class="tprail"></div>`;
+  document.body.appendChild(w);whistle();chug(3.2);setTimeout(()=>{try{FX.confetti(big?140:80)}catch(e){}},900);if(big)setTimeout(()=>{try{FX.fireworks(2200)}catch(e){}},1400);
+  setTimeout(()=>w.remove(),4300);}
+function flyToken(n){const el=$("#c"+n),r=el.getBoundingClientRect();const f=document.createElement("div");f.className="flytok";f.textContent=el.textContent;
+  f.style.left=innerWidth/2+"px";f.style.top=innerHeight/2+"px";document.body.appendChild(f);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.left=r.left+20+"px";f.style.top=r.top+20+"px";f.style.transform="translate(-50%,-50%) scale(.35)";}));
+  setTimeout(()=>{f.remove();el.animate([{transform:"scale(1)"},{transform:"scale(1.7)"},{transform:"scale(1)"}],{duration:500});SFX("sparkle");},1100);}
+let lastPh="";
 
 function redrawAll(){if(cur===2)drawRoom();if(cur===4)drawOrbit();if(cur===5&&game.q&&game.q.t==="drag")drawOrbit2();}
 
