@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>光之呼吸站</title>
+<style>
+  :root{--amber:#ffc93c;--teal:#42e0c8;--aqua:#3ec2ff;--ink:#eaf6ff;--dim:#9db8cf;--card:#0f2841;--line:rgba(120,170,210,.28)}
+  *{box-sizing:border-box}html,body{margin:0}
+  body{font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:var(--ink);min-height:100vh;user-select:none;-webkit-tap-highlight-color:transparent;
+    background:radial-gradient(120% 80% at 50% -10%,rgba(62,194,255,.12),transparent 55%),linear-gradient(165deg,#05101f,#0a2036 55%,#0e3350);padding-bottom:100px}
+  .fixbtn{position:fixed;top:12px;z-index:9000;background:#0f2841;font-weight:900;font-size:16px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);border:2px solid var(--teal);color:var(--teal)}
+  .fixbtn.l{left:12px;border-color:var(--amber);color:var(--amber)}.fixbtn.r{right:12px}
+  .wrap{max-width:1180px;margin:0 auto;padding:62px 16px 30px}
+  h1{text-align:center;font-size:40px;margin:0}.sub{text-align:center;color:var(--aqua);font-weight:900;font-size:22px;margin:4px 0 16px}
+  h2{font-size:24px;margin:18px 0 10px}
+  .zones{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .zone{border:none;border-radius:18px;padding:14px 8px;font:inherit;font-weight:900;font-size:22px;color:#08131f;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.35)}
+  .zone small{display:block;font-size:15px;font-weight:800;opacity:.85;margin-top:4px}
+  .zone.blue{background:#6fb6ff}.zone.green{background:#5fe08a}.zone.yellow{background:#ffd84a}.zone.red{background:#ff7a6b}
+  .zone:active{transform:translateY(3px)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .mode{background:linear-gradient(160deg,#123152,#0c2742);border:3px solid var(--line);border-radius:20px;padding:14px 10px;text-align:center;cursor:pointer;transition:transform .15s,border-color .15s}
+  .mode:hover{transform:translateY(-3px);border-color:var(--amber)}.mode.sug{border-color:var(--amber);box-shadow:0 0 0 4px rgba(255,201,60,.35);animation:glow 1.4s infinite}
+  @keyframes glow{50%{box-shadow:0 0 0 10px rgba(255,201,60,.12)}}
+  .mode .ic{font-size:56px;line-height:1.1}.mode .nm{font-size:24px;font-weight:900;margin-top:4px}.mode .ds{font-size:15px;color:var(--dim);font-weight:800;margin-top:2px}
+  .player{display:none;flex-direction:column;align-items:center}
+  body.play .player{display:flex}body.play .picker{display:none}
+  canvas{width:min(96vw,1040px);aspect-ratio:16/9;border-radius:24px;background:#06121f;display:block;border:3px solid var(--line);touch-action:none}
+  .cue{font-size:min(9vw,54px);font-weight:900;margin:12px 0 4px;min-height:70px;text-align:center}
+  .cnt{font-size:22px;color:var(--amber);font-weight:900;min-height:30px}
+  .ctrl{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+  .btn{font:inherit;font-weight:900;font-size:22px;border:none;border-radius:16px;padding:12px 20px;cursor:pointer;color:#08131f;background:var(--amber);box-shadow:0 5px 0 #b8860b}
+  .btn.ghost{background:#1a2f4f;color:var(--ink);box-shadow:0 5px 0 #0a1626;border:2px solid var(--line)}.btn.teal{background:var(--teal);box-shadow:0 5px 0 #14907f}
+  .btn:active{transform:translateY(3px)}
+  .speed{display:flex;gap:8px;align-items:center;font-weight:900;font-size:18px;justify-content:center;margin-top:12px}
+  .speed button{font:inherit;font-weight:900;border-radius:12px;border:2px solid var(--line);background:#0f2841;color:var(--ink);padding:6px 12px;cursor:pointer}.speed button.on{background:var(--teal);color:#08131f}
+  .tip{max-width:1040px;margin-top:14px;background:#0b1d31;border-left:6px solid var(--teal);border-radius:12px;padding:10px 14px;font-size:17px;font-weight:800;color:#cfe4f5;line-height:1.55}
+  @media(max-width:700px){.zones{grid-template-columns:repeat(2,1fr)}h1{font-size:30px}}
+</style>
+</head>
+<body>
+<a class="fixbtn l" id="backBtn" href="checkin.html">🧘 回心情打卡</a>
+<a class="fixbtn r" href="/light/">🗂️ 主選單</a>
+<div class="wrap">
+  <div class="picker">
+    <h1>🌟 光之呼吸站</h1>
+    <div class="sub">今天想用哪一種呼吸？先選心情的顏色，會亮出推薦</div>
+    <h2>🎨 我現在是什麼顏色？</h2>
+    <div class="zones">
+      <button class="zone blue" data-z="blue">🔵 藍色<small>累累的、難過</small></button>
+      <button class="zone green" data-z="green">🟢 綠色<small>平靜、準備好了</small></button>
+      <button class="zone yellow" data-z="yellow">🟡 黃色<small>緊張、太興奮</small></button>
+      <button class="zone red" data-z="red">🔴 紅色<small>生氣、快爆炸</small></button>
+    </div>
+    <h2>🫧 選一種呼吸</h2>
+    <div class="grid" id="grid"></div>
+    <div class="tip" id="zoneTip">💡 顏色心情參考國外很紅的「調節區 Zones of Regulation」：不管什麼顏色都沒有錯，重點是找到讓自己回到綠色的方法。</div>
+  </div>
+
+  <div class="player">
+    <canvas id="cv" width="1280" height="720"></canvas>
+    <div class="cue" id="cue">準備好了嗎？</div>
+    <div class="cnt" id="cnt"></div>
+    <div class="ctrl" id="ctrl"></div>
+    <div class="speed" id="speed">節奏：<button data-s="1.25">🐢 慢慢</button><button data-s="1" class="on">🙂 剛好</button><button data-s=".8">🐇 短一點</button></div>
+    <div class="tip" id="tip"></div>
+  </div>
+</div>
+<script src="fx.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const cv=$("cv"),g=cv.getContext("2d"),W=1280,H=720,CX=640,CY=360;
+const FONT='"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif';
+if(/from=checkin/.test(location.search)){$("backBtn").href="checkin.html";}
+/* ---------- 聲音：輕柔滑音 ---------- */
+let AC=null;const ac=()=>{if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;};
+function glide(f1,f2,d,v){const a=ac();if(!a)return;const o=a.createOscillator(),gn=a.createGain(),t=a.currentTime;o.type="sine";o.frequency.setValueAtTime(f1,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);
+  gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(v||.06,t+.3);gn.gain.linearRampToValueAtTime(0,t+d);o.connect(gn);gn.connect(a.destination);o.start(t);o.stop(t+d+.05);}
+function tick(f){const a=ac();if(!a)return;const o=a.createOscillator(),gn=a.createGain(),t=a.currentTime;o.type="sine";o.frequency.value=f||660;gn.gain.setValueAtTime(.12,t);gn.gain.exponentialRampToValueAtTime(.001,t+.25);o.connect(gn);gn.connect(a.destination);o.start(t);o.stop(t+.3);}
+function bell(){const a=ac();if(!a)return;const t=a.currentTime;[[528,1,.28],[1060,.5,.12],[1580,.3,.06],[2640,.2,.03]].forEach(([f,d,v])=>{const o=a.createOscillator(),gn=a.createGain();o.type="sine";o.frequency.value=f;
+  gn.gain.setValueAtTime(v,t);gn.gain.exponentialRampToValueAtTime(.0001,t+14*d);o.connect(gn);gn.connect(a.destination);o.start(t);o.stop(t+14*d+.1);});}
+/* ---------- 模式 ---------- */
+const STD=[["in",4,"吸氣……"],["hold",2,"停一下……"],["out",6,"慢慢吐氣……"]];
+const MODES=[
+ {id:"bubble",ic:"🫧",nm:"光之泡泡",ds:"泡泡變大吸、變小吐",rounds:3,ph:STD,tip:"每堂固定的開場。泡泡變大就吸氣，變小就慢慢吐。吐氣比吸氣長，身體會比較放鬆。"},
+ {id:"glow",ic:"💡",nm:"光之呼吸燈",ds:"畫面變亮吸、變暗吐",rounds:3,ph:STD,tip:"關掉教室的燈效果最好。畫面像一盞燈，吸氣時慢慢亮起來，吐氣時慢慢暗下去。"},
+ {id:"ball",ic:"🌐",nm:"呼吸球",ds:"球撐開吸、收起來吐",rounds:3,ph:STD,tip:"模仿國外特教班常用的伸縮呼吸球（Hoberman 球）。教室有實體呼吸球的話，老師拿著真的球一起開合更有感。"},
+ {id:"finger",ic:"✋",nm:"五指呼吸",ds:"手指往上吸、往下吐",rounds:5,ph:[["in",3,"往上，吸氣……"],["out",4,"往下，吐氣……"]],tip:"請學生伸出一隻手，用另一隻手的食指沿著手指描：往上吸、往下吐。五根手指描完就是五次呼吸，有觸覺提示，最好懂。"},
+ {id:"box",ic:"🟦",nm:"方塊呼吸",ds:"畫正方形：吸、停、吐、停",rounds:3,ph:[["in",3,"吸氣……"],["hold",3,"停一下……"],["out",3,"吐氣……"],["hold2",3,"停一下……"]],tip:"方塊呼吸（box breathing），連美國海豹部隊都在用。學生可以伸出手指，在空中跟著畫正方形。"},
+ {id:"rainbow",ic:"🌈",nm:"彩虹呼吸",ds:"手臂畫彩虹往上吸、往下吐",rounds:3,ph:STD,tip:"接任務三：兩隻手從身體旁邊往上畫一道彩虹（吸氣），再慢慢放下來（吐氣）。每一輪換一個顏色。"},
+ {id:"jar",ic:"✨",nm:"平靜瓶",ds:"搖一搖，看亮粉慢慢沉下來",rounds:1,ph:null,tip:"數位版平靜瓶（calm-down jar）。真的平靜瓶做法：透明瓶加水、甘油、亮粉，用手電筒從後面照，亮粉會發光。看著亮粉沉到底，心也跟著靜下來。"},
+ {id:"bell",ic:"🔔",nm:"聽鐘聲",ds:"聽到聲音完全消失才舉手",rounds:1,ph:null,tip:"MindUP 正念課程的核心練習：眼睛輕輕閉上，專心聽鐘聲慢慢變小，完全聽不到了再舉手。專注力會一次比一次長。"},
+ {id:"butterfly",ic:"🦋",nm:"蝴蝶擁抱",ds:"雙手交叉，左右輪流輕拍",rounds:1,ph:null,tip:"蝴蝶擁抱源自 1998 年墨西哥災後輔導：雙手交叉放在胸前，像蝴蝶拍翅膀一樣左右輪流輕拍。觸覺敏感的學生可以改拍膝蓋。"}
+];
+const SUG={blue:["butterfly","glow","rainbow"],green:["bubble","box","bell"],yellow:["box","finger","ball"],red:["jar","finger","bubble"]};
+const ZT={blue:"🔵 藍色：身體有點累、心情低低的。試試蝴蝶擁抱或呼吸燈，讓身體慢慢醒過來。",green:"🟢 綠色：很棒，已經準備好了！做一輪呼吸，把專心帶進今天的任務。",yellow:"🟡 黃色：心跳有點快。方塊呼吸或五指呼吸能讓身體慢下來。",red:"🔴 紅色：生氣很正常，先不要說話。看平靜瓶的亮粉沉下來，或用五指呼吸，等到變回黃色、綠色再說。"};
+$("grid").innerHTML=MODES.map(m=>`<div class="mode" data-id="${m.id}"><div class="ic">${m.ic}</div><div class="nm">${m.nm}</div><div class="ds">${m.ds}</div></div>`).join("");
+document.querySelectorAll(".mode").forEach(el=>el.onclick=()=>start(el.dataset.id));
+document.querySelectorAll(".zone").forEach(z=>z.onclick=()=>{tick(560);const s=SUG[z.dataset.z];document.querySelectorAll(".mode").forEach(m=>m.classList.toggle("sug",s.includes(m.dataset.id)));$("zoneTip").textContent=ZT[z.dataset.z]+"（亮框的是推薦）";});
+let speed=1;document.querySelectorAll("#speed button").forEach(b=>b.onclick=()=>{speed=+b.dataset.s;document.querySelectorAll("#speed button").forEach(x=>x.classList.toggle("on",x===b));});
+/* ---------- 播放引擎 ---------- */
+let M=null,raf=0,t0=0,running=false,st={};
+function start(id){M=MODES.find(m=>m.id===id);document.body.classList.add("play");$("tip").textContent="💡 "+M.tip;$("cue").textContent="準備好了嗎？";$("cnt").textContent="";
+  st={phase:null,k:0,round:0,p:0,done:false,sparks:[],taps:0,side:0,bellT:0,shaken:false};
+  $("speed").style.display=M.ph?"flex":"none";
+  setCtrl([["▶ 開始","go",begin],["↩ 換一種","ghost",back]]);running=false;cancelAnimationFrame(raf);loopIdle();window.scrollTo({top:0});}
+function back(){running=false;cancelAnimationFrame(raf);document.body.classList.remove("play");}
+function setCtrl(bs){$("ctrl").innerHTML="";bs.forEach(([t,c,f])=>{const b=document.createElement("button");b.className="btn "+(c==="go"?"":c);b.textContent=t;b.onclick=()=>{ac();f();};$("ctrl").appendChild(b);});}
+function loopIdle(){draw(0);if(!running)raf=requestAnimationFrame(loopIdle);}
+function begin(){running=true;cancelAnimationFrame(raf);st.round=0;st.k=0;t0=performance.now();setCtrl([["⏹ 停止","ghost",()=>{start(M.id);}]]);
+  if(M.id==="jar"){jarShake();} if(M.id==="bell"){bell();st.bellT=performance.now();$("cue").textContent="閉上眼睛，聽……";setCtrl([["✋ 我聽不到了","teal",finish]]);}
+  if(M.id==="butterfly"){st.taps=0;}
+  enterPhase();raf=requestAnimationFrame(loop);}
+function enterPhase(){if(!M.ph)return;const [kind,dur,txt]=M.ph[st.k];st.phase=kind;st.dur=dur*speed*1000;st.ps=performance.now();$("cue").textContent=txt;
+  $("cnt").textContent=`第 ${st.round+1} / ${M.rounds} 次`;if(kind==="in")glide(220,440,dur*speed,.05);else if(kind==="out")glide(440,200,dur*speed,.05);else tick(520);}
+function loop(now){if(!running)return;
+  if(M.ph){st.p=Math.min(1,(now-st.ps)/st.dur);if(st.p>=1){st.k++;if(st.k>=M.ph.length){st.k=0;st.round++;if(st.round>=M.rounds){finish();return;}}enterPhase();}}
+  if(M.id==="butterfly"){const iv=900*speed,n=Math.floor((now-t0)/iv);if(n>st.taps){st.taps=n;st.side=n%2;tick(st.side?600:500);$("cue").textContent=st.side?"右 🦋":"左 🦋";$("cnt").textContent=`${Math.min(n,24)} / 24 下`;if(n>=24){finish();return;}}}
+  if(M.id==="jar"){const left=st.sparks.filter(s=>!s.rest).length;$("cnt").textContent=left?`還有 ${left} 顆亮粉在飄`:"";$("cue").textContent=left>20?"慢慢吸…… 慢慢吐……":left?"快沉到底了……":"全部沉下來了 ✨";if(!left&&!st.done){st.done=true;setTimeout(finish,1200);}}
+  draw(now);raf=requestAnimationFrame(loop);}
+function finish(){running=false;cancelAnimationFrame(raf);$("cue").textContent="很好，你做到了 ✨";$("cnt").textContent="";try{FX.confetti(40);FX.sound.coin();}catch(e){}
+  const bs=[["🔁 再一次","go",begin],["🫧 換一種","ghost",back]];if(/from=checkin/.test(location.search))bs.push(["➡ 回心情打卡","teal",()=>location.href="checkin.html"]);setCtrl(bs);draw(performance.now());}
+/* ---------- 畫面 ---------- */
+const ease=x=>.5-.5*Math.cos(Math.PI*x);
+function breathLevel(){if(!running||!M.ph)return 0;const p=ease(st.p);return st.phase==="in"?p:st.phase==="out"?1-p:st.phase==="hold"?1:0;}
+function bg(c1,c2){const gr=g.createRadialGradient(CX,CY,50,CX,CY,760);gr.addColorStop(0,c1);gr.addColorStop(1,c2);g.fillStyle=gr;g.fillRect(0,0,W,H);}
+function label(t,y,c,sz){g.font=`900 ${sz||40}px ${FONT}`;g.textAlign="center";g.fillStyle=c||"#fff";g.fillText(t,CX,y);}
+function draw(now){g.clearRect(0,0,W,H);const L=breathLevel();({bubble:dBubble,glow:dGlow,ball:dBall,finger:dFinger,box:dBox,rainbow:dRainbow,jar:dJar,bell:dBell,butterfly:dButterfly})[M.id](L,now||0);}
+function dBubble(L){bg("#0e3350","#05101f");const r=90+L*170;const gr=g.createRadialGradient(CX-r*.3,CY-r*.3,r*.1,CX,CY,r);gr.addColorStop(0,"rgba(255,255,255,.9)");gr.addColorStop(.4,"rgba(150,220,255,.55)");gr.addColorStop(1,"rgba(80,160,255,.15)");
+  g.fillStyle=gr;g.beginPath();g.arc(CX,CY,r,0,7);g.fill();g.strokeStyle="rgba(255,255,255,.7)";g.lineWidth=4;g.stroke();g.strokeStyle="rgba(255,255,255,.25)";g.setLineDash([10,14]);g.beginPath();g.arc(CX,CY,260,0,7);g.stroke();g.setLineDash([]);}
+function dGlow(L){const a=.08+L*.85;bg(`rgba(255,${200+L*40},${120+L*60},${a})`,"#03070f");const gr=g.createRadialGradient(CX,CY,10,CX,CY,120+L*260);gr.addColorStop(0,`rgba(255,250,210,${.3+L*.7})`);gr.addColorStop(1,"rgba(255,220,120,0)");g.fillStyle=gr;g.fillRect(0,0,W,H);
+  g.fillStyle=`rgba(255,244,200,${.4+L*.6})`;g.beginPath();g.arc(CX,CY-20,60,Math.PI*.9,Math.PI*2.1);g.lineTo(CX+30,CY+60);g.lineTo(CX-30,CY+60);g.closePath();g.fill();g.fillStyle="#9aa6b5";g.fillRect(CX-32,CY+62,64,34);}
+function dBall(L,now){bg("#12294a","#05101f");const R=100+L*170,n=12,rot=(now||0)/4000;const cols=["#ff6b6b","#ffd43b","#51cf66","#339af0","#cc5de8","#ff922b"];
+  for(let i=0;i<n;i++){const a=rot+i/n*Math.PI*2;g.strokeStyle=cols[i%6];g.lineWidth=7;g.beginPath();g.ellipse(CX,CY,Math.abs(Math.cos(a))*R+4,R,0,0,7);g.stroke();}
+  for(let j=1;j<4;j++){const y=R*(j/4*2-1);const rr=Math.sqrt(R*R-y*y);g.strokeStyle=cols[(j+2)%6];g.lineWidth=6;g.beginPath();g.ellipse(CX,CY+y,rr,rr*.18,0,0,7);g.stroke();}}
+function dFinger(L){bg("#1b2d44","#07111e");
+  const fx=[430,540,640,740,850],top=[250,150,120,150,300],base=[470,440,430,440,500];
+  g.fillStyle="#f2c9a0";fx.forEach((x,i)=>{g.beginPath();g.moveTo(x-38,base[i]);g.lineTo(x-38,top[i]);g.arc(x,top[i],38,Math.PI,0);g.lineTo(x+38,base[i]);g.fill();});
+  g.beginPath();g.ellipse(CX,560,250,160,0,0,7);g.fill();
+  if(!running&&!st.done)return;const i=Math.min(4,st.round);const x=fx[i];let y;
+  if(st.phase==="in")y=base[i]-(base[i]-top[i]+30)*ease(st.p);else y=top[i]-30+(base[i]-top[i]+30)*ease(st.p);
+  const up=st.phase==="in";const gx=up?x-40:x+40;
+  g.fillStyle="#ffe15a";g.shadowColor="#ffe15a";g.shadowBlur=30;g.beginPath();g.arc(gx,y,22,0,7);g.fill();g.shadowBlur=0;
+  for(let k=0;k<i;k++){g.fillStyle="#5fe08a";g.beginPath();g.arc(fx[k],top[k]-60,16,0,7);g.fill();}}
+function dBox(L){bg("#10304e","#05101f");const s=380,x0=CX-s/2,y0=CY-s/2;g.lineWidth=10;g.strokeStyle="rgba(255,255,255,.2)";g.strokeRect(x0,y0,s,s);
+  const lbl=[["吸",CX,y0-24],["停",x0+s+46,CY+14],["吐",CX,y0+s+54],["停",x0-46,CY+14]];g.font=`900 36px ${FONT}`;g.textAlign="center";lbl.forEach(([t,x,y],k)=>{g.fillStyle=running&&st.k===k?"#ffd43b":"rgba(255,255,255,.5)";g.fillText(t,x,y);});
+  if(!running)return;const pts=[[x0,y0],[x0+s,y0],[x0+s,y0+s],[x0,y0+s],[x0,y0]];const a=pts[st.k],b=pts[st.k+1],p=st.p;
+  g.strokeStyle="#ffd43b";g.lineWidth=12;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);for(let k=1;k<=st.k;k++)g.lineTo(pts[k][0],pts[k][1]);g.lineTo(a[0]+(b[0]-a[0])*p,a[1]+(b[1]-a[1])*p);g.stroke();
+  g.fillStyle="#fff";g.shadowColor="#ffd43b";g.shadowBlur=30;g.beginPath();g.arc(a[0]+(b[0]-a[0])*p,a[1]+(b[1]-a[1])*p,20,0,7);g.fill();g.shadowBlur=0;}
+function dRainbow(L){bg("#16345a","#05101f");const cols=["#ff5a5a","#ff9f40","#ffd43b","#5fe08a","#3ec2ff","#4b6bff","#b56bff"];const r=Math.min(2,st.round||0);
+  g.fillStyle="#2f6b3a";g.fillRect(0,600,W,120);
+  cols.forEach((c,k)=>{g.strokeStyle=k<=r*2+2?c:"rgba(255,255,255,.08)";g.lineWidth=22;g.beginPath();g.arc(CX,600,420-k*26,Math.PI,Math.PI+Math.PI*(running?Math.max(.02,L):.02));g.stroke();});
+  if(running){const ang=Math.PI+Math.PI*Math.max(.02,L),rr=420;g.fillStyle="#fff";g.shadowColor="#fff";g.shadowBlur=24;g.beginPath();g.arc(CX+Math.cos(ang)*rr,600+Math.sin(ang)*rr,18,0,7);g.fill();g.shadowBlur=0;}}
+function jarShake(){st.sparks=[];const cols=["#ffd43b","#ff8fd8","#7fdcff","#b98bff","#ffffff","#7dffb0"];for(let k=0;k<160;k++)st.sparks.push({x:CX+(Math.random()*2-1)*170,y:170+Math.random()*420,vx:(Math.random()*2-1)*4,vy:(Math.random()*2-1)*4,c:cols[k%6],r:3+Math.random()*4,rest:false});st.done=false;tick(700);}
+function dJar(L,now){bg("#0b1e33","#03070f");const gr=g.createRadialGradient(CX,CY,20,CX,CY,300);gr.addColorStop(0,"rgba(255,245,200,.25)");gr.addColorStop(1,"rgba(255,245,200,0)");g.fillStyle=gr;g.fillRect(0,0,W,H);
+  g.fillStyle="rgba(150,210,255,.12)";g.strokeStyle="rgba(200,235,255,.8)";g.lineWidth=6;g.beginPath();g.roundRect?g.roundRect(CX-200,140,400,480,50):g.rect(CX-200,140,400,480);g.fill();g.stroke();
+  g.fillStyle="#8a93a3";g.fillRect(CX-150,105,300,40);
+  st.sparks.forEach(s=>{if(running&&!s.rest){s.vx*=.985;s.vy=s.vy*.985+.018;s.x+=s.vx;s.y+=s.vy;if(s.x<CX-190||s.x>CX+190)s.vx*=-.6;s.x=Math.max(CX-190,Math.min(CX+190,s.x));if(s.y<155)s.vy=Math.abs(s.vy);if(s.y>=605-s.r){s.y=605-s.r;s.rest=true;}}
+    g.fillStyle=s.c;g.shadowColor=s.c;g.shadowBlur=s.rest?4:12;g.beginPath();g.arc(s.x,s.y,s.r,0,7);g.fill();});g.shadowBlur=0;
+  if(!running&&!st.sparks.length)label("按「開始」搖一搖 ✨",CY,"#ffe08a",38);}
+function dBell(L,now){bg("#132a45","#05101f");const e=running&&st.bellT?(now-st.bellT)/1000:0;const a=running?Math.max(0,1-e/14):1;
+  for(let k=0;k<4;k++){const rr=((e*60+k*90)%360)+120;g.strokeStyle=`rgba(255,215,120,${running?a*(1-(rr-120)/360)*.8:0})`;g.lineWidth=6;g.beginPath();g.arc(CX,CY,rr,0,7);g.stroke();}
+  g.fillStyle="#d9a441";g.beginPath();g.ellipse(CX,CY+40,150,60,0,0,7);g.fill();g.fillStyle="#b88428";g.beginPath();g.ellipse(CX,CY+20,120,40,0,0,7);g.fill();g.fillStyle="#3a2a12";g.beginPath();g.ellipse(CX,CY+18,96,26,0,0,7);g.fill();
+  g.fillStyle="#7a4b24";g.save();g.translate(CX+190,CY-30);g.rotate(.6);g.fillRect(-10,-110,20,160);g.restore();}
+function dButterfly(L,now){bg("#1d2d4a","#05101f");const side=st.side,tap=running?Math.max(0,1-((now-t0)%(900*speed))/350):0;
+  g.fillStyle="#f2c9a0";g.beginPath();g.arc(CX,210,80,0,7);g.fill();g.fillStyle="#4b86d1";g.beginPath();g.moveTo(CX-190,660);g.quadraticCurveTo(CX-200,330,CX,320);g.quadraticCurveTo(CX+200,330,CX+190,660);g.fill();
+  const hand=(x,y,on)=>{g.fillStyle=on?"#ffe15a":"#f2c9a0";if(on){g.shadowColor="#ffe15a";g.shadowBlur=30;}g.beginPath();g.ellipse(x,y,70,40,x<CX?-.5:.5,0,7);g.fill();g.shadowBlur=0;};
+  hand(CX-90,440+(side===0?-tap*14:0),running&&side===0&&tap>0);hand(CX+90,440+(side===1?-tap*14:0),running&&side===1&&tap>0);
+  g.font=`900 60px ${FONT}`;g.textAlign="center";g.fillText("🦋",CX,120);}
+if(/mode=(\w+)/.test(location.search)){const m=location.search.match(/mode=(\w+)/)[1];if(MODES.find(x=>x.id===m))start(m);}
+})();
+</script>
+</body>
+</html>
