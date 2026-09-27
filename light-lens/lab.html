@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>透鏡實驗室・放大鏡只會把東西變大嗎？</title>
+<style>
+  :root{--bg1:#05101f;--bg2:#0a2036;--bg3:#0e3350;--amber:#ffc93c;--teal:#42e0c8;--aqua:#3ec2ff;--pink:#ff5d8f;
+    --ink:#eaf6ff;--dim:#9db8cf;--card:#0f2841;--line:rgba(120,170,210,.28);--shadow:rgba(0,0,0,.45);--good:#46e08a}
+  *{box-sizing:border-box}html,body{margin:0;padding:0}
+  body{font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:var(--ink);font-size:20px;
+    background:radial-gradient(120% 80% at 50% -10%,rgba(62,194,255,.12),transparent 55%),linear-gradient(165deg,var(--bg1),var(--bg2) 55%,var(--bg3));min-height:100vh;padding-bottom:110px}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px 16px 40px}
+  .fixbtn{position:fixed;top:12px;z-index:9000;background:#0f2841;border:2px solid var(--teal);color:var(--teal);font-weight:900;font-size:16px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px var(--shadow)}
+  .fixbtn.home{left:12px}.fixbtn.menu{right:12px}
+  .hud{position:fixed;top:60px;right:12px;z-index:9000;background:#1a2f4f;border:2px solid var(--amber);border-radius:999px;padding:6px 14px;font-weight:900;font-size:20px;color:var(--amber)}
+  header{text-align:center;padding:40px 8px 6px}
+  .emblem{font-size:72px;line-height:1}
+  h1{font-size:40px;margin:6px 0 2px}.sub{font-size:26px;color:var(--aqua);font-weight:900}
+  .prog{display:inline-flex;align-items:center;gap:12px;margin-top:12px;font-weight:900;font-size:20px;color:var(--amber)}
+  .prog .bar{width:220px;height:16px;background:#0b1d31;border-radius:99px;overflow:hidden;border:2px solid rgba(255,201,60,.5)}.prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffc93c,#ff9f1c);transition:width .5s}
+  h2.sec{font-size:30px;margin:34px 0 12px;display:flex;align-items:center;gap:10px}
+  h2.sec::after{content:"";flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--aqua),transparent)}
+  .card{background:linear-gradient(160deg,#123152,#0c2742);border:3px solid rgba(62,194,255,.35);border-radius:24px;padding:16px;box-shadow:0 10px 26px var(--shadow)}
+  canvas{width:100%;height:auto;display:block;border-radius:16px;background:#0a1a2c;touch-action:none}
+  .ctrl{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .lbl2{font-weight:900;font-size:22px}
+  input[type=range]{flex:1;min-width:220px;height:40px;accent-color:var(--amber)}
+  .btn{font:inherit;font-weight:900;font-size:22px;border:none;border-radius:16px;padding:12px 20px;cursor:pointer;color:#08131f;background:var(--amber);box-shadow:0 5px 0 #b8860b}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #b8860b}
+  .btn.aqua{background:var(--aqua);box-shadow:0 5px 0 #1f7fb0}.btn.teal{background:var(--teal);box-shadow:0 5px 0 #14907f}.btn.pink{background:var(--pink);box-shadow:0 5px 0 #a8305a;color:#fff}
+  .btn.ghost{background:#1a2f4f;color:var(--ink);box-shadow:0 5px 0 #0a1626;border:2px solid var(--line)}
+  .btn.on{outline:4px solid #fff;outline-offset:2px}
+  .say{margin-top:14px;font-size:32px;font-weight:900;line-height:1.4;background:#0b1d31;border-left:8px solid var(--amber);border-radius:12px;padding:12px 16px;min-height:70px}
+  .term{color:var(--amber);white-space:nowrap}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+  .tile{background:#0f2841;border:3px solid var(--line);border-radius:18px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:border-color .2s,transform .2s}
+  .tile .pic{width:100%;height:130px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#e9f1f8;overflow:hidden}
+  .tile .pic img{width:100%;height:100%;object-fit:cover}.tile .pic svg{height:120px}
+  .tile .nm{font-size:24px;font-weight:900;text-align:center}
+  .tile .ch{display:flex;gap:8px;width:100%}.tile .ch button{flex:1;font:inherit;font-weight:900;font-size:20px;border:none;border-radius:12px;padding:10px 4px;cursor:pointer}
+  .tile .ch .vx{background:#ffe08a;color:#3a2a00}.tile .ch .vv{background:#b9e6ff;color:#082b44}
+  .tile.ok{border-color:var(--good);transform:scale(1.02)}.tile.ok .ch{display:none}
+  .tile .res{display:none;font-size:18px;font-weight:900;color:var(--good);text-align:center;line-height:1.35}.tile.ok .res{display:block}
+  .tile.shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .real{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:center}
+  .real img{width:100%;border-radius:16px;display:block}
+  .real ol{margin:0;padding-left:1.2em;font-size:24px;font-weight:900;line-height:1.7}
+  .safe{background:#3a1420;border:2px solid var(--pink);border-radius:12px;padding:8px 12px;font-weight:900;font-size:22px;margin-top:10px}
+  .lnav{position:sticky;top:0;z-index:50;display:none;justify-content:center;gap:12px;align-items:center;background:rgba(5,16,31,.95);padding:10px;border-bottom:2px solid var(--amber)}
+  .lnav b{font-size:22px;color:var(--amber)}
+  body.lesson .lnav{display:flex}body.lesson .stn{display:none}body.lesson .stn.cur{display:block}
+  @media(max-width:760px){h1{font-size:30px}.say{font-size:24px}.real{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="./">🏠 任務五首頁</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<div class="hud">🔍 <span id="coins">0</span></div>
+<div class="lnav" id="lnav"><button class="btn ghost" id="lPrev">⬅ 上一站</button><b id="lTxt">第 1 站</b><button class="btn" id="lNext">下一站 ➡</button><button class="btn ghost" id="lAll">看全部</button></div>
+<div class="wrap">
+  <header>
+    <div class="emblem">🔍</div>
+    <h1>透鏡實驗室</h1>
+    <div class="sub">放大鏡只會把東西變大嗎？</div>
+    <div class="prog">🔍 透鏡魔法卡 <span id="pgTxt">0 / 5</span><div class="bar"><i id="pgBar"></i></div></div>
+    <div class="ctrl" style="justify-content:center"><button class="btn teal" id="lessonBtn">🎬 上課模式：一次只看一站</button></div>
+  </header>
+
+  <section class="stn" data-n="1">
+  <h2 class="sec">站 1・投影魔術：窗外的風景跑到紙上</h2>
+  <div class="card">
+    <canvas id="c1" width="1280" height="640"></canvas>
+    <div class="ctrl"><span class="lbl2">📄 白紙位置</span><input type="range" id="paper" min="0" max="100" value="15"><button class="btn ghost" id="rayBtn">✨ 顯示光線</button></div>
+    <div class="say" id="say1">拉動白紙，找到最清楚的地方</div>
+  </div>
+  </section>
+
+  <section class="stn" data-n="2">
+  <h2 class="sec">站 2・摸一摸：中間厚？中間薄？</h2>
+  <div class="card">
+    <div class="tiles" id="sortTiles"></div>
+    <div class="say" id="say2">中間<span class="term">厚</span>＝<span class="term">凸透鏡</span>；中間<span class="term">薄</span>＝<span class="term">凹透鏡</span></div>
+  </div>
+  </section>
+
+  <section class="stn" data-n="3">
+  <h2 class="sec">站 3・光線模擬器：聚在一起？散開？</h2>
+  <div class="card">
+    <canvas id="c3" width="1280" height="600"></canvas>
+    <div class="ctrl"><button class="btn on" id="t3vx">🔍 凸透鏡</button><button class="btn aqua" id="t3vv">👓 凹透鏡</button><span class="lbl2">鏡片厚度</span><input type="range" id="thick" min="1" max="5" value="3"><button class="btn teal" id="shine">🔦 開燈</button></div>
+    <div class="say" id="say3">按「開燈」，看光走到哪裡</div>
+  </div>
+  </section>
+
+  <section class="stn" data-n="4">
+  <h2 class="sec">站 4・透過鏡片看字</h2>
+  <div class="card">
+    <canvas id="c4" width="1280" height="560"></canvas>
+    <div class="ctrl"><button class="btn on" id="t4vx">🔍 放大鏡（凸）</button><button class="btn aqua" id="t4vv">👓 近視眼鏡（凹）</button><span class="lbl2">鏡片離紙</span><input type="range" id="dist" min="0" max="100" value="20"></div>
+    <div class="say" id="say4">慢慢把鏡片拉遠，字會怎樣？</div>
+  </div>
+  </section>
+
+  <section class="stn" data-n="5">
+  <h2 class="sec">站 5・生活闖關：是凸還是凹？</h2>
+  <div class="card">
+    <div class="tiles" id="lifeTiles"></div>
+    <div class="say" id="say5">生活裡到處都是透鏡，一張一張破關</div>
+  </div>
+  </section>
+
+  <section class="stn" data-n="6">
+  <h2 class="sec">站 6・真人版：用真的放大鏡投影</h2>
+  <div class="card">
+    <div class="real">
+      <img src="img/magnifier.jpg" alt="放大鏡">
+      <div>
+        <ol><li>站在教室後面，面向亮亮的窗戶</li><li>一個人拿白紙，一個人拿放大鏡</li><li>放大鏡慢慢前後移動</li><li>紙上出現窗戶了嗎？是正的還是倒的？</li></ol>
+        <div class="safe">⚠️ 放大鏡不可以對著太陽，也不可以對著眼睛</div>
+      </div>
+    </div>
+    <div class="real" style="margin-top:14px">
+      <svg viewBox="0 0 640 360" style="width:100%;border-radius:16px;background:#f3efe6;display:block"><rect x="40" y="70" width="560" height="220" rx="14" fill="#fff" stroke="#cbbfa8" stroke-width="4"/><g transform="translate(120,180)"><path d="M0 0 L60 -40 L60 -16 L130 -16 L130 16 L60 16 L60 40 Z" fill="#1b2a3a"/></g><text x="190" y="270" font-size="26" font-weight="900" fill="#6b5a3a" text-anchor="middle" font-family="sans-serif">紙上畫的箭頭</text><rect x="330" y="60" width="200" height="240" rx="90" fill="rgba(120,200,255,.35)" stroke="#5aa9d6" stroke-width="6"/><rect x="395" y="30" width="70" height="40" rx="8" fill="#5aa9d6"/><g transform="translate(365,180)"><path d="M130 0 L70 -40 L70 -16 L0 -16 L0 16 L70 16 L70 40 Z" fill="#1b2a3a"/></g><text x="430" y="330" font-size="26" font-weight="900" fill="#2d6f96" text-anchor="middle" font-family="sans-serif">透過水瓶：反過來了！</text></svg>
+      <div><ol><li>白紙畫一個 ⬅ 箭頭</li><li>圓瓶子裝滿水，放在箭頭前面</li><li>從瓶子另一邊看，箭頭變成哪一邊？</li></ol></div>
+    </div>
+    <div class="ctrl"><button class="btn teal" id="realOk">🙌 我們做到了</button><span class="lbl2" id="realTally">成功 0 組</span></div>
+    <div class="say" id="say6">水瓶也是一個凸透鏡：中間厚、會把東西倒過來</div>
+  </div>
+  </section>
+</div>
+
+<script src="../games/fx.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const S=k=>{try{FX.sound[k]()}catch(e){}};
+/* ---------- 進度 ---------- */
+const got={};let coins=0;
+function award(k,title,sub){if(got[k])return;got[k]=1;coins++;$("coins").textContent=coins;
+  const n=Object.keys(got).length;$("pgTxt").textContent=n+" / 5";$("pgBar").style.width=(n/5*100)+"%";S("coin");
+  try{FX.confetti(80)}catch(e){}
+  if(n===5){setTimeout(()=>{try{FX.chest({title:"五張透鏡魔法卡到手！開寶箱",gem:"🔍",gemName:"透鏡水晶",gemColor:"#7fdcff",sub:"中間厚會聚光、中間薄會散光",onDone:()=>FX.badge({id:"lens",emoji:"🔍",name:"透鏡偵探",desc:"凸透鏡會聚、凹透鏡發散・五站全破",onDone:()=>FX.fireworks(3000)})})}catch(e){}},700);}
+  else if(title){setTimeout(()=>{try{FX.stamp({text:title})}catch(e){}},250);}}
+
+/* ---------- 共用：畫窗外風景 ---------- */
+function scene(g,x,y,w,h){
+  g.save();g.beginPath();g.rect(x,y,w,h);g.clip();
+  const sky=g.createLinearGradient(0,y,0,y+h);sky.addColorStop(0,"#6ec6ff");sky.addColorStop(1,"#d8f0ff");g.fillStyle=sky;g.fillRect(x,y,w,h);
+  g.fillStyle="#5cb85c";g.fillRect(x,y+h*.72,w,h*.28);                                    // 草地
+  g.fillStyle="#fff";[[.62,.18,.09],[.72,.16,.07],[.68,.22,.08]].forEach(([a,b,r])=>{g.beginPath();g.arc(x+w*a,y+h*b,w*r,0,7);g.fill();}); // 雲
+  g.fillStyle="#7a4b24";g.fillRect(x+w*.16,y+h*.45,w*.07,h*.3);                           // 樹幹
+  g.fillStyle="#2e8b3e";g.beginPath();g.arc(x+w*.195,y+h*.38,w*.14,0,7);g.fill();          // 樹
+  g.fillStyle="#f4e1c1";g.fillRect(x+w*.52,y+h*.5,w*.3,h*.24);                             // 房子
+  g.fillStyle="#d9342b";g.beginPath();g.moveTo(x+w*.48,y+h*.52);g.lineTo(x+w*.67,y+h*.34);g.lineTo(x+w*.86,y+h*.52);g.fill(); // 紅屋頂
+  g.fillStyle="#5a3a1a";g.fillRect(x+w*.63,y+h*.6,w*.07,h*.14);
+  g.restore();
+  g.strokeStyle="#e8e2d6";g.lineWidth=Math.max(4,w*.03);g.strokeRect(x,y,w,h);           // 窗框
+  g.beginPath();g.moveTo(x+w/2,y);g.lineTo(x+w/2,y+h);g.moveTo(x,y+h/2);g.lineTo(x+w,y+h/2);g.lineWidth=Math.max(2,w*.015);g.stroke();
+}
+function lensShape(g,cx,cy,h,w,convex,fill,stroke){
+  g.beginPath();
+  if(convex){g.moveTo(cx,cy-h);g.quadraticCurveTo(cx+w*2,cy,cx,cy+h);g.quadraticCurveTo(cx-w*2,cy,cx,cy-h);}
+  else{const e=w*1.1;g.moveTo(cx-e,cy-h);g.lineTo(cx+e,cy-h);g.quadraticCurveTo(cx+e-w*1.8,cy,cx+e,cy+h);g.lineTo(cx-e,cy+h);g.quadraticCurveTo(cx-e+w*1.8,cy,cx-e,cy-h);}
+  g.closePath();g.fillStyle=fill;g.fill();g.strokeStyle=stroke;g.lineWidth=4;g.stroke();
+}
+function big(g,t,x,y,col,sz,al){g.font=`900 ${sz||34}px "Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif`;g.textAlign=al||"center";g.lineWidth=7;g.strokeStyle="rgba(5,16,31,.9)";g.strokeText(t,x,y);g.fillStyle=col||"#fff";g.fillText(t,x,y);}
+
+/* ---------- 站 1 投影 ---------- */
+const c1=$("c1"),g1=c1.getContext("2d");let showRay=false,sharpOnce=false;
+const W0={x:40,y:170,w:260,h:300},LX=520,CY=320,VX=900;
+function draw1(){
+  const p=+$("paper").value,px=680+p*4.6;            // 680..1140
+  g1.clearRect(0,0,1280,640);g1.fillStyle="#0a1a2c";g1.fillRect(0,0,1280,640);
+  scene(g1,W0.x,W0.y,W0.w,W0.h);big(g1,"亮亮的窗戶",W0.x+W0.w/2,W0.y-24,"#ffe08a",30);
+  lensShape(g1,LX,CY,160,20,true,"rgba(170,225,255,.35)","#bfe9ff");big(g1,"放大鏡",LX,CY+210,"#bfe9ff",30);
+  // 白紙
+  const ph=330,py=CY-ph/2,pw=230;
+  g1.fillStyle="#fbfbf7";g1.beginPath();g1.rect(px-pw/2,py,pw,ph);g1.fill();g1.strokeStyle="#cfd8e0";g1.lineWidth=3;g1.stroke();
+  const err=Math.abs(px-VX),blur=Math.min(26,err/9),s=.62;
+  // 紙上的像：倒立
+  g1.save();g1.beginPath();g1.rect(px-pw/2,py,pw,ph);g1.clip();
+  const iw=190,ih=220,alpha=Math.max(.18,1-blur/30);
+  const N=blur<1.5?1:8;
+  for(let k=0;k<N;k++){const a=k/N*Math.PI*2,dx=N>1?Math.cos(a)*blur:0,dy=N>1?Math.sin(a)*blur:0;
+    g1.save();g1.globalAlpha=alpha/(N>1?N*.45:1);g1.translate(px+dx,CY+dy);g1.scale(-1,-1);scene(g1,-iw/2,-ih/2,iw,ih);g1.restore();}
+  g1.restore();
+  big(g1,"白紙",px,py+ph+64,"#fff",30);
+  if(showRay){ // 從樹頂出發的兩條光
+    const ox=W0.x+W0.w*.195,oy=W0.y+W0.h*.25,iy=CY+(CY-oy)*.55;
+    g1.strokeStyle="rgba(255,225,90,.95)";g1.lineWidth=5;g1.setLineDash([]);
+    g1.beginPath();g1.moveTo(ox,oy);g1.lineTo(LX,CY);g1.lineTo(VX,iy);g1.stroke();
+    g1.beginPath();g1.moveTo(ox,oy);g1.lineTo(LX,oy);g1.lineTo(VX,iy);g1.stroke();
+    g1.fillStyle="#ffe15a";g1.beginPath();g1.arc(VX,iy,10,0,7);g1.fill();
+    big(g1,"樹頂的光跑到下面",(LX+VX)/2,CY-200,"#ffe15a",28);
+  }
+  const say=$("say1");
+  if(err<22){say.innerHTML='清楚了！窗戶跑到紙上，而且<span class="term">倒過來</span>了！';if(!sharpOnce){sharpOnce=true;S("clear");award("s1","倒過來了！");}}
+  else say.textContent=px<VX?"還模糊：白紙再往後一點":"還模糊：白紙再往前一點";
+}
+$("paper").oninput=draw1;$("rayBtn").onclick=()=>{showRay=!showRay;$("rayBtn").classList.toggle("on",showRay);S("jump");draw1();};
+c1.addEventListener("pointermove",e=>{if(e.buttons!==1)return;const r=c1.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*1280;$("paper").value=Math.max(0,Math.min(100,(x-680)/4.6));draw1();});
+c1.addEventListener("pointerdown",e=>{const r=c1.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*1280;if(x>640){$("paper").value=Math.max(0,Math.min(100,(x-680)/4.6));draw1();}});
+
+/* ---------- 分類磚（站2、站5共用） ---------- */
+const prof=(cv)=>`<svg viewBox="0 0 120 160"><path d="${cv?'M60 8 Q112 80 60 152 Q8 80 60 8Z':'M36 8 L84 8 Q58 80 84 152 L36 152 Q62 80 36 8Z'}" fill="rgba(120,200,255,.45)" stroke="#1f6fa8" stroke-width="4"/></svg>`;
+const halfProf=(cv)=>`<svg viewBox="0 0 120 160"><path d="${cv?'M44 8 Q100 80 44 152 Z':'M44 8 L84 8 Q58 80 84 152 L44 152 Z'}" fill="rgba(120,200,255,.45)" stroke="#1f6fa8" stroke-width="4"/></svg>`;
+function tiles(el,items,sayEl,key,done){
+  let left=items.length;
+  $(el).innerHTML=items.map((it,i)=>`<div class="tile" data-i="${i}"><div class="pic">${it.img?`<img src="${it.img}" alt="">`:it.svg||`<span style="font-size:80px">${it.emo}</span>`}</div><div class="nm">${it.nm}</div>
+    <div class="ch"><button class="vx">🔍 凸（中間厚）</button><button class="vv">👓 凹（中間薄）</button></div><div class="res">${it.why}</div></div>`).join("");
+  $(el).querySelectorAll(".tile").forEach(t=>{const it=items[+t.dataset.i];
+    t.querySelector(".vx").onclick=()=>pick(t,it,"凸");t.querySelector(".vv").onclick=()=>pick(t,it,"凹");});
+  function pick(t,it,a){if(t.classList.contains("ok"))return;
+    if(a===it.ans){t.classList.add("ok");S("powerup");left--;$(sayEl).innerHTML=`👍 ${it.nm}＝<span class="term">${it.ans}透鏡</span>`;
+      if(left===0){done();}}
+    else{t.classList.remove("shake");void t.offsetWidth;t.classList.add("shake");S("wrongsoft");$(sayEl).innerHTML=`再看一次：${it.hint||"中間比較厚，還是比較薄？"}`;}}
+}
+tiles("sortTiles",[
+  {nm:"鏡片 A",svg:prof(true),ans:"凸",why:"中間厚、邊緣薄"},
+  {nm:"鏡片 B",svg:prof(false),ans:"凹",why:"中間薄、邊緣厚"},
+  {nm:"鏡片 C",svg:halfProf(true),ans:"凸",why:"一面平、一面鼓起來，中間還是厚"},
+  {nm:"鏡片 D",svg:halfProf(false),ans:"凹",why:"一面平、一面凹進去，中間薄"},
+  {nm:"放大鏡",img:"img/magnifier.jpg",ans:"凸",why:"摸起來中間鼓鼓的",hint:"放大鏡摸起來，中間是鼓鼓的嗎？"},
+  {nm:"一滴水",img:"img/drop.jpg",ans:"凸",why:"水滴中間高高的，像小放大鏡",hint:"水滴中間是不是高高鼓起來？"}
+],"say2","s2",()=>{$("say2").innerHTML='全對！中間厚＝<span class="term">凸透鏡</span>，中間薄＝<span class="term">凹透鏡</span>';award("s2","分類高手");});
+
+tiles("lifeTiles",[
+  {nm:"放大鏡",emo:"🔍",img:"img/magnifier.jpg",ans:"凸",why:"字變大＝凸透鏡"},
+  {nm:"近視眼鏡",emo:"👓",ans:"凹",why:"看東西變小＝凹透鏡",hint:"戴近視眼鏡看字，字變大還是變小？"},
+  {nm:"老花眼鏡",emo:"👵📖",ans:"凸",why:"阿公阿嬤看書，字變大＝凸透鏡",hint:"老花眼鏡讓書上的字變大，還是變小？"},
+  {nm:"手機相機鏡頭",emo:"📱",ans:"凸",why:"把光聚在感光片上＝凸透鏡",hint:"相機要把光「聚」起來，才拍得到照片"},
+  {nm:"門上的貓眼",emo:"🚪",ans:"凹",why:"門外的人看起來小小的＝凹透鏡",hint:"從貓眼看出去，門外的人變大還是變小？"},
+  {nm:"裝水的圓瓶",emo:"🧴💧",ans:"凸",why:"中間厚，箭頭會倒過來＝凸透鏡"},
+  {nm:"投影機鏡頭",emo:"📽️",ans:"凸",why:"把畫面投到牆上＝凸透鏡（跟站 1 一樣）",hint:"投影機跟站 1 的放大鏡一樣，把畫面投到牆上"},
+  {nm:"一滴水",img:"img/drop.jpg",ans:"凸",why:"字變大＝凸透鏡"}
+],"say5","s5",()=>{$("say5").innerHTML='生活闖關全破！放大鏡、老花眼鏡、相機＝<span class="term">凸</span>；近視眼鏡、貓眼＝<span class="term">凹</span>';award("s5","生活偵探");});
+
+/* ---------- 站 3 光線模擬器 ---------- */
+const c3=$("c3"),g3=c3.getContext("2d");let cv3=true,prog3=1,anim3=null,seen3={vx:0,vv:0};
+function draw3(){
+  const L=560,C=300,t=+$("thick").value,f=560-t*75;       // 厚→焦距短
+  g3.clearRect(0,0,1280,600);g3.fillStyle="#0a1a2c";g3.fillRect(0,0,1280,600);
+  g3.strokeStyle="rgba(157,184,207,.35)";g3.lineWidth=2;g3.setLineDash([10,10]);g3.beginPath();g3.moveTo(0,C);g3.lineTo(1280,C);g3.stroke();g3.setLineDash([]);
+  lensShape(g3,L,C,210,6+t*5,cv3,"rgba(170,225,255,.35)","#bfe9ff");
+  const ys=[-160,-80,0,80,160];const tot=prog3;
+  ys.forEach((dy,i)=>{
+    const y=C+dy,a=Math.min(1,tot*2),b=Math.max(0,tot*2-1);
+    g3.strokeStyle="#ffe15a";g3.lineWidth=5;g3.shadowColor="#ffe15a";g3.shadowBlur=10;
+    g3.beginPath();g3.moveTo(40,y);g3.lineTo(40+(L-40)*a,y);g3.stroke();
+    if(b>0){let ex,ey;
+      if(cv3){const dx=f,dyv=-dy;const k=(1280-L)/dx;ex=L+(1280-L)*b;ey=y+dyv*k*b;}
+      else{const vx=L-f;const slope=dy/(L-vx);ex=L+(1280-L)*b;ey=y+slope*(1280-L)*b;
+        g3.save();g3.shadowBlur=0;g3.setLineDash([8,10]);g3.strokeStyle="rgba(255,225,90,.45)";g3.lineWidth=3;g3.beginPath();g3.moveTo(L,y);g3.lineTo(L-(L-vx)*b,C+(y-C)*(1-b));g3.stroke();g3.restore();}
+      g3.beginPath();g3.moveTo(L,y);g3.lineTo(ex,ey);g3.stroke();}
+    g3.shadowBlur=0;
+  });
+  if(tot>=1){
+    if(cv3){g3.fillStyle="#ff5d8f";g3.beginPath();g3.arc(L+f,C,12,0,7);g3.fill();big(g3,"焦點：光聚在這裡",L+f,C-30,"#ff9ab8",30);}
+    else{g3.fillStyle="#ff5d8f";g3.beginPath();g3.arc(L-f,C,10,0,7);g3.fill();big(g3,"光好像從這裡散出去",L-f,C-30,"#ff9ab8",28);}
+  }
+  big(g3,cv3?"凸透鏡（中間厚）":"凹透鏡（中間薄）",L,58,"#bfe9ff",34);
+}
+function shine(){if(anim3)cancelAnimationFrame(anim3);prog3=0;S("whoosh");const t0=performance.now();
+  const step=n=>{prog3=Math.min(1,(n-t0)/1400);draw3();if(prog3<1)anim3=requestAnimationFrame(step);else done3();};anim3=requestAnimationFrame(step);}
+function done3(){seen3[cv3?"vx":"vv"]=1;
+  $("say3").innerHTML=cv3?'凸透鏡把光<span class="term">會聚</span>到一點，這一點叫<span class="term">焦點</span>':'凹透鏡把光<span class="term">發散</span>開來，光變散了';
+  if(seen3.vx&&seen3.vv)award("s3","會聚・發散");}
+function set3(v){cv3=v;$("t3vx").classList.toggle("on",v);$("t3vv").classList.toggle("on",!v);S("blip");shine();}
+$("t3vx").onclick=()=>set3(true);$("t3vv").onclick=()=>set3(false);$("shine").onclick=shine;
+$("thick").oninput=()=>{prog3=1;draw3();$("say3").innerHTML=cv3?'鏡片越<span class="term">厚</span>，焦點越<span class="term">近</span>':'鏡片越厚，光散得越開';};
+
+/* ---------- 站 4 看字 ---------- */
+const c4=$("c4"),g4=c4.getContext("2d");let cv4=true,seen4={big:0,small:0,flip:0};
+const off=document.createElement("canvas");off.width=1280;off.height=560;const go=off.getContext("2d");
+(function(){go.fillStyle="#fbf7ec";go.fillRect(0,0,1280,560);go.fillStyle="#223";go.textAlign="left";
+  go.font='900 40px "Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif';
+  const lines=["光線特勤隊出任務！","光進到鏡片會轉彎，","中間厚的叫凸透鏡，","中間薄的叫凹透鏡。","放大鏡、眼鏡都是透鏡。","今天我們是透鏡偵探。"];
+  go.textAlign="center";lines.forEach((t,i)=>{go.fillText(t,640,80+i*82);});})();
+function draw4(){
+  const d=+$("dist").value,cx=640,cy=280,R=190;let m,blur=0,note;
+  if(cv4){if(d<=70){m=1+d/70*1.9;note=`字變大了 ${m.toFixed(1)} 倍`;if(m>2.3)seen4.big=1;}
+    else{m=-(0.9+(d-70)/30*.5);blur=(d-70)/4;note="太遠了：字倒過來、變模糊！";if(d>85)seen4.flip=1;}}
+  else{m=1/(1+d/45);note=`字變小了（${m.toFixed(1)} 倍）`;if(m<.6)seen4.small=1;}
+  g4.drawImage(off,0,0);
+  g4.save();g4.beginPath();g4.arc(cx,cy,R,0,7);g4.clip();g4.fillStyle="#fbf7ec";g4.fillRect(cx-R,cy-R,R*2,R*2);
+  const N=blur>1?8:1;
+  for(let k=0;k<N;k++){const a=k/N*Math.PI*2;g4.save();g4.globalAlpha=N>1?.22:1;g4.translate(cx+(N>1?Math.cos(a)*blur:0),cy+(N>1?Math.sin(a)*blur:0));g4.scale(m,m);g4.translate(-cx,-cy);g4.drawImage(off,0,0);g4.restore();}
+  g4.fillStyle="rgba(150,210,255,.10)";g4.fillRect(cx-R,cy-R,R*2,R*2);g4.restore();
+  g4.lineWidth=cv4?22:10;g4.strokeStyle=cv4?"#8a5a2b":"#222";g4.beginPath();g4.arc(cx,cy,R+g4.lineWidth/2,0,7);g4.stroke();
+  if(cv4){g4.save();g4.translate(cx+R*.72,cy+R*.72);g4.rotate(Math.PI/4);g4.fillStyle="#6b4420";g4.fillRect(0,-18,150,36);g4.restore();}
+  big(g4,note,640,530,cv4?"#ffe08a":"#b9e6ff",36);
+  if(seen4.big&&seen4.small&&!got.s4){$("say4").innerHTML='凸透鏡讓字<span class="term">變大</span>、太遠會<span class="term">倒過來</span>；凹透鏡讓字<span class="term">變小</span>';award("s4","變大・變小");}
+}
+function set4(v){cv4=v;$("t4vx").classList.toggle("on",v);$("t4vv").classList.toggle("on",!v);S("blip");
+  if(!got.s4)$("say4").textContent=v?"放大鏡慢慢拉遠：先變大，太遠會怎樣？":"換成近視眼鏡：字會怎樣？";draw4();}
+$("t4vx").onclick=()=>set4(true);$("t4vv").onclick=()=>set4(false);$("dist").oninput=draw4;
+
+/* ---------- 站 6 真人 ---------- */
+let real=0;$("realOk").onclick=()=>{real++;$("realTally").textContent=`成功 ${real} 組`;S("clear");try{FX.confetti(60);FX.emojiBurst("🔍",20)}catch(e){}};
+
+/* ---------- 上課模式 ---------- */
+const stns=[...document.querySelectorAll(".stn")];let cur=0;
+function show(i){cur=Math.max(0,Math.min(stns.length-1,i));stns.forEach((s,k)=>s.classList.toggle("cur",k===cur));$("lTxt").textContent=`第 ${cur+1} / ${stns.length} 站`;window.scrollTo({top:0});S("jump");redraw();}
+function lesson(on){document.body.classList.toggle("lesson",on);if(on)show(cur);}
+$("lessonBtn").onclick=()=>lesson(true);$("lAll").onclick=()=>lesson(false);$("lPrev").onclick=()=>show(cur-1);$("lNext").onclick=()=>show(cur+1);
+function redraw(){draw1();draw3();draw4();}
+document.fonts&&document.fonts.ready.then(redraw);redraw();
+if(location.hash==="#lesson")lesson(true);
+})();
+</script>
+</body>
+</html>

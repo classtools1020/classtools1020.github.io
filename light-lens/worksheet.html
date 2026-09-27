@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>透鏡第1節・學習單</title>
+<style>
+  @page{size:A4;margin:10mm}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,sans-serif;color:#10233a;background:#dfe8f1}
+  .bar{position:sticky;top:0;z-index:5;background:#0f2841;color:#eaf6ff;padding:12px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .bar b{font-size:18px}.bar button{font:inherit;font-weight:900;font-size:16px;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;background:#ffc93c;color:#08131f}
+  .bar span{font-size:14px;color:#9db8cf;font-weight:700}
+  .page{width:210mm;height:297mm;margin:14px auto;background:#fff;padding:11mm 12mm;box-shadow:0 6px 18px rgba(0,0,0,.18);page-break-after:always;position:relative;overflow:hidden}
+  .page:last-child{page-break-after:auto}
+  h1{font-size:28px;margin:0 0 2px}.tag{display:inline-block;font-size:15px;font-weight:900;border-radius:999px;padding:3px 12px;margin-bottom:6px}
+  .tag.b{background:#e6f3ff;color:#0b5c99}.tag.o{background:#fff1e3;color:#c2560a}
+  .name{font-size:20px;font-weight:800;margin:2mm 0 3mm}
+  .q{border:2.5px solid #10233a;border-radius:14px;padding:2.5mm 4mm;margin-bottom:2.5mm}
+  .qt{font-size:22px;font-weight:900;display:flex;gap:8px;align-items:center}
+  .num{display:inline-flex;align-items:center;justify-content:center;background:#10233a;color:#fff;border-radius:8px;width:30px;height:30px;font-size:18px;flex:none}
+  .opts{display:flex;gap:4mm;margin-top:2mm;flex-wrap:wrap}
+  .opt{flex:1;min-width:34mm;border:2px solid #9db8cf;border-radius:12px;padding:2mm;text-align:center;font-size:22px;font-weight:900}
+  .opt svg,.opt img{display:block;margin:0 auto 1mm;height:17mm;max-width:100%;object-fit:cover;border-radius:8px}
+  .drop{display:flex;gap:4mm;margin-top:2mm}
+  .zone{flex:1;border:3px dashed #2aa7e8;border-radius:12px;height:26mm;display:flex;align-items:flex-start;justify-content:center;padding-top:2mm;font-size:21px;font-weight:900;color:#0b5c99}
+  .zone.v{border-color:#e39b2a;color:#9a5a00}
+  .cuts{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-top:2mm}
+  .cutc{border:2px dashed #7a8ea6;border-radius:10px;height:25mm;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:16px;font-weight:900;overflow:hidden}
+  .cutc svg{height:17mm}.cutc img{width:100%;height:18mm;object-fit:cover}
+  .line{font-size:22px;font-weight:800;line-height:1.9}
+  .small{font-size:14px;color:#6b8199;font-weight:800}
+  .foot{position:absolute;left:12mm;right:12mm;bottom:6mm;font-size:12px;color:#6b8199;display:flex;justify-content:space-between}
+  .key{border:3px solid #10233a;border-radius:14px;padding:3mm 5mm;font-size:16px;font-weight:800;line-height:1.75}
+  @media print{body{background:#fff}.bar{display:none}.page{margin:0;box-shadow:none;width:auto;height:277mm}.home-btn,#fxhome,#fxflow,#fxbell,#fxvoice{display:none!important}}
+</style>
+</head>
+<body>
+<div class="bar"><b>🖨️ 透鏡第1節・學習單</b><button onclick="print()">列印（3 頁）</button><span>🔵 操作頁、🟠 推理頁各印一份；第 3 頁是教師解答卡</span><a href="/light/" style="margin-left:auto;color:#42e0c8;font-weight:900;text-decoration:none">🗂️ 主選單</a></div>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="vx" viewBox="0 0 120 160"><path d="M60 8 Q112 80 60 152 Q8 80 60 8Z" fill="rgba(120,200,255,.5)" stroke="#1f6fa8" stroke-width="5"/></symbol>
+    <symbol id="vv" viewBox="0 0 120 160"><path d="M36 8 L84 8 Q58 80 84 152 L36 152 Q62 80 36 8Z" fill="rgba(120,200,255,.5)" stroke="#1f6fa8" stroke-width="5"/></symbol>
+    <symbol id="win" viewBox="0 0 120 100"><rect width="120" height="100" fill="#8fd3ff"/><rect y="70" width="120" height="30" fill="#5cb85c"/><rect x="18" y="42" width="8" height="30" fill="#7a4b24"/><circle cx="22" cy="36" r="16" fill="#2e8b3e"/><rect x="66" y="50" width="36" height="22" fill="#f4e1c1"/><path d="M60 52 L84 32 L108 52Z" fill="#d9342b"/><rect width="120" height="100" fill="none" stroke="#bbb" stroke-width="5"/></symbol>
+    <symbol id="rayIn" viewBox="0 0 200 110"><g stroke="#e0a800" stroke-width="5" fill="none"><path d="M0 25 H100 L170 55"/><path d="M0 55 H170"/><path d="M0 85 H100 L170 55"/></g><path d="M100 8 Q122 55 100 102 Q78 55 100 8Z" fill="rgba(120,200,255,.5)" stroke="#1f6fa8" stroke-width="3"/><circle cx="170" cy="55" r="6" fill="#e8492a"/></symbol>
+    <symbol id="rayOut" viewBox="0 0 200 110"><g stroke="#e0a800" stroke-width="5" fill="none"><path d="M0 25 H100 L200 2"/><path d="M0 55 H200"/><path d="M0 85 H100 L200 108"/></g><path d="M88 8 H112 Q98 55 112 102 H88 Q102 55 88 8Z" fill="rgba(120,200,255,.5)" stroke="#1f6fa8" stroke-width="3"/></symbol>
+  </defs>
+</svg>
+
+<!-- 🔵 -->
+<section class="page">
+  <span class="tag b">🔵 我會操作</span> <span class="small">任務五 透鏡・第1節・Ka-IV-9　👏 做完貼完成貼紙 ☐</span>
+  <h1>🔍 放大鏡只會把東西變大嗎？・學習單</h1>
+  <div class="name">姓名 ＿＿＿＿＿＿　　日期 ＿＿＿＿＿＿</div>
+
+  <div class="q"><div class="qt"><span class="num">1</span>窗戶投影到紙上，看起來？（圈一個）</div>
+    <div class="opts"><div class="opt"><svg viewBox="0 0 120 100"><use href="#win"/></svg>正的</div><div class="opt"><svg viewBox="0 0 120 100" style="transform:rotate(180deg)"><use href="#win"/></svg>倒過來</div></div></div>
+
+  <div class="q"><div class="qt"><span class="num">2</span>貼一貼：把下面剪下來的鏡片，貼到對的格子</div>
+    <div class="drop"><div class="zone">中間厚＝凸透鏡</div><div class="zone v">中間薄＝凹透鏡</div></div></div>
+
+  <div class="q"><div class="qt"><span class="num">3</span>透過鏡片看字（圈一個）</div>
+    <div class="line">🔍 放大鏡：　字變大　／　字變小</div>
+    <div class="line">👓 近視眼鏡：字變大　／　字變小</div></div>
+
+  <div class="q"><div class="qt"><span class="num">4</span>光經過凸透鏡，會？（圈一個）</div>
+    <div class="opts"><div class="opt"><svg viewBox="0 0 200 110"><use href="#rayIn"/></svg>聚在一起</div><div class="opt"><svg viewBox="0 0 200 110"><use href="#rayOut"/></svg>散開</div></div></div>
+
+  <div class="q" style="margin-bottom:2mm"><div class="qt"><span class="num">5</span>放大鏡可以對著太陽或眼睛嗎？　　⭕ 可以　　❌ 不可以</div></div>
+
+  <div class="small">✂️ 剪下來，貼到第 2 題</div>
+  <div class="cuts">
+    <div class="cutc"><svg viewBox="0 0 120 160"><use href="#vx"/></svg>鏡片 A</div>
+    <div class="cutc"><svg viewBox="0 0 120 160"><use href="#vv"/></svg>鏡片 B</div>
+    <div class="cutc"><img src="img/magnifier.jpg" alt="">放大鏡</div>
+    <div class="cutc"><span style="font-size:40px;line-height:1.1">👓</span>近視眼鏡</div>
+  </div>
+</section>
+
+<!-- 🟠 -->
+<section class="page">
+  <span class="tag o">🟠 我會推理</span>
+  <h1>🔍 放大鏡只會把東西變大嗎？・學習單</h1>
+  <div class="name">姓名 ＿＿＿＿＿＿　　日期 ＿＿＿＿＿＿</div>
+  <div class="q"><div class="qt"><span class="num">1</span>放大鏡中間比較 ＿＿＿（厚／薄），所以它是 ＿＿＿ 透鏡。</div></div>
+  <div class="q"><div class="qt"><span class="num">2</span>凸透鏡會把光 ＿＿＿（會聚／發散），</div><div class="line" style="padding-left:38px">光聚在一起的那一點叫 ＿＿＿＿。</div></div>
+  <div class="q"><div class="qt"><span class="num">3</span>近視眼鏡讓字變 ＿＿＿，因為它是 ＿＿＿ 透鏡，會把光 ＿＿＿。</div></div>
+  <div class="q"><div class="qt"><span class="num">4</span>謎題：放大鏡只會把東西變大嗎？</div>
+    <div class="line" style="padding-left:38px">☐ 是　☐ 不是。因為放大鏡離得遠的時候，東西會 ＿＿＿＿＿＿，</div>
+    <div class="line" style="padding-left:38px">還可以把窗戶 ＿＿＿＿ 到白紙上。</div></div>
+  <div class="q"><div class="qt"><span class="num">5</span>遷移：阿嬤看報紙覺得字太小，</div>
+    <div class="line" style="padding-left:38px">她要戴 ＿＿＿ 透鏡的眼鏡，因為這種鏡片會讓字 ＿＿＿＿。</div></div>
+  <div class="q"><div class="qt"><span class="num">6</span>一句話：光進到鏡片會轉彎，這叫 ＿＿＿＿；</div>
+    <div class="line" style="padding-left:38px">利用這個原理做的鏡片，叫做 ＿＿＿＿。</div></div>
+  <div class="foot"><span>任務五 透鏡・第1節・翰林 4-4・Ka-IV-9</span><span>👏 做完貼完成貼紙 ☐</span></div>
+</section>
+
+<!-- 解答 -->
+<section class="page">
+  <h1>🗝️ 透鏡第1節・教師解答卡</h1>
+  <div class="key" style="margin-top:4mm">
+    🔵 1 倒過來｜2 凸：鏡片 A、放大鏡；凹：鏡片 B、近視眼鏡｜3 放大鏡字變大；近視眼鏡字變小｜4 聚在一起｜5 ❌ 不可以<br>
+    🟠 1 厚／凸｜2 會聚／焦點｜3 小／凹／發散｜4 不是；倒過來（模糊、變小也可）／投影｜5 凸／變大｜6 折射／透鏡
+  </div>
+  <div class="key" style="margin-top:5mm">
+    📋 評量記錄三欄（每位學生）<br>
+    ・概念：能分出凸透鏡（中間厚）與凹透鏡（中間薄）　□對 □半 □未<br>
+    ・反應方式：□說 □指 □操作（圈選／貼）<br>
+    ・提示層級：□3 獨立　□2 手勢或口語　□1 部分肢體協助　□0 尚未形成
+  </div>
+  <div class="key" style="margin-top:5mm">
+    🧠 常見迷思，上課時留意<br>
+    ・以為放大鏡「只會放大」：用投影魔術打破，遠處東西會倒立、變小。<br>
+    ・以為「越厚＝越放大就好」：先不深談焦距，只說「越厚，光聚得越近」。<br>
+    ・以為凹透鏡沒有用：連結近視眼鏡、門上貓眼。
+  </div>
+  <div class="foot"><span>任務五 透鏡・第1節・翰林 4-4・Ka-IV-9</span><span>教師用</span></div>
+</section>
+<script src="../games/fx.js"></script>
+</body>
+</html>
