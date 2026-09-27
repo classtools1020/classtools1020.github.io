@@ -197,6 +197,7 @@
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bell);else bell();
 
   /* ---------- 📍 今日流程自動串聯（主入口「開始這堂課」→ 每頁底部導覽列） ---------- */
+  const HOME="https://classtools1020.github.io/light/";
   const norm=u=>{try{const a=new URL(u,location.href);return (a.origin+a.pathname).replace(/index\.html$/,"");}catch(e){return u;}};
   FX.flowStart=(title,steps)=>{try{localStorage.setItem("flow",JSON.stringify({title,steps,i:0,t:Date.now()}));}catch(e){}
     const u=steps[0].url;if(/gamma\.app|youtube\.com|\.docx$/i.test(u)){window.open(u,"_blank");}else{location.href=u;}};
@@ -209,14 +210,23 @@
     bar.style.cssText="position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:9400;background:rgba(8,20,36,.96);border:2px solid #ffc93c;border-radius:18px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:min(96vw,760px);box-shadow:0 10px 26px rgba(0,0,0,.6);font-family:'Noto Sans TC','Microsoft JhengHei',system-ui,sans-serif;color:#eaf6ff";
     const btn=(t,c)=>`<button style="font-weight:900;font-size:15px;border:none;border-radius:12px;padding:10px 14px;cursor:pointer;background:${c};color:#08131f">${t}</button>`;
     bar.innerHTML=`<span style="font-weight:900;font-size:14px;color:#ffe08a">📍 ${esc(f.title)}　第 ${i+1}/${n} 步：${esc(cur.label)}</span>`+
-      (pv?btn("⬅ 上一步","#9db8cf"):"")+(nx?btn("下一步 ➡ "+esc(nx.label),"#ffc93c"):btn("🏁 這堂上完了","#42e0c8"))+`<button id="fxflowx" title="結束流程" style="border:none;background:transparent;color:#9db8cf;font-weight:900;cursor:pointer">✖</button>`;
+      btn("🏠 主畫面","#42e0c8")+(pv?btn("⬅ 上一步","#9db8cf"):"")+(nx?btn("下一步 ➡ "+esc(nx.label),"#ffc93c"):btn("🏁 這堂上完了","#42e0c8"))+`<button id="fxflowx" title="結束流程" style="border:none;background:transparent;color:#9db8cf;font-weight:900;cursor:pointer">✖</button>`;
     document.body.appendChild(bar);
     const go=(j)=>{f.i=j;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}const u=f.steps[j].url;FX.sound.jump();
       if(/gamma\.app|youtube\.com|\.docx$/i.test(u)){window.open(u,"_blank");bar.remove();flowBar();}else{location.href=u;}};
-    const bs=bar.querySelectorAll("button");let bi=0;if(pv){bs[bi++].onclick=()=>go(i-1);}
+    const bs=bar.querySelectorAll("button");let bi=0;bs[bi++].onclick=()=>{FX.sound.jump();location.href=HOME;};if(pv){bs[bi++].onclick=()=>go(i-1);}
     bs[bi++].onclick=()=>{if(nx)go(i+1);else{FX.sound.clear();FX.confetti(160);FX.fireworks(2500);setTimeout(FX.flowEnd,2600);}};
     bar.querySelector("#fxflowx").onclick=FX.flowEnd;}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",flowBar);else flowBar();
+
+  /* ---------- 🗂️ 每頁都有「回主選單」（頁面自己沒放時自動補上） ---------- */
+  function homeBtn(){const p=location.pathname.replace(/index\.html$/,"");if(/^\/light\/?$/.test(p))return;
+    if(document.getElementById("fxhome")||document.querySelector('a[href="/light/"],a[href="https://classtools1020.github.io/light/"]'))return;
+    const a=document.createElement("a");a.id="fxhome";a.href=HOME;a.textContent="🗂️ 主選單";
+    a.style.cssText="position:fixed;right:12px;top:12px;z-index:99999;background:#0f2841;border:2px solid #42e0c8;color:#42e0c8;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:'Noto Sans TC','Microsoft JhengHei',system-ui,sans-serif";
+    const st=document.createElement("style");st.textContent="@media print{#fxhome,#fxflow,#fxbell,#fxvoice{display:none!important}}";document.head.appendChild(st);
+    document.body.appendChild(a);}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",homeBtn);else homeBtn();
 
   window.FX=FX;
 })();
