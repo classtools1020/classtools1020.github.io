@@ -204,7 +204,7 @@
   FX.flowEnd=()=>{try{localStorage.removeItem("flow");}catch(e){}const b=document.getElementById("fxflow");if(b)b.remove();};
   function flowBar(){let f=null;try{f=JSON.parse(localStorage.getItem("flow")||"null");}catch(e){}if(!f||!f.steps||!f.steps.length)return;
     if(Date.now()-(f.t||0)>12*3600*1000){FX.flowEnd();return;}          // 超過 12 小時自動結束
-    const here=norm(location.href);const k=f.steps.findIndex(s=>norm(s.url)===here);if(k>=0){f.i=k;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}}
+    const isExt=u=>/gamma\.app|youtube\.com|\.docx$/i.test(u);const here=norm(location.href);const full=u=>{try{const x=new URL(u,location.href);return norm(u)+x.hash;}catch(e){return u;}};let k=f.steps.findIndex(s=>full(s.url)===full(location.href));if(k<0)k=f.steps.findIndex(s=>norm(s.url)===here);if(k>=0&&!(f.steps[f.i]&&isExt(f.steps[f.i].url))){f.i=k;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}}
     const i=f.i,n=f.steps.length,cur=f.steps[i],nx=f.steps[i+1],pv=f.steps[i-1];
     const bar=document.createElement("div");bar.id="fxflow";
     bar.style.cssText="position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:9400;background:rgba(8,20,36,.96);border:2px solid #ffc93c;border-radius:18px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:min(96vw,760px);box-shadow:0 10px 26px rgba(0,0,0,.6);font-family:'Noto Sans TC','Microsoft JhengHei',system-ui,sans-serif;color:#eaf6ff";
