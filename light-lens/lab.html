@@ -48,6 +48,40 @@
   .real img{width:100%;border-radius:16px;display:block}
   .real ol{margin:0;padding-left:1.2em;font-size:24px;font-weight:900;line-height:1.7}
   .safe{background:#3a1420;border:2px solid var(--pink);border-radius:12px;padding:8px 12px;font-weight:900;font-size:22px;margin-top:10px}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:700px){.cards{grid-template-columns:repeat(2,1fr)}}
+  .mc{position:relative;border-radius:16px;overflow:hidden;border:3px solid var(--line);aspect-ratio:4/3;cursor:pointer;background:#08111d;transition:transform .15s,border-color .15s}
+  .mc:hover{transform:translateY(-3px);border-color:var(--amber)}
+  .mc img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.8);transition:filter .5s}
+  .mc.got{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,201,60,.35)}.mc.got img{filter:none}
+  .mc .tt{position:absolute;left:0;right:0;bottom:0;padding:8px 10px;background:linear-gradient(0deg,rgba(4,10,20,.92),transparent);font-weight:900;font-size:20px}
+  .mc .tap{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-weight:900;font-size:14px;padding:4px 10px;border-radius:999px}
+  .mc .ok{position:absolute;top:8px;left:8px;font-size:26px;display:none}.mc.got .ok{display:block}
+  .xp{position:fixed;inset:0;z-index:9300;background:#03081a;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px;overflow:auto}
+  .xp.show{display:flex;animation:fade .25s}@keyframes fade{from{opacity:0}to{opacity:1}}
+  .xp .x{position:absolute;right:14px;top:14px;width:50px;height:50px;border-radius:50%;border:2px solid var(--amber);background:#0f2841;color:var(--amber);font-weight:900;font-size:24px;cursor:pointer;z-index:5}
+  .xp h3{font-size:30px;margin:6px 52px 4px;text-align:center}
+  .xp .hint{font-weight:900;color:var(--aqua);font-size:22px;margin-bottom:8px;text-align:center}
+  .xp .stage{position:relative;width:min(96vw,960px);aspect-ratio:16/9;border-radius:20px;overflow:hidden;border:3px solid var(--line);background:#08111d;touch-action:none;user-select:none;cursor:crosshair}
+  .xp .stage img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+  .xp .stage canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:0;background:none}
+  .xp .lensv{position:absolute;border-radius:50%;border:8px solid rgba(255,255,255,.92);box-shadow:0 10px 30px rgba(0,0,0,.7),inset 0 0 22px rgba(255,255,255,.35);pointer-events:none;background-repeat:no-repeat;display:none;transform:translate(-50%,-50%)}
+  .xp .tag{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.7);color:#fff;font-weight:900;font-size:22px;padding:6px 12px;border-radius:12px;pointer-events:none;z-index:2}
+  .xp .score{position:absolute;right:12px;top:12px;background:rgba(0,0,0,.7);color:var(--amber);font-weight:900;font-size:24px;padding:6px 14px;border-radius:12px;pointer-events:none;z-index:2}
+  .xp .pop{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%) scale(.3);font-weight:900;font-size:min(9vw,56px);color:#ffd43b;text-shadow:0 4px 0 #000,0 0 30px rgba(0,0,0,.8);pointer-events:none;opacity:0;z-index:3;white-space:nowrap;animation:pop .9s ease-out}
+  .xp .pop.miss{color:#ff9a9a}
+  @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-60%) scale(1)}}
+  .xp .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:4}.xp .flash.on{animation:flash .5s}@keyframes flash{0%{opacity:.9}100%{opacity:0}}
+  .xp .stage.shake{animation:shake .4s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+  .xp .choice{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .xp .why{margin-top:10px;font-size:26px;font-weight:900;color:#ffe08a;text-align:center;max-width:960px;min-height:34px;line-height:1.4}
+  .xp .okb{margin-top:10px}
+  .flycoin{position:fixed;z-index:99999;font-size:34px;pointer-events:none;transition:transform .7s cubic-bezier(.5,-.3,.7,1),opacity .7s}
+  .hud.bump{transform:scale(1.2)}.hud{transition:transform .15s}
+  .cam{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .cam .ps{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:#08111d;border:3px dashed var(--line);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-size:22px;color:var(--dim)}
+  .cam video,.cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  @media(max-width:760px){.cam{grid-template-columns:1fr}}
   .lnav{position:sticky;top:0;z-index:50;display:none;justify-content:center;gap:12px;align-items:center;background:rgba(5,16,31,.95);padding:10px;border-bottom:2px solid var(--amber)}
   .lnav b{font-size:22px;color:var(--amber)}
   body.lesson .lnav{display:flex}body.lesson .stn{display:none}body.lesson .stn.cur{display:block}
@@ -57,14 +91,14 @@
 <body>
 <a class="fixbtn home" href="./">🏠 任務五首頁</a>
 <a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
-<div class="hud">🔍 <span id="coins">0</span></div>
+<div class="hud" id="hud">🪙 <span id="coins">0</span></div>
 <div class="lnav" id="lnav"><button class="btn ghost" id="lPrev">⬅ 上一站</button><b id="lTxt">第 1 站</b><button class="btn" id="lNext">下一站 ➡</button><button class="btn ghost" id="lAll">看全部</button></div>
 <div class="wrap">
   <header>
     <div class="emblem">🔍</div>
     <h1>透鏡實驗室</h1>
     <div class="sub">放大鏡只會把東西變大嗎？</div>
-    <div class="prog">🔍 透鏡魔法卡 <span id="pgTxt">0 / 5</span><div class="bar"><i id="pgBar"></i></div></div>
+    <div class="prog">🔍 透鏡魔法卡 <span id="pgTxt">0 / 6</span><div class="bar"><i id="pgBar"></i></div></div>
     <div class="ctrl" style="justify-content:center"><button class="btn teal" id="lessonBtn">🎬 上課模式：一次只看一站</button></div>
   </header>
 
@@ -104,10 +138,10 @@
   </section>
 
   <section class="stn" data-n="5">
-  <h2 class="sec">站 5・生活闖關：是凸還是凹？</h2>
+  <h2 class="sec">站 5・生活闖關：點一張，用手指玩</h2>
   <div class="card">
-    <div class="tiles" id="lifeTiles"></div>
-    <div class="say" id="say5">生活裡到處都是透鏡，一張一張破關</div>
+    <div class="cards" id="cards"></div>
+    <div class="say" id="say5">每一關都是真的生活場景，用手指操作；六關全破有驚喜 <span id="lifeN">0 / 6</span></div>
   </div>
   </section>
 
@@ -125,23 +159,41 @@
       <svg viewBox="0 0 640 360" style="width:100%;border-radius:16px;background:#f3efe6;display:block"><rect x="40" y="70" width="560" height="220" rx="14" fill="#fff" stroke="#cbbfa8" stroke-width="4"/><g transform="translate(120,180)"><path d="M0 0 L60 -40 L60 -16 L130 -16 L130 16 L60 16 L60 40 Z" fill="#1b2a3a"/></g><text x="190" y="270" font-size="26" font-weight="900" fill="#6b5a3a" text-anchor="middle" font-family="sans-serif">紙上畫的箭頭</text><rect x="330" y="60" width="200" height="240" rx="90" fill="rgba(120,200,255,.35)" stroke="#5aa9d6" stroke-width="6"/><rect x="395" y="30" width="70" height="40" rx="8" fill="#5aa9d6"/><g transform="translate(365,180)"><path d="M130 0 L70 -40 L70 -16 L0 -16 L0 16 L70 16 L70 40 Z" fill="#1b2a3a"/></g><text x="430" y="330" font-size="26" font-weight="900" fill="#2d6f96" text-anchor="middle" font-family="sans-serif">透過水瓶：反過來了！</text></svg>
       <div><ol><li>白紙畫一個 ⬅ 箭頭</li><li>圓瓶子裝滿水，放在箭頭前面</li><li>從瓶子另一邊看，箭頭變成哪一邊？</li></ol></div>
     </div>
+    <h3 style="font-size:26px;margin:18px 0 8px">📸 拍下來當證據：把真的放大鏡放在鏡頭前</h3>
+    <div class="cam">
+      <div class="ps" id="camFrame"><span id="camEmpty">📷 開鏡頭後，把放大鏡擋在鏡頭前面，<br>對著窗戶或同學，慢慢前後移動</span><video id="camVid" autoplay playsinline muted style="display:none"></video><img id="camImg" alt="" style="display:none"></div>
+      <div style="display:flex;flex-direction:column;justify-content:center;gap:10px;font-size:24px;font-weight:900;line-height:1.5">
+        <div>👀 放大鏡靠近鏡頭：東西 <span class="term">變大</span></div><div>👀 放大鏡離遠一點：東西 <span class="term">倒過來</span></div>
+        <div class="ctrl"><button class="btn aqua" id="camOpen">📷 開鏡頭</button><button class="btn" id="camShot" style="display:none">📸 拍！</button><label class="btn ghost" style="font-size:18px">📁 或選一張照片<input type="file" accept="image/*" capture="environment" id="camIn" style="display:none"></label></div>
+      </div>
+    </div>
     <div class="ctrl"><button class="btn teal" id="realOk">🙌 我們做到了</button><span class="lbl2" id="realTally">成功 0 組</span></div>
     <div class="say" id="say6">水瓶也是一個凸透鏡：中間厚、會把東西倒過來</div>
   </div>
   </section>
 </div>
 
+<div class="xp" id="xp"><button class="x" id="xpX">✖</button><h3 id="xpTitle"></h3><div class="hint" id="xpHint"></div><div class="stage" id="xpStage"></div><div class="choice" id="xpCtrl"></div><div class="why" id="xpWhy"></div><div class="okb" id="xpOk"></div></div>
 <script src="../games/fx.js"></script>
 <script>
 (function(){
 const $=id=>document.getElementById(id);
 const S=k=>{try{FX.sound[k]()}catch(e){}};
-/* ---------- 進度 ---------- */
-const got={};let coins=0;
-function award(k,title,sub){if(got[k])return;got[k]=1;coins++;$("coins").textContent=coins;
-  const n=Object.keys(got).length;$("pgTxt").textContent=n+" / 5";$("pgBar").style.width=(n/5*100)+"%";S("coin");
+/* ---------- 進度・金幣 ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+let touched=false;addEventListener("pointerdown",()=>{touched=true;},{once:true,capture:true});
+function buzz(p){if(!touched)return;try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}
+let coins=0;try{coins=+(localStorage.getItem("lensCoins")||0);}catch(e){}$("coins").textContent=coins;
+function addCoins(n,sx,sy){const hud=$("hud"),hr=hud.getBoundingClientRect();const cnt=Math.min(6,n);
+  for(let k=0;k<cnt;k++){const el=document.createElement("div");el.className="flycoin";el.textContent="🪙";const x0=(sx||innerWidth/2)+(Math.random()*80-40),y0=(sy||innerHeight/2)+(Math.random()*60-30);
+    el.style.left=x0+"px";el.style.top=y0+"px";document.body.appendChild(el);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.transform=`translate(${hr.left+hr.width/2-x0-17}px,${hr.top+hr.height/2-y0-17}px) scale(.6)`;el.style.opacity="0";}));
+    setTimeout(()=>{el.remove();coins+=Math.round(n/cnt);$("coins").textContent=coins;try{localStorage.setItem("lensCoins",coins);}catch(e){}hud.classList.add("bump");S("coin");setTimeout(()=>hud.classList.remove("bump"),150);},700+k*60);}}
+const got={};const TOTAL=6;
+function award(k,title){if(got[k])return;got[k]=1;
+  const n=Object.keys(got).length;$("pgTxt").textContent=n+" / "+TOTAL;$("pgBar").style.width=(n/TOTAL*100)+"%";addCoins(5);
   try{FX.confetti(80)}catch(e){}
-  if(n===5){setTimeout(()=>{try{FX.chest({title:"五張透鏡魔法卡到手！開寶箱",gem:"🔍",gemName:"透鏡水晶",gemColor:"#7fdcff",sub:"中間厚會聚光、中間薄會散光",onDone:()=>FX.badge({id:"lens",emoji:"🔍",name:"透鏡偵探",desc:"凸透鏡會聚、凹透鏡發散・五站全破",onDone:()=>FX.fireworks(3000)})})}catch(e){}},700);}
+  if(n===TOTAL){setTimeout(()=>{try{FX.chest({title:"六張透鏡魔法卡到手！開寶箱",gem:"🔍",gemName:"透鏡水晶",gemColor:"#7fdcff",sub:"中間厚會聚光、中間薄會散光",onDone:()=>FX.wheel({title:"🎡 透鏡魔法轉盤",onDone:()=>FX.badge({id:"lens",emoji:"🔍",name:"透鏡偵探",desc:"凸透鏡會聚、凹透鏡發散・六站全破",onDone:()=>FX.fireworks(3000)})})})}catch(e){}},700);}
   else if(title){setTimeout(()=>{try{FX.stamp({text:title})}catch(e){}},250);}}
 
 /* ---------- 共用：畫窗外風景 ---------- */
@@ -226,16 +278,159 @@ tiles("sortTiles",[
   {nm:"一滴水",img:"img/drop.jpg",ans:"凸",why:"水滴中間高高的，像小放大鏡",hint:"水滴中間是不是高高鼓起來？"}
 ],"say2","s2",()=>{$("say2").innerHTML='全對！中間厚＝<span class="term">凸透鏡</span>，中間薄＝<span class="term">凹透鏡</span>';award("s2","分類高手");});
 
-tiles("lifeTiles",[
-  {nm:"放大鏡",emo:"🔍",img:"img/magnifier.jpg",ans:"凸",why:"字變大＝凸透鏡"},
-  {nm:"近視眼鏡",emo:"👓",ans:"凹",why:"看東西變小＝凹透鏡",hint:"戴近視眼鏡看字，字變大還是變小？"},
-  {nm:"老花眼鏡",emo:"👵📖",ans:"凸",why:"阿公阿嬤看書，字變大＝凸透鏡",hint:"老花眼鏡讓書上的字變大，還是變小？"},
-  {nm:"手機相機鏡頭",emo:"📱",ans:"凸",why:"把光聚在感光片上＝凸透鏡",hint:"相機要把光「聚」起來，才拍得到照片"},
-  {nm:"門上的貓眼",emo:"🚪",ans:"凹",why:"門外的人看起來小小的＝凹透鏡",hint:"從貓眼看出去，門外的人變大還是變小？"},
-  {nm:"裝水的圓瓶",emo:"🧴💧",ans:"凸",why:"中間厚，箭頭會倒過來＝凸透鏡"},
-  {nm:"投影機鏡頭",emo:"📽️",ans:"凸",why:"把畫面投到牆上＝凸透鏡（跟站 1 一樣）",hint:"投影機跟站 1 的放大鏡一樣，把畫面投到牆上"},
-  {nm:"一滴水",img:"img/drop.jpg",ans:"凸",why:"字變大＝凸透鏡"}
-],"say5","s5",()=>{$("say5").innerHTML='生活闖關全破！放大鏡、老花眼鏡、相機＝<span class="term">凸</span>；近視眼鏡、貓眼＝<span class="term">凹</span>';award("s5","生活偵探");});
+/* ---------- 站 5 生活闖關：六個手指小遊戲 ---------- */
+const FONT='"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif';
+function cover(im,W,H){const k=Math.max(W/im.naturalWidth,H/im.naturalHeight),w=im.naturalWidth*k,h=im.naturalHeight*k;return {x:(W-w)/2,y:(H-h)/2,w,h};}
+const CARDS=[
+ {img:"img/magnifier.jpg",t:"🔍 偵探放大鏡：找出藏起來的字",kind:"detect",term:"凸透鏡",hint:"👆 手指移動放大鏡，找出 3 個小到看不見的字",why:"放大鏡中間厚，是凸透鏡：光轉彎，小字就變大。"},
+ {img:"../light-color/img/case-traffic.jpg",t:"🚦 近視看紅綠燈",kind:"myopia",term:"凹透鏡",hint:"👆 把近視眼鏡移到紅綠燈上",why:"近視眼鏡中間薄，是凹透鏡：把光散開一點，遠方就看清楚了。"},
+ {img:"img/drop.jpg",t:"👵 幫阿嬤看藥袋",kind:"grandma",term:"凸透鏡",hint:"👆 用老花眼鏡看藥袋上的小字",why:"老花眼鏡中間厚，是凸透鏡：近的小字變大、變清楚。"},
+ {img:"../light-color/img/tw/alishan.jpg",t:"📷 手機拍阿里山小火車",kind:"camera",term:"凸透鏡",hint:"👆 在畫面上手指往上、往下滑，移動鏡頭對焦",why:"手機鏡頭是凸透鏡：把光剛好聚在感光片上，照片才清楚。"},
+ {img:"../light-color/img/case-vest.jpg",t:"🚪 門上貓眼：誰在門外？",kind:"peep",term:"凹透鏡",hint:"👆 點門上的小圓孔看出去",why:"貓眼是凹透鏡：門外的人看起來小小的，一次看到的範圍很大。看清楚再決定開不開門。"},
+ {img:"../light-color/img/wall.jpg",t:"☀️ 放大鏡曬太陽會怎樣？",kind:"sun",term:"焦點很燙",hint:"👆 手指上下移動放大鏡，讓光點變最小",why:"凸透鏡把陽光會聚到焦點，焦點非常燙，紙會燒起來。放大鏡不對太陽、不對眼睛！"},
+];
+let lifeGot=CARDS.map(()=>false),raf=0,timers=[];
+function later(f,ms){timers.push(setTimeout(f,ms));}
+$("cards").innerHTML=CARDS.map((c,i)=>`<div class="mc" data-i="${i}"><img src="${c.img}" alt=""><span class="tap">👆 點我玩</span><span class="ok">✅</span><div class="tt">${c.t}</div></div>`).join("");
+document.querySelectorAll(".mc").forEach(m=>m.onclick=()=>openXp(+m.dataset.i));
+function closeXp(){$("xp").classList.remove("show");timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(raf);raf=0;
+  const st=$("xpStage");st.onpointermove=st.onpointerdown=st.onpointerup=st.onpointercancel=null;st.innerHTML="";S("blip");}
+$("xpX").onclick=closeXp;
+function openXp(i){const c=CARDS[i];S("jump");$("xpTitle").textContent=c.t;$("xpHint").textContent=c.hint;$("xpWhy").textContent="";$("xpOk").innerHTML="";$("xpCtrl").innerHTML="";
+  const st=$("xpStage");st.innerHTML=`<img class="bg" src="${c.img}" alt=""><canvas id="xc" width="960" height="540"></canvas><div class="flash" id="flash"></div>`;
+  $("xp").classList.add("show");
+  const run=()=>({detect:gDetect,myopia:gMyopia,grandma:gGrandma,camera:gCamera,peep:gPeep,sun:gSun})[c.kind](c,i);
+  const im=st.querySelector("img.bg");if(im.complete&&im.naturalWidth)run();else{im.onload=run;im.onerror=run;}}
+function okBtn(i){$("xpOk").innerHTML=`<button class="btn teal" id="okB">✅ 我懂了：${CARDS[i].term}</button>`;$("okB").onclick=()=>learned(i);}
+function learned(i){S("powerup");$("xpWhy").innerHTML=CARDS[i].why+` <span class="term">${CARDS[i].term}</span>`;
+  if(!lifeGot[i]){lifeGot[i]=true;document.querySelectorAll(".mc")[i].classList.add("got");addCoins(10);
+    const n=lifeGot.filter(Boolean).length;$("lifeN").textContent=n+" / 6";
+    if(n===6){$("say5").innerHTML='🎉 六關全破！放大鏡、老花眼鏡、相機＝<span class="term">凸</span>；近視眼鏡、貓眼＝<span class="term">凹</span>';award("s5","生活偵探");}}
+  later(closeXp,2600);}
+function pop(t,miss){const p=document.createElement("div");p.className="pop"+(miss?" miss":"");p.textContent=t;$("xpStage").appendChild(p);later(()=>p.remove(),950);}
+function flash(){const f=$("flash");f.classList.remove("on");void f.offsetWidth;f.classList.add("on");}
+function hit(t){pop(t);S("coin");buzz([40,30,40]);try{FX.confetti(40)}catch(e){}}
+function miss(t){pop(t,true);S("wrongsoft");buzz(120);const st=$("xpStage");st.classList.remove("shake");void st.offsetWidth;st.classList.add("shake");}
+function stagePt(e){const r=$("xpStage").getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*960,y:(e.clientY-r.top)/r.height*540};}
+function choices(opts,right,after){$("xpCtrl").innerHTML=opts.map((o,k)=>`<button class="btn ${k%2?"aqua":""}" data-k="${k}" style="font-size:26px">${o}</button>`).join("");
+  $("xpCtrl").querySelectorAll("button").forEach(b=>b.onclick=()=>{if(+b.dataset.k===right){hit("答對了！");$("xpCtrl").innerHTML="";after();}else miss("再想一想");});}
+function bgOff(){const im=$("xpStage").querySelector("img.bg");const o=document.createElement("canvas");o.width=960;o.height=540;const g=o.getContext("2d");
+  if(im.naturalWidth){const f=cover(im,960,540);g.drawImage(im,f.x,f.y,f.w,f.h);}else{g.fillStyle="#e9dcc2";g.fillRect(0,0,960,540);}return {o,g};}
+function lensAt(x,src,px,py,R,Z,frame){x.save();x.beginPath();x.arc(px,py,R,0,7);x.clip();x.drawImage(src,px-R/Z,py-R/Z,2*R/Z,2*R/Z,px-R,py-R,2*R,2*R);
+  x.fillStyle="rgba(170,225,255,.08)";x.fill();x.restore();x.lineWidth=frame||10;x.strokeStyle="rgba(255,255,255,.92)";x.beginPath();x.arc(px,py,R,0,7);x.stroke();}
+function blurred(src,r){const o=document.createElement("canvas");o.width=960;o.height=540;const g=o.getContext("2d");const N=10;
+  for(let k=0;k<N;k++){const a=k/N*Math.PI*2;g.globalAlpha=1/(k+1);g.drawImage(src,Math.cos(a)*r,Math.sin(a)*r);}g.globalAlpha=1;return o;}
+
+/* A 偵探放大鏡 */
+function gDetect(c,i){const st=$("xpStage");st.querySelector("img.bg").style.display="none";const x=$("xc").getContext("2d");const {o,g}=bgOff();
+  const clues=[{x:250,y:400,ch:"光"},{x:700,y:330,ch:"轉"},{x:520,y:150,ch:"彎"}];
+  clues.forEach(q=>{g.font=`900 11px ${FONT}`;g.fillStyle="rgba(40,20,0,.9)";g.fillText(q.ch,q.x-5,q.y+4);});
+  st.insertAdjacentHTML("beforeend",`<div class="score" id="sc">🔎 ＿ ＿ ＿</div>`);
+  let p=null,n=0,hov=null,ht=0,t=0,done=false;
+  function draw(){t+=1/60;x.clearRect(0,0,960,540);x.drawImage(o,0,0);
+    clues.forEach((q,k)=>{if(q.got)return;const a=.5+.5*Math.sin(t*4+k*2);x.strokeStyle=`rgba(255,215,0,${.25+a*.45})`;x.lineWidth=2;x.beginPath();x.arc(q.x,q.y,16+a*6,0,7);x.stroke();});
+    if(p)lensAt(x,o,p.x,p.y,120,2.6,12);raf=requestAnimationFrame(draw);}
+  draw();
+  st.onpointermove=st.onpointerdown=e=>{e.preventDefault();p=stagePt(e);if(done)return;
+    const q=clues.find(q=>!q.got&&Math.hypot(q.x-p.x,q.y-p.y)<40);
+    if(q){if(hov!==q){hov=q;ht=Date.now();S("blip");}else if(Date.now()-ht>450){q.got=true;n++;hov=null;hit("找到「"+q.ch+"」！");
+      $("sc").textContent="🔎 "+clues.map(z=>z.got?z.ch:"＿").join(" ");
+      if(n===3){done=true;later(()=>{S("clear");pop("光轉彎！");$("xpWhy").textContent="三個字拼起來：光・轉・彎！放大鏡讓光轉彎，小字變大。";okBtn(i);},700);}}}
+    else hov=null;};}
+
+/* B 近視看紅綠燈 */
+function gMyopia(c,i){const st=$("xpStage");const im=st.querySelector("img.bg");im.style.display="none";const x=$("xc").getContext("2d");const {o}=bgOff();const bl=blurred(o,9);
+  st.insertAdjacentHTML("beforeend",`<div class="tag" id="gt">😵 近視沒戴眼鏡：紅綠燈看不清楚</div>`);
+  let p=null,clear=false,ht=0,asked=false;
+  function draw(){x.clearRect(0,0,960,540);x.drawImage(clear?o:bl,0,0);
+    if(p&&!clear){x.save();x.beginPath();x.ellipse(p.x,p.y,130,90,0,0,7);x.clip();x.drawImage(o,p.x-130/.9,p.y-90/.9,260/.9,180/.9,p.x-130,p.y-90,260,180);x.restore();
+      x.lineWidth=9;x.strokeStyle="#1b1b1b";x.beginPath();x.ellipse(p.x,p.y,130,90,0,0,7);x.stroke();x.beginPath();x.moveTo(p.x-130,p.y-20);x.lineTo(p.x-190,p.y-40);x.stroke();
+      x.font=`900 22px ${FONT}`;x.fillStyle="#fff";x.strokeStyle="#000";x.lineWidth=5;x.strokeText("👓 凹透鏡",p.x-50,p.y+118);x.fillText("👓 凹透鏡",p.x-50,p.y+118);}
+    raf=requestAnimationFrame(draw);}
+  draw();
+  st.onpointermove=st.onpointerdown=e=>{e.preventDefault();p=stagePt(e);if(clear)return;
+    const onLight=p.x>200&&p.x<470&&p.y>40&&p.y<420;
+    if(onLight){if(!ht)ht=Date.now();else if(Date.now()-ht>600&&!asked){asked=true;clear=true;flash();S("oneup");$("gt").textContent="😎 戴上近視眼鏡：看清楚了！";pop("是紅燈！");
+      later(()=>{$("xpWhy").textContent="看清楚了，現在要怎麼做？";choices(["🚶 直接過馬路","🛑 停下來，等綠燈"],1,()=>{$("xpWhy").textContent="對！看清楚才能做安全的決定。";okBtn(i);});},900);}}
+    else ht=0;};}
+
+/* C 幫阿嬤看藥袋 */
+function gGrandma(c,i){const st=$("xpStage");st.querySelector("img.bg").style.display="none";const x=$("xc").getContext("2d");
+  const o=document.createElement("canvas");o.width=960;o.height=540;const g=o.getContext("2d");
+  g.fillStyle="#caa77a";g.fillRect(0,0,960,540);g.fillStyle="#b8915f";for(let k=0;k<12;k++)g.fillRect(0,k*46,960,3);
+  g.save();g.translate(480,280);g.rotate(-.04);g.fillStyle="#fff";g.shadowColor="rgba(0,0,0,.35)";g.shadowBlur=18;g.fillRect(-190,-200,380,400);g.shadowBlur=0;
+  g.fillStyle="#d93b3b";g.fillRect(-190,-200,380,60);g.fillStyle="#fff";g.font=`900 34px ${FONT}`;g.textAlign="center";g.fillText("藥　袋",0,-158);
+  g.fillStyle="#222";g.font=`900 15px ${FONT}`;const L=[["姓名：王阿嬤",-90],["每天吃 3 次",-45],["飯後吃",0],["每次 1 顆",45],["吃完多喝水",90]];L.forEach(([t,y])=>g.fillText(t,0,y));
+  g.restore();const bl=blurred(o,6);
+  st.insertAdjacentHTML("beforeend",`<div class="tag" id="gt">👵 阿嬤：字好小，看不清楚……</div>`);
+  let p=null,ht=0,asked=false;
+  function draw(){x.clearRect(0,0,960,540);x.drawImage(asked?o:bl,0,0);if(asked)p={x:480,y:235};if(p){lensAt(x,o,p.x,p.y,asked?150:110,asked?2.8:2.2,12);
+    x.font=`900 22px ${FONT}`;x.fillStyle="#fff";x.strokeStyle="#000";x.lineWidth=5;x.strokeText("👓 老花眼鏡（凸）",p.x-90,p.y+145);x.fillText("👓 老花眼鏡（凸）",p.x-90,p.y+145);}raf=requestAnimationFrame(draw);}
+  draw();
+  st.onpointermove=st.onpointerdown=e=>{e.preventDefault();p=stagePt(e);if(asked)return;
+    const on=Math.abs(p.x-480)<120&&Math.abs(p.y-235)<40;
+    if(on){if(!ht)ht=Date.now();else if(Date.now()-ht>600){asked=true;S("oneup");flash();$("gt").textContent="👵 阿嬤：看到了！謝謝你！";
+      $("xpWhy").textContent="藥袋上寫：每天吃幾次？";choices(["1 次","2 次","3 次"],2,()=>{$("xpWhy").textContent="每天 3 次！你幫阿嬤看清楚了 👍";okBtn(i);});}}else ht=0;};}
+
+/* D 手機拍阿里山小火車 */
+function gCamera(c,i){const st=$("xpStage");const im=st.querySelector("img.bg");const x=$("xc").getContext("2d");
+  let f=.15,drag=false,ly=0,shot=false;const F=.63;
+  st.insertAdjacentHTML("beforeend",`<div class="tag" id="gt">📱 相機模式：畫面好模糊</div>`);
+  function draw(){const b=Math.abs(f-F)*30;im.style.filter=`blur(${b.toFixed(1)}px)`;x.clearRect(0,0,960,540);
+    x.strokeStyle="rgba(255,255,255,.85)";x.lineWidth=4;const s=70;[[400,200],[560,200],[400,340],[560,340]].forEach(([a,bb],k)=>{x.beginPath();x.moveTo(a+(k%2?-0:0),bb);});
+    x.strokeStyle=b<1.6?"#46e08a":"#ffd43b";x.strokeRect(480-s,270-s,s*2,s*2);
+    x.fillStyle="rgba(0,0,0,.55)";x.fillRect(900,60,34,420);x.fillStyle="#ffd43b";x.fillRect(900,60+(1-f)*400,34,20);x.fillStyle="#46e08a";x.fillRect(896,60+(1-F)*400+6,42,8);
+    x.font=`900 20px ${FONT}`;x.fillStyle="#fff";x.fillText("鏡頭",892,50);raf=requestAnimationFrame(draw);}
+  draw();
+  function upd(){const b=Math.abs(f-F)*30;if(b<1.6&&!shot){$("gt").textContent="📱 清楚了！按「拍」";if(!$("snap")){$("xpCtrl").innerHTML=`<button class="btn" id="snap" style="font-size:28px">📸 拍！</button>`;$("snap").onclick=()=>{shot=true;flash();S("clear");buzz([30,40,30]);pop("喀嚓！");$("xpCtrl").innerHTML="";$("gt").textContent="📸 拍到清楚的小火車！";$("xpWhy").textContent="鏡頭前後移動，光剛好聚在感光片上，照片就清楚了。";okBtn(i);};S("coin");}}
+    else if(!shot){$("gt").textContent=b<6?"📱 快清楚了……":"📱 相機模式：畫面好模糊";if($("snap"))$("xpCtrl").innerHTML="";}}
+  st.onpointerdown=e=>{drag=true;ly=e.clientY;};st.onpointerup=st.onpointercancel=()=>{drag=false;};
+  st.onpointermove=e=>{if(!drag||shot)return;const dy=ly-e.clientY;ly=e.clientY;f=clamp(f+dy*.0022,0,1);if(Math.abs(dy)>2)S("blip");upd();};}
+
+/* E 門上貓眼 */
+function gPeep(c,i){const st=$("xpStage");const im=st.querySelector("img.bg");im.style.display="none";const x=$("xc").getContext("2d");
+  st.insertAdjacentHTML("beforeend",`<div class="tag" id="gt">🔔 叮咚！有人按門鈴</div>`);
+  let open=0,peeked=false,t=0;
+  function door(){const gr=x.createLinearGradient(0,0,960,0);gr.addColorStop(0,"#6b3f1f");gr.addColorStop(.5,"#8a5530");gr.addColorStop(1,"#6b3f1f");x.fillStyle=gr;x.fillRect(0,0,960,540);
+    x.strokeStyle="#4a2a12";x.lineWidth=8;x.strokeRect(290,40,380,480);x.strokeRect(330,300,300,180);
+    x.fillStyle="#d8b24a";x.beginPath();x.arc(620,300,16,0,7);x.fill();
+    const a=.5+.5*Math.sin(t*4);x.fillStyle="#222";x.beginPath();x.arc(480,150,24,0,7);x.fill();x.strokeStyle=`rgba(255,215,0,${.4+a*.5})`;x.lineWidth=5;x.beginPath();x.arc(480,150,34+a*6,0,7);x.stroke();
+    x.fillStyle="#9fd6ff";x.beginPath();x.arc(474,144,6,0,7);x.fill();}
+  function draw(){t+=1/60;x.clearRect(0,0,960,540);door();
+    if(open>0){const R=40+open*220;x.save();x.beginPath();x.arc(480,270,R,0,7);x.clip();x.fillStyle="#000";x.fillRect(0,0,960,540);
+      x.fillStyle="#0b1622";x.fillRect(0,0,960,540);const w=R*1.25,h=w*im.naturalHeight/im.naturalWidth;x.drawImage(im,480-w/2,285-h/2,w,h);const fe=x.createRadialGradient(480,285,h*.18,480,285,h*.5);fe.addColorStop(0,"rgba(11,22,34,0)");fe.addColorStop(1,"rgba(11,22,34,1)");x.fillStyle=fe;x.fillRect(0,0,960,540);
+      const vg=x.createRadialGradient(480,270,R*.55,480,270,R);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.85)");x.fillStyle=vg;x.fillRect(0,0,960,540);x.restore();
+      x.lineWidth=14;x.strokeStyle="#222";x.beginPath();x.arc(480,270,R,0,7);x.stroke();open=Math.min(1,open+.04);}
+    raf=requestAnimationFrame(draw);}
+  draw();
+  st.onpointerdown=e=>{const p=stagePt(e);if(peeked)return;if(Math.hypot(p.x-480,p.y-150)<70){peeked=true;open=.01;S("whoosh");
+      later(()=>{$("gt").textContent="👀 門外的人變得小小的，看得到的範圍變大了";$("xpWhy").textContent="門外是一個穿反光背心的工人。你要怎麼做？";
+        choices(["🚪 直接開門","🙋 先問是誰、請大人來"],1,()=>{$("xpWhy").textContent="很好！先看清楚、再請大人決定，這就是安全的決定。";okBtn(i);});},1300);}
+    else miss("點門上的小圓孔");};}
+
+/* F 放大鏡曬太陽 */
+function gSun(c,i){const st=$("xpStage");const x=$("xc").getContext("2d");
+  st.insertAdjacentHTML("beforeend",`<div class="score" id="sc">🔥 0%</div>`);
+  let ly=200,lx=480,hot=0,burnt=false,t=0,smoke=[];const PY=470,FOC=190;
+  function draw(){t+=1/60;x.clearRect(0,0,960,540);
+    x.fillStyle="#ffd84a";x.shadowColor="#ffd84a";x.shadowBlur=40;x.beginPath();x.arc(90,70,46,0,7);x.fill();x.shadowBlur=0;
+    x.fillStyle="#fbfbf4";x.beginPath();x.moveTo(250,PY-20);x.lineTo(720,PY-40);x.lineTo(760,PY+40);x.lineTo(210,PY+50);x.closePath();x.fill();
+    const d=PY-ly,r=clamp(6+Math.abs(d-FOC)*.55,6,120);const b=clamp(1-(r-6)/110,.1,1);
+    x.strokeStyle="rgba(255,240,150,.5)";x.lineWidth=3;x.beginPath();x.moveTo(lx-80,ly);x.lineTo(lx-r,PY);x.moveTo(lx+80,ly);x.lineTo(lx+r,PY);x.stroke();
+    const gr=x.createRadialGradient(lx,PY,1,lx,PY,r);gr.addColorStop(0,`rgba(255,255,220,${b})`);gr.addColorStop(1,"rgba(255,230,120,0)");x.fillStyle=gr;x.beginPath();x.ellipse(lx,PY,r,r*.4,0,0,7);x.fill();
+    if(burnt){x.fillStyle="rgba(40,20,0,.85)";x.beginPath();x.ellipse(lx,PY,20,9,0,0,7);x.fill();}
+    x.fillStyle="#6b4420";x.save();x.translate(lx+70,ly-30);x.rotate(-.5);x.fillRect(0,-9,120,18);x.restore();
+    x.fillStyle="rgba(170,225,255,.45)";x.beginPath();x.ellipse(lx,ly,80,16,0,0,7);x.fill();x.lineWidth=7;x.strokeStyle="#8a5a2b";x.stroke();
+    if(r<16&&!burnt){hot=Math.min(100,hot+1.2);if(Math.random()<.4)smoke.push({x:lx+(Math.random()*16-8),y:PY-6,v:1+Math.random(),a:.7});}
+    else if(!burnt)hot=Math.max(0,hot-.6);
+    smoke.forEach(s=>{s.y-=s.v;s.x+=Math.sin(t*3+s.y*.05)*.6;s.a-=.006;x.fillStyle=`rgba(120,120,120,${Math.max(0,s.a)})`;x.beginPath();x.arc(s.x,s.y,10+(PY-s.y)*.08,0,7);x.fill();});smoke=smoke.filter(s=>s.a>0);
+    $("sc").textContent="🔥 "+Math.round(hot)+"%";
+    if(hot>=100&&!burnt){burnt=true;S("boom");buzz([80,40,120]);const stg=$("xpStage");stg.classList.remove("shake");void stg.offsetWidth;stg.classList.add("shake");pop("冒煙了！好危險！",true);
+      later(()=>{$("xpWhy").textContent="放大鏡可以拿來對太陽玩嗎？";choices(["☀️ 可以，很好玩","🙅 不可以：不對太陽、不對眼睛"],1,()=>{$("xpWhy").textContent="對！光聚在焦點會很燙，會燒起來。";okBtn(i);});},1100);}
+    raf=requestAnimationFrame(draw);}
+  draw();
+  st.onpointermove=st.onpointerdown=e=>{e.preventDefault();const p=stagePt(e);lx=clamp(p.x,280,700);ly=clamp(p.y,110,PY-40);};}
+
 
 /* ---------- 站 3 光線模擬器 ---------- */
 const c3=$("c3"),g3=c3.getContext("2d");let cv3=true,prog3=1,anim3=null,seen3={vx:0,vv:0};
@@ -298,7 +493,20 @@ function set4(v){cv4=v;$("t4vx").classList.toggle("on",v);$("t4vv").classList.to
 $("t4vx").onclick=()=>set4(true);$("t4vv").onclick=()=>set4(false);$("dist").oninput=draw4;
 
 /* ---------- 站 6 真人 ---------- */
-let real=0;$("realOk").onclick=()=>{real++;$("realTally").textContent=`成功 ${real} 組`;S("clear");try{FX.confetti(60);FX.emojiBurst("🔍",20)}catch(e){}};
+/* ---------- 站 6 真人版＋拍照證據 ---------- */
+let real=0;$("realOk").onclick=()=>{real++;$("realTally").textContent=`成功 ${real} 組`;S("clear");try{FX.confetti(60);FX.emojiBurst("🔍",20)}catch(e){}addCoins(5);award("s6","投影成功");};
+let camStream=null;
+function camDone(src){const im=$("camImg");im.src=src;im.style.display="block";$("camVid").style.display="none";$("camEmpty").style.display="none";$("camShot").style.display="none";
+  S("powerup");buzz([80,50,80]);addCoins(10);$("say6").innerHTML='拍到了！真的放大鏡也會讓東西<span class="term">變大</span>、離遠了<span class="term">倒過來</span>';award("s6","拍到證據");}
+$("camOpen").onclick=async()=>{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("say6").textContent="這台裝置開不了鏡頭，請用「📁 或選一張照片」";return;}
+  try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1280}},audio:false});const v=$("camVid");v.srcObject=camStream;v.style.display="block";$("camImg").style.display="none";$("camEmpty").style.display="none";$("camShot").style.display="inline-block";S("blip");
+    $("say6").textContent="把放大鏡擋在鏡頭前，慢慢前後移動，看到變大或倒過來就按「📸 拍！」";}
+  catch(e){$("say6").textContent="鏡頭沒有打開（要按「允許」），或改用「📁 或選一張照片」";}};
+$("camShot").onclick=()=>{const v=$("camVid");if(!v.videoWidth)return;const c=document.createElement("canvas");c.width=v.videoWidth;c.height=v.videoHeight;c.getContext("2d").drawImage(v,0,0);
+  const fl=document.createElement("div");fl.style.cssText="position:fixed;inset:0;background:#fff;z-index:99990;pointer-events:none;opacity:.9;transition:opacity .4s";document.body.appendChild(fl);requestAnimationFrame(()=>fl.style.opacity="0");setTimeout(()=>fl.remove(),450);
+  camDone(c.toDataURL("image/jpeg",.9));};
+$("camIn").onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)camDone(URL.createObjectURL(f));};
+
 
 /* ---------- 上課模式 ---------- */
 const stns=[...document.querySelectorAll(".stn")];let cur=0;
