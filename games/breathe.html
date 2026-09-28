@@ -27,7 +27,16 @@
   .mode .ic{font-size:56px;line-height:1.1}.mode .nm{font-size:24px;font-weight:900;margin-top:4px}.mode .ds{font-size:15px;color:var(--dim);font-weight:800;margin-top:2px}
   .player{display:none;flex-direction:column;align-items:center}
   body.play .player{display:flex}body.play .picker{display:none}
-  canvas{width:min(96vw,1040px);aspect-ratio:16/9;border-radius:24px;background:#06121f;display:block;border:3px solid var(--line);touch-action:none}
+  .stagebox{position:relative;width:min(96vw,1040px);aspect-ratio:16/9;border-radius:24px;overflow:hidden;border:3px solid var(--line);background:#06121f;touch-action:none;box-shadow:0 18px 40px rgba(0,0,0,.55)}
+  .stagebox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  body.gl #cv{display:none}body:not(.gl) #gl{display:none}
+  .buddy{position:absolute;left:14px;bottom:10px;display:flex;align-items:flex-end;gap:6px;pointer-events:none;z-index:3}
+  .buddy img{width:min(18vw,150px);height:min(18vw,150px);filter:drop-shadow(0 10px 14px rgba(0,0,0,.55));transition:transform .6s}
+  .buddy .say{background:rgba(255,255,255,.92);color:#10233a;font-weight:900;font-size:min(3.6vw,26px);padding:8px 14px;border-radius:18px 18px 18px 4px;margin-bottom:min(12vw,96px);white-space:nowrap}
+  .mode .ic img,.zone img{display:block;margin:0 auto}
+  .mode .ic img{width:84px;height:84px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.45))}
+  .zone img{width:64px;height:64px;margin-bottom:2px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+  .credit{text-align:center;color:#6f87a0;font-size:12px;font-weight:700;margin-top:14px}
   .cue{font-size:min(9vw,54px);font-weight:900;margin:12px 0 4px;min-height:70px;text-align:center}
   .cnt{font-size:22px;color:var(--amber);font-weight:900;min-height:30px}
   .ctrl{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px}
@@ -49,18 +58,19 @@
     <div class="sub">今天想用哪一種呼吸？先選心情的顏色，會亮出推薦</div>
     <h2>🎨 我現在是什麼顏色？</h2>
     <div class="zones">
-      <button class="zone blue" data-z="blue">🔵 藍色<small>累累的、難過</small></button>
-      <button class="zone green" data-z="green">🟢 綠色<small>平靜、準備好了</small></button>
-      <button class="zone yellow" data-z="yellow">🟡 黃色<small>緊張、太興奮</small></button>
-      <button class="zone red" data-z="red">🔴 紅色<small>生氣、快爆炸</small></button>
+      <button class="zone blue" data-z="blue"><img src="img/noto/1f622.webp" alt="">藍色<small>累累的、難過</small></button>
+      <button class="zone green" data-z="green"><img src="img/noto/1f60a.webp" alt="">綠色<small>平靜、準備好了</small></button>
+      <button class="zone yellow" data-z="yellow"><img src="img/noto/1f62c.webp" alt="">黃色<small>緊張、太興奮</small></button>
+      <button class="zone red" data-z="red"><img src="img/noto/1f621.webp" alt="">紅色<small>生氣、快爆炸</small></button>
     </div>
     <h2>🫧 選一種呼吸</h2>
     <div class="grid" id="grid"></div>
+    <div class="credit">表情：Google Noto Animated Emoji（CC BY 4.0）・3D：three.js（MIT）</div>
     <div class="tip" id="zoneTip">💡 顏色心情參考國外很紅的「調節區 Zones of Regulation」：不管什麼顏色都沒有錯，重點是找到讓自己回到綠色的方法。</div>
   </div>
 
   <div class="player">
-    <canvas id="cv" width="1280" height="720"></canvas>
+    <div class="stagebox" id="stagebox"><canvas id="cv" width="1280" height="720"></canvas><div class="buddy"><img id="buddy" alt=""><div class="say" id="bsay">一起呼吸吧！</div></div></div>
     <div class="cue" id="cue">準備好了嗎？</div>
     <div class="cnt" id="cnt"></div>
     <div class="ctrl" id="ctrl"></div>
@@ -69,6 +79,7 @@
   </div>
 </div>
 <script src="fx.js"></script>
+<script type="module" src="breathe3d.js"></script>
 <script>
 (function(){
 const $=id=>document.getElementById(id);
@@ -97,38 +108,45 @@ const MODES=[
 ];
 const SUG={blue:["butterfly","glow","rainbow"],green:["bubble","box","bell"],yellow:["box","finger","ball"],red:["jar","finger","bubble"]};
 const ZT={blue:"🔵 藍色：身體有點累、心情低低的。試試蝴蝶擁抱或呼吸燈，讓身體慢慢醒過來。",green:"🟢 綠色：很棒，已經準備好了！做一輪呼吸，把專心帶進今天的任務。",yellow:"🟡 黃色：心跳有點快。方塊呼吸或五指呼吸能讓身體慢下來。",red:"🔴 紅色：生氣很正常，先不要說話。看平靜瓶的亮粉沉下來，或用五指呼吸，等到變回黃色、綠色再說。"};
-$("grid").innerHTML=MODES.map(m=>`<div class="mode" data-id="${m.id}"><div class="ic">${m.ic}</div><div class="nm">${m.nm}</div><div class="ds">${m.ds}</div></div>`).join("");
+const NE=c=>`img/noto/${c}.webp`;const ICO={"bubble": "1fae7", "glow": "1f4a1", "ball": "1f30f", "finger": "1f590_fe0f", "box": "1f60e", "rainbow": "1f308", "jar": "2728", "bell": "1f514", "butterfly": "1f98b"};
+$("grid").innerHTML=MODES.map(m=>`<div class="mode" data-id="${m.id}"><div class="ic"><img src="${NE(ICO[m.id])}" alt="" loading="lazy"></div><div class="nm">${m.nm}</div><div class="ds">${m.ds}</div></div>`).join("");
 document.querySelectorAll(".mode").forEach(el=>el.onclick=()=>start(el.dataset.id));
 document.querySelectorAll(".zone").forEach(z=>z.onclick=()=>{tick(560);const s=SUG[z.dataset.z];document.querySelectorAll(".mode").forEach(m=>m.classList.toggle("sug",s.includes(m.dataset.id)));$("zoneTip").textContent=ZT[z.dataset.z]+"（亮框的是推薦）";});
 let speed=1;document.querySelectorAll("#speed button").forEach(b=>b.onclick=()=>{speed=+b.dataset.s;document.querySelectorAll("#speed button").forEach(x=>x.classList.toggle("on",x===b));});
+/* ---------- 呼吸小夥伴（會動的真實表情） ---------- */
+const FACE={idle:"263a_fe0f",in:"1f60c",hold:"1f60a",hold2:"1f60a",out:"1f62e_200d_1f4a8",done:"1f973",hug:"1f917",listen:"1f60c"};
+let curFace="";function face(k,say){const c=FACE[k]||k;if(c!==curFace){curFace=c;$("buddy").src=NE(c);}if(say!=null)$("bsay").textContent=say;}
+const use3D=()=>window.B3D&&B3D.ok&&M&&B3D.has(M.id);
+function applyView(){document.body.classList.toggle("gl",!!use3D());if(use3D())B3D.setMode(M.id);}
+document.addEventListener("b3d-ready",()=>{if(M)applyView();});
 /* ---------- 播放引擎 ---------- */
 let M=null,raf=0,t0=0,running=false,st={};
 function start(id){M=MODES.find(m=>m.id===id);document.body.classList.add("play");$("tip").textContent="💡 "+M.tip;$("cue").textContent="準備好了嗎？";$("cnt").textContent="";
-  st={phase:null,k:0,round:0,p:0,done:false,sparks:[],taps:0,side:0,bellT:0,shaken:false};
+  st={phase:null,k:0,round:0,p:0,done:false,sparks:[],taps:0,side:0,bellT:0,shaken:false};applyView();face(M.id==="butterfly"?"hug":"idle","一起呼吸吧！");
   $("speed").style.display=M.ph?"flex":"none";
   setCtrl([["▶ 開始","go",begin],["↩ 換一種","ghost",back]]);running=false;cancelAnimationFrame(raf);loopIdle();window.scrollTo({top:0});}
 function back(){running=false;cancelAnimationFrame(raf);document.body.classList.remove("play");}
 function setCtrl(bs){$("ctrl").innerHTML="";bs.forEach(([t,c,f])=>{const b=document.createElement("button");b.className="btn "+(c==="go"?"":c);b.textContent=t;b.onclick=()=>{ac();f();};$("ctrl").appendChild(b);});}
 function loopIdle(){draw(0);if(!running)raf=requestAnimationFrame(loopIdle);}
 function begin(){running=true;cancelAnimationFrame(raf);st.round=0;st.k=0;t0=performance.now();setCtrl([["⏹ 停止","ghost",()=>{start(M.id);}]]);
-  if(M.id==="jar"){jarShake();} if(M.id==="bell"){bell();st.bellT=performance.now();$("cue").textContent="閉上眼睛，聽……";setCtrl([["✋ 我聽不到了","teal",finish]]);}
-  if(M.id==="butterfly"){st.taps=0;}
+  if(M.id==="jar"){jarShake();if(use3D())B3D.jarShake();face("in","慢慢看……");} if(M.id==="bell"){bell();st.bellT=performance.now();$("cue").textContent="閉上眼睛，聽……";face("listen","噓……聽");setCtrl([["✋ 我聽不到了","teal",finish]]);}
+  if(M.id==="butterfly"){st.taps=0;st.t0=t0;st.speed=speed;face("hug","抱抱自己");}
   enterPhase();raf=requestAnimationFrame(loop);}
 function enterPhase(){if(!M.ph)return;const [kind,dur,txt]=M.ph[st.k];st.phase=kind;st.dur=dur*speed*1000;st.ps=performance.now();$("cue").textContent=txt;
-  $("cnt").textContent=`第 ${st.round+1} / ${M.rounds} 次`;if(kind==="in")glide(220,440,dur*speed,.05);else if(kind==="out")glide(440,200,dur*speed,.05);else tick(520);}
+  $("cnt").textContent=`第 ${st.round+1} / ${M.rounds} 次`;face(kind,kind==="in"?"吸……":kind==="out"?"呼……":"停一下");if(kind==="in")glide(220,440,dur*speed,.05);else if(kind==="out")glide(440,200,dur*speed,.05);else tick(520);}
 function loop(now){if(!running)return;
   if(M.ph){st.p=Math.min(1,(now-st.ps)/st.dur);if(st.p>=1){st.k++;if(st.k>=M.ph.length){st.k=0;st.round++;if(st.round>=M.rounds){finish();return;}}enterPhase();}}
   if(M.id==="butterfly"){const iv=900*speed,n=Math.floor((now-t0)/iv);if(n>st.taps){st.taps=n;st.side=n%2;tick(st.side?600:500);$("cue").textContent=st.side?"右 🦋":"左 🦋";$("cnt").textContent=`${Math.min(n,24)} / 24 下`;if(n>=24){finish();return;}}}
-  if(M.id==="jar"){const left=st.sparks.filter(s=>!s.rest).length;$("cnt").textContent=left?`還有 ${left} 顆亮粉在飄`:"";$("cue").textContent=left>20?"慢慢吸…… 慢慢吐……":left?"快沉到底了……":"全部沉下來了 ✨";if(!left&&!st.done){st.done=true;setTimeout(finish,1200);}}
+  if(M.id==="jar"){const left=use3D()?B3D.jarLeft():st.sparks.filter(s=>!s.rest).length;$("cnt").textContent=left?`還有 ${left} 顆亮粉在飄`:"";$("cue").textContent=left>20?"慢慢吸…… 慢慢吐……":left?"快沉到底了……":"全部沉下來了 ✨";if(!left&&!st.done){st.done=true;setTimeout(finish,1200);}}
   draw(now);raf=requestAnimationFrame(loop);}
-function finish(){running=false;cancelAnimationFrame(raf);$("cue").textContent="很好，你做到了 ✨";$("cnt").textContent="";try{FX.confetti(40);FX.sound.coin();}catch(e){}
-  const bs=[["🔁 再一次","go",begin],["🫧 換一種","ghost",back]];if(/from=checkin/.test(location.search))bs.push(["➡ 回心情打卡","teal",()=>location.href="checkin.html"]);setCtrl(bs);draw(performance.now());}
+function finish(){running=false;cancelAnimationFrame(raf);face("done","你做到了！");$("cue").textContent="很好，你做到了 ✨";$("cnt").textContent="";try{FX.confetti(40);FX.sound.coin();}catch(e){}
+  const bs=[["🔁 再一次","go",begin],["🫧 換一種","ghost",back]];if(/from=checkin/.test(location.search))bs.push(["➡ 回心情打卡","teal",()=>location.href="checkin.html"]);setCtrl(bs);loopIdle();}
 /* ---------- 畫面 ---------- */
 const ease=x=>.5-.5*Math.cos(Math.PI*x);
 function breathLevel(){if(!running||!M.ph)return 0;const p=ease(st.p);return st.phase==="in"?p:st.phase==="out"?1-p:st.phase==="hold"?1:0;}
 function bg(c1,c2){const gr=g.createRadialGradient(CX,CY,50,CX,CY,760);gr.addColorStop(0,c1);gr.addColorStop(1,c2);g.fillStyle=gr;g.fillRect(0,0,W,H);}
 function label(t,y,c,sz){g.font=`900 ${sz||40}px ${FONT}`;g.textAlign="center";g.fillStyle=c||"#fff";g.fillText(t,CX,y);}
-function draw(now){g.clearRect(0,0,W,H);const L=breathLevel();({bubble:dBubble,glow:dGlow,ball:dBall,finger:dFinger,box:dBox,rainbow:dRainbow,jar:dJar,bell:dBell,butterfly:dButterfly})[M.id](L,now||0);}
+function draw(now){if(use3D()){B3D.frame(breathLevel(),now||performance.now(),st,running);return;}g.clearRect(0,0,W,H);const L=breathLevel();({bubble:dBubble,glow:dGlow,ball:dBall,finger:dFinger,box:dBox,rainbow:dRainbow,jar:dJar,bell:dBell,butterfly:dButterfly})[M.id](L,now||0);}
 function dBubble(L){bg("#0e3350","#05101f");const r=90+L*170;const gr=g.createRadialGradient(CX-r*.3,CY-r*.3,r*.1,CX,CY,r);gr.addColorStop(0,"rgba(255,255,255,.9)");gr.addColorStop(.4,"rgba(150,220,255,.55)");gr.addColorStop(1,"rgba(80,160,255,.15)");
   g.fillStyle=gr;g.beginPath();g.arc(CX,CY,r,0,7);g.fill();g.strokeStyle="rgba(255,255,255,.7)";g.lineWidth=4;g.stroke();g.strokeStyle="rgba(255,255,255,.25)";g.setLineDash([10,14]);g.beginPath();g.arc(CX,CY,260,0,7);g.stroke();g.setLineDash([]);}
 function dGlow(L){const a=.08+L*.85;bg(`rgba(255,${200+L*40},${120+L*60},${a})`,"#03070f");const gr=g.createRadialGradient(CX,CY,10,CX,CY,120+L*260);gr.addColorStop(0,`rgba(255,250,210,${.3+L*.7})`);gr.addColorStop(1,"rgba(255,220,120,0)");g.fillStyle=gr;g.fillRect(0,0,W,H);
