@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>光光轉個彎 MV｜折射</title>
+<title>光光轉個彎 MV｜Refraction</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700;900&family=Bungee&display=swap" rel="stylesheet">
@@ -83,14 +83,18 @@ summary{font-weight:900;cursor:pointer}
   <details>
     <summary>📄 完整歌詞（可以印出來）</summary>
     <div class="lyr">
-      <b>第一段：珍珠紅茶</b>珍珠紅茶 插吸管<br>看起來呀 斷掉了<br>拿出來看 直直的<br>原來光光 轉個彎
-      <b>副歌</b>光從空氣 進水裡<br>走路方向 轉個彎<br>這個魔法 叫折射<br>眼睛也會 被騙喔
-      <b>第二段：硬幣和游泳池</b>碗裡硬幣 看不見<br>倒進水後 浮上來<br>泳池看來 淺淺的<br>其實很深 要小心
-      <b>間奏：竹東動漫小劇場</b>（跟著節奏拍手）
-      <b>第三段：撈金魚和放大鏡</b>夜市撈魚 怎麼撈<br>要往深處 撈一點<br>放大鏡呀 看看字<br>光光轉彎 字變大
+      <b>前奏</b>Yeah 光線特勤隊<br>Let's go！
+      <b>主歌一</b>珍珠紅茶 插下吸管<br>低頭一看 竟然斷一半<br>拿出來看 它根本沒斷<br>不是魔術 是光在轉彎
+      <b>導歌</b>別急著相信 你的眼睛<br>答案就藏在 水的表面
+      <b>副歌</b>Bend it bend it 光轉個彎<br>空氣到水裡 換個方向<br>這叫折射 Refraction<br>眼睛看到 不一定是真相
+      <b>主歌二</b>空碗裡的硬幣 看不見<br>倒進清水 它浮到眼前<br>泳池看起來 淺淺一片<br>其實更深 下水別冒險
+      <b>Dance Break</b>Hey！Hey！<br>竹東 make some noise！<br>光線特勤隊 Let's go！
+      <b>主歌三</b>夜市撈金魚 往哪撈<br>看到的位置 比較高<br>往深一點 才撈得到<br>放大鏡一照 字大一號
+      <b>橋段</b>吸管沒斷 硬幣沒跑<br>泳池沒變 是光在繞<br>記住這招 你就知道<br>光轉個彎 世界很妙
+      <b>尾聲</b>光線特勤隊 任務完成<br>Refraction, yeah！
     </div>
   </details>
-  <p class="note">這一版是「伴奏＋主旋律」，跟著亮起來的字一起唱。吸管杯、雷射水箱、硬幣、游泳池、撈魚網、放大鏡、水滴、內灣線小火車是真實照片；手搖飲杯和「光光」角色是畫的。點畫面可以暫停／繼續，上方段落按鈕可以直接跳到那一段。</p>
+  <p class="note">歌聲是 Gemini 生成的版本，字幕依歌聲對齊。吸管杯、雷射水箱、硬幣、游泳池、撈魚網、放大鏡、水滴、內灣線小火車是真實照片；手搖飲杯和「光光」角色是畫的。點畫面可以暫停／繼續，上方段落按鈕可以直接跳到那一段。</p>
 </div>
 <audio id="audio" preload="auto" src="mv/song.mp3"></audio>
 <script>
@@ -108,9 +112,9 @@ function grad(g,stops,radial,attrs){const id=gid();const d=el('defs',{},g);const
 function txt(parent,x,y,s,size,fill,extra){const t=el('text',Object.assign({x,y,'text-anchor':'middle','dominant-baseline':'central','font-family':'Noto Sans TC, sans-serif','font-weight':900,'font-size':size,fill},extra||{}),parent);t.textContent=s;return t;}
 function pop(node,cx,cy,k){node.setAttribute('transform',`translate(${cx},${cy}) scale(${Math.max(0.001,k)}) translate(${-cx},${-cy})`);node.setAttribute('opacity',clamp(k*1.5));}
 
-const SEGS=[{"s": 0.0, "e": 9.231, "ly": null, "ct": [], "sec": "🎵 前奏", "vis": "title", "party": false}, {"s": 9.231, "e": 13.496, "ly": "珍珠紅茶插吸管", "ct": [9.231, 9.808, 10.385, 10.962, 11.538, 12.115, 12.692], "sec": "🥤 第一段", "vis": "V1_0", "party": false}, {"s": 13.496, "e": 18.112, "ly": "看起來呀斷掉了", "ct": [13.846, 14.423, 15.0, 15.577, 16.154, 16.731, 17.308], "sec": "🥤 第一段", "vis": "V1_1", "party": false}, {"s": 18.112, "e": 22.727, "ly": "拿出來看直直的", "ct": [18.462, 19.038, 19.615, 20.192, 20.769, 21.346, 21.923], "sec": "🥤 第一段", "vis": "V1_2", "party": false}, {"s": 22.727, "e": 27.692, "ly": "原來光光轉個彎", "ct": [23.077, 23.654, 24.231, 24.808, 25.385, 25.962, 26.538], "sec": "🥤 第一段", "vis": "V1_3", "party": false}, {"s": 27.692, "e": 31.958, "ly": "光從空氣進水裡", "ct": [27.692, 28.269, 28.846, 29.423, 30.0, 30.577, 31.154], "sec": "⭐ 副歌", "vis": "C1_0", "party": false}, {"s": 31.958, "e": 36.573, "ly": "走路方向轉個彎", "ct": [32.308, 32.885, 33.462, 34.038, 34.615, 35.192, 35.769], "sec": "⭐ 副歌", "vis": "C1_1", "party": false}, {"s": 36.573, "e": 41.188, "ly": "這個魔法叫折射", "ct": [36.923, 37.5, 38.077, 38.654, 39.231, 39.808, 40.385], "sec": "⭐ 副歌", "vis": "C1_2", "party": false}, {"s": 41.188, "e": 46.154, "ly": "眼睛也會被騙喔", "ct": [41.538, 42.115, 42.692, 43.269, 43.846, 44.423, 45.0], "sec": "⭐ 副歌", "vis": "C1_3", "party": false}, {"s": 46.154, "e": 50.419, "ly": "碗裡硬幣看不見", "ct": [46.154, 46.731, 47.308, 47.885, 48.462, 49.038, 49.615], "sec": "🪙 第二段", "vis": "V2_0", "party": false}, {"s": 50.419, "e": 55.035, "ly": "倒進水後浮上來", "ct": [50.769, 51.346, 51.923, 52.5, 53.077, 53.654, 54.231], "sec": "🪙 第二段", "vis": "V2_1", "party": false}, {"s": 55.035, "e": 59.65, "ly": "泳池看來淺淺的", "ct": [55.385, 55.962, 56.538, 57.115, 57.692, 58.269, 58.846], "sec": "🪙 第二段", "vis": "V2_2", "party": false}, {"s": 59.65, "e": 64.615, "ly": "其實很深要小心", "ct": [60.0, 60.577, 61.154, 61.731, 62.308, 62.885, 63.462], "sec": "🪙 第二段", "vis": "V2_3", "party": false}, {"s": 64.615, "e": 68.881, "ly": "光從空氣進水裡", "ct": [64.615, 65.192, 65.769, 66.346, 66.923, 67.5, 68.077], "sec": "⭐ 副歌", "vis": "C2_0", "party": false}, {"s": 68.881, "e": 73.496, "ly": "走路方向轉個彎", "ct": [69.231, 69.808, 70.385, 70.962, 71.538, 72.115, 72.692], "sec": "⭐ 副歌", "vis": "C2_1", "party": false}, {"s": 73.496, "e": 78.112, "ly": "這個魔法叫折射", "ct": [73.846, 74.423, 75.0, 75.577, 76.154, 76.731, 77.308], "sec": "⭐ 副歌", "vis": "C2_2", "party": false}, {"s": 78.112, "e": 83.077, "ly": "眼睛也會被騙喔", "ct": [78.462, 79.038, 79.615, 80.192, 80.769, 81.346, 81.923], "sec": "⭐ 副歌", "vis": "C2_3", "party": false}, {"s": 83.077, "e": 101.538, "ly": null, "ct": [], "sec": "🎶 間奏・竹東動漫小劇場", "vis": "break", "party": true}, {"s": 101.538, "e": 105.804, "ly": "夜市撈魚怎麼撈", "ct": [101.538, 102.115, 102.692, 103.269, 103.846, 104.423, 105.0], "sec": "🐟 第三段", "vis": "V3_0", "party": false}, {"s": 105.804, "e": 110.419, "ly": "要往深處撈一點", "ct": [106.154, 106.731, 107.308, 107.885, 108.462, 109.038, 109.615], "sec": "🐟 第三段", "vis": "V3_1", "party": false}, {"s": 110.419, "e": 115.035, "ly": "放大鏡呀看看字", "ct": [110.769, 111.346, 111.923, 112.5, 113.077, 113.654, 114.231], "sec": "🐟 第三段", "vis": "V3_2", "party": false}, {"s": 115.035, "e": 120.0, "ly": "光光轉彎字變大", "ct": [115.385, 115.962, 116.538, 117.115, 117.692, 118.269, 118.846], "sec": "🐟 第三段", "vis": "V3_3", "party": false}, {"s": 120.0, "e": 124.265, "ly": "光從空氣進水裡", "ct": [120.0, 120.577, 121.154, 121.731, 122.308, 122.885, 123.462], "sec": "⭐ 副歌", "vis": "C3_0", "party": false}, {"s": 124.265, "e": 128.881, "ly": "走路方向轉個彎", "ct": [124.615, 125.192, 125.769, 126.346, 126.923, 127.5, 128.077], "sec": "⭐ 副歌", "vis": "C3_1", "party": false}, {"s": 128.881, "e": 133.496, "ly": "這個魔法叫折射", "ct": [129.231, 129.808, 130.385, 130.962, 131.538, 132.115, 132.692], "sec": "⭐ 副歌", "vis": "C3_2", "party": false}, {"s": 133.496, "e": 138.462, "ly": "眼睛也會被騙喔", "ct": [133.846, 134.423, 135.0, 135.577, 136.154, 136.731, 137.308], "sec": "⭐ 副歌", "vis": "C3_3", "party": false}, {"s": 138.462, "e": 142.727, "ly": "光從空氣進水裡", "ct": [138.462, 139.038, 139.615, 140.192, 140.769, 141.346, 141.923], "sec": "🎆 最後副歌", "vis": "C4_0", "party": true}, {"s": 142.727, "e": 147.342, "ly": "走路方向轉個彎", "ct": [143.077, 143.654, 144.231, 144.808, 145.385, 145.962, 146.538], "sec": "🎆 最後副歌", "vis": "C4_1", "party": true}, {"s": 147.342, "e": 151.958, "ly": "這個魔法叫折射", "ct": [147.692, 148.269, 148.846, 149.423, 150.0, 150.577, 151.154], "sec": "🎆 最後副歌", "vis": "C4_2", "party": true}, {"s": 151.958, "e": 156.923, "ly": "眼睛也會被騙喔", "ct": [152.308, 152.885, 153.462, 154.038, 154.615, 155.192, 155.769], "sec": "🎆 最後副歌", "vis": "C4_3", "party": true}, {"s": 156.923, "e": 167.654, "ly": null, "ct": [], "sec": "🎆 尾聲", "vis": "outro", "party": true}];
-const BPM=104,BEAT=60/BPM;
-const beatOf=T=>T/BEAT;
+const SEGS=[{"s": 0, "ly": null, "ct": [], "sec": "🎵 前奏", "vis": "title", "party": false, "e": 9.0}, {"s": 9.0, "ly": "珍珠紅茶 插下吸管", "ct": [9.102, 9.66, 10.24, 11.053, 11.401, 12.237, 12.817, 13.398], "sec": "🧋 主歌一", "vis": "V1_0", "party": false, "e": 13.644}, {"s": 13.644, "ly": "低頭一看 竟然斷一半", "ct": [13.677, 14.28, 14.861, 15.372, 16.022, 16.579, 17.136, 17.717, 18.321], "sec": "🧋 主歌一", "vis": "V1_1", "party": false, "e": 18.288}, {"s": 18.288, "ly": "拿出來看 它根本沒斷", "ct": [18.321, 18.901, 19.458, 19.992, 20.596, 21.2, 21.78, 22.338, 22.825], "sec": "🧋 主歌一", "vis": "V1_2", "party": false, "e": 22.932}, {"s": 22.932, "ly": "不是魔術 是光在轉彎", "ct": [22.941, 23.499, 24.102, 24.683, 25.24, 25.681, 26.262, 26.819, 27.237], "sec": "🧋 主歌一", "vis": "V1_3", "party": false, "e": 27.576}, {"s": 27.576, "ly": "別急著相信 你的眼睛", "ct": [27.818, 28.398, 29.002, 29.396, 30.023, 30.557, 30.999, 31.44, 32.113], "sec": "👀 導歌", "vis": "P_0", "party": false, "e": 32.22}, {"s": 32.22, "ly": "答案就藏在 水的表面", "ct": [32.438, 32.879, 33.599, 34.04, 34.598, 35.178, 35.619, 36.2, 37.036], "sec": "👀 導歌", "vis": "P_1", "party": false, "e": 36.864}, {"s": 36.864, "ly": "Bend it bend it 光轉個彎", "ct": [37.036, 37.616, 38.197, 38.801, 39.451, 40.101, 40.658, 41.378], "sec": "⭐ 副歌", "vis": "C_0", "party": false, "e": 41.508}, {"s": 41.508, "ly": "空氣到水裡 換個方向", "ct": [41.657, 42.098, 42.678, 43.236, 43.7, 44.257, 44.861, 45.441, 45.999], "sec": "⭐ 副歌", "vis": "C_1", "party": false, "e": 46.152}, {"s": 46.152, "ly": "這叫折射 Refraction", "ct": [46.277, 47.369, 48.39, 49.366, 50.318], "sec": "⭐ 副歌", "vis": "C_2", "party": false, "e": 50.796}, {"s": 50.796, "ly": "眼睛看到 不一定是真相", "ct": [50.875, 51.339, 51.92, 52.361, 52.918, 53.29, 54.079, 54.497, 54.892, 55.496], "sec": "⭐ 副歌", "vis": "C_3", "party": false, "e": 55.25}, {"s": 55.25, "ly": "空碗裡的硬幣 看不見", "ct": [55.496, 55.821, 56.401, 56.959, 57.539, 58.12, 58.7, 59.118, 59.536], "sec": "🪙 主歌二", "vis": "V2_0", "party": false, "e": 59.894}, {"s": 59.894, "ly": "倒進清水 它浮到眼前", "ct": [59.861, 60.418, 60.999, 61.556, 62.137, 62.74, 63.205, 63.739, 64.482], "sec": "🪙 主歌二", "vis": "V2_1", "party": false, "e": 64.538}, {"s": 64.538, "ly": "泳池看起來 淺淺一片", "ct": [64.691, 65.202, 65.62, 66.13, 66.781, 67.408, 67.942, 68.499, 69.079], "sec": "🪙 主歌二", "vis": "V2_2", "party": false, "e": 69.182}, {"s": 69.182, "ly": "其實更深 下水別冒險", "ct": [69.381, 69.939, 70.496, 70.821, 71.378, 71.843, 72.516, 72.98, 73.398], "sec": "🪙 主歌二", "vis": "V2_3", "party": false, "e": 73.826}, {"s": 73.826, "ly": "別急著相信 你的眼睛", "ct": [73.979, 74.559, 75.14, 75.697, 76.278, 76.719, 77.322, 77.88, 78.46], "sec": "👀 導歌", "vis": "P_0", "party": false, "e": 78.47}, {"s": 78.47, "ly": "答案就藏在 水的表面", "ct": [78.6, 79.18, 79.761, 80.341, 80.759, 81.34, 81.943, 82.64, 82.965], "sec": "👀 導歌", "vis": "P_1", "party": false, "e": 83.114}, {"s": 83.114, "ly": "Bend it bend it 光轉個彎", "ct": [83.197, 83.778, 84.358, 84.939, 85.612, 86.239, 86.819, 87.4], "sec": "⭐ 副歌", "vis": "C_0", "party": false, "e": 87.758}, {"s": 87.758, "ly": "空氣到水裡 換個方向", "ct": [88.097, 88.7, 89.118, 89.722, 90.117, 90.697, 91.115, 91.626, 92.137], "sec": "⭐ 副歌", "vis": "C_1", "party": false, "e": 92.402}, {"s": 92.402, "ly": "這叫折射 Refraction", "ct": [92.624, 93.6, 94.714, 95.736, 96.781], "sec": "⭐ 副歌", "vis": "C_2", "party": false, "e": 97.046}, {"s": 97.046, "ly": "眼睛看到 不一定是真相", "ct": [97.036, 97.64, 98.081, 98.638, 99.08, 99.776, 100.217, 100.635, 101.053, 101.68], "sec": "⭐ 副歌", "vis": "C_3", "party": false, "e": 101.69}, {"s": 101.69, "ly": null, "ct": [], "sec": "🎶 Dance Break・竹東動漫小劇場", "vis": "break", "party": true, "e": 110.978}, {"s": 110.978, "ly": "夜市撈金魚 往哪撈", "ct": [110.968, 111.642, 112.199, 112.895, 113.499, 114.056, 114.637, 115.38], "sec": "🐟 主歌三", "vis": "V3_0", "party": false, "e": 115.622}, {"s": 115.622, "ly": "看到的位置 比較高", "ct": [115.821, 116.378, 117.098, 117.656, 118.306, 118.979, 119.513, 120.14], "sec": "🐟 主歌三", "vis": "V3_1", "party": false, "e": 120.266}, {"s": 120.266, "ly": "往深一點 才撈得到", "ct": [120.419, 120.999, 121.58, 122.23, 123.019, 123.6, 124.18, 124.761], "sec": "🐟 主歌三", "vis": "V3_1b", "party": false, "e": 124.91}, {"s": 124.91, "ly": "放大鏡一照 字大一號", "ct": [125.063, 125.62, 126.2, 126.479, 127.245, 127.803, 128.322, 128.848, 129.335], "sec": "🐟 主歌三", "vis": "V3_3", "party": false, "e": 129.554}, {"s": 129.554, "ly": "吸管沒斷 硬幣沒跑", "ct": [129.544, 129.962, 130.218, 130.543, 131.1, 131.239, 131.611, 131.959], "sec": "🌙 橋段", "vis": "R_0", "party": false, "e": 131.876}, {"s": 131.876, "ly": "泳池沒變 是光在繞", "ct": [131.959, 132.238, 132.563, 132.865, 133.12, 133.7, 133.979, 134.188], "sec": "🌙 橋段", "vis": "R_1", "party": false, "e": 134.198}, {"s": 134.198, "ly": "記住這招 你就知道", "ct": [134.188, 134.42, 134.838, 135.279, 135.581, 135.86, 136.231, 136.311], "sec": "🌙 橋段", "vis": "R_2", "party": false, "e": 136.52}, {"s": 136.52, "ly": "光轉個彎 世界很妙", "ct": [136.57, 136.899, 137.229, 137.601, 137.903, 138.228, 138.577, 138.875], "sec": "🌙 橋段", "vis": "R_3", "party": false, "e": 138.842}, {"s": 138.842, "ly": "Bend it bend it 光轉個彎", "ct": [139.041, 139.482, 140.295, 140.899, 141.433, 142.083, 142.78, 143.314], "sec": "🎆 最後副歌", "vis": "C_0", "party": true, "e": 143.486}, {"s": 143.486, "ly": "空氣到水裡 換個方向", "ct": [143.476, 144.08, 144.66, 145.218, 145.798, 146.239, 146.843, 147.215, 147.818], "sec": "🎆 最後副歌", "vis": "C_1", "party": true, "e": 148.13}, {"s": 148.13, "ly": "這叫折射 Refraction", "ct": [148.399, 149.56, 150.396, 151.278, 152.416], "sec": "🎆 最後副歌", "vis": "C_2", "party": true, "e": 152.774}, {"s": 152.774, "ly": "眼睛看到 不一定是真相", "ct": [153.6, 154.041, 154.459, 154.924, 155.341, 155.806, 156.201, 156.572, 157.06, 157.338], "sec": "🎆 最後副歌", "vis": "C_3", "party": true, "e": 157.418}, {"s": 157.418, "ly": null, "ct": [], "sec": "🎆 尾聲", "vis": "outro", "party": true, "e": 167.34}];
+const BPM=103.359375,BEAT=60/BPM;
+const beatOf=T=>(T-0.14)/BEAT;
 const pulse=B=>1+.06*Math.pow(1-(((B%1)+1)%1),3);
 
 /* ---------- 照片（真實照片） ---------- */
@@ -223,7 +227,7 @@ const VIS={
       sub.setAttribute('opacity',seg(lt,4.6,5.2));
       hit(t1,330,170,lt,.6,B);
       k.set({x:lerp(1800,1330,eo(seg(lt,5.8,7))),y:700,t:lt,s:.9,wave:lt>7});
-      setCue(lt<2?'🚂 從竹東出發！':lt<6?'🌈 光線特勤隊・任務四':'🎤 準備唱囉！');};},
+      setCue(lt<4.4?'🎤 Yeah！':lt<7.5?'光線特勤隊':"Let's go！");};},
   V1_0(g,S){
     el('rect',{x:0,y:0,width:1600,height:900,fill:grad(g,[[0,'#FFF4E4'],[1,'#E8C9A0']],false,{x1:0,y1:0,x2:0,y2:1})},g);
     el('rect',{x:0,y:690,width:1600,height:210,fill:grad(g,[[0,'#C08A55'],[1,'#8A5A30']],false,{x1:0,y1:0,x2:0,y2:1})},g);
@@ -236,7 +240,7 @@ const VIS={
     el('rect',{x:0,y:690,width:1600,height:210,fill:'#A87245'},wrap);
     const b=mkBoba(wrap);b.g.setAttribute('transform','translate(800,150)');b.set({depth:1,bend:1,up:0});
     const sl=speedLines(g,844,300,'#111');
-    const sh=shout(g,1230,190,'咦？！斷掉了？',62,'#FFFFFF');
+    const sh=shout(g,1230,190,'咦？！斷一半？',62,'#FFFFFF');
     return (lt,B)=>{const z=lerp(1,1.9,eio(seg(lt,0,1.2)));wrap.setAttribute('transform',`translate(844,300) scale(${z}) translate(-844,-300)`);
       b.ring.setAttribute('opacity',seg(lt,S.c(2),S.c(2)+.2));
       sl.set(seg(lt,S.c(4)-.1,S.c(4)+.15)*.5,lt);hit(sh,1230,190,lt,S.c(4),B);};},
@@ -283,9 +287,9 @@ const VIS={
     const p=photo(g,'laser',{blur:1});shade(g,.45);
     const sl=speedLines(g,800,400,'#FFE14D');
     const big=[...'折射'].map((c,i)=>kw(g,c,640+i*320,380,300,i?'#FF3FB0':'#14B8E6',i?6:-6));
-    const k=mkKoko(g);const t1=tag(g,800,640,'光從空氣進水裡會轉彎＝折射','#0E2A40',46);
-    return (lt,B)=>{sl.set(seg(lt,S.c(4)-.1,S.c(4)+.2)*.5,lt);big.forEach((n,i)=>hit(n,640+i*320,380,lt,S.c(5+i),B));
-      k.set({x:lerp(-200,250,eo(seg(lt,0,1))),y:640,t:lt,s:.85,wave:true,wow:lt>S.c(5)});hit(t1,800,640,lt,S.c(2),B);};},
+    const rf=kw(g,'REFRACTION',800,170,96,'#2CE6FF',0);rf.querySelector('text').setAttribute('font-family','Bungee, Noto Sans TC, sans-serif');const k=mkKoko(g);const t1=tag(g,800,640,'光從空氣進水裡會轉彎＝折射','#0E2A40',46);
+    return (lt,B)=>{sl.set(seg(lt,S.c(4)-.1,S.c(4)+.2)*.5,lt);big.forEach((n,i)=>hit(n,640+i*320,380,lt,S.c(2+i),B));hit(rf,800,170,lt,S.c(4),B);
+      k.set({x:lerp(-200,250,eo(seg(lt,0,1))),y:640,t:lt,s:.85,wave:true,wow:lt>S.c(2)});hit(t1,800,640,lt,S.c(0),B);};},
   C_3(g,S){
     const p=chorusBase(g,'straw',.18);
     const sh=shout(g,430,220,'眼睛被騙了！',70,'#FFFFFF');
@@ -339,7 +343,7 @@ const VIS={
         const kk=((B/2)%1);const s=1+.04*Math.pow(1-kk,3);f.fg.setAttribute('transform',`translate(${f.x+f.w/2},${f.y+f.h/2}) scale(${s}) translate(${-(f.x+f.w/2)},${-(f.y+f.h/2)})`);});
       sl.set(.35*Math.pow(1-((B%1)),2),lt);title.setAttribute('opacity',1);pop(title,800,450,back(seg(lt,0,.4))*pulse(B));
       const kx=800+Math.sin(lt*1.4)*420;k.set({x:kx,y:450+Math.cos(lt*2.8)*40,t:lt,s:.75,wave:true,wow:Math.floor(B)%4===0,rot:Math.sin(B*Math.PI)*14});
-      setCue('👏 跟著節奏拍手 👏');};},
+      setCue(lt<2.4?'👏 Hey！Hey！':lt<4.7?'竹東 make some noise！':lt<7?"光線特勤隊 Let's go！":'👏 跟著節奏拍手 👏');};},
   V3_0(g,S){
     const p=photo(g,'aquarium');shade(g,.12);realBadge(g);
     const t1=tag(g,330,170,'🏮 夜市撈金魚','#B3122E',50);const k=kw(g,'怎麼撈？',1260,250,120,'#FFB400',6);
@@ -359,11 +363,53 @@ const VIS={
     const ring=el('circle',{cx:552,cy:320,r:255,fill:'none',stroke:'#FFE14D','stroke-width':12,filter:'url(#neon)',opacity:0},g);
     const k=kw(g,'🔍 放大鏡',1250,180,100,'#FFB400',6);const t1=tag(g,1200,780,'眼鏡也是靠光轉彎','#5A3A12',42);
     return (lt,B)=>{p.kb(lt,4.6,1,1.08,552,320);ring.setAttribute('opacity',seg(lt,S.c(4),S.c(4)+.3)*(.6+.4*Math.sin(lt*7)));hit(k,1250,180,lt,S.c(0),B);hit(t1,1200,780,lt,S.c(4),B);};},
+  P_0(g,S){
+    const p=photo(g,'straw');shade(g,.3);realBadge(g);
+    const sl=speedLines(g,1104,345,'#FFFFFF');
+    const sh=shout(g,460,230,'別急著相信！',74,'#FFFFFF');
+    const eye=txt(g,460,520,'👁️',150,'#fff',{opacity:0});
+    return (lt,B)=>{p.kb(lt,4.6,1.1,1.2,1104,345);sl.set(seg(lt,S.c(0),S.c(0)+.2)*.35,lt);hit(sh,460,230,lt,S.c(0),B);
+      eye.setAttribute('opacity',seg(lt,S.c(5),S.c(5)+.3));eye.setAttribute('transform',`translate(0,${Math.sin(lt*6)*8})`);};},
+  P_1(g,S){
+    const zoom=el('g',{},g);const p=photo(zoom,'laser');realBadge(g);
+    const surf=el('line',{x1:420,y1:362,x2:1180,y2:362,stroke:'#2CE6FF','stroke-width':10,filter:'url(#neon)',pathLength:1,'stroke-dasharray':1,'stroke-dashoffset':1},zoom);
+    const t1=tag(g,1180,640,'答案在這裡：水面','#0E5A8A',48);const k=kw(g,'水的表面',1180,200,110,'#2CE6FF',-4);
+    return (lt,B)=>{const z=lerp(1,1.3,eio(seg(lt,0,2)));zoom.setAttribute('transform',`translate(688,365) scale(${z}) translate(-688,-365)`);
+      surf.setAttribute('stroke-dashoffset',1-eo(seg(lt,S.c(4),S.c(8)||S.c(4)+1.5)));hit(k,1180,200,lt,S.c(6),B);hit(t1,1180,640,lt,S.c(8)||S.c(6)+.5,B);};},
+  V3_1b(g,S){
+    const p=photo(g,'net');shade(g,.12);realBadge(g);
+    const real=el('g',{},g);el('path',{d:'M1060 690 q60 -40 140 0 q-80 40 -140 0z M1200 690 l40 -26 l0 52z',fill:'#FF8A3D',stroke:'#fff','stroke-width':4},real);
+    const ring=el('circle',{cx:1130,cy:690,r:110,fill:'none',stroke:'#2FB36E','stroke-width':10,filter:'url(#neon)',opacity:0},g);
+    const arr=el('path',{d:'M1000 470 L1000 660 M965 625 L1000 670 L1035 625',fill:'none',stroke:'#2CE6FF','stroke-width':14,'stroke-linecap':'round','stroke-linejoin':'round',filter:'url(#neon)'},g);
+    const k=kw(g,'往深一點！',1180,200,120,'#2FB36E',-4);const ok=tag(g,1130,840-60,'✓ 撈到了！','#1E7A48',44);
+    return (lt,B)=>{p.kb(lt,5,1.05,1.12,1000,600);arr.setAttribute('transform',`translate(0,${Math.sin(lt*8)*12})`);hit(k,1180,200,lt,S.c(0),B);
+      ring.setAttribute('opacity',seg(lt,S.c(5),S.c(5)+.3));hit(ok,1130,780,lt,S.c(6),B);};},
+  R_0(g,S){
+    const L=el('g',{},g);const a=photo(L,'straw');const R=el('g',{},g);const b=photo(R,'coin');
+    const c1=gid(),c2=gid();const cp1=el('clipPath',{id:c1},g);el('rect',{x:0,y:0,width:796,height:900},cp1);const cp2=el('clipPath',{id:c2},g);el('rect',{x:804,y:0,width:796,height:900},cp2);
+    L.setAttribute('clip-path',`url(#${c1})`);R.setAttribute('clip-path',`url(#${c2})`);a.g.setAttribute('transform','translate(-300,0)');b.g.setAttribute('transform','translate(380,0)');
+    shade(g,.3);realBadge(g);
+    const t1=tag(g,400,160,'✓ 吸管沒斷','#1E7A48',50);const t2=tag(g,1200,160,'✓ 硬幣沒跑','#1E7A48',50);
+    return (lt,B)=>{hit(t1,400,160,lt,S.c(0),B);hit(t2,1200,160,lt,S.c(4),B);};},
+  R_1(g,S){
+    const p=photo(g,'pool');shade(g,.35);realBadge(g);
+    const path=el('path',{d:'M120 120 L620 430 Q700 470 760 560 L980 860',fill:'none',stroke:'#FFE14D','stroke-width':16,'stroke-linecap':'round',filter:'url(#neon)',pathLength:1,'stroke-dasharray':1,'stroke-dashoffset':1},g);
+    const t1=tag(g,1150,200,'✓ 泳池沒變','#1E7A48',50);const k=kw(g,'是光在繞 ↝',1150,420,110,'#FFB400',-4);
+    return (lt,B)=>{p.kb(lt,2.3,1,1.04);hit(t1,1150,200,lt,S.c(0),B);path.setAttribute('stroke-dashoffset',1-eo(seg(lt,S.c(4),S.c(7))));hit(k,1150,420,lt,S.c(4),B);};},
+  R_2(g,S){
+    const p=photo(g,'train',{blur:1});shade(g,.55);
+    const k=mkKoko(g);const t=kw(g,'記住這招！',800,170,130,'#FF3FB0',-4);const sh=shout(g,1230,560,'你就知道！',60,'#FFE14D');
+    return (lt,B)=>{k.set({x:800,y:520,t:lt,s:1.25,wave:true,wow:lt>S.c(4)});hit(t,800,170,lt,S.c(0),B);hit(sh,1230,560,lt,S.c(4),B);};},
+  R_3(g,S){
+    const p=photo(g,'laser');shade(g,.2);realBadge(g);
+    const k=kw(g,'世界很妙 ✨',1180,200,120,'#FFB400',-4);const sl=speedLines(g,688,365,'#B6FFC8');
+    return (lt,B)=>{p.kb(lt,2.3,1.15,1.0,688,365);sl.set(.25,lt);hit(k,1180,200,lt,S.c(4),B);};},
   V3_3(g,S){
-    const p=photo(g,'drop');shade(g,.05);realBadge(g);
-    const k=kw(g,'字變大！',1250,170,130,'#FF3FB0',-6);const t1=tag(g,420,170,'💧 水滴＝小小放大鏡','#0E5A8A',44);
-    const sl=speedLines(g,840,424,'#FFFFFF');
-    return (lt,B)=>{p.kb(lt,5,1,1.55,840,424);hit(t1,420,170,lt,S.c(0),B);hit(k,1250,170,lt,S.c(5),B);sl.set(seg(lt,S.c(5),S.c(5)+.15)*(1-seg(lt,S.c(6),S.c(6)+.8))*.4,lt);};},
+    const a=photo(g,'magnifier');const b=photo(g,'drop');realBadge(g);
+    const ring=el('circle',{cx:552,cy:320,r:255,fill:'none',stroke:'#FFE14D','stroke-width':12,filter:'url(#neon)',opacity:0},g);
+    const k0=kw(g,'🔍 放大鏡一照',1200,170,96,'#FFB400',6);const k=kw(g,'字大一號！',1250,170,130,'#FF3FB0',-6);
+    return (lt,B)=>{const f=seg(lt,S.c(5)-.2,S.c(5)+.2);b.g.setAttribute('opacity',f);a.g.setAttribute('opacity',1-f);a.kb(lt,4.6,1,1.08,552,320);b.kb(Math.max(0,lt-S.c(5)),2.5,1,1.5,840,424);
+      ring.setAttribute('opacity',(1-f)*seg(lt,S.c(2),S.c(2)+.3));hit(k0,1200,170,lt,S.c(0),B);k0.setAttribute('opacity',(1-f)*(lt>S.c(0)?1:0));hit(k,1250,170,lt,S.c(6),B);};},
   outro(g,S){
     const p=photo(g,'train');shade(g,.5);
     const k=mkKoko(g);
@@ -371,7 +417,7 @@ const VIS={
     const l1=tag(g,800,470,'吸管沒斷 → 光轉彎 ＝ 折射','#0E2A40',54);
     const l2=tag(g,800,600,'看起來淺 → 其實更深，要小心','#7A1E4A',46);
     return (lt,B)=>{p.kb(lt,10.7,1.14,1.02,800,450);hit(t,800,250,lt,.3,B);hit(l1,800,470,lt,1.6,B);hit(l2,800,600,lt,2.6,B);
-      k.set({x:lerp(1800,1330,eo(seg(lt,3,4.2))),y:720,t:lt,s:.85,wave:true});setCue('✨ 光光轉個彎 ✨');};}
+      k.set({x:lerp(1800,1330,eo(seg(lt,3,4.2))),y:720,t:lt,s:.85,wave:true});setCue(lt<4.6?'光線特勤隊 任務完成':'Refraction, yeah！');};}
 };
 ['C1','C2','C3','C4'].forEach(c=>{for(let i=0;i<4;i++)VIS[c+'_'+i]=VIS['C_'+i];});
 
@@ -397,7 +443,7 @@ function enter(i){
   const ctx={c:k=>(S.ct[k]!=null?S.ct[k]:S.s+k*.5)-S.s};
   karaEl.innerHTML='';spans=[];
   if(!S.ly){karaEl.className='cue';karaEl.textContent='🎧 準備好了嗎？';}
-  else{karaEl.className='';[...S.ly].forEach((c,j)=>{if(j===4){const g=document.createElement('span');g.className='gap';karaEl.appendChild(g);}const s=document.createElement('span');s.textContent=c;karaEl.appendChild(s);spans.push(s);});}
+  else{karaEl.className='';(S.ly.match(/[A-Za-z']+|\s+|[^\sA-Za-z]/g)||[]).forEach(c=>{if(/^\s+$/.test(c)){const g=document.createElement('span');g.className='gap';karaEl.appendChild(g);return;}const s=document.createElement('span');s.textContent=c;karaEl.appendChild(s);spans.push(s);});}
   upd=VIS[S.vis](sceneG,ctx);
   secEl.textContent=S.sec;markSteps();
 }
