@@ -206,17 +206,30 @@
     if(Date.now()-(f.t||0)>12*3600*1000){FX.flowEnd();return;}          // 超過 12 小時自動結束
     const isExt=u=>/gamma\.app|youtube\.com|\.docx$/i.test(u);const here=norm(location.href);const full=u=>{try{const x=new URL(u,location.href);return norm(u)+x.hash;}catch(e){return u;}};let k=f.steps.findIndex(s=>full(s.url)===full(location.href));if(k<0)k=f.steps.findIndex(s=>norm(s.url)===here);if(k>=0&&!(f.steps[f.i]&&isExt(f.steps[f.i].url))){f.i=k;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}}
     const i=f.i,n=f.steps.length,cur=f.steps[i],nx=f.steps[i+1],pv=f.steps[i-1];
+    let mini=false;try{mini=localStorage.getItem("flowMini")==="1";}catch(e){}
     const bar=document.createElement("div");bar.id="fxflow";
-    bar.style.cssText="position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:9400;background:rgba(8,20,36,.96);border:2px solid #ffc93c;border-radius:18px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:min(96vw,760px);box-shadow:0 10px 26px rgba(0,0,0,.6);font-family:'Noto Sans TC','Microsoft JhengHei',system-ui,sans-serif;color:#eaf6ff";
-    const btn=(t,c)=>`<button style="font-weight:900;font-size:15px;border:none;border-radius:12px;padding:10px 14px;cursor:pointer;background:${c};color:#08131f">${t}</button>`;
-    bar.innerHTML=`<span style="font-weight:900;font-size:14px;color:#ffe08a">📍 ${esc(f.title)}　第 ${i+1}/${n} 步：${esc(cur.label)}</span>`+
-      btn("🏠 主畫面","#42e0c8")+(pv?btn("⬅ 上一步","#9db8cf"):"")+(nx?btn("下一步 ➡ "+esc(nx.label),"#ffc93c"):btn("🏁 這堂上完了","#42e0c8"))+`<button id="fxflowx" title="結束流程" style="border:none;background:transparent;color:#9db8cf;font-weight:900;cursor:pointer">✖</button>`;
+    const B="border:none;border-radius:12px;font-weight:900;cursor:pointer;font-family:inherit;white-space:nowrap;";
+    if(!document.getElementById("fxflowcss")){const st=document.createElement("style");st.id="fxflowcss";st.textContent=
+      "#fxflow{position:fixed;left:0;right:0;bottom:0;z-index:9400;display:flex;align-items:center;gap:8px;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(8,20,36,.97);border-top:2px solid #ffc93c;box-shadow:0 -8px 22px rgba(0,0,0,.45);font-family:'Noto Sans TC','Microsoft JhengHei',system-ui,sans-serif}"+
+      "#fxflow .lb{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#ffe08a;font-weight:900;font-size:14px}"+
+      "#fxflow .no{flex:none;background:#ffc93c;color:#08131f;border-radius:999px;padding:6px 10px;font-weight:900;font-size:14px;border:none;cursor:pointer}"+
+      "#fxflow.mini{left:10px;right:auto;bottom:10px;border:2px solid #ffc93c;border-radius:999px;padding:6px}"+
+      "#fxflow.mini .lb,#fxflow.mini .pv,#fxflow.mini .x{display:none}"+
+      "@media(min-width:900px){#fxflow:not(.mini){left:50%;right:auto;transform:translateX(-50%);bottom:10px;width:min(820px,96vw);border:2px solid #ffc93c;border-radius:18px;padding:8px 12px}}"+
+      "@media print{#fxflow{display:none!important}}";document.head.appendChild(st);}
+    if(mini)bar.className="mini";
+    bar.innerHTML=`<button class="no" title="縮小／展開">📍 ${i+1}/${n}</button><span class="lb">${esc(f.title)}｜${esc(cur.label)}</span>`+
+      (pv?`<button class="pv" style="${B}background:#9db8cf;color:#08131f;padding:10px 12px;font-size:15px">⬅</button>`:"")+
+      (nx?`<button class="nx" title="${esc(nx.label)}" style="${B}background:#ffc93c;color:#08131f;padding:10px 16px;font-size:16px">下一步 ➡</button>`:`<button class="nx" style="${B}background:#42e0c8;color:#08131f;padding:10px 14px;font-size:15px">🏁 上完了</button>`)+
+      `<button class="x" title="結束流程" style="${B}background:transparent;color:#9db8cf;padding:8px">✖</button>`;
     document.body.appendChild(bar);
+    const pad=()=>{const h=bar.classList.contains("mini")?0:bar.offsetHeight+8;document.body.style.paddingBottom=h?h+"px":"";};pad();
     const go=(j)=>{f.i=j;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}const u=f.steps[j].url;FX.sound.jump();
       if(/gamma\.app|youtube\.com|\.docx$/i.test(u)){window.open(u,"_blank");bar.remove();flowBar();}else{location.href=u;}};
-    const bs=bar.querySelectorAll("button");let bi=0;bs[bi++].onclick=()=>{FX.sound.jump();location.href=HOME;};if(pv){bs[bi++].onclick=()=>go(i-1);}
-    bs[bi++].onclick=()=>{if(nx)go(i+1);else{FX.sound.clear();FX.confetti(160);FX.fireworks(2500);setTimeout(FX.flowEnd,2600);}};
-    bar.querySelector("#fxflowx").onclick=FX.flowEnd;}
+    bar.querySelector(".no").onclick=()=>{bar.classList.toggle("mini");try{localStorage.setItem("flowMini",bar.classList.contains("mini")?"1":"0");}catch(e){}pad();};
+    if(pv)bar.querySelector(".pv").onclick=()=>go(i-1);
+    bar.querySelector(".nx").onclick=()=>{if(nx)go(i+1);else{FX.sound.clear();FX.confetti(160);FX.fireworks(2500);setTimeout(FX.flowEnd,2600);}};
+    bar.querySelector(".x").onclick=()=>{FX.flowEnd();document.body.style.paddingBottom="";};}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",flowBar);else flowBar();
 
   /* ---------- 🗂️ 每頁都有「回主選單」（頁面自己沒放時自動補上） ---------- */
