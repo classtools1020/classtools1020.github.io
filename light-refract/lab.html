@@ -100,7 +100,7 @@
   body.lesson .lnav{display:flex}
   .lnav .btn{font-size:min(5vw,22px);padding:14px 26px}
   .lnav .step{font-family:var(--disp);font-weight:700;font-size:min(5vw,22px);color:var(--amber);min-width:110px;text-align:center}
-  .lnav .dots{display:flex;gap:6px}.lnav .dots i{width:12px;height:12px;border-radius:50%;background:#2a4a6e;display:block}.lnav .dots i.on{background:var(--amber)}
+  .lnav .dots{display:flex;gap:6px}.lnav .dots i{width:12px;height:12px;border-radius:50%;background:#2a4a6e;display:block}.lnav .dots i.on{background:var(--amber);color:#08131f!important}.lnav .dots i:not(.on){color:#eaf6ff!important}
   .lexit{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:99999;display:none;background:#0f2841;border:2px solid var(--line);color:var(--ink);font-weight:900;font-size:15px;padding:8px 14px;border-radius:999px;cursor:pointer}
   body.lesson .lexit{display:block}
   body.lesson #hud{top:12px;right:150px}
@@ -126,7 +126,7 @@
     <div class="say" id="say1">先把水倒進去，看吸管會怎樣</div>
   </div>
 
-  <h2 class="sec">站 1½・真的杯子挑戰：拍下你桌上的吸管</h2>
+  <h2 class="sec">站 2・真的杯子挑戰：拍下你桌上的吸管</h2>
   <div class="card">
     <div class="real">
       <div class="ps"><canvas id="c1b" width="960" height="720"></canvas><div class="lbl">螢幕上的杯子</div></div>
@@ -136,26 +136,26 @@
     <div class="say" id="sayReal">把吸管放進真的水裡，從側邊看，拍一張——真的也「斷」了嗎？</div>
   </div>
 
-  <h2 class="sec">站 2・消失的硬幣（同一個碗）</h2>
+  <h2 class="sec">站 3・消失的硬幣（同一個碗）</h2>
   <div class="card">
     <div class="ps" id="ps2"><canvas id="c2" width="1280" height="720"></canvas><div class="lbl" id="s2lbl">眼睛在碗邊，硬幣被擋住</div><div class="note" id="s2note">👆 點碗＝倒水，眼睛不要動</div></div>
     <div class="ctrl"><button class="btn aqua" id="pourBtn">🫗 倒水進碗裡</button><button class="btn ghost" id="emptyBtn">↩ 倒掉</button></div>
     <div class="say" id="say2">硬幣沒動，等一下會發生魔法</div>
   </div>
 
-  <h2 class="sec">站 3・光線轉彎</h2>
+  <h2 class="sec">站 4・光線轉彎</h2>
   <div class="card">
     <div class="ps" style="cursor:default"><img src="img/laser.jpg" alt=""><canvas id="c3" width="960" height="540"></canvas><div class="lbl">真實雷射光進水</div><div class="note">🔦 拉入射角，看折射角變化</div></div>
     <div class="ctrl"><span class="lbl2">🔦 入射角</span><input type="range" id="angle" min="0" max="80" value="40"><span class="lbl2" id="angleTxt">40°</span></div>
     <div class="say" id="say3">光進水後往法線靠近，這叫<span class="term">折射 · Refraction</span></div>
   </div>
 
-  <h2 class="sec">站 4・折射生活闖關：點一張，用手指玩</h2>
+  <h2 class="sec">站 5・折射生活闖關：點一張，用手指玩</h2>
   <div class="card">
     <div class="cards" id="cards"></div>
     <div class="say" id="say4">每關都是真的生活場景，用手指操作；集滿 6 張有驚喜</div>
   </div>
-  <h2 class="sec">站 5・真人版：水盆撈硬幣（螢幕外的 4D 挑戰）</h2>
+  <h2 class="sec">站 6・真人版：水盆撈硬幣（螢幕外的 4D 挑戰）</h2>
   <div class="card">
     <div class="real">
       <div class="ps" style="cursor:default"><img src="img/coin.jpg" alt=""><div class="lbl">桌上真的水盆＋硬幣</div><div class="note">🥢 從側邊看，用筷子一次夾到硬幣</div></div>
@@ -483,7 +483,8 @@ pg();
 /* ===================== 上課模式：一次一站 ===================== */
 (function(){const hs=[...document.querySelectorAll("h2.sec")];const sts=hs.map(h=>{const s=document.createElement("section");s.className="st";h.parentNode.insertBefore(s,h);const card=h.nextElementSibling;s.appendChild(h);s.appendChild(card);return s;});
   const N=sts.length;let cur=+(localStorage.getItem("refractLessonCur")||0);if(cur>=N)cur=0;
-  $("ldots").innerHTML=sts.map(()=>"<i></i>").join("");
+  $("ldots").innerHTML=sts.map((s,k)=>`<i title="${s.querySelector("h2").textContent.replace(/"/g,"")}" style="cursor:pointer;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:13px;font-weight:900;color:#08131f">${k+1}</i>`).join("");
+  [...$("ldots").children].forEach((d,k)=>d.onclick=()=>{FX.sound.blip();show(k);});
   function show(i){cur=clamp(i,0,N-1);sts.forEach((s,k)=>s.classList.toggle("cur",k===cur));$("lstep").textContent="站 "+(cur+1)+" / "+N;[...$("ldots").children].forEach((d,k)=>d.classList.toggle("on",k===cur));
     $("lprev").style.visibility=cur===0?"hidden":"visible";$("lnext").textContent=cur===N-1?"🏁 完成":"下一站 ➡";localStorage.setItem("refractLessonCur",cur);scrollTo(0,0);}
   function enter(){document.body.classList.add("lesson");show(cur);FX.sound.jump();}
@@ -491,7 +492,7 @@ pg();
   $("lessonBtn").onclick=enter;$("lexit").onclick=exit;
   $("lprev").onclick=()=>{FX.sound.blip();show(cur-1);};
   $("lnext").onclick=()=>{if(cur===N-1){FX.sound.clear&&FX.sound.clear();FX.fireworks&&FX.fireworks(2500);FX.confetti(120);setTimeout(exit,2600);return;}FX.sound.blip();show(cur+1);};
-  if(location.hash==="#lesson")enter();})();
+  const m=location.hash.match(/^#lesson(?:-(\d+))?$/);if(m){if(m[1])cur=clamp(+m[1]-1,0,N-1);enter();}})();
 </script>
 </body>
 </html>
