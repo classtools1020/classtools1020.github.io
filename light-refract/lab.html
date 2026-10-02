@@ -143,7 +143,7 @@
     <div class="say" id="say2">硬幣沒動，等一下會發生魔法</div>
   </div>
 
-  <h2 class="sec">站 4・光線轉彎</h2>
+  <h2 class="sec">站 4・看見光折一下</h2>
   <div class="card">
     <div class="ps" style="cursor:default"><img src="img/laser.jpg" alt=""><canvas id="c3" width="960" height="540"></canvas><div class="lbl">真實雷射光進水</div><div class="note">🔦 拉入射角，看折射角變化</div></div>
     <div class="ctrl"><span class="lbl2">🔦 入射角</span><input type="range" id="angle" min="0" max="80" value="40"><span class="lbl2" id="angleTxt">40°</span></div>
@@ -161,7 +161,7 @@
       <div class="ps" style="cursor:default"><img src="img/coin.jpg" alt=""><div class="lbl">桌上真的水盆＋硬幣</div><div class="note">🥢 從側邊看，用筷子一次夾到硬幣</div></div>
       <div style="display:flex;flex-direction:column;justify-content:center;gap:8px;font-weight:900;font-size:17px;line-height:1.5">
         <div>1️⃣ 水盆裝水，丟一枚 10 元硬幣到底</div><div>2️⃣ 眼睛放低，從<b>側邊</b>看硬幣</div><div>3️⃣ 筷子從上面一次夾下去，不能試探</div><div>4️⃣ 夾到？夾空？按下面計分</div>
-        <div style="color:var(--aqua)">為什麼會夾空？光從水裡出來轉彎，硬幣看起來比真的<b>淺、偏</b>。要往更深、更靠中間夾。</div>
+        <div style="color:var(--aqua)">為什麼會夾空？光從水裡出來、在水面折一下，硬幣看起來比真的<b>淺、偏</b>。要往更深、更靠中間夾。</div>
       </div>
     </div>
     <div class="ctrl"><button class="btn go" id="tHit">🙌 夾到了</button><button class="btn ghost" id="tMiss">😅 夾空了</button><span class="lbl2" id="tally">夾到 0・夾空 0</span><button class="btn ghost" id="tReset">↺</button></div>
@@ -231,7 +231,7 @@ function drawStraw(c,lvl,label,tea){const x=c.getContext("2d"),W=c.width,H=c.hei
     if(tea){x.fillStyle="rgba(40,20,10,.85)";for(let k=0;k<7;k++){const px=gl+18+((k*37)%(gr-gl-36)),py=gb-14-(k%3)*13;if(py>wy+8){x.beginPath();x.arc(px,py,7,0,6.283);x.fill();}}}
     x.fillStyle="rgba(255,255,255,.55)";x.fillRect(gl,wy-3,gr-gl,6);
     x.strokeStyle="rgba(255,255,255,.35)";x.lineWidth=2;x.beginPath();x.ellipse((gl+gr)/2,wy,(gr-gl)/2,10,0,0,6.283);x.stroke();
-    if(label){x.fillStyle="#ffd43b";x.font="900 "+Math.round(W/48)+"px 'Noto Sans TC',sans-serif";x.fillText("← 光在這裡轉彎",gr+16,wy+8);}
+    if(label){x.fillStyle="#ffd43b";x.font="900 "+Math.round(W/48)+"px 'Noto Sans TC',sans-serif";x.fillText("← 光在這裡折一下",gr+16,wy+8);}
   }
   return {gl,gr,gt,gb,wy};}
 let water=0,pulled=false,s1done=false,cmp=false,div=.28;
@@ -255,12 +255,12 @@ $("water").oninput=e=>{FX.sound.blip();setWater(+e.target.value);};
     const dy=ly-e.clientY;ly=e.clientY;acc+=dy;if(Math.abs(acc)>4){setWater(water+acc*.5);acc=0;if(Date.now()-bt>90){bt=Date.now();bubbleSound();}}};
   el.onpointerup=el.onpointercancel=()=>{drag=false;};})();
 $("cmpBtn").onclick=()=>{cmp=!cmp;$("cmpBtn").classList.toggle("on",cmp);FX.sound.jump();drawS1();$("s1note").textContent=cmp?"↔ 拖中間的線：左邊沒有水、右邊有水，同一支吸管":"👆 手指在杯子上往上滑＝倒水，往下滑＝倒掉";$("say1").innerHTML=cmp?"同一支吸管：有水那邊看起來斷了，沒水那邊是直的<span class='term'>折射</span>":"先把水倒進去，看吸管會怎樣";};
-$("pullBtn").onclick=()=>{pulled=true;FX.sound.jump();splashSound(.4);drawS1();$("say1").innerHTML="沒斷！同一支吸管，是<b>光進水轉彎</b>讓它看起來彎<span class='term'>折射</span>";FX.stamp({text:"沒斷"});FX.confetti(60);addCoins(5);setTimeout(()=>{pulled=false;drawS1();},2200);};
+$("pullBtn").onclick=()=>{pulled=true;FX.sound.jump();splashSound(.4);drawS1();$("say1").innerHTML="沒斷！同一支吸管，是<b>光進水折一下</b>讓它看起來彎<span class='term'>折射</span>";FX.stamp({text:"沒斷"});FX.confetti(60);addCoins(5);setTimeout(()=>{pulled=false;drawS1();},2200);};
 /* 真的杯子挑戰：網頁內開鏡頭即時預覽→拍 */
 let camStream=null;
 function realShow(src){const im=$("realImg");im.src=src;im.style.display="block";$("realVid").style.display="none";$("realEmpty").style.display="none";$("realLbl").style.display="block";
   $("camShot").style.display="none";$("camAgain").style.display=camStream?"inline-block":"none";$("arBtn").style.display="inline-block";
-  FX.sound.powerup();buzz([80,50,80]);FX.confetti(80);addCoins(10);$("sayReal").innerHTML="真的杯子也一樣！同一支吸管，光進水轉彎就看起來斷了<span class='term'>折射</span>";setTimeout(()=>FX.stamp({text:"真的斷了？"}),400);}
+  FX.sound.powerup();buzz([80,50,80]);FX.confetti(80);addCoins(10);$("sayReal").innerHTML="真的杯子也一樣！同一支吸管，光進水折一下就看起來斷了<span class='term'>折射</span>";setTimeout(()=>FX.stamp({text:"真的斷了？"}),400);}
 function camPreview(){$("realVid").style.display="block";$("realImg").style.display="none";$("realEmpty").style.display="none";$("realLbl").style.display="none";$("camShot").style.display="inline-block";$("camAgain").style.display="none";$("camOpen").style.display="none";$("arBtn").style.display="inline-block";$("sayReal").textContent="把真的杯子對準鏡頭，從側邊看吸管，按「📸 拍！」";}
 $("camOpen").onclick=async()=>{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("sayReal").textContent="這台裝置開不了鏡頭，請用「📁 或選一張照片」";return;}
   try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1280}},audio:false});$("realVid").srcObject=camStream;camPreview();FX.sound.blip();}
@@ -280,9 +280,9 @@ function drawAR(){const c=$("arC"),x=c.getContext("2d"),W=c.width,H=c.height;x.c
   x.lineCap="round";x.lineWidth=9;x.strokeStyle="#ffd43b";x.shadowColor="#ffd43b";x.shadowBlur=14;x.beginPath();x.moveTo(px-Math.sin(i)*L,py-Math.cos(i)*L);x.lineTo(px,py);x.stroke();
   x.strokeStyle="#3ef0ff";x.shadowColor="#3ef0ff";x.beginPath();x.moveTo(px,py);x.lineTo(px+Math.sin(r)*L,py+Math.cos(r)*L);x.stroke();x.shadowBlur=0;
   x.setLineDash([6,8]);x.strokeStyle="rgba(255,212,59,.45)";x.lineWidth=4;x.beginPath();x.moveTo(px,py);x.lineTo(px+Math.sin(i)*L,py+Math.cos(i)*L);x.stroke();x.setLineDash([]);
-  x.fillStyle="#ffd43b";x.font="900 24px 'Noto Sans TC',sans-serif";x.fillText("光在這裡轉彎",px+20,py-14);
+  x.fillStyle="#ffd43b";x.font="900 24px 'Noto Sans TC',sans-serif";x.fillText("光在這裡折一下",px+20,py-14);
   x.fillStyle="#fff";x.font="900 16px 'Noto Sans TC',sans-serif";x.fillText("👆 拖曳白線對準真的水面",W-300,H-20);}
-$("arBtn").onclick=()=>{arOn=!arOn;$("arC").style.display=arOn?"block":"none";$("arBtn").classList.toggle("on",arOn);FX.sound.blip();drawAR();$("sayReal").textContent=arOn?"把白線拖到真的水面，看光怎麼在那裡轉彎（黃→藍往中間靠）":"";};
+$("arBtn").onclick=()=>{arOn=!arOn;$("arC").style.display=arOn?"block":"none";$("arBtn").classList.toggle("on",arOn);FX.sound.blip();drawAR();$("sayReal").textContent=arOn?"把白線拖到真的水面，看光怎麼在那裡折一下（黃→藍往中間靠）":"";};
 (function(){const fr=$("realFrame");let d=false;fr.style.touchAction="none";
   fr.onpointerdown=e=>{if(!arOn)return;d=true;try{fr.setPointerCapture(e.pointerId);}catch(x){}mv(e);};
   function mv(e){const r=fr.getBoundingClientRect();arX=clamp((e.clientX-r.left)/r.width,.15,.85);arY=clamp((e.clientY-r.top)/r.height,.15,.85);drawAR();}
@@ -301,15 +301,15 @@ function drawS2(){const c=$("c2"),x=c.getContext("2d"),W=c.width,H=c.height;x.cl
     const g=x.createRadialGradient(cx-8,y-6,4,cx,y,40);g.addColorStop(0,"#fff3b0");g.addColorStop(.5,"#ffd25a");g.addColorStop(1,"#b8860b");
     x.fillStyle=g;x.beginPath();x.ellipse(cx,y,40,15,0,0,6.283);x.fill();x.strokeStyle="#8a6508";x.lineWidth=3;x.stroke();
     x.fillStyle="#8a6508";x.font="900 16px sans-serif";x.textAlign="center";x.fillText("10",cx,y+6);x.restore();
-    x.textAlign="left";x.fillStyle="#42e0c8";x.font="900 26px 'Noto Sans TC',sans-serif";x.fillText(fill>=1?"光在水面轉彎 → 看到硬幣了！":"倒水中…",30,60);
+    x.textAlign="left";x.fillStyle="#42e0c8";x.font="900 26px 'Noto Sans TC',sans-serif";x.fillText(fill>=1?"光在水面折一下 → 看到硬幣了！":"倒水中…",30,60);
     if(fill>=1){x.fillStyle="#ffe08a";x.font="900 20px 'Noto Sans TC',sans-serif";x.fillText("硬幣沒動，是影像被抬高",30,96);}
   }else{x.fillStyle="#ff6b6b";x.font="900 26px 'Noto Sans TC',sans-serif";x.fillText("被碗邊擋住，看不到硬幣",30,60);}
   $("s2lbl").textContent=fill>=1?"硬幣浮上來了！":fill>0?"倒水中…":"眼睛在碗邊，硬幣被擋住";
 }
 img2.onload=drawS2;
 function pour(){if(anim||fill>=1)return;let t=0;anim=setInterval(()=>{t+=.04;fill=Math.min(1,t);if(Math.random()<.4)bubbleSound();drawS2();if(fill>=1){clearInterval(anim);anim=null;FX.sound.coin();buzz([50,30,50]);FX.emojiBurst("🪙",24,innerWidth/2,innerHeight*.5);addCoins(5);
-  $("say2").innerHTML="硬幣沒動，是<b>光在水面轉彎</b>，影像被抬高——游泳池看起來淺也是這樣<span class='term'>折射・視深</span>";
-  setTimeout(()=>FX.chest({title:"硬幣浮起來了！開寶箱",gem:"🪙",gemName:"折射金幣",gemColor:"#ffd25a",sub:"光在水面轉彎，影像被抬高",onDone:()=>{}}),600);}},40);}
+  $("say2").innerHTML="硬幣沒動，是<b>光在水面折一下</b>，影像被抬高——游泳池看起來淺也是這樣<span class='term'>折射・視深</span>";
+  setTimeout(()=>FX.chest({title:"硬幣浮起來了！開寶箱",gem:"🪙",gemName:"折射金幣",gemColor:"#ffd25a",sub:"光在水面折一下，影像被抬高",onDone:()=>{}}),600);}},40);}
 $("pourBtn").onclick=pour;$("ps2").onpointerdown=pour;
 $("emptyBtn").onclick=()=>{if(anim)return;fill=0;splashSound(.3);drawS2();$("say2").textContent="硬幣沒動，等一下會發生魔法";};
 
@@ -332,16 +332,16 @@ drawS3();
 /* ===================== 站 4：生活闖關（觸控小遊戲） ===================== */
 const CARDS=[
  {img:"img/net.jpg",t:"🎣 夜市撈魚：往哪撈？",kind:"net",term:"折射",hint:"👆 手指移動網子，點一下＝撈！撈到 3 條過關（小心魚會逃）",why:"看到的魚比真的位置高——往看到的地方撈會撈空，要往更深撈。"},
- {img:"img/pool.jpg",t:"🏊 游泳池：看起來淺？",kind:"pool",term:"視深",hint:"👆 把 🤖 往下拖，看什麼時候才到底",why:"光從水裡出來時轉彎，池底影像被抬高——看起來淺，其實更深。跳水前一定要先看深度！"},
- {img:"img/aquarium.jpg",t:"🐠 魚缸：魚變大了？",kind:"zoom",term:"折射放大",hint:"👆 手指往上滑＝靠近魚缸，靠太近會……",why:"水和彎彎的玻璃讓光轉彎，魚的影像被放大——像放大鏡一樣。"},
- {img:"img/drop.jpg",t:"💧 水滴放大鏡：找金幣",kind:"lens",term:"透鏡",hint:"👆 滑動水滴，找出藏起來的 3 枚金幣",why:"一滴水就是小放大鏡：光穿過水滴轉彎，字就變大。"},
- {img:"img/magnifier.jpg",t:"👓 戴上眼鏡看清楚",kind:"glasses",term:"透鏡",hint:"👆 看不清楚？把鏡片滑過去",why:"鏡片讓光轉彎，把光送到眼睛對的位置——眼鏡就是這樣幫忙看清楚的。"},
- {img:"img/glass-empty.jpg",t:"🥤 珍奶吸管斷了？",kind:"straw",term:"折射",hint:"👆 手指往上滑＝倒珍奶；有平板可以「傾斜倒」",why:"吸管沒斷，是光進飲料轉彎，讓它看起來彎。"},
+ {img:"img/pool.jpg",t:"🏊 游泳池：看起來淺？",kind:"pool",term:"視深",hint:"👆 把 🤖 往下拖，看什麼時候才到底",why:"光從水裡出來、在水面折一下，池底影像被抬高——看起來淺，其實更深。跳水前一定要先看深度！"},
+ {img:"img/aquarium.jpg",t:"🐠 魚缸：魚變大了？",kind:"zoom",term:"折射放大",hint:"👆 手指往上滑＝靠近魚缸，靠太近會……",why:"水和彎彎的玻璃讓光換方向，魚的影像被放大——像放大鏡一樣。"},
+ {img:"img/drop.jpg",t:"💧 水滴放大鏡：找金幣",kind:"lens",term:"透鏡",hint:"👆 滑動水滴，找出藏起來的 3 枚金幣",why:"一滴水就是小放大鏡：光穿過水滴換方向，字就變大。"},
+ {img:"img/magnifier.jpg",t:"👓 戴上眼鏡看清楚",kind:"glasses",term:"透鏡",hint:"👆 看不清楚？把鏡片滑過去",why:"鏡片讓光換方向，把光送到眼睛對的位置——眼鏡就是這樣幫忙看清楚的。"},
+ {img:"img/glass-empty.jpg",t:"🥤 珍奶吸管斷了？",kind:"straw",term:"折射",hint:"👆 手指往上滑＝倒珍奶；有平板可以「傾斜倒」",why:"吸管沒斷，是光進飲料折一下，讓它看起來彎。"},
 ];
 let got=CARDS.map(()=>false),cur=-1,xpTimers=[],raf=0,tiltFn=null;
 function later(f,ms){xpTimers.push(setTimeout(f,ms));}
 function pg(){const n=got.filter(Boolean).length;$("pgTxt").textContent=n+" / 6";$("pgBar").style.width=(n/6*100)+"%";
-  if(n===6&&!window._allDone){window._allDone=true;$("say4").textContent="🎉 六關全破！";setTimeout(()=>FX.wheel({title:"🎡 折射魔法轉盤",onDone:()=>FX.badge({id:"refract",emoji:"🥤",name:"折射偵探",desc:"光進水會轉彎＝折射・六關全破",onDone:()=>FX.fireworks(3000)})}),600);}}
+  if(n===6&&!window._allDone){window._allDone=true;$("say4").textContent="🎉 六關全破！";setTimeout(()=>FX.wheel({title:"🎡 折射魔法轉盤",onDone:()=>FX.badge({id:"refract",emoji:"🥤",name:"折射偵探",desc:"光進水會折一下＝折射・六關全破",onDone:()=>FX.fireworks(3000)})}),600);}}
 function getCard(i){if(got[i])return;got[i]=true;const el=document.querySelectorAll(".mc")[i];if(el)el.classList.add("got");FX.sound.coin();FX.emojiBurst("🪙",12,innerWidth/2,innerHeight*.4);pg();}
 $("cards").innerHTML=CARDS.map((c,i)=>`<div class="mc" onclick="openXp(${i})"><img src="${c.img}" alt=""><span class="tap">👆 點我玩</span><span class="ok">✅</span><div class="tt">${c.t}</div></div>`).join("");
 
@@ -428,7 +428,7 @@ function xpZoom(c,i){const st=$("xpStage"),im=st.querySelector("img.bg");const x
   st.onpointerdown=e=>{drag=true;ly=e.clientY;};st.onpointerup=st.onpointercancel=()=>{drag=false;};
   st.onpointermove=e=>{if(!drag||done)return;const dy=ly-e.clientY;ly=e.clientY;s=clamp(s+dy*.006,1,2.4);im.style.transform=`scale(${s})`;$("sc").textContent="🔍 ×"+s.toFixed(1);if(Math.abs(dy)>3)FX.sound.blip();
     if(s>=2.1&&!done){done=true;burst=.1;flash();splashSound(.7);buzz([60,40,160]);parts.splash(480,300,40);st.classList.add("bigshake");later(()=>st.classList.remove("bigshake"),800);
-      hit("哇！魚衝出來了！",5);$("xpWhy").textContent="靠近看，魚變超大——水＋圓玻璃讓光轉彎，影像被放大。";okBtn(i);}};}
+      hit("哇！魚衝出來了！",5);$("xpWhy").textContent="靠近看，魚變超大——水＋圓玻璃讓光換方向，影像被放大。";okBtn(i);}};}
 
 /* 4 水滴放大鏡：找出 3 枚金幣（會閃、會飛進錢包） */
 function xpLens(c,i){const st=$("xpStage");st.insertAdjacentHTML("beforeend",`<canvas id="xc" width="960" height="540"></canvas><div class="lens" id="lens"><span class="coin" id="lc">🪙</span></div><div class="score" id="sc">🪙 0 / 3</div>`);
@@ -443,7 +443,7 @@ function xpLens(c,i){const st=$("xpStage");st.insertAdjacentHTML("beforeend",`<c
     const near=coins3.find(o=>!o.got&&Math.hypot(o.x-p.x,o.y-p.y)<40);
     if(near){$("lc").style.display="block";if(hover!==near){hover=near;hoverT=Date.now();FX.sound.blip();buzz(15);}
       else if(Date.now()-hoverT>450){near.got=true;n++;$("sc").textContent="🪙 "+n+" / 3";pop("找到金幣！","hit");FX.sound.coin();buzz([40,30,40]);addCoins(3,e.clientX,e.clientY);$("lc").style.display="none";hover=null;
-        if(n>=3){FX.confetti(60);$("xpWhy").textContent="水滴＝放大鏡！光穿過水滴轉彎，小東西就變大、看得到。";okBtn(i);}}}
+        if(n>=3){FX.confetti(60);$("xpWhy").textContent="水滴＝放大鏡！光穿過水滴換方向，小東西就變大、看得到。";okBtn(i);}}}
     else{$("lc").style.display="none";hover=null;}}
   st.onpointermove=e=>{e.preventDefault();place(e);};st.onpointerdown=e=>{place(e);};}
 
@@ -453,7 +453,7 @@ function xpGlasses(c,i){const st=$("xpStage"),im=st.querySelector("img.bg");im.s
   const lens=$("lens");let moved=0,done=false;const ZOOM=1.5;
   function place(e){const p=stagePt(e);if(!p.inside)return;const r=st.getBoundingClientRect();const px=p.x/960*r.width,py=p.y/540*r.height;
     lens.style.display="block";lens.style.left=px+"px";lens.style.top=py+"px";lens.style.backgroundImage=`url(${im.src})`;lens.style.backgroundSize=(r.width*ZOOM)+"px "+(r.height*ZOOM)+"px";lens.style.backgroundPosition=(-(px*ZOOM)+105)+"px "+(-(py*ZOOM)+75)+"px";
-    if(++moved===30&&!done){done=true;im.style.transition="filter 1s";im.style.filter="blur(0)";flash();FX.sound.oneup();buzz([50,30,50]);$("gt").textContent="😎 戴上眼鏡：全部清楚了！";hit("看清楚了！",5);$("xpWhy").textContent="鏡片讓光轉彎，把影像送到眼睛對的地方。";okBtn(i);}}
+    if(++moved===30&&!done){done=true;im.style.transition="filter 1s";im.style.filter="blur(0)";flash();FX.sound.oneup();buzz([50,30,50]);$("gt").textContent="😎 戴上眼鏡：全部清楚了！";hit("看清楚了！",5);$("xpWhy").textContent="鏡片讓光換方向，把影像送到眼睛對的地方。";okBtn(i);}}
   st.onpointermove=e=>{e.preventDefault();place(e);};st.onpointerdown=e=>{place(e);};}
 
 /* 6 珍奶吸管：上滑倒珍奶／傾斜平板倒 */
@@ -463,7 +463,7 @@ function xpStraw(c,i){const st=$("xpStage");st.innerHTML=`<canvas id="xc" width=
   if(img1.complete)draw();else img1.addEventListener("load",draw,{once:true});
   function setLvl(v){lvl=clamp(v,0,1);if(lvl>.5&&!shown){shown=true;pop("斷了？！","miss");buzz([60,40,60]);$("xpWhy").textContent="看起來斷在珍奶裡……按「拿出來看」";
       $("xpCtrl").insertAdjacentHTML("beforeend",`<button class="btn go" id="pb">🖐️ 拿出來看</button>`);
-      $("pb").onclick=()=>{lvl=0;splashSound(.4);flash();hit("沒斷！",5);$("xpWhy").textContent="同一支吸管，是光進珍奶轉彎，讓它看起來彎。";okBtn(i);};}}
+      $("pb").onclick=()=>{lvl=0;splashSound(.4);flash();hit("沒斷！",5);$("xpWhy").textContent="同一支吸管，是光進珍奶折一下，讓它看起來彎。";okBtn(i);};}}
   st.onpointerdown=e=>{drag=true;ly=e.clientY;};st.onpointerup=st.onpointercancel=()=>{drag=false;};
   st.onpointermove=e=>{if(!drag||tilt)return;const dy=ly-e.clientY;ly=e.clientY;setLvl(lvl+dy*.004);if(Math.abs(dy)>3&&Date.now()-bt>90){bt=Date.now();bubbleSound();}};
   $("xpCtrl").innerHTML=`<button class="btn aqua" id="tb">📱 用傾斜平板倒珍奶</button>`;

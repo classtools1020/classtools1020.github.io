@@ -67,16 +67,16 @@
 <script src="fx.js"></script>
 <script>
 const Q=[
- {q:"吸管放進水裡，看起來會？",o:["彎了、像斷掉","變更長","變成紅色"],c:0,hint:"光進水會轉彎，所以吸管看起來彎。",tz:"折射",te:"Refraction"},
+ {q:"吸管放進水裡，看起來會？",o:["彎了、像斷掉","變更長","變成紅色"],c:0,hint:"光進水會折一下，所以吸管看起來彎。",tz:"折射",te:"Refraction"},
  {q:"把吸管拿出來，吸管真的？",o:["沒斷","斷了","變短"],c:0,hint:"是光讓它看起來彎，吸管本身沒事。",tz:"看起來彎",te:"Appears bent"},
  {q:"光從空氣進到水裡，會怎樣？",o:["方向改變","消失不見","變成兩道"],c:0,hint:"換一種介質，光的方向就改變。",tz:"折射",te:"Refraction"},
- {q:"光進到水裡方向改變，這叫？",o:["折射","反射","色散"],c:0,hint:"反射是彈回來；折射是穿進去轉彎。",tz:"折射",te:"Refraction"},
- {q:"碗裡的硬幣，倒水以後看起來？",o:["浮上來了","沉下去","不見了"],c:0,hint:"光在水面轉彎，把硬幣的影像抬高。",tz:"視深變淺",te:"Apparent depth"},
+ {q:"光進到水裡方向改變，這叫？",o:["折射","反射","色散"],c:0,hint:"反射是彈回來；折射是穿進去換方向。",tz:"折射",te:"Refraction"},
+ {q:"碗裡的硬幣，倒水以後看起來？",o:["浮上來了","沉下去","不見了"],c:0,hint:"光在水面折一下，把硬幣的影像抬高。",tz:"視深變淺",te:"Apparent depth"},
  {q:"游泳池看起來比實際？",o:["淺","深","一樣"],c:0,hint:"和硬幣一樣，看起來被抬高了。",tz:"視深",te:"Apparent depth"},
  {q:"用網子撈水裡的東西，要往哪撈？",o:["更深一點","看到的地方","更淺一點"],c:0,hint:"看到的位置比真的位置高。",tz:"折射的應用",te:"Application"},
  {q:"光從空氣進水，折射角和入射角比起來？",o:["比較小","比較大","一樣"],c:0,hint:"進水後光往法線靠近。",tz:"折射角",te:"Angle of refraction"},
- {q:"眼鏡的鏡片幫我們看清楚，是利用光的？",o:["折射","反射","影子"],c:0,hint:"鏡片讓光轉彎，剛好聚到眼睛裡。",tz:"透鏡",te:"Lens"},
- {q:"光碰到鏡子彈回來叫反射；光進水轉彎叫？",o:["折射","色散","直進"],c:0,hint:"彈回來＝反射，穿過去轉彎＝折射。",tz:"折射 vs 反射",te:"Refraction vs reflection"},
+ {q:"眼鏡的鏡片幫我們看清楚，是利用光的？",o:["折射","反射","影子"],c:0,hint:"鏡片讓光換方向，剛好聚到眼睛裡。",tz:"透鏡",te:"Lens"},
+ {q:"光碰到鏡子彈回來叫反射；光進水折一下叫？",o:["折射","色散","直進"],c:0,hint:"彈回來＝反射，穿過去換方向＝折射。",tz:"折射 vs 反射",te:"Refraction vs reflection"},
 ];
 const KEYS=["A","B","C","D"];let idx=0,scores=[0,0];const $=id=>document.getElementById(id);
 function pt(t,d){scores[t]=Math.max(0,scores[t]+d);$(t?"pb":"pa").textContent=scores[t];if(d>0){FX.sound.coin();FX.confetti(30,t?innerWidth*.75:innerWidth*.25);}}

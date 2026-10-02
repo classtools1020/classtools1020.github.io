@@ -110,8 +110,8 @@ function bub(n){for(let i=0;i<n;i++)setTimeout(()=>FX.sound.blip(),i*120);}
 $("pour").onclick=()=>{lvlT=.72;bub(8);$("say").textContent="水漫上來了…轉轉看、換角度看";};
 $("empty").onclick=()=>{lvlT=0;FX.sound.blip();$("say").textContent="水倒掉了，吸管本來就是直的";};
 let pulling=false;$("pull").onclick=()=>{if(pulling)return;pulling=true;FX.sound.powerup();let k=0;const iv=setInterval(()=>{k+=.05;strawLift=Math.sin(Math.min(1,k)*Math.PI)*2.6;if(k>=1){clearInterval(iv);pulling=false;}},30);
-  $("say").textContent="拿出來：直的！沒斷——是光進水轉彎";FX.stamp&&FX.stamp({text:"沒斷"});FX.confetti&&FX.confetti(60);};
-let rayOn=false;$("ray").onclick=()=>{rayOn=!rayOn;rayG.visible=rayOn;$("ray").classList.toggle("on",rayOn);FX.sound.blip();$("say").textContent=rayOn?"黃＝空氣裡的光，藍＝進水後轉彎的光（往中間白線靠近）":"";};
+  $("say").textContent="拿出來：直的！沒斷——是光進水折一下";FX.stamp&&FX.stamp({text:"沒斷"});FX.confetti&&FX.confetti(60);};
+let rayOn=false;$("ray").onclick=()=>{rayOn=!rayOn;rayG.visible=rayOn;$("ray").classList.toggle("on",rayOn);FX.sound.blip();$("say").textContent=rayOn?"黃＝空氣裡的光，藍＝進水後換方向的光（往中間白線靠近）":"";};
 let seenBroken=false,seenTop=false;
 function status(){const l=$("lbl");if(lvl<.05){l.textContent="還沒有水，先倒水";l.className="lbl";return;}
   if(strawLift>.5){l.textContent="拿出來：直的！沒斷";l.className="lbl good";return;}

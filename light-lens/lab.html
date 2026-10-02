@@ -282,7 +282,7 @@ tiles("sortTiles",[
 const FONT='"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif';
 function cover(im,W,H){const k=Math.max(W/im.naturalWidth,H/im.naturalHeight),w=im.naturalWidth*k,h=im.naturalHeight*k;return {x:(W-w)/2,y:(H-h)/2,w,h};}
 const CARDS=[
- {img:"img/magnifier.jpg",t:"🔍 偵探放大鏡：找出藏起來的字",kind:"detect",term:"凸透鏡",hint:"👆 手指移動放大鏡，找出 3 個小到看不見的字",why:"放大鏡中間厚，是凸透鏡：光轉彎，小字就變大。"},
+ {img:"img/magnifier.jpg",t:"🔍 偵探放大鏡：找出藏起來的字",kind:"detect",term:"凸透鏡",hint:"👆 手指移動放大鏡，找出 3 個小到看不見的字",why:"放大鏡中間厚，是凸透鏡：光換方向，小字就變大。"},
  {img:"../light-color/img/case-traffic.jpg",t:"🚦 近視看紅綠燈",kind:"myopia",term:"凹透鏡",hint:"👆 把近視眼鏡移到紅綠燈上",why:"近視眼鏡中間薄，是凹透鏡：把光散開一點，遠方就看清楚了。"},
  {img:"img/drop.jpg",t:"👵 幫阿嬤看藥袋",kind:"grandma",term:"凸透鏡",hint:"👆 用老花眼鏡看藥袋上的小字",why:"老花眼鏡中間厚，是凸透鏡：近的小字變大、變清楚。"},
  {img:"../light-color/img/tw/alishan.jpg",t:"📷 手機拍阿里山小火車",kind:"camera",term:"凸透鏡",hint:"👆 在畫面上手指往上、往下滑，移動鏡頭對焦",why:"手機鏡頭是凸透鏡：把光剛好聚在感光片上，照片才清楚。"},
@@ -323,7 +323,7 @@ function blurred(src,r){const o=document.createElement("canvas");o.width=960;o.h
 
 /* A 偵探放大鏡 */
 function gDetect(c,i){const st=$("xpStage");st.querySelector("img.bg").style.display="none";const x=$("xc").getContext("2d");const {o,g}=bgOff();
-  const clues=[{x:250,y:400,ch:"光"},{x:700,y:330,ch:"轉"},{x:520,y:150,ch:"彎"}];
+  const clues=[{x:250,y:400,ch:"光"},{x:700,y:330,ch:"折"},{x:520,y:150,ch:"射"}];
   clues.forEach(q=>{g.font=`900 11px ${FONT}`;g.fillStyle="rgba(40,20,0,.9)";g.fillText(q.ch,q.x-5,q.y+4);});
   st.insertAdjacentHTML("beforeend",`<div class="score" id="sc">🔎 ＿ ＿ ＿</div>`);
   let p=null,n=0,hov=null,ht=0,t=0,done=false;
@@ -335,7 +335,7 @@ function gDetect(c,i){const st=$("xpStage");st.querySelector("img.bg").style.dis
     const q=clues.find(q=>!q.got&&Math.hypot(q.x-p.x,q.y-p.y)<40);
     if(q){if(hov!==q){hov=q;ht=Date.now();S("blip");}else if(Date.now()-ht>450){q.got=true;n++;hov=null;hit("找到「"+q.ch+"」！");
       $("sc").textContent="🔎 "+clues.map(z=>z.got?z.ch:"＿").join(" ");
-      if(n===3){done=true;later(()=>{S("clear");pop("光轉彎！");$("xpWhy").textContent="三個字拼起來：光・轉・彎！放大鏡讓光轉彎，小字變大。";okBtn(i);},700);}}}
+      if(n===3){done=true;later(()=>{S("clear");pop("光換方向！");$("xpWhy").textContent="三個字拼起來：光・折・射！放大鏡讓光換方向，小字變大。";okBtn(i);},700);}}}
     else hov=null;};}
 
 /* B 近視看紅綠燈 */
@@ -471,7 +471,7 @@ const c4=$("c4"),g4=c4.getContext("2d");let cv4=true,seen4={big:0,small:0,flip:0
 const off=document.createElement("canvas");off.width=1280;off.height=560;const go=off.getContext("2d");
 (function(){go.fillStyle="#fbf7ec";go.fillRect(0,0,1280,560);go.fillStyle="#223";go.textAlign="left";
   go.font='900 40px "Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif';
-  const lines=["光線特勤隊出任務！","光進到鏡片會轉彎，","中間厚的叫凸透鏡，","中間薄的叫凹透鏡。","放大鏡、眼鏡都是透鏡。","今天我們是透鏡偵探。"];
+  const lines=["光線特勤隊出任務！","光進出鏡片會換方向，","中間厚的叫凸透鏡，","中間薄的叫凹透鏡。","放大鏡、眼鏡都是透鏡。","今天我們是透鏡偵探。"];
   go.textAlign="center";lines.forEach((t,i)=>{go.fillText(t,640,80+i*82);});})();
 function draw4(){
   const d=+$("dist").value,cx=640,cy=280,R=190;let m,blur=0,note;
