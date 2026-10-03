@@ -19,6 +19,7 @@
   .stage{position:relative;width:min(100vw,calc((100vh - 118px)*1.7917));aspect-ratio:1600/893;overflow:hidden;border-radius:14px;background:#000;--u:calc(min(100vw,calc((100vh - 118px)*1.7917))/1600)}
   .bg,.bg2{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .5s,transform 6s ease-out}
   .split .bg{clip-path:inset(0 50% 0 0)}.split .bg2{clip-path:inset(0 0 0 50%)}
+  .s3d{position:absolute;inset:0}.s3d canvas{width:100%;height:100%;display:block}
   .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,8,16,.72) 0%,rgba(2,8,16,.15) 38%,rgba(2,8,16,.15) 62%,rgba(2,8,16,.7) 100%);pointer-events:none}
   .dimall{position:absolute;inset:0;background:#020810;pointer-events:none;transition:opacity .4s}
   svg.ov{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
@@ -71,6 +72,7 @@
 <div class="stage" id="stage">
   <img class="bg" id="bg" alt="">
   <img class="bg2" id="bg2" alt="">
+  <div class="s3d" id="scene3d"></div>
   <div class="shade"></div>
   <div class="dimall" id="dim"></div>
   <svg class="ov" id="ov" viewBox="0 0 1600 893" preserveAspectRatio="xMidYMid slice"></svg>
@@ -96,6 +98,7 @@
   <div class="dots" id="dots"></div>
 </div>
 <script src="koko.js"></script>
+<script type="module" src="news3d.js"></script>
 <script>
 (function(){
 const IMG=n=>'mv/'+n+'.jpg';const BADGE='📷 示意照片（不是新聞現場）';
@@ -103,18 +106,18 @@ const CH=['📺 開播','📰 新聞','🔍 五個線索','🧠 為什麼','🛟
 const CHID=['open','news','5w','why','float','end'];
 const SRC='新聞來源：改寫自 <a href="https://www.setn.com/news/1892874" target="_blank" rel="noopener">三立新聞網</a>、光明網（2026 年 8 月）';
 const S=[
- {ch:0,bg:'lake',tag:'光線新聞台',title:'📺 看新聞練習',q:'今天的新聞，是真的發生過的事',say:'我是主播光光！先告訴你：主角最後平安獲救！',mood:'happy'},
- {ch:0,bg:'lake',tag:'頭條新聞',title:'阿姨河邊泡腳　一腳踩空',q:'靠「仰漂」撐了將近 1 小時，平安獲救！',src:SRC,say:'標題，就是新聞最重要的一句話！',mood:'point'},
- {ch:1,bg:'lake',tag:'新聞 ①',title:'天氣好熱',q:'一位 50 多歲的阿姨，到公園的河邊散步',src:SRC,say:'地點在中國江蘇的蘇州。',mood:'happy'},
- {ch:1,bg:'lake',tag:'新聞 ②',title:'她想泡泡腳',q:'水看起來很淺，她就走下石階，把腳泡進水裡',src:SRC,say:'水清清的，看起來好淺……',mood:'think'},
- {ch:1,bg:'lake',dim:.35,tag:'新聞 ③',title:'一腳踩空！',q:'水底突然變深，她掉進深水區——她不會游泳！',src:SRC,draw:'dropoff',say:'好危險！！',mood:'wow'},
- {ch:1,bg:'pool',tag:'新聞 ④',title:'她做了一件對的事',q:'躺在水上「仰漂」：臉朝上、口鼻露出水面、不亂動',src:SRC,draw:'float',say:'不亂動，才能保存體力！',mood:'point'},
- {ch:1,bg:'lake',tag:'新聞 ⑤',title:'平安獲救！',q:'快 1 小時後，路人發現她、報警，她被救上岸',src:SRC,say:'大家都說這是「教科書級」的自救！',mood:'happy'},
- {ch:2,bg:'lake',dim:.5,tag:'偵探時間',title:'抓出五個線索',steps:['👤 誰？ → 一位 50 多歲的阿姨','📍 在哪裡？ → 公園的河邊','💥 發生什麼？ → 泡腳時一腳踩空，掉進深水區','❓ 為什麼？ → 她以為水很淺','🛟 怎麼辦？ → 仰漂，等人來救'],say:'先讓同學說說看，再按揭曉！',mood:'think'},
- {ch:3,bg:'lake',tag:'偵探連結',title:'為什麼以為水很淺？',q:'光從水底出來，在水面折一下……',a:'水底看起來被「抬高」了 → 其實更深！',draw:'depthLake',say:'跟碗裡的硬幣一樣喔！',mood:'think',sayA:'看起來淺，其實更深！',moodA:'wow'},
- {ch:4,bg:'pool',tag:'保命技能',title:'仰漂三步驟',steps:['① 躺下，臉朝天空','② 放輕鬆，手腳張開像星星 ⭐','③ 口鼻露出來，慢慢呼吸、等人救'],say:'體育課我們可以練習！',mood:'happy'},
- {ch:4,bg:'lake',dim:.45,tag:'看到有人落水',title:'救人口訣',steps:['🚫 不要自己跳下去救','📣 大聲叫大人','📞 打 119','🛟 丟會浮的東西給他（寶特瓶、救生圈）'],say:'保護好自己，才能幫助別人！',mood:'point'},
- {ch:5,bg:'pool',dim:.35,tag:'安全口令',title:'跟光光喊三次！',big:'看起來淺，其實更深！',bigS:true,bigTop:1,chant:true,a:'先看深度・大人在旁・掉下去了仰漂等待',at:2,link:['story.html#end','🏆 回事件簿結案'],say:'最大聲的那一組加分！',mood:'wow',sayA:'太大聲了！我耳朵在震！',moodA:'happy'}
+ {ch:0,bg:'lake',scene:'title',tag:'光線新聞台',title:'📺 看新聞練習',q:'今天的新聞，是真的發生過的事',say:'我是主播光光！先告訴你：主角最後平安獲救！',mood:'happy'},
+ {ch:0,bg:'lake',scene:'walk',tag:'頭條新聞',title:'阿姨河邊泡腳　一腳踩空',q:'靠「仰漂」撐了將近 1 小時，平安獲救！',src:SRC,say:'標題，就是新聞最重要的一句話！',mood:'point'},
+ {ch:1,bg:'lake',scene:'walk',tag:'新聞 ①',title:'天氣好熱',q:'一位 50 多歲的阿姨，到公園的河邊散步',src:SRC,say:'地點在中國江蘇的蘇州。',mood:'happy'},
+ {ch:1,bg:'lake',scene:'dip',tag:'新聞 ②',title:'她想泡泡腳',q:'水看起來很淺，她就走下石階，把腳泡進水裡',src:SRC,say:'水清清的，看起來好淺……',mood:'think'},
+ {ch:1,bg:'lake',scene:'slip',tag:'新聞 ③',title:'一腳踩空！',q:'水底突然變深，她掉進深水區——她不會游泳！',src:SRC,say:'好危險！！',mood:'wow'},
+ {ch:1,bg:'pool',scene:'float',tag:'新聞 ④',title:'她做了一件對的事',q:'躺在水上「仰漂」：臉朝上、口鼻露出水面、不亂動',src:SRC,say:'不亂動，才能保存體力！',mood:'point'},
+ {ch:1,bg:'lake',scene:'rescue',tag:'新聞 ⑤',title:'平安獲救！',q:'快 1 小時後，路人發現她、報警，她被救上岸',src:SRC,say:'大家都說這是「教科書級」的自救！',mood:'happy'},
+ {ch:2,bg:'lake',scene:'float',dim:.45,tag:'偵探時間',title:'抓出五個線索',steps:['👤 誰？ → 一位 50 多歲的阿姨','📍 在哪裡？ → 公園的河邊','💥 發生什麼？ → 泡腳時一腳踩空，掉進深水區','❓ 為什麼？ → 她以為水很淺','🛟 怎麼辦？ → 仰漂，等人來救'],say:'先讓同學說說看，再按揭曉！',mood:'think'},
+ {ch:3,bg:'lake',scene:'why',tag:'偵探連結',title:'為什麼以為水很淺？',q:'光從水底出來，在水面折一下……',a:'水底看起來被「抬高」了 → 其實更深！',say:'跟碗裡的硬幣一樣喔！',mood:'think',sayA:'看起來淺，其實更深！',moodA:'wow'},
+ {ch:4,bg:'pool',scene:'floatTop',dim:.2,tag:'保命技能',title:'仰漂三步驟',steps:['① 躺下，臉朝天空','② 放輕鬆，手腳張開像星星 ⭐','③ 口鼻露出來，慢慢呼吸、等人救'],say:'體育課我們可以練習！',mood:'happy'},
+ {ch:4,bg:'lake',scene:'rescue',dim:.4,tag:'看到有人落水',title:'救人口訣',steps:['🚫 不要自己跳下去救','📣 大聲叫大人','📞 打 119','🛟 丟會浮的東西給他（寶特瓶、救生圈）'],say:'保護好自己，才能幫助別人！',mood:'point'},
+ {ch:5,bg:'pool',scene:'title',dim:.35,tag:'安全口令',title:'跟光光喊三次！',big:'看起來淺，其實更深！',bigS:true,bigTop:1,chant:true,a:'先看深度・大人在旁・掉下去了仰漂等待',at:2,link:['story.html#end','🏆 回事件簿結案'],say:'最大聲的那一組加分！',mood:'wow',sayA:'太大聲了！我耳朵在震！',moodA:'happy'}
 ];
 const $=id=>document.getElementById(id);
 const NS='http://www.w3.org/2000/svg';
@@ -159,10 +162,11 @@ $('dots').innerHTML=S.map(()=>'<i></i>').join('');[...$('dots').children].forEac
 function maxRev(s){return s.steps?s.steps.length:(s.a||s.chant?1:0);}
 function render(){
   const s=S[i];
+  $('scene3d').classList.toggle('hide',!s.scene);$('bg').classList.toggle('hide',!!s.scene);if(s.scene){if(window.NEWS3D)NEWS3D.set(s.scene);else window.__news3dWant=s.scene;}
   $('bg').src=IMG(s.bg);$('bg').style.transform='scale(1.06)';requestAnimationFrame(()=>$('bg').style.transform='scale(1)');
   $('stage').classList.toggle('split',!!s.bg2);$('bg2').classList.toggle('hide',!s.bg2);if(s.bg2)$('bg2').src=IMG(s.bg2);
   $('dim').style.opacity=s.dim||0;
-  $('tag').textContent=s.tag||'';$('badge').textContent=s.badge||BADGE;$('src').innerHTML=s.src||'';$('tag').classList.toggle('hide',!s.tag);
+  $('tag').textContent=s.tag||'';$('badge').textContent=s.badge||(s.scene?'🧊 3D 模擬（示意）':BADGE);$('src').innerHTML=s.src||'';$('tag').classList.toggle('hide',!s.tag);
   $('title').textContent=s.title||'';
   $('q').textContent=s.q||'';$('q').style.top=s.big?'calc(var(--u)*560)':'';
   $('big').textContent=s.big||'';$('big').className='big'+(s.bigS?' s':'');$('big').style.top=s.bigTop?'calc(var(--u)*230)':'';
