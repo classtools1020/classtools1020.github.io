@@ -52,7 +52,7 @@
 </style>
 </head>
 <body>
-<a class="fixbtn home" href="../light-refract/">🏠 回到首頁</a>
+<a class="fixbtn home" href="/light/" onclick="if(history.length>1){history.back();return false;}">⬅ 返回</a>
 <a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
 <div class="wrap">
   <div class="score">
@@ -89,7 +89,7 @@ function pick(el){const item=Q[idx];if(el.dataset.ok==="true"){document.querySel
   else{el.classList.add("wrong");FX.sound.wrongsoft();const fb=$("fb");fb.className="feedback hint show";fb.innerHTML="💡 再想一下："+item.hint;setTimeout(()=>el.classList.remove("wrong"),400);}}
 function next(){if(idx<Q.length)idx++;if(idx===5){FX.levelup({level:2,label:"折射偵探晉級",onDone:render});return;}render();}
 function end(){let msg,emo;if(scores[0]>scores[1]){msg="🚂 A隊 獲勝！";emo="🚂";}else if(scores[1]>scores[0]){msg="🤖 B隊 獲勝！";emo="🤖";}else{msg="平手！兩隊都好棒！";emo="🤝";}
-  $("card").innerHTML='<div class="end"><div style="font-size:70px">'+emo+'</div><div class="big">🎉 全部答完！</div><div class="fin">🚂 A隊 '+scores[0]+' 分　｜　🤖 B隊 '+scores[1]+' 分</div><div class="fin" style="color:var(--amber)">'+msg+'</div><div class="row"><button class="btn next" onclick="FX.wheel({title:\'🎡 幸運轉盤・全班獎勵\'})">🎡 轉幸運轉盤</button><button class="btn ghost" onclick="restart()">🔄 再玩一次</button><a class="btn ghost" href="../light-refract/" style="text-decoration:none">🏠 回首頁</a></div></div>';
+  $("card").innerHTML='<div class="end"><div style="font-size:70px">'+emo+'</div><div class="big">🎉 全部答完！</div><div class="fin">🚂 A隊 '+scores[0]+' 分　｜　🤖 B隊 '+scores[1]+' 分</div><div class="fin" style="color:var(--amber)">'+msg+'</div><div class="row"><button class="btn next" onclick="FX.wheel({title:\'🎡 幸運轉盤・全班獎勵\'})">🎡 轉幸運轉盤</button><button class="btn ghost" onclick="restart()">🔄 再玩一次</button><a class="btn ghost" href="/light/" style="text-decoration:none">🏠 回首頁</a></div></div>';
   FX.sound.clear();FX.confetti(160);setTimeout(()=>FX.wheel({title:"🎡 幸運轉盤・全班獎勵",onDone:()=>FX.badge({id:"rquiz",emoji:"🥤",name:"折射搶答王",desc:"10 題全部挑戰完成"})}),1200);}
 function restart(){idx=0;scores=[0,0];$("pa").textContent=0;$("pb").textContent=0;render();}
 render();
