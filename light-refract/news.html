@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05101f">
+<title>光線新聞台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--amber:#FFC93C;--pink:#FF3FB0;--cyan:#2CE6FF;--ink:#EAF6FF;--dim:#9DB8CF;--bg:#05101F}
+  *{box-sizing:border-box}html,body{margin:0;height:100%}
+  body{background:radial-gradient(120% 80% at 50% -10%,rgba(255,201,60,.10),transparent 55%),#05101F;color:var(--ink);font-family:'Noto Sans TC','Microsoft JhengHei',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+  .chs{display:flex;gap:6px;padding:8px 10px 6px;flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none}
+  .chs::-webkit-scrollbar{display:none}
+  .chs button{flex:none;font-family:inherit;font-weight:900;font-size:15px;border-radius:999px;padding:7px 14px;cursor:pointer;border:2px solid rgba(120,170,210,.35);background:#0F2841;color:var(--dim)}
+  .chs button.on{border-color:var(--amber);background:#3A2F10;color:var(--amber)}
+  .stage{position:relative;width:min(100vw,calc((100vh - 118px)*1.7917));aspect-ratio:1600/893;overflow:hidden;border-radius:14px;background:#000;--u:calc(min(100vw,calc((100vh - 118px)*1.7917))/1600)}
+  .bg,.bg2{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .5s,transform 6s ease-out}
+  .split .bg{clip-path:inset(0 50% 0 0)}.split .bg2{clip-path:inset(0 0 0 50%)}
+  .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,8,16,.72) 0%,rgba(2,8,16,.15) 38%,rgba(2,8,16,.15) 62%,rgba(2,8,16,.7) 100%);pointer-events:none}
+  .dimall{position:absolute;inset:0;background:#020810;pointer-events:none;transition:opacity .4s}
+  svg.ov{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .badge{position:absolute;right:calc(var(--u)*22);top:calc(var(--u)*20);background:rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.5);border-radius:999px;padding:calc(var(--u)*6) calc(var(--u)*18);font-size:calc(var(--u)*26);font-weight:900}
+  .src{position:absolute;right:calc(var(--u)*20);bottom:calc(var(--u)*14);background:rgba(0,0,0,.6);color:#CFE8FF;border-radius:calc(var(--u)*10);padding:calc(var(--u)*4) calc(var(--u)*12);font-size:calc(var(--u)*22);font-weight:700}
+  .src:empty{display:none}.src a{color:#FFE27A}
+  .tag{position:absolute;left:calc(var(--u)*24);top:calc(var(--u)*20);background:var(--pink);color:#fff;border-radius:999px;padding:calc(var(--u)*6) calc(var(--u)*20);font-size:calc(var(--u)*28);font-weight:900;letter-spacing:.06em;box-shadow:0 4px 0 #A01070}
+  .title{position:absolute;left:0;right:0;top:calc(var(--u)*70);text-align:center;font-weight:900;font-size:calc(var(--u)*92);color:#fff;-webkit-text-stroke:calc(var(--u)*3) #14B8E6;paint-order:stroke;text-shadow:0 0 calc(var(--u)*24) rgba(44,230,255,.6),0 calc(var(--u)*6) 0 rgba(0,0,0,.4);letter-spacing:.04em}
+  .q{position:absolute;left:8%;right:8%;top:calc(var(--u)*196);text-align:center;font-weight:900;font-size:calc(var(--u)*54);color:#fff;text-shadow:0 calc(var(--u)*3) calc(var(--u)*10) rgba(0,0,0,.9),0 0 calc(var(--u)*3) #000}
+  .big{position:absolute;left:0;right:0;top:calc(var(--u)*300);text-align:center;font-weight:900;font-size:calc(var(--u)*230);color:#fff;-webkit-text-stroke:calc(var(--u)*8) var(--pink);paint-order:stroke;text-shadow:0 0 calc(var(--u)*40) rgba(255,63,176,.7);line-height:1}
+  .big.s{font-size:calc(var(--u)*96);-webkit-text-stroke:calc(var(--u)*4) var(--pink)}
+  .ans{position:absolute;left:calc(50% + var(--u)*110);bottom:calc(var(--u)*48);transform:translateX(-50%) scale(.3);opacity:0;max-width:calc(100% - var(--u)*520);background:linear-gradient(180deg,#FFE27A,#FFB400);color:#2A1700;border:calc(var(--u)*6) solid #fff;border-radius:calc(var(--u)*30);padding:calc(var(--u)*18) calc(var(--u)*40);font-weight:900;font-size:calc(var(--u)*50);text-align:center;box-shadow:0 calc(var(--u)*14) calc(var(--u)*30) rgba(0,0,0,.5);transition:transform .45s cubic-bezier(.2,1.6,.4,1),opacity .2s}
+  .ans.top{bottom:auto;top:calc(var(--u)*290);left:50%;max-width:80%}
+  .ans.top2{bottom:auto;top:calc(var(--u)*470);left:50%;max-width:80%}
+  .ans.on{transform:translateX(-50%) scale(1);opacity:1}
+  .steps{position:absolute;left:calc(50% + var(--u)*120);transform:translateX(-50%);top:calc(var(--u)*200);display:grid;gap:calc(var(--u)*14);width:68%}
+  .steps div{background:rgba(8,20,36,.86);border:calc(var(--u)*4) solid rgba(255,255,255,.75);border-radius:calc(var(--u)*24);padding:calc(var(--u)*14) calc(var(--u)*28);font-weight:900;font-size:calc(var(--u)*46);opacity:0;transform:translateX(calc(var(--u)*-60));transition:.4s cubic-bezier(.2,1.4,.4,1)}
+  .steps div.on{opacity:1;transform:none}
+  .vote{position:absolute;left:50%;transform:translateX(-50%);top:calc(var(--u)*330);display:flex;gap:calc(var(--u)*50)}
+  .vote button{font-family:inherit;font-weight:900;font-size:calc(var(--u)*56);border-radius:calc(var(--u)*32);padding:calc(var(--u)*24) calc(var(--u)*46);border:calc(var(--u)*6) solid #fff;cursor:pointer;color:#fff;box-shadow:0 calc(var(--u)*10) 0 rgba(0,0,0,.35);min-width:calc(var(--u)*380)}
+  .vote button:nth-child(1){background:#1F8FD0}.vote button:nth-child(2){background:#D0306F}
+  .vote button b{display:block;font-size:calc(var(--u)*90);font-family:'Bungee',sans-serif;line-height:1.1}
+  .vote button:active{transform:translateY(calc(var(--u)*6))}
+  .act{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--u)*56);font-family:inherit;font-weight:900;font-size:calc(var(--u)*44);border:calc(var(--u)*5) solid #fff;border-radius:999px;padding:calc(var(--u)*14) calc(var(--u)*44);cursor:pointer;background:linear-gradient(180deg,#42E0C8,#1FBFA8);color:#04302A;box-shadow:0 calc(var(--u)*8) 0 #14907F;text-decoration:none;white-space:nowrap}
+  .stars{position:absolute;left:0;right:0;bottom:calc(var(--u)*150);text-align:center;font-size:calc(var(--u)*70);letter-spacing:.2em}
+  .cd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bungee',sans-serif;font-size:calc(var(--u)*380);color:#fff;-webkit-text-stroke:calc(var(--u)*10) var(--pink);paint-order:stroke;pointer-events:none;opacity:0}
+  .cd.on{animation:cd .9s ease-out}
+  @keyframes cd{0%{opacity:0;transform:scale(2)}25%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.8)}}
+  .kwrap{position:absolute;left:calc(var(--u)*6);bottom:calc(var(--u)*4);pointer-events:none}
+  .koko{position:relative;display:flex;align-items:flex-end}
+  .koko svg{width:calc(var(--u)*230);height:calc(var(--u)*230);filter:drop-shadow(0 calc(var(--u)*8) calc(var(--u)*10) rgba(0,0,0,.5))}
+  .koko .kb{position:absolute;left:calc(var(--u)*30);bottom:calc(var(--u)*228);width:max-content;max-width:calc(var(--u)*560);background:#fff;color:#14233A;border:calc(var(--u)*5) solid #14233A;border-radius:calc(var(--u)*28);padding:calc(var(--u)*12) calc(var(--u)*24);font-weight:900;font-size:calc(var(--u)*34);line-height:1.35;box-shadow:0 calc(var(--u)*8) 0 rgba(0,0,0,.3)}
+  .koko .kb::after{content:"";position:absolute;left:calc(var(--u)*70);bottom:calc(var(--u)*-30);border:calc(var(--u)*14) solid transparent;border-top:calc(var(--u)*18) solid #14233A}
+  .koko.pop svg{animation:hop .5s cubic-bezier(.2,1.6,.4,1)}.koko.pop .kb{animation:bub .4s cubic-bezier(.2,1.6,.4,1)}
+  @keyframes hop{0%{transform:translateY(0)}40%{transform:translateY(calc(var(--u)*-40))}100%{transform:none}}
+  @keyframes bub{0%{transform:scale(.4);opacity:0}100%{transform:none;opacity:1}}
+  .hide{display:none!important}
+  .nav{display:flex;gap:10px;align-items:center;justify-content:center;padding:8px 10px;width:min(100vw,1100px)}
+  .nav button{font-family:inherit;font-weight:900;font-size:17px;border-radius:14px;padding:10px 16px;cursor:pointer;border:2px solid rgba(120,170,210,.4);background:#0F2841;color:var(--ink)}
+  .nav .rv{background:linear-gradient(180deg,#FFE27A,#FFB400);color:#2A1700;border-color:#fff;font-size:19px;padding:10px 26px}
+  .nav .nx{background:linear-gradient(180deg,#42E0C8,#1FBFA8);color:#04302A;border-color:#fff}
+  .nav .pg{color:var(--dim);font-weight:900;min-width:64px;text-align:center}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:520px}
+  .dots i{width:11px;height:11px;border-radius:50%;background:#2A4A6E;cursor:pointer}.dots i.on{background:var(--amber)}
+  @media (max-width:700px){.nav button{font-size:14px;padding:8px 10px}.nav .rv{font-size:15px;padding:8px 14px}.dots{display:none}}
+</style>
+</head>
+<body>
+<div class="chs" id="chs"></div>
+<div class="stage" id="stage">
+  <img class="bg" id="bg" alt="">
+  <img class="bg2" id="bg2" alt="">
+  <div class="shade"></div>
+  <div class="dimall" id="dim"></div>
+  <svg class="ov" id="ov" viewBox="0 0 1600 893" preserveAspectRatio="xMidYMid slice"></svg>
+  <div class="badge" id="badge">📷 真實照片</div>
+  <div class="src" id="src"></div>
+  <div class="tag" id="tag"></div>
+  <div class="title" id="title"></div>
+  <div class="q" id="q"></div>
+  <div class="big" id="big"></div>
+  <div class="steps" id="steps"></div>
+  <div class="vote" id="vote"></div>
+  <div class="stars" id="stars"></div>
+  <div class="ans" id="ans"></div>
+  <a class="act" id="act" target="_self"></a>
+  <div class="cd" id="cd"></div>
+  <div class="kwrap" id="kwrap"></div>
+</div>
+<div class="nav">
+  <button id="prev">⬅ 上一頁</button>
+  <span class="pg" id="pg"></span>
+  <button class="rv" id="rv">✨ 揭曉</button>
+  <button class="nx" id="next">下一頁 ➡</button>
+  <div class="dots" id="dots"></div>
+</div>
+<script src="koko.js"></script>
+<script>
+(function(){
+const IMG=n=>'mv/'+n+'.jpg';const BADGE='📷 示意照片（不是新聞現場）';
+const CH=['📺 開播','📰 新聞','🔍 五個線索','🧠 為什麼','🛟 保命技能','📣 安全口令'];
+const CHID=['open','news','5w','why','float','end'];
+const SRC='新聞來源：改寫自 <a href="https://www.setn.com/news/1892874" target="_blank" rel="noopener">三立新聞網</a>、光明網（2026 年 8 月）';
+const S=[
+ {ch:0,bg:'lake',tag:'光線新聞台',title:'📺 看新聞練習',q:'今天的新聞，是真的發生過的事',say:'我是主播光光！先告訴你：主角最後平安獲救！',mood:'happy'},
+ {ch:0,bg:'lake',tag:'頭條新聞',title:'阿姨河邊泡腳　一腳踩空',q:'靠「仰漂」撐了將近 1 小時，平安獲救！',src:SRC,say:'標題，就是新聞最重要的一句話！',mood:'point'},
+ {ch:1,bg:'lake',tag:'新聞 ①',title:'天氣好熱',q:'一位 50 多歲的阿姨，到公園的河邊散步',src:SRC,say:'地點在中國江蘇的蘇州。',mood:'happy'},
+ {ch:1,bg:'lake',tag:'新聞 ②',title:'她想泡泡腳',q:'水看起來很淺，她就走下石階，把腳泡進水裡',src:SRC,say:'水清清的，看起來好淺……',mood:'think'},
+ {ch:1,bg:'lake',dim:.35,tag:'新聞 ③',title:'一腳踩空！',q:'水底突然變深，她掉進深水區——她不會游泳！',src:SRC,draw:'dropoff',say:'好危險！！',mood:'wow'},
+ {ch:1,bg:'pool',tag:'新聞 ④',title:'她做了一件對的事',q:'躺在水上「仰漂」：臉朝上、口鼻露出水面、不亂動',src:SRC,draw:'float',say:'不亂動，才能保存體力！',mood:'point'},
+ {ch:1,bg:'lake',tag:'新聞 ⑤',title:'平安獲救！',q:'快 1 小時後，路人發現她、報警，她被救上岸',src:SRC,say:'大家都說這是「教科書級」的自救！',mood:'happy'},
+ {ch:2,bg:'lake',dim:.5,tag:'偵探時間',title:'抓出五個線索',steps:['👤 誰？ → 一位 50 多歲的阿姨','📍 在哪裡？ → 公園的河邊','💥 發生什麼？ → 泡腳時一腳踩空，掉進深水區','❓ 為什麼？ → 她以為水很淺','🛟 怎麼辦？ → 仰漂，等人來救'],say:'先讓同學說說看，再按揭曉！',mood:'think'},
+ {ch:3,bg:'lake',tag:'偵探連結',title:'為什麼以為水很淺？',q:'光從水底出來，在水面折一下……',a:'水底看起來被「抬高」了 → 其實更深！',draw:'depthLake',say:'跟碗裡的硬幣一樣喔！',mood:'think',sayA:'看起來淺，其實更深！',moodA:'wow'},
+ {ch:4,bg:'pool',tag:'保命技能',title:'仰漂三步驟',steps:['① 躺下，臉朝天空','② 放輕鬆，手腳張開像星星 ⭐','③ 口鼻露出來，慢慢呼吸、等人救'],say:'體育課我們可以練習！',mood:'happy'},
+ {ch:4,bg:'lake',dim:.45,tag:'看到有人落水',title:'救人口訣',steps:['🚫 不要自己跳下去救','📣 大聲叫大人','📞 打 119','🛟 丟會浮的東西給他（寶特瓶、救生圈）'],say:'保護好自己，才能幫助別人！',mood:'point'},
+ {ch:5,bg:'pool',dim:.35,tag:'安全口令',title:'跟光光喊三次！',big:'看起來淺，其實更深！',bigS:true,bigTop:1,chant:true,a:'先看深度・大人在旁・掉下去了仰漂等待',at:2,link:['story.html#end','🏆 回事件簿結案'],say:'最大聲的那一組加分！',mood:'wow',sayA:'太大聲了！我耳朵在震！',moodA:'happy'}
+];
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function text(p,x,y,s,size,fill,stroke){const t=el('text',{x,y,'text-anchor':'middle','dominant-baseline':'central','font-family':'Noto Sans TC, sans-serif','font-weight':900,'font-size':size,fill:fill||'#fff',stroke:stroke||'#000','stroke-width':size*.14,'paint-order':'stroke'},p);t.textContent=s;return t;}
+function beam(p,pts,color,w){return el('polyline',{points:pts.map(q=>q.join(',')).join(' '),fill:'none',stroke:color||'#FFF27A','stroke-width':w||12,'stroke-linecap':'round','stroke-linejoin':'round',pathLength:1,'stroke-dasharray':1,'stroke-dashoffset':1,style:'filter:drop-shadow(0 0 10px #FFF27A);transition:stroke-dashoffset 1.6s ease-in-out'},p);}
+/* 光線疊圖：座標對準 1600×893 照片 */
+const DRAW={
+  dropoff(g){const W=el('path',{d:'M0 470 L1600 470 L1600 893 L0 893Z',fill:'#1673B8',opacity:.45},g);
+    el('polyline',{points:'0,520 360,520 360,560 600,560 600,600 720,600 720,880 1600,880',fill:'none',stroke:'#C99A5B','stroke-width':16,'stroke-linejoin':'round'},g);
+    el('line',{x1:0,y1:470,x2:1600,y2:470,stroke:'#9FE3FF','stroke-width':6},g);
+    text(g,480,640,'淺淺的石階',44,'#fff','#0E5A8A');text(g,1150,760,'突然變深！',64,'#fff','#E8283C');
+    const p=el('g',{},g);el('circle',{cx:860,cy:560,r:34,fill:'#FFD1A8',stroke:'#111','stroke-width':5},p);el('path',{d:'M860 594 L860 690 M860 620 L810 580 M860 620 L910 580 M860 690 L830 750 M860 690 L890 750',stroke:'#FF3FB0','stroke-width':16,'stroke-linecap':'round'},p);
+    p.innerHTML+='<animateTransform attributeName="transform" type="translate" values="0 0;0 60;0 50" dur="1.6s" fill="freeze"/>';text(g,940,500,'！！',60,'#FFE14D');},
+  float(g){const p=el('g',{},g);el('ellipse',{cx:800,cy:560,rx:300,ry:40,fill:'none',stroke:'#9FE3FF','stroke-width':8,opacity:.8},p);
+    el('path',{d:'M640 540 L960 540 M720 540 L640 470 M720 540 L640 610 M960 540 L1060 480 M960 540 L1060 600',stroke:'#FFD1A8','stroke-width':22,'stroke-linecap':'round'},p);
+    el('path',{d:'M720 540 L940 540',stroke:'#FF3FB0','stroke-width':44,'stroke-linecap':'round'},p);
+    el('circle',{cx:600,cy:532,r:44,fill:'#FFD1A8',stroke:'#111','stroke-width':5},p);el('path',{d:'M584 520 q4 -6 8 0 M606 520 q4 -6 8 0 M588 545 q10 8 20 0',fill:'none',stroke:'#111','stroke-width':4,'stroke-linecap':'round'},p);
+    p.innerHTML+='<animateTransform attributeName="transform" type="translate" values="0 0;0 -10;0 0" dur="2.4s" repeatCount="indefinite"/>';
+    text(g,600,430,'臉朝上',42,'#fff','#0E5A8A');text(g,1150,430,'手腳張開',42,'#fff','#0E5A8A');},
+  depthLake(g,on){el('line',{x1:1180,y1:520,x2:1180,y2:650,stroke:'#FFE14D','stroke-width':14,'stroke-linecap':'round'},g);text(g,1180,480,'看起來',44,'#FFE14D');
+    if(on){const r=el('line',{x1:1330,y1:520,x2:1330,y2:520,stroke:'#FF3F6E','stroke-width':16,'stroke-linecap':'round'},g);r.innerHTML='<animate attributeName="y2" from="520" to="860" dur="1.2s" fill="freeze"/>';text(g,1330,480,'真的',44,'#FF8FA8');}},
+  strawRing(g,on){if(!on)return;const r=el('ellipse',{cx:1090,cy:345,rx:120,ry:80,fill:'none',stroke:'#FF3F6E','stroke-width':10,'stroke-dasharray':'20 12'},g);r.innerHTML='<animate attributeName="stroke-dashoffset" from="0" to="64" dur="1s" repeatCount="indefinite"/>';},
+  surface(g,on){const l=el('line',{x1:790,y1:345,x2:1420,y2:345,stroke:'#2CE6FF','stroke-width':on?10:0,style:'filter:drop-shadow(0 0 10px #2CE6FF)'},g);
+    if(on){text(g,1500,290,'空氣',48,'#fff');text(g,1500,410,'水',48,'#9FE3FF');DRAW.strawRing(g,true);}},
+  kink(g,on){const b=beam(g,[[0,-2],[690,364],[1150,842]]);if(on){requestAnimationFrame(()=>requestAnimationFrame(()=>b.setAttribute('stroke-dashoffset',0)));
+      setTimeout(()=>{const c=el('circle',{cx:690,cy:364,r:70,fill:'none',stroke:'#FF3FB0','stroke-width':9},g);c.innerHTML='<animate attributeName="r" values="60;85;60" dur="1s" repeatCount="indefinite"/>';el('circle',{cx:690,cy:364,r:16,fill:'#fff'},g);text(g,1000,470,'折一下！',64,'#fff','#FF3FB0');},900);}},
+  splitLabel(g,on,arg){el('line',{x1:800,y1:0,x2:800,y2:893,stroke:'#fff','stroke-width':8},g);if(!on)return;const [a,b]=arg.split('|');text(g,400,560,a,60,'#fff','#0E5A8A');text(g,1200,560,b,60,'#fff','#A01070');},
+  strawGhost(g,on){if(!on)return;el('line',{x1:1025,y1:345,x2:960,y2:700,stroke:'#FFF27A','stroke-width':16,'stroke-dasharray':'26 16','stroke-linecap':'round',opacity:.95},g);
+    text(g,860,640,'真的位置',40,'#FFF27A');el('path',{d:'M1180 560 L1180 470',stroke:'#FF3FB0','stroke-width':10,'marker-end':'url(#ah)'},g);text(g,1290,520,'看起來被抬高',40,'#fff','#FF3FB0');},
+  coinLift(g,on){if(!on)return;el('ellipse',{cx:930,cy:600,rx:95,ry:28,fill:'none',stroke:'#FFF27A','stroke-width':8,'stroke-dasharray':'18 12'},g);text(g,930,665,'真的位置',40,'#FFF27A');
+    el('path',{d:'M1080 600 L1080 500',stroke:'#FF3FB0','stroke-width':12,'marker-end':'url(#ah)'},g);text(g,1210,520,'看起來的位置',40,'#fff','#FF3FB0');},
+  depth(g,on){el('line',{x1:330,y1:330,x2:330,y2:520,stroke:'#FFE14D','stroke-width':14,'stroke-linecap':'round'},g);text(g,330,285,'看起來',44,'#FFE14D');
+    if(on){const r=el('line',{x1:470,y1:330,x2:470,y2:330,stroke:'#FF3F6E','stroke-width':16,'stroke-linecap':'round'},g);r.innerHTML='<animate attributeName="y2" from="330" to="760" dur="1.2s" fill="freeze"/>';text(g,470,285,'真的',44,'#FF8FA8');}}
+};
+let i=0,rev=0;const votes={};
+const kk=Koko.mount($('kwrap'));
+const sfx=n=>{try{window.FX&&FX.sound&&FX.sound[n]&&FX.sound[n]();}catch(e){}};
+$('chs').innerHTML=CH.map((c,k)=>`<button data-k="${k}">${c}</button>`).join('');
+[...$('chs').children].forEach(b=>b.onclick=()=>{go(S.findIndex(s=>s.ch===+b.dataset.k));});
+$('dots').innerHTML=S.map(()=>'<i></i>').join('');[...$('dots').children].forEach((d,k)=>d.onclick=()=>go(k));
+function maxRev(s){return s.steps?s.steps.length:(s.a||s.chant?1:0);}
+function render(){
+  const s=S[i];
+  $('bg').src=IMG(s.bg);$('bg').style.transform='scale(1.06)';requestAnimationFrame(()=>$('bg').style.transform='scale(1)');
+  $('stage').classList.toggle('split',!!s.bg2);$('bg2').classList.toggle('hide',!s.bg2);if(s.bg2)$('bg2').src=IMG(s.bg2);
+  $('dim').style.opacity=s.dim||0;
+  $('tag').textContent=s.tag||'';$('badge').textContent=s.badge||BADGE;$('src').innerHTML=s.src||'';$('tag').classList.toggle('hide',!s.tag);
+  $('title').textContent=s.title||'';
+  $('q').textContent=s.q||'';$('q').style.top=s.big?'calc(var(--u)*560)':'';
+  $('big').textContent=s.big||'';$('big').className='big'+(s.bigS?' s':'');$('big').style.top=s.bigTop?'calc(var(--u)*230)':'';
+  $('steps').innerHTML=(s.steps||[]).map((t,k)=>`<div class="${k<rev?'on':''}">${t}</div>`).join('');
+  $('vote').innerHTML=(s.vote||[]).map((t,k)=>`<button data-k="${k}">${t}<b>${(votes[i]||[])[k]||0}</b></button>`).join('');
+  [...$('vote').children].forEach(b=>b.onclick=e=>{e.stopPropagation();votes[i]=votes[i]||[0,0];votes[i][+b.dataset.k]++;b.querySelector('b').textContent=votes[i][+b.dataset.k];sfx('blip');});
+  $('ans').textContent=s.a||'';$('ans').classList.toggle('top',s.at===1);$('ans').classList.toggle('top2',s.at===2);$('ans').classList.toggle('on',!!s.a&&rev>0&&!s.steps);
+  if(s.vote&&s.a){$('vote').style.top=rev>0?'calc(var(--u)*300)':'';}
+  $('stars').textContent=s.chant&&rev>0?'⭐'.repeat(Math.min(3,rev)):'';
+  const a=$('act');if(s.link){a.href=s.link[0];a.textContent=s.link[1];a.classList.remove('hide');a.style.bottom='';}
+  else if(s.cd){a.removeAttribute('href');a.textContent='⏱ 3、2、1 倒水！';a.classList.remove('hide');a.onclick=countdown;}else a.classList.add('hide');
+  if(!s.cd)a.onclick=null;
+  const ov=$('ov');ov.innerHTML='<defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#FF3FB0"/></marker></defs>';
+  if(s.draw){const [n,arg]=s.draw.split(':');DRAW[n](el('g',{},ov),rev>0,arg);}
+  const showA=rev>0&&s.sayA;kk.say(s.steps&&rev>0?'':(showA?s.sayA:s.say),showA?s.moodA:(s.steps&&rev>0?'happy':s.mood));
+  const mr=maxRev(s);$('rv').classList.toggle('hide',!mr);$('rv').textContent=s.chant?'✨ 念一次':s.steps?`✨ 下一條（${Math.min(rev,mr)}/${mr}）`:'✨ 揭曉';
+  $('rv').disabled=!s.chant&&rev>=mr;$('rv').style.opacity=$('rv').disabled?.4:1;
+  $('pg').textContent=(i+1)+' / '+S.length;
+  [...$('chs').children].forEach((b,k)=>b.classList.toggle('on',k===s.ch));
+  [...$('dots').children].forEach((d,k)=>d.classList.toggle('on',k===i));
+  try{history.replaceState(null,'','#'+(i+1));}catch(e){}
+}
+function go(k){i=Math.max(0,Math.min(S.length-1,k));rev=0;sfx('jump');render();}
+function reveal(){const s=S[i];const mr=maxRev(s);if(!s.chant&&rev>=mr)return;rev++;sfx(s.steps?'blip':'oneup');
+  if(rev===1&&s.a&&window.FX&&FX.confetti)try{FX.confetti(40);}catch(e){}render();}
+function countdown(){let n=3;const c=$('cd');const tick=()=>{c.textContent=n>0?n:'倒！';c.classList.remove('on');void c.offsetWidth;c.classList.add('on');sfx('blip');if(n-->0)setTimeout(tick,900);};tick();}
+$('prev').onclick=()=>go(i-1);$('next').onclick=()=>go(i+1);$('rv').onclick=reveal;
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown')go(i+1);else if(e.key==='ArrowLeft'||e.key==='PageUp')go(i-1);else if(e.key===' '||e.key==='Enter'){e.preventDefault();reveal();}});
+let tx=null;$('stage').addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+$('stage').addEventListener('touchend',e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60)go(i+(dx<0?1:-1));tx=null;});
+const h=location.hash.slice(1);const hc=CHID.indexOf(h);
+if(hc>=0)i=S.findIndex(s=>s.ch===hc);else if(+h>0)i=Math.min(S.length-1,+h-1);
+render();
+})();
+</script>
+<script src="../games/fx.js"></script>
+</body>
+</html>
