@@ -74,7 +74,7 @@
     <div class="cue" id="cue">準備好了嗎？</div>
     <div class="cnt" id="cnt"></div>
     <div class="ctrl" id="ctrl"></div>
-    <div class="speed" id="speed">節奏：<button data-s="1.25">🐢 慢慢</button><button data-s="1" class="on">🙂 剛好</button><button data-s=".8">🐇 短一點</button></div>
+    <div class="speed" id="speed">節奏：<button data-s="1.25">🐢 慢慢</button><button data-s="1" class="on">🙂 剛好</button><button data-s=".8">🐇 短一點</button>　<button id="wavesBtn" onclick="toggleWaves()">🌊 海浪背景音</button></div>
     <div class="tip" id="tip"></div>
   </div>
 </div>
@@ -88,6 +88,17 @@ const FONT='"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif';
 if(/from=checkin/.test(location.search)){$("backBtn").href="checkin.html";}
 /* ---------- 聲音：輕柔滑音 ---------- */
 let AC=null;const ac=()=>{if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;};
+/* ---------- 真實質感音效（豎琴、頌缽、海浪；檔案在 sfx/breath/） ---------- */
+const SB={};const SFXN=["inhale","exhale","hold","round","done","tap","tapL","tapR","bowl","shake","waves"];
+function loadSfx(){const a=ac();if(!a||SB._l)return;SB._l=1;SFXN.forEach(n=>fetch("sfx/breath/"+n+".mp3").then(r=>r.arrayBuffer()).then(b=>a.decodeAudioData(b)).then(buf=>{SB[n]=buf;if(n==="waves"&&wavesOn)startWaves();}).catch(()=>{}));}
+function play(n,vol,rate){const a=ac();if(!a||!SB[n])return false;const s=a.createBufferSource(),g=a.createGain();s.buffer=SB[n];if(rate)s.playbackRate.value=rate;g.gain.value=vol==null?.9:vol;s.connect(g);g.connect(a.destination);s.start();return true;}
+let wavesOn=false,wavesSrc=null,wavesGain=null;
+try{wavesOn=localStorage.getItem("breathWaves")==="1";}catch(e){}
+function startWaves(){const a=ac();if(!a||!SB.waves||wavesSrc)return;wavesSrc=a.createBufferSource();wavesSrc.buffer=SB.waves;wavesSrc.loop=true;wavesGain=a.createGain();wavesGain.gain.value=0;wavesSrc.connect(wavesGain);wavesGain.connect(a.destination);wavesSrc.start();wavesGain.gain.linearRampToValueAtTime(.35,a.currentTime+2);}
+function stopWaves(){if(!wavesSrc)return;const a=ac();wavesGain.gain.linearRampToValueAtTime(0,a.currentTime+1);const s=wavesSrc;setTimeout(()=>{try{s.stop();}catch(e){}},1100);wavesSrc=null;}
+function toggleWaves(){wavesOn=!wavesOn;try{localStorage.setItem("breathWaves",wavesOn?"1":"0");}catch(e){}loadSfx();if(wavesOn)startWaves();else stopWaves();const b=document.getElementById("wavesBtn");if(b)b.classList.toggle("on",wavesOn);}
+document.addEventListener("pointerdown",()=>loadSfx(),{once:true});
+setTimeout(()=>{const b=document.getElementById("wavesBtn");if(b){b.classList.toggle("on",wavesOn);b.onclick=e=>{e.stopPropagation();toggleWaves();};}},0);
 function glide(f1,f2,d,v){const a=ac();if(!a)return;const o=a.createOscillator(),gn=a.createGain(),t=a.currentTime;o.type="sine";o.frequency.setValueAtTime(f1,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);
   gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(v||.06,t+.3);gn.gain.linearRampToValueAtTime(0,t+d);o.connect(gn);gn.connect(a.destination);o.start(t);o.stop(t+d+.05);}
 function tick(f){const a=ac();if(!a)return;const o=a.createOscillator(),gn=a.createGain(),t=a.currentTime;o.type="sine";o.frequency.value=f||660;gn.gain.setValueAtTime(.12,t);gn.gain.exponentialRampToValueAtTime(.001,t+.25);o.connect(gn);gn.connect(a.destination);o.start(t);o.stop(t+.3);}
@@ -111,8 +122,8 @@ const ZT={blue:"🔵 藍色：身體有點累、心情低低的。試試蝴蝶�
 const NE=c=>`img/noto/${c}.webp`;const ICO={"bubble": "1fae7", "glow": "1f4a1", "ball": "1f30f", "finger": "1f590_fe0f", "box": "1f60e", "rainbow": "1f308", "jar": "2728", "bell": "1f514", "butterfly": "1f98b"};
 $("grid").innerHTML=MODES.map(m=>`<div class="mode" data-id="${m.id}"><div class="ic"><img src="${NE(ICO[m.id])}" alt="" loading="lazy"></div><div class="nm">${m.nm}</div><div class="ds">${m.ds}</div></div>`).join("");
 document.querySelectorAll(".mode").forEach(el=>el.onclick=()=>start(el.dataset.id));
-document.querySelectorAll(".zone").forEach(z=>z.onclick=()=>{tick(560);const s=SUG[z.dataset.z];document.querySelectorAll(".mode").forEach(m=>m.classList.toggle("sug",s.includes(m.dataset.id)));$("zoneTip").textContent=ZT[z.dataset.z]+"（亮框的是推薦）";});
-let speed=1;document.querySelectorAll("#speed button").forEach(b=>b.onclick=()=>{speed=+b.dataset.s;document.querySelectorAll("#speed button").forEach(x=>x.classList.toggle("on",x===b));});
+document.querySelectorAll(".zone").forEach(z=>z.onclick=()=>{if(!play("tap",.8))tick(560);const s=SUG[z.dataset.z];document.querySelectorAll(".mode").forEach(m=>m.classList.toggle("sug",s.includes(m.dataset.id)));$("zoneTip").textContent=ZT[z.dataset.z]+"（亮框的是推薦）";});
+let speed=1;document.querySelectorAll("#speed button[data-s]").forEach(b=>b.onclick=()=>{speed=+b.dataset.s;document.querySelectorAll("#speed button[data-s]").forEach(x=>x.classList.toggle("on",x===b));});
 /* ---------- 呼吸小夥伴（會動的真實表情） ---------- */
 const FACE={idle:"263a_fe0f",in:"1f60c",hold:"1f60a",hold2:"1f60a",out:"1f62e_200d_1f4a8",done:"1f973",hug:"1f917",listen:"1f60c"};
 let curFace="";function face(k,say){const c=FACE[k]||k;if(c!==curFace){curFace=c;$("buddy").src=NE(c);}if(say!=null)$("bsay").textContent=say;}
@@ -129,17 +140,17 @@ function back(){running=false;cancelAnimationFrame(raf);document.body.classList.
 function setCtrl(bs){$("ctrl").innerHTML="";bs.forEach(([t,c,f])=>{const b=document.createElement("button");b.className="btn "+(c==="go"?"":c);b.textContent=t;b.onclick=()=>{ac();f();};$("ctrl").appendChild(b);});}
 function loopIdle(){draw(0);if(!running)raf=requestAnimationFrame(loopIdle);}
 function begin(){running=true;cancelAnimationFrame(raf);st.round=0;st.k=0;t0=performance.now();setCtrl([["⏹ 停止","ghost",()=>{start(M.id);}]]);
-  if(M.id==="jar"){jarShake();if(use3D())B3D.jarShake();face("in","慢慢看……");} if(M.id==="bell"){bell();st.bellT=performance.now();$("cue").textContent="閉上眼睛，聽……";face("listen","噓……聽");setCtrl([["✋ 我聽不到了","teal",finish]]);}
+  if(M.id==="jar"){jarShake();if(use3D())B3D.jarShake();face("in","慢慢看……");} if(M.id==="bell"){if(!play("bowl",.95))bell();st.bellT=performance.now();$("cue").textContent="閉上眼睛，聽……";face("listen","噓……聽");setCtrl([["✋ 我聽不到了","teal",finish]]);}
   if(M.id==="butterfly"){st.taps=0;st.t0=t0;st.speed=speed;face("hug","抱抱自己");}
   enterPhase();raf=requestAnimationFrame(loop);}
 function enterPhase(){if(!M.ph)return;const [kind,dur,txt]=M.ph[st.k];st.phase=kind;st.dur=dur*speed*1000;st.ps=performance.now();$("cue").textContent=txt;
-  $("cnt").textContent=`第 ${st.round+1} / ${M.rounds} 次`;face(kind,kind==="in"?"吸……":kind==="out"?"呼……":"停一下");if(kind==="in")glide(220,440,dur*speed,.05);else if(kind==="out")glide(440,200,dur*speed,.05);else tick(520);}
+  $("cnt").textContent=`第 ${st.round+1} / ${M.rounds} 次`;face(kind,kind==="in"?"吸……":kind==="out"?"呼……":"停一下");if(kind==="in"){if(!play("inhale",.85))glide(220,440,dur*speed,.05);}else if(kind==="out"){if(!play("exhale",.9))glide(440,200,dur*speed,.05);}else{if(!play("hold",.7))tick(520);}}
 function loop(now){if(!running)return;
-  if(M.ph){st.p=Math.min(1,(now-st.ps)/st.dur);if(st.p>=1){st.k++;if(st.k>=M.ph.length){st.k=0;st.round++;if(st.round>=M.rounds){finish();return;}}enterPhase();}}
-  if(M.id==="butterfly"){const iv=900*speed,n=Math.floor((now-t0)/iv);if(n>st.taps){st.taps=n;st.side=n%2;tick(st.side?600:500);$("cue").textContent=st.side?"右 🦋":"左 🦋";$("cnt").textContent=`${Math.min(n,24)} / 24 下`;if(n>=24){finish();return;}}}
+  if(M.ph){st.p=Math.min(1,(now-st.ps)/st.dur);if(st.p>=1){st.k++;if(st.k>=M.ph.length){st.k=0;st.round++;if(st.round>=M.rounds){finish();return;}play("round",.6);}enterPhase();}}
+  if(M.id==="butterfly"){const iv=900*speed,n=Math.floor((now-t0)/iv);if(n>st.taps){st.taps=n;st.side=n%2;if(!play(st.side?"tapR":"tapL",.9))tick(st.side?600:500);$("cue").textContent=st.side?"右 🦋":"左 🦋";$("cnt").textContent=`${Math.min(n,24)} / 24 下`;if(n>=24){finish();return;}}}
   if(M.id==="jar"){const left=use3D()?B3D.jarLeft():st.sparks.filter(s=>!s.rest).length;$("cnt").textContent=left?`還有 ${left} 顆亮粉在飄`:"";$("cue").textContent=left>20?"慢慢吸…… 慢慢吐……":left?"快沉到底了……":"全部沉下來了 ✨";if(!left&&!st.done){st.done=true;setTimeout(finish,1200);}}
   draw(now);raf=requestAnimationFrame(loop);}
-function finish(){running=false;cancelAnimationFrame(raf);face("done","你做到了！");$("cue").textContent="很好，你做到了 ✨";$("cnt").textContent="";try{FX.confetti(40);FX.sound.coin();}catch(e){}
+function finish(){running=false;cancelAnimationFrame(raf);face("done","你做到了！");$("cue").textContent="很好，你做到了 ✨";$("cnt").textContent="";try{FX.confetti(40);if(!play("done",.9))FX.sound.coin();}catch(e){}
   const bs=[["🔁 再一次","go",begin],["🫧 換一種","ghost",back]];if(/from=checkin/.test(location.search))bs.push(["➡ 回心情打卡","teal",()=>location.href="checkin.html"]);setCtrl(bs);loopIdle();}
 /* ---------- 畫面 ---------- */
 const ease=x=>.5-.5*Math.cos(Math.PI*x);
@@ -172,7 +183,7 @@ function dRainbow(L){bg("#16345a","#05101f");const cols=["#ff5a5a","#ff9f40","#f
   g.fillStyle="#2f6b3a";g.fillRect(0,600,W,120);
   cols.forEach((c,k)=>{g.strokeStyle=k<=r*2+2?c:"rgba(255,255,255,.08)";g.lineWidth=22;g.beginPath();g.arc(CX,600,420-k*26,Math.PI,Math.PI+Math.PI*(running?Math.max(.02,L):.02));g.stroke();});
   if(running){const ang=Math.PI+Math.PI*Math.max(.02,L),rr=420;g.fillStyle="#fff";g.shadowColor="#fff";g.shadowBlur=24;g.beginPath();g.arc(CX+Math.cos(ang)*rr,600+Math.sin(ang)*rr,18,0,7);g.fill();g.shadowBlur=0;}}
-function jarShake(){st.sparks=[];const cols=["#ffd43b","#ff8fd8","#7fdcff","#b98bff","#ffffff","#7dffb0"];for(let k=0;k<160;k++)st.sparks.push({x:CX+(Math.random()*2-1)*170,y:170+Math.random()*420,vx:(Math.random()*2-1)*4,vy:(Math.random()*2-1)*4,c:cols[k%6],r:3+Math.random()*4,rest:false});st.done=false;tick(700);}
+function jarShake(){play("shake",.8);st.sparks=[];const cols=["#ffd43b","#ff8fd8","#7fdcff","#b98bff","#ffffff","#7dffb0"];for(let k=0;k<160;k++)st.sparks.push({x:CX+(Math.random()*2-1)*170,y:170+Math.random()*420,vx:(Math.random()*2-1)*4,vy:(Math.random()*2-1)*4,c:cols[k%6],r:3+Math.random()*4,rest:false});st.done=false;tick(700);}
 function dJar(L,now){bg("#0b1e33","#03070f");const gr=g.createRadialGradient(CX,CY,20,CX,CY,300);gr.addColorStop(0,"rgba(255,245,200,.25)");gr.addColorStop(1,"rgba(255,245,200,0)");g.fillStyle=gr;g.fillRect(0,0,W,H);
   g.fillStyle="rgba(150,210,255,.12)";g.strokeStyle="rgba(200,235,255,.8)";g.lineWidth=6;g.beginPath();g.roundRect?g.roundRect(CX-200,140,400,480,50):g.rect(CX-200,140,400,480);g.fill();g.stroke();
   g.fillStyle="#8a93a3";g.fillRect(CX-150,105,300,40);
