@@ -36,8 +36,22 @@
 6. 新聞類素材：結局安全、先告訴學生「主角平安」；註明來源；示意圖要標「示意」。
 7. 特教原則：分解、替代、重整；先猜再揭曉；答錯用鼓勵語。
 
-## 目前進度（2026-10-03）
+## 一條龍自動化工具箱（老師的要求：素材全部自己弄，不要叫老師下載、轉傳）
+| 需要 | 做法 |
+|---|---|
+| 真實感照片 | `mcp__Gamma__generate_image`（type: photo，16:9 用 banner）→ 等 completed 拿到 cdn.gamma.app 網址 → 加一行到 `tools/fetch-list.txt`（`目的地路徑 網址`）→ push。GitHub Actions `.github/workflows/fetch-images.yml` 會自動下載並 commit 進 repo → `git pull` 後用 Read 檢查照片。（雲端容器連不到 cdn.gamma.app，所以一定走這條） |
+| 3D／立體場景 | three.js（`light-refract/vendor/three.module.min.js`），參考 `light-refract/news3d.js`；要截圖用 Playwright＋swiftshader |
+| 動畫 | 網頁用 SVG/CSS/requestAnimationFrame；PPT 用 python-pptx＋手寫 p:timing（參考 scratchpad 的 build.py 寫法：fly/zoom/fade/wipe） |
+| 音效 | Python numpy 合成（豎琴、頌缽、海浪…）→ ffmpeg 轉 mp3，參考 `games/sfx/breath/` |
+| 地圖 | npm `world-atlas`＋`topojson-client` 取真實海岸線，numpy 畫地形，參考 `games/img/taiwan-map.jpg` |
+| Word／PDF | 學習單一律附 PDF（LibreOffice 轉檔），連結優先給 PDF；docx 要符合 OOXML 元素順序 |
+| 歌曲 | 寫歌詞＋Gemini 提示詞給老師生成（目前只有這一步需要老師），收到 mp3 後用 sherpa-onnx 中文辨識逐字對齊 |
+- 沒有連上的：ChatGPT、Gemini（生圖）、NotebookLM、Claude in Chrome；需要時先用 Gamma。
+- 做完一定自己截圖驗證再交給老師。
+
+## 目前進度（2026-10-04）
 - 10/2（五）甲班、乙班：只上到吸管實驗（R1 前半）。
+- 10/4 完成：光之呼吸站換真實照片（Gamma 生成 6 張）＋真實質感音效＋海浪背景音；所有 Word 學習單修復（結構損毀）並附 PDF；光之環島列車真實地形台灣地圖、每關加提示、熱氣球「開紅燈看看」、修正紫色科學錯誤；光之列車闖關加提示。
 - 已完成並上線：事件簿、新聞台 3D 版、兩者的列印講義、折射 PPT 第2節／第3節（動畫＋超連結，待老師用 PowerPoint 實測）、導覽整理（返回／主選單）、MV 新歌、實驗室站號 1–6、主選單改格子、全站「轉彎」改「折一下」。
 - 課表（`light/data.js` 的 SCHED）：
   - 10/5（一）甲 第7節：R2 硬幣浮上來了
