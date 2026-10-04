@@ -97,10 +97,13 @@
   .cell.miss{filter:grayscale(1);opacity:.35}.cell small{font-size:13px;font-weight:900;color:var(--dim)}
   .cell.got{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,201,60,.3)}
   footer{text-align:center;margin-top:20px;color:var(--dim);font-size:13px}
+  .hintbtn{margin:4px 0 2px;border:2px solid var(--amber,#ffc93c);background:#3a2f10;color:#ffe08a;font-weight:900;font-size:17px;border-radius:999px;padding:8px 16px;cursor:pointer;font-family:inherit}
+  .hint{display:none;width:min(96vw,900px);background:#fff8e1;color:#3a2a10;border:3px solid #ffc93c;border-radius:18px;padding:12px 18px;margin:8px auto;font-weight:800;font-size:18px;line-height:1.55;text-align:left}
+  .hint.show{display:block}.hint b.k{display:block;color:#b25e00;font-size:15px;margin-bottom:4px}.hint ol{margin:6px 0 0;padding-left:26px}
 </style>
 </head>
 <body>
-<a class="fixbtn home" href="/light-color/">🏠 回到首頁</a>
+<a class="fixbtn home" href="/light/" onclick="if(history.length>1){history.back();return false;}">⬅ 返回</a>
 <a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
 <svg width="0" height="0" style="position:absolute"><filter id="lightf" color-interpolation-filters="sRGB"><feColorMatrix id="lmtx" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></svg>
 <div class="wrap">
@@ -113,7 +116,7 @@
   <footer>🚂 光之列車　｜　任務三 光與顏色・Ka-IV-10／11　｜　原創角色・竹東國中自然科</footer>
 </div>
 
-<div class="xp" id="xp"><button class="x" onclick="closeXp()">✖</button><h3 id="xpT"></h3><div class="q" id="xpQ"></div><div id="xpBody"></div><div class="fb" id="fb"></div><div class="ctrl" id="xpCtrl"></div></div>
+<div class="xp" id="xp"><button class="x" onclick="closeXp()">✖</button><h3 id="xpT"></h3><div class="q" id="xpQ"></div><button class="hintbtn" id="hintBtn">💡 看不懂？按我看提示</button><div class="hint" id="hint"></div><div id="xpBody"></div><div class="fb" id="fb"></div><div class="ctrl" id="xpCtrl"></div></div>
 <div class="gacha" id="gacha"><div class="ptitle" id="gT">🎰 扭蛋時間！點膠囊</div><div class="capsule" id="cap">🥚</div><div class="prize" id="prize" style="display:none"></div><div class="ptitle" id="pName"></div><button class="btn go" id="gOk" style="display:none">收進圖鑑 📖</button></div>
 <div class="book" id="book"><button class="x fixbtn" style="right:14px;top:12px;border:2px solid var(--amber);color:var(--amber)" onclick="$('book').classList.remove('show')">✖ 關閉</button><div class="ptitle" style="margin-bottom:12px">📖 貼紙圖鑑</div><div class="grid" id="grid"></div></div>
 
@@ -162,7 +165,18 @@ $("resetBtn").onclick=()=>{if(!confirm("重新開始？（貼紙圖鑑會保留�
 let timers=[],raf=0;function later(f,ms){timers.push(setTimeout(f,ms));}
 function closeXp(){$("xp").classList.remove("show");timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(raf);$("xpBody").innerHTML="";FX.sound.blip();}
 function scene(objs){return `<div class="scene" id="sc"><img class="bg" src="${IMG}wall.jpg" alt=""><div class="lbl">⚪ 白光</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt=""><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;}
-function openXp(){const s=ST[cur];if(!s)return;FX.sound.jump();$("xpT").textContent=`${s.icon} 第 ${cur+1} 站・${s.n}`;$("xpQ").textContent=s.q||"";$("fb").innerHTML="";$("xpCtrl").innerHTML="";$("xpBody").innerHTML="";$("xp").classList.add("show");setLight("white");
+const RULE="🔑 規則：東西是什麼顏色，就會把那種顏色的光「彈回來」（反射）。燈裡沒有它能彈的光 → 它就變黑。";
+function hintFor(c){
+  if(c.k==="spot"&&c.light==="green")return ["綠光燈裡，只有「綠色的光」。","哪一個東西「不會」把綠光彈回來？紅蘋果只會彈紅光。","沒有光可以彈 → 蘋果變黑 → 燈照到蘋果時按！"];
+  if(c.k==="spot"&&c.light==="blue")return ["藍光燈裡，只有「藍色的光」。","白色的東西會把「所有顏色的光」都彈回來。","所以藍光下，白衣還是亮的 → 燈照到白衣時按！"];
+  if(c.k==="mem")return ["先看清楚：蘋果紅、香蕉黃、植物綠、白衣白。","綠光來的時候：誰不會彈綠光？（紅色的東西）","燈變回白光後，點剛剛變黑的那一個。"];
+  if(c.k==="load")return ["想一想：這個東西是什麼顏色？","紅色的東西 → 紅光車廂；綠色的東西 → 綠光車廂。","白色的東西什麼光都彈回來 → 全部光車廂。"];
+  if(c.k==="mix"&&c.goal==="黃光")return ["光的三原色：紅、綠、藍。","兩盞燈疊在一起會變新顏色。","紅光＋綠光＝黃光 → 打開紅燈和綠燈。"];
+  if(c.k==="mix")return ["白光是很多顏色的光加在一起。","光的三原色：紅、綠、藍。","三盞燈全部打開＝白光！"];
+  if(c.k==="boss")return ["沒有光 → 什麼都看不到，顏色也不見了。","白色會彈回所有顏色的光，所以哪種燈下都亮。","晚上要被看見 → 穿會反光、很亮的螢光色。","東西的顏色＝它把什麼光彈回來。"];
+  return ["先看圖想一想。","東西的顏色＝它反射什麼光。","答錯沒關係，可以再試！"];}
+function setHint(c){const h=$("hint");if(!h)return;h.classList.remove("show");h.innerHTML=`<b class="k">${RULE}</b><ol>${hintFor(c).map(t=>`<li>${t}</li>`).join("")}</ol>`;$("hintBtn").onclick=()=>{h.classList.toggle("show");try{FX.sound.blip();}catch(e){}};}
+function openXp(){const s=ST[cur];if(!s)return;FX.sound.jump();$("xpT").textContent=`${s.icon} 第 ${cur+1} 站・${s.n}`;$("xpQ").textContent=s.q||"";$("fb").innerHTML="";$("xpCtrl").innerHTML="";$("xpBody").innerHTML="";$("xp").classList.add("show");setLight("white");setHint(s);
   ({spot:xSpot,load:xLoad,mem:xMem,boss:xBoss,mix:xMix})[s.k](s);}
 function clear(s){FX.sound.right&&FX.sound.right();buzz([40,30,40]);$("fb").innerHTML="✅ "+s.why+`<span class="term">${s.tz}</span>`;addCoins(10);
   $("xpCtrl").innerHTML=`<button class="btn go big" id="nx">🚂 開車！下一站</button>`;$("nx").onclick=()=>{closeXp();advance(s);};
