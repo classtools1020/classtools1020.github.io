@@ -1,0 +1,7 @@
+# 目的地路徑 空格 網址（Gamma 生成的真實感照片，呼吸站與熱氣球用）
+games/img/breath/hand.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/s63oQEFeznpeAJNBS6X4o/NGWxj4bYDjVEwShyNgZsv.jpg
+games/img/breath/bubble.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/F8yABzLwq9f4UpouQx8gR/bLYrRu40BYWurKSxMUTpm.jpg
+games/img/breath/ball.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/oLgKzfY1ab1WH6Kiiuj1Q/JcCHIdziDXIIIgjsR-0p6.jpg
+games/img/breath/jar.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DB554B6iURkS9tUM0Co4h/Ag4uunL8NSKn8s46gFH6F.jpg
+games/img/breath/bowl.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/mWS6vXn5MwCNVGmrQeeJq/1sGTTXU29ad0Y2kW2BnCR.jpg
+games/img/breath/butterfly.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DN1hf1wGTcErvitWSLIhv/PFONXFJ47Rh-zQolwisol.jpg

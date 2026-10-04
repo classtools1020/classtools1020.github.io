@@ -1,0 +1,27 @@
+name: fetch-images
+on:
+  push:
+    paths: ['tools/fetch-list.txt']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download images listed in tools/fetch-list.txt
+        run: |
+          while read -r dest url; do
+            [ -z "$dest" ] && continue
+            case "$dest" in \#*) continue;; esac
+            mkdir -p "$(dirname "$dest")"
+            curl -fsSL --retry 3 -o "$dest" "$url" && echo "ok $dest"
+          done < tools/fetch-list.txt
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A games/img
+          git diff --cached --quiet || git commit -m "自動下載 Gamma 生成圖片"
+          git push
