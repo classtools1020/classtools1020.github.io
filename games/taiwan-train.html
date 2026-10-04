@@ -58,6 +58,12 @@
   .xp{position:fixed;inset:0;z-index:9300;background:#03081a;display:none;flex-direction:column;align-items:center;padding:12px;overflow:auto}
   .xp.show{display:flex;animation:fade .3s}
   @keyframes fade{from{opacity:0}to{opacity:1}}
+  .hintbtn{position:static;margin:4px 0 2px;border:2px solid var(--amber);background:#3a2f10;color:#ffe08a;font-weight:900;font-size:17px;border-radius:999px;padding:8px 16px;cursor:pointer;z-index:5}
+  .hint{display:none;width:min(96vw,900px);background:#fff8e1;color:#3a2a10;border:3px solid #ffc93c;border-radius:18px;padding:12px 18px;margin:8px 0;font-weight:800;font-size:18px;line-height:1.55}
+  .hint.show{display:block;animation:hin .3s}.hint b.k{display:block;color:#b25e00;font-size:15px;margin-bottom:4px}
+  .hint ol{margin:6px 0 0;padding-left:26px}.hint li{margin:3px 0}
+  @keyframes hin{from{opacity:0;transform:translateY(-8px)}to{opacity:1}}
+  .redlit .bal,.redlit .bg{filter:url(#lightf)!important}
   .xp .x{position:absolute;right:14px;top:14px;width:46px;height:46px;border-radius:50%;border:2px solid var(--amber);background:#0f2841;color:var(--amber);font-weight:900;font-size:22px;cursor:pointer;z-index:2}
   .xp h3{font-family:var(--disp);font-size:min(6vw,26px);margin:6px 48px 4px;text-align:center}
   .xp .q{font-weight:900;color:var(--aqua);font-size:min(5vw,22px);text-align:center;margin-bottom:8px;max-width:900px}
@@ -145,7 +151,7 @@
   <footer>🚆 光之環島列車　｜　任務三 光與顏色・Ka-IV-10／11　｜　原創角色・溫和音效版・竹東國中自然科</footer>
 </div>
 
-<div class="xp" id="xp"><button class="x" onclick="closeXp()">✖</button><h3 id="xpT"></h3><div class="q" id="xpQ"></div><div id="xpBody"></div><div class="fb" id="fb"></div><div class="ctrl" id="xpCtrl"></div></div>
+<div class="xp" id="xp"><button class="x" onclick="closeXp()">✖</button><h3 id="xpT"></h3><div class="q" id="xpQ"></div><button class="hintbtn" id="hintBtn">💡 看不懂？按我看提示</button><div class="hint" id="hint"></div><div id="xpBody"></div><div class="fb" id="fb"></div><div class="ctrl" id="xpCtrl"></div></div>
 <div class="arrive" id="arrive"><h2 id="arT"></h2><div class="big"><img id="arImg" src="" alt=""><div class="stamp" id="arStamp"></div></div><div class="fact" id="arFact"></div><button class="btn go big" id="arOk">🚆 繼續環島</button></div>
 <div class="gacha" id="gacha"><div class="ptitle" id="gT">🎁 特別站禮物！點一下</div><div class="capsule" id="cap">🎁</div><div class="prize" id="prize" style="display:none"></div><div class="ptitle" id="pName"></div><button class="btn go" id="gOk" style="display:none">收下 📖</button></div>
 <div class="book" id="book"><button class="x fixbtn" style="right:14px;top:12px;border:2px solid var(--amber);color:var(--amber)" onclick="$('book').classList.remove('show')">✖ 關閉</button><div class="ptitle" style="margin-bottom:12px">📖 環島明信片</div><div class="grid" id="grid"></div></div>
@@ -201,7 +207,20 @@ $("resetBtn").onclick=()=>{if(!confirm("重新從台北出發？（明信片會�
 let timers=[],raf=0;function later(f,ms){timers.push(setTimeout(f,ms));}
 function closeXp(){$("xp").classList.remove("show");timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(raf);$("xpBody").innerHTML="";S.tap();}
 function scene(objs,bg){return `<div class="scene" id="sc"><img class="bg dim" src="${bg||IMG+"wall.jpg"}" alt=""><div class="lbl">⚪ 白光</div><div class="objs">${objs.map(i=>`<div class="obj" data-i="${i}"><img src="${OBJ[i].img}" alt="" draggable="false"><div class="nm">${OBJ[i].n}</div></div>`).join("")}</div></div>`;}
-function openXp(){const c=CITIES[cur];if(!c)return;S.tap();$("xpT").textContent=`${c.em} 第 ${cur+1} 站・${c.n}${c.sp?" ⭐特別站":""}`;$("xpQ").textContent="";$("fb").innerHTML="";$("xpCtrl").innerHTML="";$("xpBody").innerHTML="";$("xp").classList.add("show");setLight("white");
+/* 💡 每一關的提示：先講規則，再一步一步想 */
+const RULE="🔑 規則：東西是什麼顏色，就會把那種顏色的光「彈回來」（反射）。燈裡沒有它能彈的光 → 它就變黑。";
+function hintFor(c){const L={green:"綠",blue:"藍",red:"紅"}[c.light]||"";
+  if(c.k==="spot"&&c.light==="green")return ["綠光燈裡，只有「綠色的光」。","哪一個東西「不會」把綠光彈回來？紅蘋果只會彈紅光。","沒有光可以彈 → 蘋果變黑 → 燈照到蘋果時按！"];
+  if(c.k==="spot"&&c.light==="blue")return ["藍光燈裡，只有「藍色的光」。","白色的東西會把「所有顏色的光」都彈回來。","所以藍光下，白衣還是亮的 → 燈照到白衣時按！"];
+  if(c.k==="mem")return ["先看清楚：蘋果紅、香蕉黃、植物綠、白衣白。","綠光來的時候：誰不會彈綠光？（紅色的東西）","燈變回白光後，點剛剛變黑的那一個。"];
+  if(c.k==="load")return ["按一個燈，看東西亮不亮。","在那個燈下還亮著 → 它會彈回那種光 → 上那節車廂。","紅燈、綠燈都會亮的白衣 → 上「全部光車廂」。"];
+  if(c.k==="mix"&&c.goal==="黃光")return ["光的三原色：紅、綠、藍。","兩盞燈疊在一起會變新顏色。","紅光＋綠光＝黃光 → 打開紅燈和綠燈。"];
+  if(c.k==="mix")return ["白光是很多顏色的光加在一起。","光的三原色：紅、綠、藍。","三盞燈全部打開＝白光！"];
+  if(c.k==="balloon")return ["紅光燈裡，只有「紅色的光」。","氣球要能彈回紅光才會亮：紅、黃（有紅）、白（全部都有）→ 會亮。","綠、藍、青（藍綠）沒有紅 → 變黑 → 戳破這 3 顆！","不確定？按「🔴 開紅燈看看」！"];
+  return ["先看照片，想一想光是從哪裡來的。","自己會發光的叫「光源」；其他東西是把光反射到我們眼睛。","選一個最合理的答案，答錯可以再試！"];}
+function setHint(c){const h=$("hint");h.classList.remove("show");h.innerHTML=`<b class="k">${RULE}</b><ol>${hintFor(c).map(t=>`<li>${t}</li>`).join("")}</ol>`;
+  $("hintBtn").onclick=()=>{h.classList.toggle("show");S.tap();};}
+function openXp(){const c=CITIES[cur];if(!c)return;S.tap();$("xpT").textContent=`${c.em} 第 ${cur+1} 站・${c.n}${c.sp?" ⭐特別站":""}`;$("xpQ").textContent="";$("fb").innerHTML="";$("xpCtrl").innerHTML="";$("xpBody").innerHTML="";$("xp").classList.add("show");setLight("white");setHint(c);
   ({quiz:xQuiz,final:xQuiz,spot:xSpot,load:xLoad,mem:xMem,mix:xMix,balloon:xBalloon})[c.k](c);}
 function wrong(msg){streak=0;hud();S.no();pop("再試一次",true);$("fb").textContent=msg||"💡 再想一次（答錯不扣分）";}
 function clear(c){S.ok();streak++;const mult=[1,2,3][speed()];const earn=10*mult;coins+=earn;hud();pop("+"+earn+" 🪙"+(mult>1?"（×"+mult+"）":""));FX.confetti(60);
@@ -242,8 +261,9 @@ function xMix(c){$("xpQ").textContent="打開燈，做出「"+c.goal+"」！";$(
   document.querySelectorAll(".lamp").forEach(l=>l.onclick=()=>{on[l.dataset.l]^=1;l.classList.toggle("on",!!on[l.dataset.l]);S.tap();upd();});upd();
   $("chk").onclick=()=>{const ok=on.red===c.goalRGB[0]&&on.green===c.goalRGB[1]&&on.blue===c.goalRGB[2];if(ok)clear(c);else{const n=on.red+on.green+on.blue;wrong(n===0?"先把燈打開":(c.goal==="黃光"?"黃光只要兩盞燈，想想是哪兩盞？":"白光要三盞燈全開！"));}};}
 /* 🎈 戳熱氣球：只戳「紅光下會變黑」的氣球 */
-function xBalloon(c){$("xpQ").textContent="紅光下會變黑的熱氣球有 3 顆，把它們戳破！";const B=[["#e53935","紅",false],["#2ecc40","綠",true],["#2f7bff","藍",true],["#ffe600","黃",false],["#ffffff","白",false],["#9b30ff","紫",true]];let need=3,got=0;
-  $("xpBody").innerHTML=`<div class="scene" id="sc"><img class="bg" src="${TW+c.img}" alt="" style="filter:brightness(.55)"><div class="lbl">🔴 紅光下誰會變黑？</div><div class="balloons">${B.map((b,i)=>`<div class="bal" data-i="${i}" style="background:${b[0]};left:${8+i*15}%;top:${18+(i%2)*28}%;animation-delay:${i*.4}s">${b[1]}</div>`).join("")}</div></div>`;
+function xBalloon(c){$("xpQ").textContent="紅光下會變黑的熱氣球有 3 顆，把它們戳破！";const B=[["#e53935","紅",false],["#2ecc40","綠",true],["#2f7bff","藍",true],["#ffe600","黃",false],["#ffffff","白",false],["#00d5e0","青",true]];let need=3,got=0;
+  $("xpBody").innerHTML=`<div class="scene" id="sc"><img class="bg" src="${TW+c.img}" alt="" style="filter:brightness(.55)"><div class="lbl">🔴 紅光下誰會變黑？</div><button class="btn" id="redPeek" style="position:absolute;right:12px;bottom:12px;z-index:6">🔴 開紅燈看看</button><div class="balloons">${B.map((b,i)=>`<div class="bal" data-i="${i}" style="background:${b[0]};left:${8+i*15}%;top:${18+(i%2)*28}%;animation-delay:${i*.4}s">${b[1]}</div>`).join("")}</div></div>`;
+  $("redPeek").onclick=e=>{e.stopPropagation();const sc=$("sc");sc.classList.add("redlit");setLight("red");S.tap();$("fb").textContent="👀 看！紅光下哪幾顆變黑了？記住它們";later(()=>{sc.classList.remove("redlit");setLight("white");const l=document.querySelector("#xpBody .lbl");if(l)l.textContent="🔴 紅光下誰會變黑？";},3000);};
   document.querySelectorAll(".bal").forEach(el=>el.onclick=()=>{const b=B[+el.dataset.i];if(b[2]){el.classList.add("pop");S.coin();FX.emojiBurst("✨",8,innerWidth/2,innerHeight*.4);got++;$("fb").textContent=b[1]+"色只反射"+b[1]+"光，紅光下沒東西可反射→黑！";if(got>=need)clear(c);}else{wrong(b[1]+"色的氣球反射紅光，紅光下還是亮的，不用戳");}});}
 /* 🎁 特別站禮物 */
 const GIFTS=[["🚂","內灣小火車票"],["🌄","阿里山日出票"],["🎈","熱氣球票"],["💎","白光寶石"],["🌈","彩虹徽章"],["🤖","機器人小幫手"]];
