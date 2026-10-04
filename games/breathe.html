@@ -27,6 +27,11 @@
   .mode .ic{font-size:56px;line-height:1.1}.mode .nm{font-size:24px;font-weight:900;margin-top:4px}.mode .ds{font-size:15px;color:var(--dim);font-weight:800;margin-top:2px}
   .player{display:none;flex-direction:column;align-items:center}
   body.play .player{display:flex}body.play .picker{display:none}
+  .phl{position:absolute;inset:0;display:none;overflow:hidden;background:#06121f}
+  body.ph .phl{display:block}body.ph #cv,body.ph #gl{display:none!important}
+  .phl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 50%;will-change:transform,filter}
+  .phl svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .phl .real{position:absolute;right:12px;top:10px;background:rgba(0,0,0,.5);color:#fff;font-weight:900;font-size:13px;padding:4px 10px;border-radius:999px;z-index:2}
   .stagebox{position:relative;width:min(96vw,1040px);aspect-ratio:16/9;border-radius:24px;overflow:hidden;border:3px solid var(--line);background:#06121f;touch-action:none;box-shadow:0 18px 40px rgba(0,0,0,.55)}
   .stagebox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
   body.gl #cv{display:none}body:not(.gl) #gl{display:none}
@@ -70,7 +75,7 @@
   </div>
 
   <div class="player">
-    <div class="stagebox" id="stagebox"><canvas id="cv" width="1280" height="720"></canvas><div class="buddy"><img id="buddy" alt=""><div class="say" id="bsay">一起呼吸吧！</div></div></div>
+    <div class="stagebox" id="stagebox"><div class="phl" id="phl"><img id="phImg" alt=""><svg id="phSvg" viewBox="0 0 2752 1536" preserveAspectRatio="xMidYMid slice"></svg><div class="real">📷 真實照片</div></div><canvas id="cv" width="1280" height="720"></canvas><div class="buddy"><img id="buddy" alt=""><div class="say" id="bsay">一起呼吸吧！</div></div></div>
     <div class="cue" id="cue">準備好了嗎？</div>
     <div class="cnt" id="cnt"></div>
     <div class="ctrl" id="ctrl"></div>
@@ -133,10 +138,10 @@ document.addEventListener("b3d-ready",()=>{if(M)applyView();});
 /* ---------- 播放引擎 ---------- */
 let M=null,raf=0,t0=0,running=false,st={};
 function start(id){M=MODES.find(m=>m.id===id);document.body.classList.add("play");$("tip").textContent="💡 "+M.tip;$("cue").textContent="準備好了嗎？";$("cnt").textContent="";
-  st={phase:null,k:0,round:0,p:0,done:false,sparks:[],taps:0,side:0,bellT:0,shaken:false};applyView();face(M.id==="butterfly"?"hug":"idle","一起呼吸吧！");
+  st={phase:null,k:0,round:0,p:0,done:false,sparks:[],taps:0,side:0,bellT:0,shaken:false};applyView();setPhoto(M.id);face(M.id==="butterfly"?"hug":"idle","一起呼吸吧！");
   $("speed").style.display=M.ph?"flex":"none";
   setCtrl([["▶ 開始","go",begin],["↩ 換一種","ghost",back]]);running=false;cancelAnimationFrame(raf);loopIdle();window.scrollTo({top:0});}
-function back(){running=false;cancelAnimationFrame(raf);document.body.classList.remove("play");}
+function back(){running=false;cancelAnimationFrame(raf);document.body.classList.remove("play");setPhoto(null);}
 function setCtrl(bs){$("ctrl").innerHTML="";bs.forEach(([t,c,f])=>{const b=document.createElement("button");b.className="btn "+(c==="go"?"":c);b.textContent=t;b.onclick=()=>{ac();f();};$("ctrl").appendChild(b);});}
 function loopIdle(){draw(0);if(!running)raf=requestAnimationFrame(loopIdle);}
 function begin(){running=true;cancelAnimationFrame(raf);st.round=0;st.k=0;t0=performance.now();setCtrl([["⏹ 停止","ghost",()=>{start(M.id);}]]);
@@ -157,7 +162,30 @@ const ease=x=>.5-.5*Math.cos(Math.PI*x);
 function breathLevel(){if(!running||!M.ph)return 0;const p=ease(st.p);return st.phase==="in"?p:st.phase==="out"?1-p:st.phase==="hold"?1:0;}
 function bg(c1,c2){const gr=g.createRadialGradient(CX,CY,50,CX,CY,760);gr.addColorStop(0,c1);gr.addColorStop(1,c2);g.fillStyle=gr;g.fillRect(0,0,W,H);}
 function label(t,y,c,sz){g.font=`900 ${sz||40}px ${FONT}`;g.textAlign="center";g.fillStyle=c||"#fff";g.fillText(t,CX,y);}
-function draw(now){if(use3D()){B3D.frame(breathLevel(),now||performance.now(),st,running);return;}g.clearRect(0,0,W,H);const L=breathLevel();({bubble:dBubble,glow:dGlow,ball:dBall,finger:dFinger,box:dBox,rainbow:dRainbow,jar:dJar,bell:dBell,butterfly:dButterfly})[M.id](L,now||0);}
+/* ---------- 真實照片模式 ---------- */
+const PH={bubble:"img/breath/bubble.jpg",glow:"../moon/img/candle.jpg",ball:"img/breath/ball.jpg",finger:"img/breath/hand.jpg",bell:"img/breath/bowl.jpg",butterfly:"img/breath/butterfly.jpg",rainbow:"../light-color/img/tw/yilan.jpg"};
+// 五指呼吸：照片上的指尖（T）與指縫（V），座標是 2752×1536 照片的像素
+const HAND={P0:[1010,770],T:[[900,430],[1130,180],[1344,90],[1594,160],[1960,680]],V:[[1124,730],[1276,650],[1460,640],[1640,900],[1800,1040]]};
+let phMode=null;
+function setPhoto(id){phMode=PH[id]?id:null;document.body.classList.toggle("ph",!!phMode);if(!phMode)return;$("phImg").src=PH[id];$("phSvg").innerHTML=id==="finger"?'<defs><filter id="phg" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path id="phDone" fill="none" stroke="#FFE14D" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" filter="url(#phg)" opacity=".85"/><path id="phCur" fill="none" stroke="#FFF6B0" stroke-width="18" stroke-linecap="round" filter="url(#phg)"/><circle id="phDot" r="38" fill="#FFFBE0" filter="url(#phg)"/>':(id==="bell"?'<g id="phRings" fill="none" stroke="#FFE9A8" stroke-width="10"></g>':"");}
+const lerp2=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+function drawPhoto(now){const L=breathLevel(),im=$("phImg");let sc=1,br=1,rot=0,sat=1;
+  if(phMode==="bubble"){sc=1+.16*L;br=.8+.35*L;}
+  else if(phMode==="glow"){sc=1+.04*L;br=.4+.85*L;}
+  else if(phMode==="ball"){sc=.94+.16*L;br=.85+.25*L;}
+  else if(phMode==="rainbow"){sc=1+.06*L;br=.7+.45*L;sat=.6+.8*L;}
+  else if(phMode==="finger"){sc=1+.03*L;br=.9+.15*L;drawHand();}
+  else if(phMode==="butterfly"){const tap=running?Math.max(0,1-((now-t0)%(900*speed))/350):0;rot=(st.side?1:-1)*2.2*tap;sc=1+.03*tap;}
+  else if(phMode==="bell"){const e=running&&st.bellT?(now-st.bellT)/1000:0;const a=running?Math.max(0,1-e/14):0;br=.85+.2*a;
+    $("phRings").innerHTML=a>0?[0,1,2].map(k=>{const r=((e*90+k*160)%480);return `<circle cx="1693" cy="860" r="${200+r}" opacity="${(a*(1-r/480)*.8).toFixed(2)}"/>`;}).join(""):"";}
+  im.style.transform=`scale(${sc.toFixed(4)}) rotate(${rot.toFixed(2)}deg)`;im.style.filter=`brightness(${br.toFixed(3)}) saturate(${sat.toFixed(2)})`;}
+function drawHand(){const i=Math.min(4,st.round||0);const start=i===0?HAND.P0:HAND.V[i-1];const p=running?ease(st.p||0):0;
+  let pos;if(!running)pos=HAND.P0;else if(st.phase==="in")pos=lerp2(start,HAND.T[i],p);else pos=lerp2(HAND.T[i],HAND.V[i],p);
+  let d="M"+HAND.P0.join(" ");for(let k=0;k<i;k++)d+=" L"+HAND.T[k].join(" ")+" L"+HAND.V[k].join(" ");
+  $("phDone").setAttribute("d",i?d:"");
+  $("phCur").setAttribute("d",running?("M"+start.join(" ")+(st.phase==="in"?" L"+pos.join(" "):" L"+HAND.T[i].join(" ")+" L"+pos.join(" "))):"");
+  $("phDot").setAttribute("cx",pos[0]);$("phDot").setAttribute("cy",pos[1]);}
+function draw(now){if(M&&PH[M.id]){drawPhoto(now||performance.now());return;}if(use3D()){B3D.frame(breathLevel(),now||performance.now(),st,running);return;}g.clearRect(0,0,W,H);const L=breathLevel();({bubble:dBubble,glow:dGlow,ball:dBall,finger:dFinger,box:dBox,rainbow:dRainbow,jar:dJar,bell:dBell,butterfly:dButterfly})[M.id](L,now||0);}
 function dBubble(L){bg("#0e3350","#05101f");const r=90+L*170;const gr=g.createRadialGradient(CX-r*.3,CY-r*.3,r*.1,CX,CY,r);gr.addColorStop(0,"rgba(255,255,255,.9)");gr.addColorStop(.4,"rgba(150,220,255,.55)");gr.addColorStop(1,"rgba(80,160,255,.15)");
   g.fillStyle=gr;g.beginPath();g.arc(CX,CY,r,0,7);g.fill();g.strokeStyle="rgba(255,255,255,.7)";g.lineWidth=4;g.stroke();g.strokeStyle="rgba(255,255,255,.25)";g.setLineDash([10,14]);g.beginPath();g.arc(CX,CY,260,0,7);g.stroke();g.setLineDash([]);}
 function dGlow(L){const a=.08+L*.85;bg(`rgba(255,${200+L*40},${120+L*60},${a})`,"#03070f");const gr=g.createRadialGradient(CX,CY,10,CX,CY,120+L*260);gr.addColorStop(0,`rgba(255,250,210,${.3+L*.7})`);gr.addColorStop(1,"rgba(255,220,120,0)");g.fillStyle=gr;g.fillRect(0,0,W,H);
