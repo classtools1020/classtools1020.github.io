@@ -126,7 +126,7 @@
 </style>
 </head>
 <body>
-<a class="fixbtn home" href="/light-color/">🏠 回到首頁</a>
+<a class="fixbtn home" href="/light/" onclick="if(history.length>1){history.back();return false;}">⬅ 返回</a>
 <a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
 <svg width="0" height="0" style="position:absolute"><filter id="lightf" color-interpolation-filters="sRGB"><feColorMatrix id="lmtx" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter></svg>
 <div class="wrap">
@@ -135,7 +135,7 @@
   <div class="hud"><span class="pill train" id="trainPill">🚃 區間車</span><span class="pill">🚉 <b id="stn">1</b> / 11</span><span class="pill">🪙 <b id="coins">0</b></span><span class="pill btn" id="bookBtn">📖 明信片 <b id="bookN">0</b>/10</span></div>
   <div class="speed"><span id="sp0" class="on">🚃 區間車</span><span id="sp1">🚄 自強號 ×2</span><span id="sp2">🚅 高鐵 ×3</span></div>
   <div class="board">
-    <div class="map" id="map"><svg viewBox="0 0 600 800" preserveAspectRatio="xMidYMid meet"><path id="tw" d="M 330 60 C 380 50 430 80 445 130 C 460 190 470 260 455 330 C 445 400 420 470 395 540 C 375 600 350 660 315 710 C 295 740 270 760 250 745 C 225 720 205 680 190 640 C 165 570 150 500 145 430 C 140 350 150 280 175 220 C 200 160 250 110 290 80 C 305 70 315 65 330 60 Z" fill="#1f5c3a" stroke="#6be59a" stroke-width="5" opacity=".95"/><path id="rail" d="" fill="none" stroke="#3b2a1a" stroke-width="16" stroke-linecap="round"/><path id="rail2" d="" fill="none" stroke="#e9c98a" stroke-width="5" stroke-dasharray="14 12" stroke-linecap="round"/></svg><div class="train" id="train">🚆</div></div>
+    <div class="map" id="map"><svg viewBox="0 0 600 800" preserveAspectRatio="xMidYMid meet"><image href="img/taiwan-map.jpg" x="0" y="0" width="600" height="800" preserveAspectRatio="none"/><path id="tw" d="" fill="none"/><path id="rail" d="" fill="none" stroke="#3b2a1a" stroke-width="16" stroke-linecap="round"/><path id="rail2" d="" fill="none" stroke="#e9c98a" stroke-width="5" stroke-dasharray="14 12" stroke-linecap="round"/></svg><div class="train" id="train">🚆</div></div>
     <div class="side">
       <div class="card"><div class="post" id="post"><img id="postImg" src="" alt=""><div class="stamp" id="postStamp" style="display:none"></div><div class="cap" id="postCap">🚉 台北車站・準備出發</div></div><div class="fact" id="fact">按「進站闖關」，答對火車就往下一站開。連對會升級成自強號、高鐵，跑更快、金幣更多。</div></div>
       <div class="say" id="say">從台北出發！</div>
@@ -165,17 +165,17 @@ const S={tap:()=>tone(880,.08,0,.08),ok:()=>{tone(523,.25,0,.12);tone(659,.25,.1
   whistle:()=>{tone(660,.5,0,.07,"triangle");tone(880,.5,.15,.07,"triangle");},chug:n=>{for(let i=0;i<n;i++)tone(110,.06,i*.18,.05,"triangle");},arrive:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.4,i*.12,.1));},up:()=>{[659,784,988,1319].forEach((f,i)=>tone(f,.3,i*.08,.1));}};
 /* ===== 環島路線：11 站（台北→…→台北） ===== */
 const CITIES=[
- {n:"台北",em:"🏙️",x:330,y:105,img:"taipei.jpg",t:"台北 101 的夜燈",fact:"101 晚上會換顏色，因為燈本身就是光源，發什麼顏色的光就是什麼顏色。",tz:"光源",k:"quiz",q:{q:"晚上的 101 是紅色、藍色、綠色一直換，因為？",opts:[["燈本身發出不同顏色的光","#ffe600"],["大樓自己會變色","#888"]],ok:0}},
- {n:"桃園",em:"✈️",x:290,y:150,img:"taoyuan.jpg",t:"桃園機場的紅色夕陽",fact:"傍晚陽光要穿過很厚的空氣，藍光被散掉，剩下紅橙光到我們眼睛，所以夕陽是紅的。",tz:"色散・紅光傳得遠",k:"spot",light:"green",target:0},
- {n:"新竹・竹東",em:"🏡",x:258,y:200,img:"hsinchu.jpg",t:"家鄉站！內灣線小火車",fact:"我們的家鄉站。內灣線的小火車漆成鮮豔的顏色，是因為車身反射那些顏色的光。特別站：禮物加倍！",tz:"選擇性反射",k:"load",sp:true},
- {n:"台中",em:"🌅",x:225,y:290,img:"taichung.jpg",t:"高美濕地的鏡面反射",fact:"淺淺的水面像鏡子，把夕陽和風車倒著映出來——光碰到平滑的水面會反射。",tz:"反射",k:"quiz",q:{q:"水面像鏡子一樣有倒影，是因為光在水面？",opts:[["反射回來","#3ec2ff"],["被水喝掉","#888"]],ok:0}},
- {n:"嘉義・阿里山",em:"🌄",x:225,y:390,img:"alishan.jpg",t:"阿里山日出與森林小火車",fact:"日出時太陽在很低的地方，光穿過厚厚的空氣，只剩紅橙光——跟夕陽一樣的道理。特別站：森林小火車射擊！",tz:"紅光傳得遠",k:"spot",light:"blue",target:3,sp:true},
- {n:"台南",em:"🧂",x:200,y:490,img:"tainan.jpg",t:"井仔腳鹽田的白",fact:"鹽田白得刺眼，因為白色反射所有顏色的光，光越強看起來越白。",tz:"反射所有光",k:"mem",light:"green",target:0},
- {n:"高雄",em:"🌉",x:215,y:580,img:"kaohsiung.jpg",t:"愛河的燈光倒影",fact:"橋上的彩燈映在河面上，河水把燈光反射給我們的眼睛，所以有一條一條的光。",tz:"反射",k:"mix",goal:"黃光",goalRGB:[1,1,0]},
- {n:"台東",em:"🎈",x:330,y:600,img:"taitung.jpg",t:"鹿野高台的熱氣球",fact:"熱氣球五顏六色，每一個只反射自己那個顏色的光。特別站：戳熱氣球！",tz:"選擇性反射",k:"balloon",sp:true},
- {n:"花蓮",em:"🌊",x:395,y:470,img:"hualien.jpg",t:"七星潭的藍色大海",fact:"海水把紅光吸掉、把藍光散射回來，所以深深的海是藍色的。",tz:"吸收與散射",k:"quiz",q:{q:"七星潭的海為什麼是藍色？",opts:[["海水把藍光送回我們眼睛","#3ec2ff"],["海裡有藍色顏料","#888"]],ok:0}},
- {n:"宜蘭",em:"🌈",x:400,y:250,img:"yilan.jpg",t:"雨後的彩虹與龜山島",fact:"雨後空氣裡的小水滴像小三稜鏡，把白光分成七彩——這就是色散。",tz:"色散",k:"mix",goal:"白光",goalRGB:[1,1,1]},
- {n:"台北・終點",em:"🏁",x:330,y:105,img:"taipei.jpg",t:"環島完成！",fact:"你把台灣的光和顏色都看過一遍了：光源、反射、選擇性反射、色散、加色混合。",tz:"物體的顏色＝它反射什麼光",k:"final",q:{q:"最後一題：東西的顏色到底是什麼？",opts:[["它反射什麼光","#ffe600"],["它自己會發光","#e53935"]],ok:0}},
+ {n:"台北",em:"🏙️",x:439,y:94,img:"taipei.jpg",t:"台北 101 的夜燈",fact:"101 晚上會換顏色，因為燈本身就是光源，發什麼顏色的光就是什麼顏色。",tz:"光源",k:"quiz",q:{q:"晚上的 101 是紅色、藍色、綠色一直換，因為？",opts:[["燈本身發出不同顏色的光","#ffe600"],["大樓自己會變色","#888"]],ok:0}},
+ {n:"桃園",em:"✈️",x:372,y:128,img:"taoyuan.jpg",t:"桃園機場的紅色夕陽",fact:"傍晚陽光要穿過很厚的空氣，藍光被散掉，剩下紅橙光到我們眼睛，所以夕陽是紅的。",tz:"色散・紅光傳得遠",k:"spot",light:"green",target:0},
+ {n:"新竹・竹東",em:"🏡",x:338,y:182,img:"hsinchu.jpg",t:"家鄉站！內灣線小火車",fact:"我們的家鄉站。內灣線的小火車漆成鮮豔的顏色，是因為車身反射那些顏色的光。特別站：禮物加倍！",tz:"選擇性反射",k:"load",sp:true},
+ {n:"台中",em:"🌅",x:277,y:284,img:"taichung.jpg",t:"高美濕地的鏡面反射",fact:"淺淺的水面像鏡子，把夕陽和風車倒著映出來——光碰到平滑的水面會反射。",tz:"反射",k:"quiz",q:{q:"水面像鏡子一樣有倒影，是因為光在水面？",opts:[["反射回來","#3ec2ff"],["被水喝掉","#888"]],ok:0}},
+ {n:"嘉義・阿里山",em:"🌄",x:300,y:419,img:"alishan.jpg",t:"阿里山日出與森林小火車",fact:"日出時太陽在很低的地方，光穿過厚厚的空氣，只剩紅橙光——跟夕陽一樣的道理。特別站：森林小火車射擊！",tz:"紅光傳得遠",k:"spot",light:"blue",target:3,sp:true},
+ {n:"台南",em:"🧂",x:186,y:529,img:"tainan.jpg",t:"井仔腳鹽田的白",fact:"鹽田白得刺眼，因為白色反射所有顏色的光，光越強看起來越白。",tz:"反射所有光",k:"mem",light:"green",target:0},
+ {n:"高雄",em:"🌉",x:203,y:605,img:"kaohsiung.jpg",t:"愛河的燈光倒影",fact:"橋上的彩燈映在河面上，河水把燈光反射給我們的眼睛，所以有一條一條的光。",tz:"反射",k:"mix",goal:"黃光",goalRGB:[1,1,0]},
+ {n:"台東",em:"🎈",x:368,y:578,img:"taitung.jpg",t:"鹿野高台的熱氣球",fact:"熱氣球五顏六色，每一個只反射自己那個顏色的光。特別站：戳熱氣球！",tz:"選擇性反射",k:"balloon",sp:true},
+ {n:"花蓮",em:"🌊",x:455,y:320,img:"hualien.jpg",t:"七星潭的藍色大海",fact:"海水把紅光吸掉、把藍光散射回來，所以深深的海是藍色的。",tz:"吸收與散射",k:"quiz",q:{q:"七星潭的海為什麼是藍色？",opts:[["海水把藍光送回我們眼睛","#3ec2ff"],["海裡有藍色顏料","#888"]],ok:0}},
+ {n:"宜蘭",em:"🌈",x:492,y:178,img:"yilan.jpg",t:"雨後的彩虹與龜山島",fact:"雨後空氣裡的小水滴像小三稜鏡，把白光分成七彩——這就是色散。",tz:"色散",k:"mix",goal:"白光",goalRGB:[1,1,1]},
+ {n:"台北・終點",em:"🏁",x:439,y:94,img:"taipei.jpg",t:"環島完成！",fact:"你把台灣的光和顏色都看過一遍了：光源、反射、選擇性反射、色散、加色混合。",tz:"物體的顏色＝它反射什麼光",k:"final",q:{q:"最後一題：東西的顏色到底是什麼？",opts:[["它反射什麼光","#ffe600"],["它自己會發光","#e53935"]],ok:0}},
 ];
 const POSTS=CITIES.slice(0,10).map(c=>[c.em,c.n]);
 let cur=+(localStorage.getItem("twCur")||0),coins=+(localStorage.getItem("twCoins")||0),streak=+(localStorage.getItem("twStreak")||0),posts=JSON.parse(localStorage.getItem("twPosts")||"[]");
@@ -186,7 +186,7 @@ function pop(t,soft){const p=document.createElement("div");p.className="pop"+(so
 /* 地圖 */
 function mapPt(i){const m=$("map").getBoundingClientRect();const vw=600,vh=800;const s=Math.min(m.width/vw,m.height/vh);const ox=(m.width-vw*s)/2,oy=(m.height-vh*s)/2;return {x:ox+CITIES[i].x*s,y:oy+CITIES[i].y*s};}
 (function rail(){const d=CITIES.map((c,i)=>(i?"L":"M")+c.x+" "+c.y).join(" ");$("rail").setAttribute("d",d);$("rail2").setAttribute("d",d);})();
-function drawMap(){document.querySelectorAll(".city").forEach(e=>e.remove());CITIES.forEach((c,i)=>{if(i===10)return;const p=mapPt(i);const d=document.createElement("div");d.className="city"+(c.sp?" sp":"")+(i<cur?" done":i===cur?" now":" lock")+(c.x<300?" l":"");d.style.left=p.x+"px";d.style.top=p.y+"px";d.innerHTML=(i<cur?"✅":c.em)+`<span class="n">${c.n}${c.sp?" ⭐":""}</span>`;
+function drawMap(){document.querySelectorAll(".city").forEach(e=>e.remove());CITIES.forEach((c,i)=>{if(i===10)return;const p=mapPt(i);const d=document.createElement("div");d.className="city"+((c.x<400&&c.y<450)?" l":"")+(c.sp?" sp":"")+(i<cur?" done":i===cur?" now":" lock")+(c.x<300?" l":"");d.style.left=p.x+"px";d.style.top=p.y+"px";d.innerHTML=(i<cur?"✅":c.em)+`<span class="n">${c.n}${c.sp?" ⭐":""}</span>`;
     d.onclick=()=>{if(i===cur)openXp();else if(i<cur){S.tap();showPost(i);}else{S.tap();$("say").textContent="先到前面的站";}};$("map").appendChild(d);});placeTrain(Math.min(cur,10));}
 function placeTrain(i){const p=mapPt(i);const t=$("train");t.style.left=p.x+"px";t.style.top=p.y+"px";}
 function moveTrain(from,to,done){const a=mapPt(from),b=mapPt(to);let k=0;const sp=speed();const step=[.014,.022,.034][sp];S.whistle();S.chug(sp===2?4:8);
