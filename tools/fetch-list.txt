@@ -21,3 +21,4 @@ img/lesson/handson.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/A5Q
 img/lesson/convex-laser.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/wiB4y0r6oedL1J2vpApEc/04nRxCtbNyIysBWqWEnX0.jpg
 img/lesson/concave-laser.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/EGAjapj2rMGDZP1qtMih0/kFvKHNQEvNcQnx54c027X.jpg
 img/lesson/prism.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/O7bxGny3bJm60ZORVuMAP/6YBKrL6CewApm8d2lVeoC.jpg
+img/lesson/sand-row.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/Km0QmcqbEEHj7iUKkfeKG/yme6aDk2yZEqwqatRDhXa.jpg
