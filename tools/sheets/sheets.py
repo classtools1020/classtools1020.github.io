@@ -55,8 +55,8 @@ body{margin:0;background:#e9e4da;font-family:"Noto Sans TC","Microsoft JhengHei"
 .tb{border:.5mm solid #cfc6b4;border-radius:3mm;background:#fffdf8;padding:2mm;text-align:center;display:flex;flex-direction:column;gap:1.4mm}
 .tb .h{font-size:11pt;font-weight:900;color:#1f2a37}
 .tb .h span{display:block;font-size:9.5pt;color:#5b6673;font-weight:700}
-.lensc{width:23mm;height:23mm;margin:0 auto;border-radius:50%;border:1mm dashed #8fb7d8;display:flex;align-items:center;justify-content:center;background:radial-gradient(#fff,#f3f8fc)}
-.tb .c{display:flex;flex-direction:column;gap:1.2mm;align-items:flex-start;font-size:11.5pt;font-weight:900;padding-left:2mm}
+.lensc{width:27mm;height:27mm;margin:0 auto;border-radius:50%;border:1mm dashed #8fb7d8;display:flex;align-items:center;justify-content:center;background:radial-gradient(#fff,#f3f8fc)}
+.tb .c{display:flex;flex-direction:column;gap:1.6mm;align-items:flex-start;font-size:13pt;font-weight:900;padding-left:2mm}
 .tb .c label{display:flex;align-items:center;gap:1.6mm}
 .tb .bx{width:5mm;height:5mm}
 .drop{border:.8mm dashed #3ea4e8;border-radius:3mm;padding:3mm 4mm;margin-top:3mm;background:#f6fbff}
@@ -181,8 +181,8 @@ TINY = os.path.join(HERE, 'tiny')
 def tiny(n):
     f = glob.glob(f'{TINY}/t{n}.*')[0]; ext = 'png' if f.endswith('png') else 'jpeg'
     return f'<img src="data:image/{ext};base64,{base64.b64encode(open(f, "rb").read()).decode()}" style="width:6mm;height:6mm;object-fit:cover;border-radius:1mm" alt="">'
-HUNT = [(1, '紅紅的水果', tiny(1), ['蘋果', '番茄']), (2, '黃黃彎彎的', tiny(2), ['香蕉', '檸檬']), (3, '藍色的翅膀', tiny(3), ['蝴蝶', '蜜蜂']), (4, '彩虹色、圓圓的', tiny(4), ['泡泡', '氣球']),
-        (5, '水裡的東西', tiny(5), ['吸管', '筷子']), (6, '碗裡的錢', tiny(6), ['硬幣', '鈕扣']), (7, '超小的字', '<span style="font-size:3.2pt;font-weight:700">光</span>', ['光', '水']), (8, '超小的字', '<span style="font-size:3.2pt;font-weight:700">折射</span>', ['折射', '反射'])]
+HUNT = [(1, '紅紅的水果', tiny(1), ['🍎 蘋果', '🍅 番茄']), (2, '黃黃彎彎的', tiny(2), ['🍌 香蕉', '🍋 檸檬']), (3, '藍色的翅膀', tiny(3), ['🦋 蝴蝶', '🐝 蜜蜂']), (4, '彩虹色、圓圓的', tiny(4), ['🫧 泡泡', '🎈 氣球']),
+        (5, '水裡的東西', tiny(5), ['🥤 吸管', '🥢 筷子']), (6, '碗裡的錢', tiny(6), ['🪙 硬幣', '🔘 鈕扣']), (7, '超小的字', '<span style="font-size:3.2pt;font-weight:700">光</span>', ['光', '水']), (8, '超小的字', '<span style="font-size:3.2pt;font-weight:700">折射</span>', ['折射', '反射'])]
 def tbox(n, hint, pic, ch):
     c = ''.join(f'<label>{BX}{x}</label>' for x in ch)
     return f'<div class="tb"><div class="h">#{n}<span>提示：{hint}</span></div><div class="lensc">{pic}</div><div class="c"><label>{BX}找到了！</label><div style="font-size:10pt;color:#5b6673">它是：</div>{c}</div></div>'
