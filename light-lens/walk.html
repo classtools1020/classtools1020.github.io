@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>牽手走沙灘</title>
+<style>
+  :root{--ink:#1f2a37;--paper:#f4efe6;--red:#c8372d;--teal:#1f7a8c;--gold:#d99a22}
+  html,body{margin:0;height:100%;overflow:hidden;background:#cfd6dc;font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none}
+  canvas{display:block;touch-action:none}
+  .top{position:fixed;left:0;right:0;top:0;display:flex;align-items:center;gap:8px;padding:10px 12px;pointer-events:none;flex-wrap:wrap}
+  .top>*{pointer-events:auto}
+  .nb{font-weight:700;font-size:18px;line-height:1;font-family:inherit;padding:11px 14px;border-radius:12px;border:none;background:rgba(255,255,255,.92);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer;text-decoration:none;touch-action:manipulation}
+  .tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+  .tab{font-weight:700;font-size:17px;line-height:1;font-family:inherit;padding:10px 12px;border-radius:12px;border:2px solid transparent;background:rgba(255,255,255,.75);color:var(--ink);cursor:pointer;touch-action:manipulation}
+  .tab.on{background:var(--ink);color:#fff}
+  .cap{position:fixed;left:50%;top:74px;transform:translateX(-50%);max-width:min(92vw,980px);background:rgba(255,255,255,.95);border-radius:18px;padding:14px 26px;box-shadow:0 6px 24px rgba(0,0,0,.18);text-align:center;transition:transform .25s}
+  .cap .t{font-size:clamp(26px,3.6vw,46px);font-weight:900;letter-spacing:.04em;line-height:1.25}
+  .cap .s{font-size:clamp(16px,1.8vw,22px);color:#5b6673;font-weight:700;margin-top:4px;min-height:1em}
+  .cap.pop{transform:translateX(-50%) scale(1.06)}
+  .cap b{color:var(--red)}
+  .bot{position:fixed;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;padding:0 12px}
+  .big{font-weight:900;font-size:26px;line-height:1;font-family:inherit;padding:18px 30px;border-radius:18px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2);touch-action:manipulation;min-width:150px}
+  .go{background:var(--red);color:#fff}
+  .lt{background:#ffd34d;color:var(--ink)}
+  .nx{background:#fff;color:var(--ink)}
+  .big:disabled{opacity:.45}
+  .legend{position:fixed;left:14px;top:70px;background:rgba(255,255,255,.9);border-radius:14px;padding:10px 14px;font-weight:700;font-size:17px;line-height:1.7;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+  .legend i{display:inline-block;width:18px;height:18px;border-radius:5px;vertical-align:-3px;margin-right:6px}
+  @media (max-width:700px){.legend{display:none}.big{padding:14px 18px;font-size:20px;min-width:0}}
+</style>
+</head>
+<body>
+<div class="top">
+  <button class="nb" onclick="history.length>1?history.back():location.href='./'">← 返回</button>
+  <a class="nb" href="/light/">🏠 主選單</a>
+  <div class="tabs" id="tabs"></div>
+</div>
+<div class="cap" id="cap"><div class="t" id="capT"></div><div class="s" id="capS"></div></div>
+<div class="legend" id="legend"></div>
+<div class="bot">
+  <button class="big go" id="go">▶ 走！</button>
+  <button class="big lt" id="lt">✨ 換成光</button>
+  <button class="big nx" id="nx">下一個 →</button>
+</div>
+<script type="module">
+import * as THREE from '../light-town/lib/three.module.min.js';
+import { RoomEnvironment } from '../light-town/lib/RoomEnvironment.js';
+import { person, walkPose, koko } from '../light-town/world.js';
+
+// ---------- 場景與相機 ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture;
+const camera = new THREE.PerspectiveCamera(38, 1, .1, 200);
+const hemi = new THREE.HemisphereLight('#ffffff', '#8a7a60', .7); scene.add(hemi);
+const sun = new THREE.DirectionalLight('#fff4e0', 1.7); sun.position.set(-6, 14, 8); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 12, bottom: -12, near: 1, far: 40 }); scene.add(sun); scene.add(sun.target);
+
+function noiseTex(base, spread, grain, size = 512, rep = 6) {
+  const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d');
+  x.fillStyle = base; x.fillRect(0, 0, size, size);
+  const id = x.getImageData(0, 0, size, size), d = id.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (Math.random() - .5) * spread; d[i] += n; d[i + 1] += n; d[i + 2] += n * .9; }
+  x.putImageData(id, 0, 0);
+  for (let i = 0; i < grain; i++) { x.fillStyle = `rgba(${Math.random() < .5 ? '255,255,255' : '60,50,40'},${Math.random() * .25})`; const r = Math.random() * 2.2; x.beginPath(); x.arc(Math.random() * size, Math.random() * size, r, 0, 7); x.fill(); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+const roadTex = noiseTex('#5d6268', 40, 9000, 512, 5);
+const sandTex = noiseTex('#d6b273', 46, 16000, 512, 4);
+const sandTex2 = sandTex.clone(); sandTex2.repeat.set(.22, .22); sandTex2.needsUpdate = true;
+const roadMat = new THREE.MeshStandardMaterial({ map: roadTex, roughness: .95 });
+const sandMat = new THREE.MeshStandardMaterial({ map: sandTex, roughness: 1 });
+const sandMat2 = new THREE.MeshStandardMaterial({ map: sandTex2, roughness: 1 });
+const glassMat = new THREE.MeshPhysicalMaterial({ color: '#bfe6f5', roughness: .05, metalness: 0, transparent: true, opacity: .45, clearcoat: 1, clearcoatRoughness: .05, side: THREE.DoubleSide });
+const darkMat = new THREE.MeshStandardMaterial({ color: '#16202c', roughness: .9 });
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 60), roadMat); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+// 馬路白線
+const lines = new THREE.Group(); scene.add(lines);
+const world = new THREE.Group(); scene.add(world);
+
+function label(text, color = '#1f2a37', bg = 'rgba(255,255,255,.88)', s = 1) {
+  const c = document.createElement('canvas'); const x = c.getContext('2d'); const fs = 64;
+  x.font = `900 ${fs}px "Noto Sans TC","Microsoft JhengHei",sans-serif`; const w = x.measureText(text).width + 50;
+  c.width = w; c.height = fs + 36; x.font = `900 ${fs}px "Noto Sans TC","Microsoft JhengHei",sans-serif`;
+  x.fillStyle = bg; x.beginPath(); x.roundRect(0, 0, w, c.height, 22); x.fill(); x.fillStyle = color; x.textBaseline = 'middle'; x.fillText(text, 25, c.height / 2 + 3);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, depthTest: false })); sp.scale.set(w / c.height * .62 * s, .62 * s, 1); sp.renderOrder = 10; return sp;
+}
+
+// ---------- 沙的形狀：sdf<0 在沙裡 ----------
+const disk = (cx, cz, r) => (x, z) => Math.hypot(x - cx, z - cz) - r;
+const convex = (cx, cz, R, thick) => { const a = disk(cx - R + thick / 2, cz, R), b = disk(cx + R - thick / 2, cz, R); return (x, z) => Math.max(a(x, z), b(x, z)); };
+const concave = (cx, cz, R, thin, H) => { const a = disk(cx - R - thin / 2, cz, R), b = disk(cx + R + thin / 2, cz, R); const hw = thin / 2 + R - Math.sqrt(R * R - H * H);
+  return (x, z) => Math.max(Math.abs(z - cz) - H, Math.abs(x - cx) - hw, -a(x, z), -b(x, z)); };
+
+// 每一列 z 的沙區間 → 沙堆高度（越寬越高＝越厚越高）
+function heightFn(sdf, x0, x1, z0, z1, k) {
+  const N = 240, rows = [];
+  for (let j = 0; j <= N; j++) { const z = z0 + (z1 - z0) * j / N; let l = null, r = null;
+    for (let i = 0; i <= 600; i++) { const x = x0 + (x1 - x0) * i / 600; if (sdf(x, z) < 0) { if (l === null) l = x; r = x; } }
+    rows.push([l, r]); }
+  return (x, z) => { const j = Math.round((z - z0) / (z1 - z0) * N); if (j < 0 || j > N) return 0; const [l, r] = rows[j]; if (l === null || x < l || x > r) return 0;
+    const m = (l + r) / 2, hw = (r - l) / 2 + 1e-6; const u = (x - m) / hw; return k * hw * Math.sqrt(Math.max(0, 1 - u * u)); };
+}
+function pileMesh(h, x0, x1, z0, z1) {
+  const g = new THREE.PlaneGeometry(x1 - x0, z1 - z0, 220, 220); g.rotateX(-Math.PI / 2); g.translate((x0 + x1) / 2, 0, (z0 + z1) / 2);
+  const p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) { const y = h(p.getX(i), p.getZ(i)); p.setY(i, y > 0 ? y + .02 : -.08); }
+  g.computeVertexNormals(); const m = new THREE.Mesh(g, sandMat); m.receiveShadow = true; m.castShadow = true; return m;
+}
+
+// ---------- 同學 ----------
+const SHIRTS = ['#e4572e', '#f3a712', '#2f8a4c', '#1f7a8c', '#6a4c93', '#d14d8b', '#3b6fb6'];
+const HAIR = ['#2a2220', '#3b2a1e', '#1c1c1c', '#4a3020'];
+let kids = [], hands = [], trails = [], state = null;
+const handMat = new THREE.MeshStandardMaterial({ color: '#f1c8a0', roughness: .6 });
+const glowMat = new THREE.MeshBasicMaterial({ color: '#ffe066' });
+
+function makeKid(i, shirt) {
+  const holder = new THREE.Group(); world.add(holder);
+  const P = person(holder, { shirt, pants: '#2c3e66', hair: HAIR[i % 4], long: i % 3 === 1, scale: 1.3 });
+  P.armL.rotation.z = -.55; P.armR.rotation.z = .55;
+  const ring = new THREE.Mesh(new THREE.RingGeometry(.42, .55, 40), new THREE.MeshBasicMaterial({ color: '#ffd34d', transparent: true, opacity: .95, side: THREE.DoubleSide }));
+  ring.rotation.x = -Math.PI / 2; ring.position.y = .05; ring.visible = false; holder.add(ring);
+  const glow = new THREE.Mesh(new THREE.SphereGeometry(.22, 20, 14), glowMat); glow.position.y = .5; glow.visible = false; holder.add(glow);
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex(), color: '#ffd34d', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); halo.scale.set(1.6, 1.6, 1); halo.position.y = .5; halo.visible = false; holder.add(halo);
+  return { holder, P, ring, glow, halo, phase: Math.random() * 6 };
+}
+let _halo; function haloTex() { if (_halo) return _halo; const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'); const g = x.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(255,240,180,1)'); g.addColorStop(.35, 'rgba(255,210,80,.5)'); g.addColorStop(1, 'rgba(255,200,60,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); return _halo = new THREE.CanvasTexture(c); }
+
+// ---------- 五個場景 ----------
+const VR = 1.5, NS = 1.8;   // 馬路速度、沙灘慢幾倍
+const SCENES = [
+  { name: '① 沙灘走得慢', build() {
+      const sand = new THREE.Mesh(new THREE.PlaneGeometry(26, 3.2), sandMat); sand.rotation.x = -Math.PI / 2; sand.position.set(6, .02, 1.7); sand.receiveShadow = true; world.add(sand);
+      return { sdf: (x, z) => (z > .1 && z < 3.3) ? -1 : 1, h: () => 0, area: [-2, 14, -3.4, 3.6], hands: false,
+        kids: [{ x: -1, z: -1.6 }, { x: -1, z: 1.7 }], dir: [1, 0], until: 7.2,
+        labels: [['馬路', 3, -3.1], ['沙灘', 3, 3.25]], sandName: '沙灘', glassName: '玻璃・水', airName: '空氣',
+        caps: [[0, '一起出發！', '上面走馬路，下面走沙灘'], [2.6, '誰走得比較遠？', ''], [6.2, '馬路<b>走得快</b>，沙灘<b>走得慢</b>', '光也一樣：在玻璃、水裡面，光會變慢']],
+        lightCap: ['光在空氣裡跑得快，在玻璃裡<b>變慢</b>', '黃色的光：上面在空氣、下面在玻璃'] }; } },
+  { name: '② 斜斜走進沙灘', build() {
+      const B0 = [1.2, -4.5], B1 = [10.2, 4.5]; const bd = [B1[0] - B0[0], B1[1] - B0[1]], bl = Math.hypot(...bd), n = [bd[1] / bl, -bd[0] / bl];
+      const sdf = (x, z) => -((x - B0[0]) * n[0] + (z - B0[1]) * n[1]);
+      const sh = new THREE.Shape([new THREE.Vector2(B0[0], -B0[1]), new THREE.Vector2(30, 4.5), new THREE.Vector2(30, -4.5), new THREE.Vector2(B1[0], -B1[1])]);
+      const sand = new THREE.Mesh(new THREE.ShapeGeometry(sh), sandMat2); sand.rotation.x = -Math.PI / 2; sand.position.y = .02; sand.receiveShadow = true; world.add(sand);
+      return { sdf, h: () => 0, area: [-3, 15, -4.4, 4.4], hands: true, kids: [-2, -1, 0, 1, 2].map(k => ({ x: -2.4, z: k * 1.1 })), dir: [1, 0], until: 10.5,
+        labels: [['馬路', -2, -4], ['沙灘', 11, -4]], sandName: '沙灘', glassName: '玻璃', airName: '空氣',
+        caps: [[0, '一排同學，手牽手', '沙灘的邊，是斜斜的']], ev: true,
+        lightCap: ['光碰到玻璃，也是<b>「折一下」換方向</b>', '先碰到玻璃的光先變慢'] }; } },
+  { name: '③ 中間厚', build() {
+      const sdf = convex(4.0, 0, 9, 2.0), h = heightFn(sdf, 2.5, 5.5, -4.2, 4.2, .8);
+      world.add(pileMesh(h, 2.5, 5.5, -4.2, 4.2));
+      return { sdf, h, area: [-3, 13.5, -4.5, 4.5], hands: true, kids: [-3, -2, -1, 0, 1, 2, 3].map(k => ({ x: -1.8, z: k * .75 })), dir: [1, 0], focusStop: true,
+        labels: [['沙堆：中間最厚', 4.0, -4.6]], sandName: '沙堆', glassName: '凸透鏡', airName: '空氣', ev: 'convex',
+        caps: [[0, '沙堆：<b>中間最厚</b>', '一排同學直直走過去']],
+        lightCap: ['光也是這樣：<b>聚到焦點</b>', '中間厚＝凸透鏡（放大鏡）'] }; } },
+  { name: '④ 中間薄', build() {
+      const sdf = concave(4.0, 0, 9, .4, 3.2), h = heightFn(sdf, 2, 6, -3.3, 3.3, .8);
+      world.add(pileMesh(h, 2, 6, -3.3, 3.3));
+      return { sdf, h, area: [-3, 13.5, -4.8, 4.8], hands: true, kids: [-3, -2, -1, 0, 1, 2, 3].map(k => ({ x: -1.8, z: k * .75 })), dir: [1, 0], until: 11, edgeStop: 4.9,
+        labels: [['兩邊厚、中間薄', 4.0, -3.9]], sandName: '沙', glassName: '凹透鏡', airName: '空氣', ev: 'concave',
+        caps: [[0, '這次：<b>兩邊厚</b>、中間薄', '一排同學直直走過去']],
+        lightCap: ['光也是這樣：<b>散開</b>', '中間薄＝凹透鏡（近視眼鏡、貓眼）'] }; } },
+  { name: '⑤ 倒過來', build() {
+      const sdf = convex(2.6, 0, 5.5, 1.6), h = heightFn(sdf, 1.5, 3.7, -3.1, 3.1, .8);
+      world.add(pileMesh(h, 1.5, 3.7, -3.1, 3.1));
+      return { sdf, h, area: [-3, 13, -3.8, 3.8], hands: true, kids: [-2, -1, 0, 1, 2].map(k => ({ x: -2, z: k * .9 })), dir: [1, 0], until: 13, edgeStop: 3.6,
+        colors: ['#c8372d', '#f2f2f2', '#f2f2f2', '#f2f2f2', '#1f5fa8'], labels: [], sandName: '沙堆', glassName: '凸透鏡', airName: '空氣', ev: 'flip',
+        caps: [[0, '<b style="color:#c8372d">紅色</b>在上面，<b style="color:#1f5fa8">藍色</b>在下面', '走過沙堆，會怎樣？']],
+        lightCap: ['光也交叉了 → 景色<b>倒過來</b>', '放大鏡拿遠一點，白紙上的景色倒過來'] }; } },
+];
+
+// ---------- 建立場景 ----------
+let cur = 0, light = false, playing = false, t = 0, S = null, star = null, arrows = [], focusX = null, koKo = null;
+const $ = id => document.getElementById(id);
+function clearWorld() { while (world.children.length) { const o = world.children.pop(); o.traverse?.(m => { m.geometry?.dispose?.(); }); } kids = []; hands = []; trails = []; arrows = []; star = null; }
+function load(i, lightMode = false) {
+  cur = i; light = lightMode; clearWorld(); t = 0; playing = false;
+  S = SCENES[i].build();
+  const cols = S.colors || SHIRTS;
+  S.kids.forEach((k, j) => { const K = makeKid(j, cols[j % cols.length]); Object.assign(K, { x: k.x, z: k.z, d: [...S.dir], in: S.sdf(k.x, k.z) < 0, path: [[k.x, k.z]], done: false }); kids.push(K); });
+  if (S.hands) for (let j = 0; j < kids.length - 1; j++) { const m = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, 1, 10), handMat); m.castShadow = true; world.add(m); hands.push(m); }
+  S.labels.forEach(([txt, x, z]) => { if (light) txt = txt === '馬路' ? '空氣' : txt === '沙灘' ? '玻璃' : S.glassName; const l = label(txt, '#1f2a37'); l.position.set(x, .9, z); world.add(l); });
+  // 光模式
+  ground.material = light ? darkMat : roadMat;
+  world.traverse(o => { if (o.isMesh && (o.material === sandMat || o.material === sandMat2)) { o.material = light ? glassMat : o.material; if (light && o.geometry.type === 'PlaneGeometry' && S.h !== undefined) mirrorGlass(o); } });
+  kids.forEach(K => { K.P.g.visible = !light; K.glow.visible = K.halo.visible = light; });
+  if (light) kids.forEach((K, j) => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(3 * 4000), 3)); g.setDrawRange(0, 0);
+    const ln = new THREE.Line(g, new THREE.LineBasicMaterial({ color: (S.colors && j === 0) ? '#ff5a4a' : (S.colors && j === kids.length - 1) ? '#5aa0ff' : '#ffd34d' })); ln.frustumCulled = false; world.add(ln); trails.push({ ln, n: 0 }); });
+  if (light && S.colors) { kids[0].glow.material = new THREE.MeshBasicMaterial({ color: '#ff5a4a' }); kids[kids.length - 1].glow.material = new THREE.MeshBasicMaterial({ color: '#5aa0ff' }); }
+  hands.forEach(h => h.visible = !light);
+  // 焦點
+  focusX = null;
+  if (S.ev === 'convex' || S.ev === 'flip') focusX = findFocus();
+  // 光光偵探
+  if (!light) { const kg = new THREE.Group(); world.add(kg); koKo = koko(kg); kg.position.set(S.area[0] + .4, 0, S.area[3] - .1); kg.rotation.y = .5; kg.scale.setScalar(1.3); } else koKo = null;
+  sync(0); fit(); setCap(...(light ? S.lightCap : S.caps[0].slice(1)));
+  $('go').textContent = '▶ 走！'; $('go').disabled = false;
+  $('lt').textContent = light ? '🚶 換回同學' : '✨ 換成光';
+  [...$('tabs').children].forEach((b, j) => b.classList.toggle('on', j === i));
+  $('legend').innerHTML = light ? `<div><i style="background:#ffd34d"></i>光</div><div><i style="background:#bfe6f5;border:2px solid #2a7fb8"></i>${S.glassName}</div><div><i style="background:#16202c"></i>${S.airName}</div>`
+    : `<div><i style="background:#e4572e"></i>同學 ＝ 光</div><div><i style="background:#e3c58c"></i>${S.sandName}（走得慢）＝ 玻璃</div><div><i style="background:#7d8288"></i>馬路（走得快）＝ 空氣</div>`;
+  S.capIdx = 1; S.flags = {};
+}
+function mirrorGlass(o) { // 玻璃：上下對稱的透鏡（把沙堆鏡射一份到地面下方看起來像整塊玻璃）
+  o.position.y = .01;
+}
+function findFocus() { // 用模擬算焦點（靠近中心那位同學的路線與中線的交點）
+  const sim = { x: S.kids[0].x, z: S.kids[Math.floor(S.kids.length / 2) - 1].z, d: [...S.dir], in: false };
+  for (let i = 0; i < 6000; i++) { step(sim, .01); if (sim.x > 2 && !sim.in && sim.d[1] !== 0 && Math.sign(sim.z) !== Math.sign(S.kids[Math.floor(S.kids.length / 2) - 1].z) ) return sim.x; }
+  return null;
+}
+function step(K, dt) {
+  const v = K.in ? VR / NS : VR; const nx = K.x + K.d[0] * v * dt, nz = K.z + K.d[1] * v * dt; const now = S.sdf(nx, nz) < 0;
+  if (now !== K.in) {
+    const e = 1e-4; let gx = S.sdf(nx + e, nz) - S.sdf(nx - e, nz), gz = S.sdf(nx, nz + e) - S.sdf(nx, nz - e); const gl = Math.hypot(gx, gz) || 1; gx /= gl; gz /= gl;
+    let N = [gx, gz]; if (K.d[0] * N[0] + K.d[1] * N[1] > 0) N = [-N[0], -N[1]];
+    const eta = K.in ? NS : 1 / NS; const ci = -(K.d[0] * N[0] + K.d[1] * N[1]); const k = 1 - eta * eta * (1 - ci * ci);
+    if (k >= 0) { const a = eta * ci - Math.sqrt(k); const d = [eta * K.d[0] + a * N[0], eta * K.d[1] + a * N[1]]; const l = Math.hypot(...d); K.d = [d[0] / l, d[1] / l]; K.in = now; K.path?.push([K.x, K.z]); }
+    else { K.d = [K.d[0] + 2 * ci * N[0], K.d[1] + 2 * ci * N[1]]; return; }
+  }
+  K.x = nx; K.z = nz;
+}
+const tmpA = new THREE.Vector3(), tmpB = new THREE.Vector3();
+function sync(dt) {
+  kids.forEach((K, j) => {
+    const y = S.h(K.x, K.z); K.holder.position.set(K.x, y, K.z); K.holder.rotation.y = Math.atan2(K.d[0], K.d[1]);
+    if (playing && !K.done) { K.phase += dt * (K.in ? 5 : 9); walkPose(K.P, K.phase, K.in ? .35 : .55); }
+    if (light && trails[j]) { const tr = trails[j]; if (tr.n < 4000) { tr.ln.geometry.attributes.position.setXYZ(tr.n, K.x, y + .5, K.z); tr.n++; tr.ln.geometry.setDrawRange(0, tr.n); tr.ln.geometry.attributes.position.needsUpdate = true; } }
+  });
+  hands.forEach((m, j) => { const A = kids[j], B = kids[j + 1]; tmpA.set(A.x, S.h(A.x, A.z) + .78, A.z); tmpB.set(B.x, S.h(B.x, B.z) + .78, B.z);
+    const L = tmpA.distanceTo(tmpB); m.position.copy(tmpA).add(tmpB).multiplyScalar(.5); m.scale.set(1.3, Math.max(.01, L - .62), 1.3); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tmpB.sub(tmpA).normalize()); m.visible = !light && L < 2.4; });
+}
+function fit() {
+  const [x0, x1, z0, z1] = S.area; const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2; const w = x1 - x0, d = z1 - z0;
+  const asp = innerWidth / innerHeight; const vf = THREE.MathUtils.degToRad(camera.fov);
+  const distW = (w / 2) / Math.tan(vf / 2) / asp, distD = (d / 2 + 2.2) / Math.tan(vf / 2);
+  const dist = Math.max(distW, distD) * 1.0 + 1.5;
+  const tilt = THREE.MathUtils.degToRad(58);
+  camera.position.set(cx, Math.sin(tilt) * dist, cz + Math.cos(tilt) * dist); camera.lookAt(cx, 0, cz - .9);
+  sun.target.position.set(cx, 0, cz); sun.position.set(cx - 6, 14, cz + 8);
+}
+function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); if (S) fit(); }
+addEventListener('resize', resize); resize();
+
+// ---------- 字幕與音效 ----------
+let ac; function ding(f = 880) { try { ac = ac || new AudioContext(); const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; o.type = 'sine'; g.gain.setValueAtTime(.0001, ac.currentTime); g.gain.exponentialRampToValueAtTime(.18, ac.currentTime + .02); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + .5); o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime + .55); } catch (e) {} }
+function setCap(tx, sx = '', snd = false) { $('capT').innerHTML = tx; $('capS').innerHTML = sx; if (snd) { ding(); const c = $('cap'); c.classList.add('pop'); setTimeout(() => c.classList.remove('pop'), 260); } }
+
+function addStar(x) {
+  const g = new THREE.Group(); const pts = []; for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i / 10 * Math.PI * 2, r = i % 2 ? .22 : .5; pts.push(new THREE.Vector2(Math.cos(a) * r, Math.sin(a) * r)); }
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(new THREE.Shape(pts), { depth: .12, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: '#ff3b30' }));
+  m.rotation.x = -Math.PI / 2; m.position.y = .08; g.add(m); const l = label('焦點', '#c8372d'); l.position.set(0, 1.0, -.9); g.add(l); g.position.set(x, 0, 0); world.add(g); star = g;
+}
+function addArrow(x, z, d, color) {
+  const g = new THREE.Group(); const L = 2.4;
+  const sh = new THREE.Mesh(new THREE.BoxGeometry(L, .06, .16), new THREE.MeshBasicMaterial({ color })); sh.position.x = L / 2; g.add(sh);
+  const hd = new THREE.Mesh(new THREE.ConeGeometry(.32, .6, 3), new THREE.MeshBasicMaterial({ color })); hd.rotation.z = -Math.PI / 2; hd.rotation.x = Math.PI / 2; hd.position.x = L + .2; g.add(hd);
+  g.position.set(x, .1, z); g.rotation.y = -Math.atan2(d[1], d[0]); world.add(g); arrows.push(g);
+}
+
+// ---------- 事件（什麼時候換字幕） ----------
+function events() {
+  const F = S.flags; const ins = kids.map(K => K.in);
+  if (light) { if (!F.l && kids.every(K => K.done || K.x > S.area[1] - 1)) { F.l = 1; } return; }
+  if (S.caps && S.capIdx < S.caps.length && t >= S.caps[S.capIdx][0]) { const c = S.caps[S.capIdx++]; setCap(c[1], c[2], true); }
+  if (S.ev === true) {
+    const first = kids.findIndex(K => K.in);
+    if (!F.a && first >= 0) { F.a = 1; kids[first].ring.visible = true; setCap(`他<b>先踩到沙</b> → 先變慢！`, '旁邊的同學還在馬路上，走得快', true); }
+    if (!F.b && ins.every(Boolean)) { F.b = 1; kids.forEach(K => K.ring.visible = false); setCap('整排，<b>換方向</b>了！', '這就是光在玻璃、水面「折一下」', true); addArrow(kids[2].x + 1.0, kids[4].z + 1.3, kids[2].d, '#c8372d'); addArrow(-2.6, 3.2, [1, 0], '#1f2a37'); }
+  }
+  if (S.ev === 'convex') {
+    const mid = kids[3];
+    if (!F.a && kids.some(K => K.in)) { F.a = 1; mid.ring.visible = true; setCap('中間的人：沙最厚，<b>走最久</b>', '兩邊的人，沙很薄，很快就出來', true); }
+    if (!F.b && kids.every(K => !K.in && K.x > 5)) { F.b = 1; mid.ring.visible = false; setCap('兩邊的人，都往<b>中間</b>走……', '', true); }
+    if (!F.c && focusX && mid.x > focusX - .25) { F.c = 1; addStar(focusX); setCap('大家走到<b>同一點</b>：焦點 ★', '中間厚＝凸透鏡（放大鏡）', true); }
+  }
+  if (S.ev === 'concave') {
+    if (!F.a && kids[0].in) { F.a = 1; kids[0].ring.visible = kids[6].ring.visible = true; setCap('兩邊的人：沙最厚，<b>走最久</b>', '中間的人很快就過去了', true); }
+    if (!F.b && kids.every(K => !K.in && K.x > 6.2)) { F.b = 1; kids[0].ring.visible = kids[6].ring.visible = false; setCap('大家<b>散開</b>了！', '中間薄＝凹透鏡（近視眼鏡、貓眼）', true); }
+  }
+  if (S.ev === 'flip') {
+    if (!F.a && focusX && kids[2].x > focusX - .3) { F.a = 1; addStar(focusX); setCap('走到焦點……<b>交叉</b>！', '', true); }
+    if (!F.b && kids[0].z > kids[4].z + 1.2) { F.b = 1; kids[0].ring.visible = kids[4].ring.visible = true; setCap('<b style="color:#c8372d">紅色</b>跑到下面了！<b>倒過來！</b>', '所以放大鏡拿遠一點，白紙上的景色會倒過來', true); }
+  }
+}
+function finished() {
+  if (S.until && t >= S.until) return true;
+  if (S.focusStop && focusX && kids[3].x > focusX + .6) return true;
+  if (S.edgeStop && kids.some(K => Math.abs(K.z) > S.edgeStop)) return true;
+  return kids.every(K => K.x > S.area[1] + 1);
+}
+
+// ---------- 迴圈 ----------
+const clock = new THREE.Clock();
+function loop() {
+  requestAnimationFrame(loop);
+  let dt = Math.min(clock.getDelta(), .05) * (window.__dtScale || 1);
+  if (playing) {
+    const sub = Math.ceil(dt / .01); for (let s = 0; s < sub; s++) { kids.forEach(K => step(K, dt / sub)); t += dt / sub; events(); if (finished() || (window.__pauseAt && t >= window.__pauseAt)) { playing = false; break; } }
+    if (!playing) { $('go').textContent = '↺ 再走一次'; $('go').disabled = false; if (light) setCap(...S.lightCap, true); kids.forEach(K => walkPose(K.P, 0, 0)); }
+  }
+  sync(dt);
+  if (star) star.children[0].rotation.z += dt * 1.5;
+  if (koKo) koKo.g.position.y = Math.abs(Math.sin(performance.now() / 400)) * .12;
+  kids.forEach(K => { if (K.ring.visible) K.ring.scale.setScalar(1 + Math.sin(performance.now() / 160) * .08); if (light) K.halo.material.opacity = .75 + Math.sin(performance.now() / 200 + K.phase) * .2; });
+  renderer.render(scene, camera);
+}
+
+// ---------- 按鈕 ----------
+SCENES.forEach((s, i) => { const b = document.createElement('button'); b.className = 'tab'; b.textContent = s.name; b.onclick = () => load(i); $('tabs').appendChild(b); });
+$('go').onclick = () => { if (!playing && t > 0) load(cur, light); playing = true; $('go').textContent = '走路中…'; $('go').disabled = true; clock.getDelta(); };
+$('lt').onclick = () => load(cur, !light);
+$('nx').onclick = () => load((cur + 1) % SCENES.length);
+const start = Math.max(0, Math.min(SCENES.length - 1, (parseInt(location.hash.slice(1)) || 1) - 1));
+load(start);
+loop();
+window.__walk = { load, play: () => $('go').click(), get t() { return t; }, get playing() { return playing; } };
+</script>
+</body>
+</html>
