@@ -53,7 +53,7 @@
 - 10/2（五）甲班、乙班：只上到吸管實驗（R1 前半）。
 - 10/4 完成：光之呼吸站換真實照片（Gamma 生成 6 張）＋真實質感音效＋海浪背景音；所有 Word 學習單修復（結構損毀）並附 PDF；光之環島列車真實地形台灣地圖、每關加提示、熱氣球「開紅燈看看」、修正紫色科學錯誤；光之列車闖關加提示。
 - 已完成並上線：事件簿、新聞台 3D 版、兩者的列印講義、折射 PPT 第2節／第3節（動畫＋超連結，待老師用 PowerPoint 實測）、導覽整理（返回／主選單）、MV 新歌、實驗室站號 1–6、主選單改格子、全站「轉彎」改「折一下」。
-- **10/16（五）老師請喪假，代課**：代課包放在**老師的體育網域** `hccadaptive.com/f8f9fc3bd1/`（repo `classtools1020/sports-results` 的 `f8f9fc3bd1/` 資料夾），**網址與內容完全不出現 classtools**（老師不希望同事發現本站）。整包自給自足：遊戲、MV、事件簿、透鏡實驗室、照片、音效都複製進去、路徑全改相對；專用 `games/fx.js` 永遠代課模式（只有「⬅ 回代課包」）、每頁浮水印「© 曾瓊瑩老師原創教材・僅供 2026/10/16 代課使用・請勿轉傳」、10/17 00:00 起自動顯示已下架、所有頁 `noindex`。通關碼另給（不寫在任何公開頁）。已排程 10/17 09:00 提醒刪除 `sports-results/f8f9fc3bd1/`。打包程式在 scratchpad `subpack/build.py`。classtools 上的舊版 `s/6e4deddfed/` 已刪除。hccadaptive.com 是縣賽成績網站，**別動它的其他檔案**。
+- **10/16（五）老師請喪假，代課**：代課包（只列①②③步驟，不要說明文字、不要心情打卡）放在**老師的體育網域** `hccadaptive.com/f8f9fc3bd1/`（repo `classtools1020/sports-results` 的 `f8f9fc3bd1/` 資料夾），**網址與內容完全不出現 classtools**（老師不希望同事發現本站）。整包自給自足：遊戲、MV、事件簿、透鏡實驗室、照片、音效都複製進去、路徑全改相對；專用 `games/fx.js` 永遠代課模式（只有「⬅ 回代課包」）、每頁浮水印「© 曾瓊瑩老師原創教材・僅供 2026/10/16 代課使用・請勿轉傳」、10/16 16:00 起自動顯示已下架、所有頁 `noindex`。通關碼另給（不寫在任何公開頁）。已排程 10/16 16:01 自動刪除 `sports-results/f8f9fc3bd1/`。打包程式在 scratchpad `subpack/build.py`。classtools 上的舊版 `s/6e4deddfed/` 已刪除。hccadaptive.com 是縣賽成績網站，**別動它的其他檔案**。
 - 課表（`light/data.js` 的 SCHED）：
   - 10/5（一）甲 第7節：R2 硬幣浮上來了
   - 10/7（三）乙 第4節：R2；甲 第7節：R3 動手做＋生活結案
@@ -66,7 +66,7 @@
 - [ ] 老師用 NotebookLM 依來源文件產出第 2、3 節投影片（可印講義）。
 - [ ] 透鏡 L1（10/12）的 Gamma 簡報改成事件簿風格（真實照片＋光光偵探）。
 - [ ] 選做：MV 裡加入光光偵探探險動作（老師有興趣，尚未開工）。
-- [ ] 10/17：刪除 hccadaptive.com 代課包（sports-results/f8f9fc3bd1/）。
+- [ ] 10/16 16:01：刪除 hccadaptive.com 代課包（sports-results/f8f9fc3bd1/）。
 
 ## 本機預覽小技巧
 - 雲端容器連不到 github.io；在 repo 外建一個資料夾，用 symlink 放 `light-refract`、`games`、`light`，再 `python3 -m http.server` 預覽。
