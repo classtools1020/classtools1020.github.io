@@ -5,3 +5,8 @@ games/img/breath/ball.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/
 games/img/breath/jar.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DB554B6iURkS9tUM0Co4h/Ag4uunL8NSKn8s46gFH6F.jpg
 games/img/breath/bowl.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/mWS6vXn5MwCNVGmrQeeJq/1sGTTXU29ad0Y2kW2BnCR.jpg
 games/img/breath/butterfly.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DN1hf1wGTcErvitWSLIhv/PFONXFJ47Rh-zQolwisol.jpg
+img/sub/drop-text.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/MLAQhe6DHmqOp7pdZt3nu/4qxlOgtG5nfI2Q3vox6Ie.jpg
+img/sub/treasure.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/AZbyd5lJl6fQYcThNoVS7/piyOdqfB69ovrArWd2hrw.jpg
+img/sub/draw.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/KMOxn1CTYSbIhST8UfxNx/8spH6vQ7v12Ig9kEpQ5gr.jpg
+img/sub/buzzer.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/g2gKDszD97DqWyogHY7Qa/fXeAZLlOoJ8yV9yWHxjDu.jpg
+img/sub/magnifier.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/3Nw2HHXDyYSdQy4QxqVwz/DU0UMGyWjr_E71jpAyB72.jpg
