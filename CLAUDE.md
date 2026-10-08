@@ -32,6 +32,10 @@
 - **折射環島搶答** `games/light-refract-quiz.html`：真實台灣地形圖＋小火車沿鐵路開、紅藍兩隊搶答佔站（插旗）、答錯換另一隊、提示鈕、全班一起答、結算明信片。紙張＋墨色風（不要螢光霓虹、不要滿版表情符號），觸控大按鈕，1366×768 一頁不捲動。
 - 共用：`games/fx.js`（音效、主選單按鈕、底部導覽列）、`games/checkin.html`（心情打卡／謝幕）
 
+## 上課簡報（新版，紙張＋墨色風）
+- 產生程式在 `tools/lessons/`：`kit.py`（共用元件：封面、流程頁、預測卡→打勾、證據照片＋光路線、句型小結、學習單預覽）、`lesson_l1.py`（10/12 透鏡第1節 → `light-lens/files/L1-lens.pptx`）、`lesson_r3.py`（10/14 折射第3節 → `light-refract/files/R3-refraction.pptx`）。
+- 每份第 2 頁是「流程」，點一列可跳頁或開網頁；每頁右上「流程」回去。老師不喜歡一兩行字的 Gamma 簡報。
+
 ## 全站通關碼
 - 每個 HTML 的 `<head>` 都有 `<script src="/gate.js"></script>`＋`noindex`；`robots.txt` 全站 Disallow。**新增頁面一定要加這兩行。**
 - `gate.js` 只存通關碼的 SHA-256；通關碼由老師自己保管，**不要寫進任何 repo 或 CLAUDE.md**（repo 是公開的）。
