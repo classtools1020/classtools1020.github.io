@@ -23,3 +23,9 @@ img/lesson/concave-laser.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anythi
 img/lesson/prism.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/O7bxGny3bJm60ZORVuMAP/6YBKrL6CewApm8d2lVeoC.jpg
 img/lesson/sand-row.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/Km0QmcqbEEHj7iUKkfeKG/yme6aDk2yZEqwqatRDhXa.jpg
 img/lesson/arrow-flip.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/5emz8YILvjdjG6BITfuCP/yRV4HHFFlBRJQz97IphcW.jpg
+img/review/sunfocus.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/2EsX4A73Yv0h6hEomVCKn/ItlqtpBarLBoOx7joYzhd.jpg
+img/review/ladybug.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/NHw1IeOP6pJNOqioYCMdX/KFDG6wU4ygGofSq9n5eXg.jpg
+img/review/peepview.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/bQy57X2iF6rYlrY2YC9PX/BcAA1y0ffU-VQtIZWyALK.jpg
+img/review/students.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/uOvXzvy7Ae00f5TdKdtah/nPhXRTl0z9anUbB-4_1U0.jpg
+img/review/projflip.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/JvqFrt7n6IGgMSXsVDYIq/9PmKN1FksyzOfDAFlaBuD.jpg
+img/review/kit.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/R2XjhCEZbb1E0vs0W2HN0/wkcmjTacqlzaXlo6mPKAY.jpg
