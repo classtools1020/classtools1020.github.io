@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1a2b">
+<title>光線小鎮・光線特勤隊</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#0b1a2b;font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;color:#fff;-webkit-user-select:none;user-select:none}
+  #stage{position:fixed;inset:0}
+  #stage canvas{width:100%;height:100%;display:block;touch-action:none}
+  .hide{display:none!important}
+  .fixbtn{position:fixed;top:12px;z-index:40;background:rgba(10,24,40,.85);border:2px solid #42e0c8;color:#42e0c8;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.4);cursor:pointer;font-family:inherit}
+  .fixbtn.l{left:12px} .fixbtn.r{right:12px} .fixbtn.m{left:50%;transform:translateX(-50%);border-color:#ffd84a;color:#ffd84a;display:none}
+  /* 集章卡 */
+  #stamps{position:fixed;top:60px;left:12px;z-index:30;display:flex;gap:8px;align-items:center;background:rgba(10,24,40,.78);padding:8px 12px;border-radius:18px;border:2px solid rgba(255,216,74,.6);backdrop-filter:blur(4px)}
+  #stamps .stitle{font-weight:900;color:#ffd84a;font-size:15px;margin-right:4px;white-space:nowrap}
+  .stamp{width:58px;height:58px;border-radius:50%;border:3px dashed rgba(255,255,255,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;line-height:1}
+  .stamp span{font-size:22px;font-weight:900}.stamp small{font-size:10px;font-weight:700;opacity:.85;margin-top:2px;white-space:nowrap}
+  .stamp.on{border:3px solid #ffd84a;background:radial-gradient(#fff3b0,#ffcc33);color:#5a3416;animation:stampIn .5s}
+  .stamp.cur{border-color:#42e0c8;box-shadow:0 0 0 4px rgba(66,224,200,.25)}
+  @keyframes stampIn{0%{transform:scale(2) rotate(-20deg);opacity:0}70%{transform:scale(.9)}100%{transform:scale(1)}}
+  /* 下一站 */
+  #next{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:30;font:900 24px inherit;font-family:inherit;padding:14px 30px;border:none;border-radius:999px;background:linear-gradient(180deg,#ffe27a,#ffb400);color:#3a2300;box-shadow:0 6px 0 #c9860f,0 10px 24px rgba(0,0,0,.4);cursor:pointer;animation:bob 2s infinite}
+  @keyframes bob{50%{transform:translateX(-50%) translateY(-4px)}}
+  /* 移動按鈕 */
+  #pad{position:fixed;left:16px;bottom:16px;z-index:25;display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(2,58px);gap:6px}
+  #pad button{border:none;border-radius:16px;background:rgba(10,24,40,.7);color:#fff;font-size:26px;cursor:pointer;border:2px solid rgba(255,255,255,.3);touch-action:none}
+  #mvF{grid-column:2;grid-row:1}#mvL{grid-column:1;grid-row:2}#mvB{grid-column:2;grid-row:2}#mvR{grid-column:3;grid-row:2}
+  /* 任務面板 */
+  #panel{position:fixed;right:84px;bottom:16px;z-index:35;width:min(470px,calc(100vw - 100px));background:rgba(8,20,34,.92);border:3px solid #ffd84a;border-radius:22px;padding:16px 18px;box-shadow:0 12px 30px rgba(0,0,0,.5);backdrop-filter:blur(6px);max-height:calc(100vh - 130px);overflow:auto}
+  .ptag{color:#42e0c8;font-weight:900;font-size:14px;letter-spacing:.1em}
+  .ptitle{font-size:28px;font-weight:900;margin:2px 0 6px}
+  .pq{font-size:22px;font-weight:700;line-height:1.5}
+  .phint{font-size:16px;color:#ffe08a;font-weight:700;margin-top:6px;min-height:0}
+  .prow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .pbtn{flex:1 1 auto;min-width:120px;font:900 19px inherit;font-family:inherit;padding:12px 14px;border:none;border-radius:14px;background:#1f4a73;color:#fff;cursor:pointer;box-shadow:0 4px 0 #0f2b45}
+  .pbtn:active{transform:translateY(2px);box-shadow:0 2px 0 #0f2b45}
+  .pbtn.act{background:linear-gradient(180deg,#42e0c8,#1fbfa8);color:#04302a;box-shadow:0 4px 0 #14907f}
+  .pbtn.opt{background:#fff;color:#123;box-shadow:0 4px 0 #9db}
+  .pbtn.go{background:linear-gradient(180deg,#ffe27a,#ffb400);color:#3a2300;box-shadow:0 4px 0 #c9860f;font-size:22px}
+  .pbtn.sel{outline:4px solid #ffd84a}
+  .pbtn.wrong{background:#6b2b3b;color:#ffd0d8}
+  .pans{margin-top:12px;background:linear-gradient(180deg,#fff7d6,#ffe9a0);color:#3a2300;border-radius:16px;padding:12px 14px;font-size:21px;font-weight:900;line-height:1.5}
+  .pans.pop{animation:pop .45s}
+  @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1)}}
+  #toast{position:fixed;top:140px;left:50%;transform:translate(-50%,-20px);z-index:45;background:rgba(8,20,34,.92);border:2px solid #42e0c8;border-radius:16px;padding:12px 20px;font-size:20px;font-weight:900;opacity:0;transition:.3s;pointer-events:none;max-width:90vw;text-align:center}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  /* 開始畫面 */
+  #start{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:linear-gradient(180deg,rgba(8,20,34,.35),rgba(8,20,34,.85));text-align:center;padding:20px}
+  #start h1{font-size:min(12vw,84px);margin:0;letter-spacing:.06em;text-shadow:0 6px 24px rgba(0,0,0,.6)}
+  #start .sub{font-size:22px;font-weight:900;color:#ffd84a;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+  .routes{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .rcard{width:280px;border:none;border-radius:22px;padding:18px;cursor:pointer;font-family:inherit;text-align:left;color:#08131f;box-shadow:0 8px 0 rgba(0,0,0,.25),0 14px 30px rgba(0,0,0,.4);transition:transform .15s}
+  .rcard:hover{transform:translateY(-4px)}
+  .rcard .ri{font-size:44px}.rcard .rt{font-size:26px;font-weight:900;margin-top:4px}.rcard .rd{font-size:15px;font-weight:700;margin-top:6px;line-height:1.5}
+  .rcard.lens{background:linear-gradient(160deg,#bfe9ff,#6cc4ff)}.rcard.refract{background:linear-gradient(160deg,#c9fff1,#4fe0c0)}.rcard.walk{background:linear-gradient(160deg,#fff4c2,#ffd166);width:200px}
+  .rcard.pre{outline:5px solid #ffd84a;outline-offset:4px}
+  #finale{position:fixed;inset:0;z-index:55;display:flex;align-items:center;justify-content:center;background:rgba(8,20,34,.55)}
+  #finale .box{background:linear-gradient(180deg,#fff7d6,#ffe9a0);color:#3a2300;border-radius:26px;padding:26px 30px;max-width:640px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+  #finale h2{font-size:44px;margin:0 0 8px}#finale .fl{font-size:21px;font-weight:800;line-height:1.7;text-align:left}
+  #finale button{margin-top:14px;font:900 22px inherit;font-family:inherit;padding:12px 26px;border:none;border-radius:999px;background:#1f4a73;color:#fff;cursor:pointer}
+  #fade{position:fixed;inset:0;z-index:48;background:#05101f;opacity:0;pointer-events:none;transition:opacity .35s}#fade.on{opacity:1}
+  #loading{position:fixed;inset:0;z-index:60;background:#0b1a2b;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#ffd84a}
+  @media(max-width:760px){#stamps{top:56px;transform:scale(.8);transform-origin:left top}#pad{transform:scale(.85);transform-origin:left bottom}#next{font-size:19px;bottom:90px}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<a class="fixbtn l" href="/light/" onclick="if(history.length>1){history.back();return false;}">⬅ 返回</a>
+<a class="fixbtn r" href="/light/">🗂️ 主選單</a>
+<button class="fixbtn" id="menuBtn" style="right:12px;top:60px;border-color:#ffd84a;color:#ffd84a;font-size:14px">🧭 換路線</button>
+<div id="stamps" class="hide"></div>
+<button id="next" class="hide"></button>
+<div id="pad"><button id="mvF" aria-label="前進">▲</button><button id="mvL" aria-label="左轉">◀</button><button id="mvB" aria-label="後退">▼</button><button id="mvR" aria-label="右轉">▶</button></div>
+<div id="panel" class="hide"></div>
+<div id="toast"></div>
+<div id="fade"></div>
+<div id="start">
+  <h1>光線小鎮</h1>
+  <div class="sub">跟光光偵探在竹東街上走一圈，找出光的祕密</div>
+  <div class="routes">
+    <button class="rcard lens" data-route="lens"><div class="ri">🔍</div><div class="rt">透鏡任務</div><div class="rd">眼鏡行・教室投影・操場聚光・貓眼・一滴水<br>中間厚、中間薄，看起來差在哪？</div></button>
+    <button class="rcard refract" data-route="refract"><div class="ri">💧</div><div class="rt">折射任務</div><div class="rd">手搖飲・土地公廟・游泳池・竹東溪・一滴水<br>光在水面折一下，眼睛被騙了嗎？</div></button>
+    <button class="rcard walk" data-route=""><div class="ri">🚶</div><div class="rt">自由散步</div><div class="rd">用方向鍵或點地板走路</div></button>
+  </div>
+</div>
+<div id="finale" class="hide"><div class="box"><h2>🏆 結案！</h2><div class="fl"></div><button>繼續逛小鎮</button></div></div>
+<div id="loading">光線小鎮建造中…</div>
+<script src="../games/fx.js"></script>
+<script type="module">
+  try { const T='光線小鎮竹東車站內灣線阿德機車行光光眼鏡驗光配鏡老花近視手搖飲茶商店早餐蛋餅明公寓老張牛肉麵大眾藥局福利雜貨華文具小美髮廊國中德祠溪慢珍珠奶冬瓜檸檬乾貢丸湯水深游泳池視力表'; await Promise.race([Promise.all(['900','700'].map(w=>document.fonts.load(w+' 40px "Noto Sans TC"',T))),new Promise(r=>setTimeout(r,2500))]); } catch (e) {}
+  await import('./main.js');
+  document.getElementById('loading').remove();
+</script>
+</body>
+</html>

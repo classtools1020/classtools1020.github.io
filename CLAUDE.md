@@ -24,6 +24,11 @@
   - `index.html`（任務四首頁）已重做：只放現行教材＋列印下載，舊 Gamma／YouTube 已移除
   - `koko.js` 原創角色「光光偵探」（星星＋偵探帽＋放大鏡）
   - `files/折射_NotebookLM簡報來源.md`（雲端也有一份 Google 文件，給 NotebookLM 產簡報）
+- **光線小鎮 `light-town/`（3D 可走動的竹東街景，three.js r160 放在 `light-town/lib/`）**：`#lens` 透鏡任務 5 站（眼鏡行凸/凹、教室投影倒立、操場聚焦、公寓貓眼凹透鏡、公園一滴水）；`#refract` 折射任務 5 站（茶飲吸管、福德祠硬幣、游泳池腿變短、竹東溪撈魚＋真的 Snell 光路、一滴水）。
+  - `world.js` 街景（騎樓、鐵窗、水塔、機車、欒樹、電線桿、內灣線、竹東溪、光線國中）；靜態物件用 `mergeStatic` 依材質合併（4000→1200 draw calls）。
+  - `main.js` 玩家（光光偵探 3D）、鏡頭、導覽、集章卡、放大鏡疊圖（第二支相機→render target→圓形 shader）、慢電腦自動降畫質。
+  - `missions.js` 每站 `{stand, face, tp, build, enter, update, exit}`；水裡「看起來」用 `splitWater`（clipping plane 上下分開，水下那段 y 壓扁＝在水面折一下）。
+  - 測試：雲端 swiftshader 一格要 2–5 秒，截圖前設 `window.__dtScale=30`；`__town.startRoute('lens'); __town.goStop(i)` 直接跳站。
 - 共用：`games/fx.js`（音效、主選單按鈕、底部導覽列）、`games/checkin.html`（心情打卡／謝幕）
 
 ## 教學設計鐵則（老師的回饋累積）
@@ -66,8 +71,9 @@
   - 10/21（三）乙 第4節：L1 透鏡
 
 ## 下一步（待辦）
+- [ ] 老師用學校電腦實測光線小鎮（投影機＋觸控/滑鼠），看順不順。
 - [ ] 老師用 NotebookLM 依來源文件產出第 2、3 節投影片（可印講義）。
-- [ ] 透鏡 L1（10/12）的 Gamma 簡報改成事件簿風格（真實照片＋光光偵探）。
+- [x] 透鏡 L1（10/12）的 Gamma 簡報 → 換成光線小鎮透鏡任務。
 - [ ] 選做：MV 裡加入光光偵探探險動作（老師有興趣，尚未開工）。
 - [ ] 10/16 16:01：刪除 hccadaptive.com 代課包（sports-results/f8f9fc3bd1/）。
 
