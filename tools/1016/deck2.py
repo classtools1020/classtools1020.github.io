@@ -248,14 +248,14 @@ for i, (ic, a, b_) in enumerate(lv):
 T(sl, 6.22, 5.85, 6.4, .5, '⚠ 放大鏡不對著太陽、不對著別人的眼睛', 18, RED)
 button(sl, 6.2, 6.45, 3.0, '📄  尋寶單', PDF + 'treasure.pdf', h=.72, size=20)
 for g in lvs: A.add('click', [('fly', s.shape_id, {'dir': 'r', 'dur': 400}) for s in g])
-link_slide('甲班｜出勤', '光線特勤隊・\n出勤！', '紅隊、藍隊輪流開特勤車去竹東辦案！先按「透鏡案件」。', CAP + 's_dispatch.png', '▶  出勤', B + 'games/light-dispatch.html', (0, .17, 0, 0))
+link_slide('甲班｜出勤', '光線特勤隊・\n出勤！', '按 ◀ ▶ 開特勤車撿光點，到現場轉一轉、點對的證據卡，還能抽夥伴卡！先按「透鏡案件」。', CAP + 's_dispatch.png', '▶  出勤', B + 'games/light-dispatch.html', (0, .17, 0, 0))
 frame_slide('甲班｜小結', [['放大鏡中間', '厚', '，'], ['讓光', '換方向', '，'], ['東西看起來', '變大', '。']])
 
 # ======================= 乙班 第 6 節 =======================
 sB = cover('乙班', '第 6 節　14:05–14:50', '光線特勤隊總複習', MV + 'train.jpg', ['MV〈折一下 Snap!〉', '光之環島列車', '光線特勤隊出勤'], '', rot=-2, goal='分辨反射和折射，說出光在水面折一下')
 link_slide('乙班｜暖身', 'MV\n〈折一下 Snap!〉', '唱到 Snap，全班一起彈指！', CAP + 's_mv.png', '▶  播放 MV', B + 'light-refract/mv.html', (.21, .07, .21, .35))
 link_slide('乙班｜光與顏色', '光之環島列車', '從台北出發，每一站答一題光的問題。卡住可以按「看提示」。', CAP + 's_train.png', '▶  出發', B + 'games/taiwan-train.html')
-link_slide('乙班｜出勤', '光線特勤隊・\n出勤！', '紅隊、藍隊輪流開特勤車去竹東辦案！先按「折射案件」。', CAP + 's_dispatch.png', '▶  出勤', B + 'games/light-dispatch.html', (0, .17, 0, 0))
+link_slide('乙班｜出勤', '光線特勤隊・\n出勤！', '按 ◀ ▶ 開特勤車撿光點，到現場轉一轉、點對的證據卡，還能抽夥伴卡！先按「折射案件」。', CAP + 's_dispatch.png', '▶  出勤', B + 'games/light-dispatch.html', (0, .17, 0, 0))
 frame_slide('乙班｜小結', [['光走', '直線', '，'], ['碰到水面', '折一下', '，'], ['再繼續直直走。']])
 
 # ======================= 乙班 第 7 節 =======================

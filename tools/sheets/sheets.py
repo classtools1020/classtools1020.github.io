@@ -197,12 +197,42 @@ treasure = page(head('g', '🔍', '尋寶', '放大鏡偵探', '放大鏡尋寶�
   foot('10/16 自然・放大鏡偵探'))
 open(f'{OUT}/treasure.html', 'w').write(doc('放大鏡尋寶單', [treasure]))
 
-# ================= 10/16 我看到的光（畫卡，一頁兩張） =================
-def half():
-    pk = ''.join(opt(img(p), l) for p, l in [('light-refract/mv/drop.jpg', '水滴'), ('light-refract/mv/magnifier.jpg', '放大鏡'), ('light-refract/mv/train.jpg', '環島列車'), ('light-refract/mv/straw.jpg', '吸管')])
-    return (f'<div class="half"><div class="head">🎨 我看到的光<span>姓名</span></div><div class="canvas">畫在這裡（也可以貼）</div>'
-            f'<div style="font-size:12.5pt;font-weight:900">今天最神奇的是？（可以勾很多個）</div><div class="pick">{pk}</div>'
-            f'<div class="mood">我的心情：<span class="chip">{BX}😄 開心</span><span class="chip">{BX}😮 好神奇</span><span class="chip">{BX}🤔 想再試</span></div></div>')
-draw = page(half() + '<div class="cut">✂ - - - - - - - - - - - - - 沿虛線剪開 - - - - - - - - - - - - -</div>' + half())
+# ================= 10/16 我看到的光（光線特勤隊・任務報告書） =================
+DCSS = """
+.step{display:flex;align-items:center;gap:2.5mm;font-size:14pt;font-weight:900;margin:2.5mm 0 2mm}
+.step .no{background:#2f8a4c}
+.p6{display:grid;grid-template-columns:repeat(3,1fr);gap:2.6mm}
+.p6 .op .pic{height:24mm}
+.low{display:grid;grid-template-columns:1.25fr 1fr;gap:5mm;flex:1;margin-top:1mm}
+.pola{position:relative;background:#fff;padding:5mm 5mm 15mm;box-shadow:0 1.2mm 4mm rgba(0,0,0,.28);transform:rotate(-1.6deg);margin:5mm 2mm 2mm;border:.3mm solid #e6e0d4}
+.pola .in{height:92mm;border:.5mm dashed #c9c1b2;background:repeating-linear-gradient(45deg,#fbfaf6 0 3mm,#f7f4ec 3mm 6mm);display:flex;align-items:center;justify-content:center;color:#b8ae9c;font-size:13pt;font-weight:800}
+.pola .cap{position:absolute;left:5mm;right:5mm;bottom:4mm;font-size:11pt;color:#9b927f;font-weight:800;text-align:center}
+.tape{position:absolute;width:26mm;height:8mm;background:rgba(255,214,102,.75);top:-4mm;box-shadow:0 .3mm 1mm rgba(0,0,0,.1)}
+.tape.l{left:8mm;transform:rotate(-8deg)}.tape.r{right:8mm;transform:rotate(7deg);background:rgba(140,200,240,.7)}
+.how3{display:flex;flex-direction:column;gap:2.4mm}
+.how3 .op{display:flex;align-items:center;gap:3mm;text-align:left;padding:1.6mm 2.5mm}
+.how3 .op .pic{width:22mm;height:16mm;margin:0;flex:none;font-size:22pt}
+.how3 .op .pic svg{height:14mm}
+.faces{display:flex;justify-content:space-between;gap:2mm}
+.face{flex:1;text-align:center;border:.45mm solid #d8cfbf;border-radius:3mm;background:#fff;padding:2mm 1mm}
+.face .e{font-size:28pt;line-height:1.1}
+.face .lab{font-size:11.5pt}
+.stamp{margin-top:auto;align-self:flex-end;width:30mm;height:30mm;border-radius:50%;border:.8mm dashed #c8372d;color:#c8372d;display:flex;align-items:center;justify-content:center;flex-direction:column;font-weight:900;font-size:12pt;transform:rotate(-8deg);opacity:.85}
+.stamp small{font-size:8.5pt;font-weight:800}
+"""
+CSS += DCSS
+SAW = [('light-refract/mv/drop.jpg', '水滴讓字變大'), ('light-refract/mv/magnifier.jpg', '放大鏡'), ('light-refract/mv/straw.jpg', '吸管像斷掉'),
+       ('light-refract/mv/coin.jpg', '硬幣浮上來'), ('light-refract/mv/aquarium.jpg', '圓魚缸'), ('light-refract/mv/laser.jpg', '光折一下')]
+HOWL = [(ray_svg(True), '光折一下、換方向'), (txt('光', 26), '東西變大'), ('<span style="display:inline-block;transform:rotate(180deg)">🌳</span>', '東西倒過來')]
+draw = page(head('g', '📋', '報告書', '光線特勤隊・任務報告', '🎨 我看到的光', '10/16') +
+  '<div class="step"><span class="no">1</span>今天我看到了什麼？（可以勾很多個）</div>'
+  '<div class="p6">' + ''.join(opt(img(p), l) for p, l in SAW) + '</div>'
+  '<div class="low"><div><div class="step"><span class="no">2</span>把它畫在拍立得裡（也可以貼）</div>'
+  '<div class="pola"><span class="tape l"></span><span class="tape r"></span><div class="in">✏️ 畫在這裡</div><div class="cap">我的光線照片</div></div></div>'
+  '<div style="display:flex;flex-direction:column"><div class="step"><span class="no">3</span>光怎麼了？</div><div class="how3">' +
+  ''.join(f'<div class="op"><div class="pic">{p}</div><div class="lab">{BX}{l}</div></div>' for p, l in HOWL) + '</div>'
+  '<div class="step"><span class="no">4</span>我的心情</div><div class="faces">' +
+  ''.join(f'<div class="face"><div class="e">{e}</div><div class="lab">{BX}{t}</div></div>' for e, t in [('😄', '開心'), ('😮', '好神奇'), ('🤔', '想再玩')]) +
+  '</div><div class="stamp">結案<small>特勤隊章</small></div></div></div>' + foot('10/16 自然・光線特勤隊'))
 open(f'{OUT}/draw.html', 'w').write(doc('我看到的光', [draw]))
 print('ok', OUT)
