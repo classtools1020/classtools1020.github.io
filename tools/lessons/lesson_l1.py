@@ -51,15 +51,15 @@ home, A = new(); bg(home); kit.HOME[0] = home
 kicker(home, '今天的流程')
 T(home, .7, 1.0, 10, .8, '跟著光光偵探，一站一站來', 36)
 FLOW = [('🧘', '心情打卡', G + 'games/checkin.html'), ('🪄', '投影魔術（先猜）', 'S:magic'), ('🔍', '鏡片長什麼樣子？', 'S:shape'),
-        ('🏙️', '光線小鎮・透鏡任務', G + 'light-town/#lens'), ('🧪', '透鏡實驗室', G + 'light-lens/lab.html#lesson'),
+        ('🏙️', '光線小鎮・透鏡任務', G + 'light-town/#lens'), ('💡', '為什麼？五個祕密', 'S:why'), ('🧪', '透鏡實驗室', G + 'light-lens/lab.html#lesson'),
         ('📝', '學習單', G + 'light-lens/worksheet.html'), ('🌙', '謝幕打卡', G + 'games/checkin.html#end')]
 flow_rows = []
 for i, (ic, name, url) in enumerate(FLOW):
     col, row = i // 4, i % 4
-    x, y = .7 + col * 6.2, 2.05 + row * 1.2
-    r = rect(home, x, y, 5.9, 1.0, WHITE, LINEC, 1.5, MSO_SHAPE.ROUNDED_RECTANGLE, rad=.2)
+    x, y = .7 + col * 6.2, 2.05 + row * 1.12
+    r = rect(home, x, y, 5.9, .95, WHITE, LINEC, 1.5, MSO_SHAPE.ROUNDED_RECTANGLE, rad=.2)
     num(home, x + .25, y + .22, i + 1, .56, INK, WHITE, 18)
-    tx = T(home, x + 1.0, y, 4.8, 1.0, f'{ic}  {name}', 24, INK, anchor=MSO_ANCHOR.MIDDLE)
+    tx = T(home, x + 1.0, y, 4.8, .95, f'{ic}  {name}', 24, INK, anchor=MSO_ANCHOR.MIDDLE)
     flow_rows.append((r, url))
 T(home, 6.9, 6.85, 6, .4, '點任何一列可以直接跳過去', 14, SOFT, bold=False)
 
@@ -159,6 +159,93 @@ finding(2, '光點最小、最亮的地方', TOWN + 'c_sun.png', '凸透鏡把�
 finding(3, '投影到白紙上，景色倒過來了', TOWN + 'c_dark.png', '凸透鏡把遠處的光聚在白紙上，景色上下顛倒——相機和眼睛裡也是這樣。', d_invert)
 finding(4, '中間薄的鏡片：看得更廣', TOWN + 'c_peep2.png', '中間薄＝凹透鏡：光散開，看得到更大的範圍，東西變小。', d_spread)
 
+# ---------- 為什麼？五個祕密 ----------
+def poly(sl, pts, fill='BFE6F5', line_='2A7FB8', lw=3, alpha=None):
+    ff = sl.shapes.build_freeform(Inches(pts[0][0]), Inches(pts[0][1]))
+    ff.add_line_segments([(Inches(x), Inches(y)) for x, y in pts[1:]], close=True)
+    s = ff.convert_to_shape(); s.fill.solid(); s.fill.fore_color.rgb = rgb(fill)
+    if alpha is not None: set_alpha(s._element.spPr, alpha)
+    s.line.color.rgb = rgb(line_); s.line.width = Pt(lw); s.shadow.inherit = False
+    return s
+def ray(sl, pts, color=GOLD, w=5):
+    return [line(sl, pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1], color, w, arrow=(i == len(pts) - 2)) for i in range(len(pts) - 1)]
+def why_slide(n, title, sub):
+    sl, A = new(); bg(sl); toc_link(sl, home); kicker(sl, f'為什麼？祕密 {n}')
+    T(sl, .7, 1.0, 12, .9, title, 36)
+    b = band(sl, sub, y=6.3, h=1.2, size=24)
+    return sl, A, b
+GEN2 = '/home/user/classtools1020.github.io/img/lesson/'
+
+# 祕密 1：玻璃跟水一樣，會讓光折一下
+whyS, A, b = why_slide(1, '玻璃跟水一樣，也會讓光「折一下」', '光從空氣進玻璃、從玻璃出來，都會在表面折一下——跟進出水一樣！'); sl = whyS
+framed(sl, MV + 'laser.jpg', .7, 2.05, 5.4, 3.6, -1)
+T(sl, .7, 5.75, 5.4, .45, '還記得嗎？雷射光進水會折一下', 16, SOFT, bold=False)
+blk = rect(sl, 8.6, 2.3, 2.2, 3.6, 'CDE8F2', '2A7FB8', 3); T(sl, 8.6, 5.95, 2.2, .4, '玻璃', 18, TEAL, align=PP_ALIGN.CENTER)
+r1 = ray(sl, [(6.7, 2.3), (8.6, 3.45)]); r2 = ray(sl, [(8.6, 3.45), (10.8, 4.0)]); r3 = ray(sl, [(10.8, 4.0), (12.7, 5.15)])
+k1 = oval(sl, 8.35, 3.2, .5, .5, RED, 4); k2 = oval(sl, 10.55, 3.75, .5, .5, RED, 4)
+A.add('click', [('wipe', x.shape_id, {'dur': 500, 'dir': 'r'}) for x in r1] + [('zoom', k1.shape_id, {'dur': 300})])
+A.add('click', [('wipe', x.shape_id, {'dur': 500, 'dir': 'r'}) for x in r2] + [('zoom', k2.shape_id, {'dur': 300})] + [('wipe', x.shape_id, {'dur': 500, 'dir': 'r', 'delay': 300}) for x in r3])
+A.add('click', [('wipe', b.shape_id, {'dur': 450, 'dir': 'u'})])
+
+# 祕密 2：光會往「厚的那邊」折
+sl, A, b = why_slide(2, '光穿過三角形的玻璃，會往「厚的那邊」折', '三稜鏡：薄的在上、厚的在下——光進去、出來，都往厚的那邊折。')
+framed(sl, GEN2 + 'prism.jpg', .7, 2.05, 5.4, 3.6, -1)
+pr = poly(sl, [(9.6, 2.2), (8.2, 5.5), (11.0, 5.5)])
+T(sl, 9.95, 2.1, 1.8, .5, '薄', 22, SOFT); T(sl, 9.2, 5.55, 1.8, .5, '厚', 22, RED)
+rr = ray(sl, [(6.7, 3.75), (8.86, 3.95), (10.55, 4.45), (12.6, 5.9)])
+ar = line(sl, 11.6, 3.2, 11.6, 4.3, RED, 5, arrow=True); at = T(sl, 11.0, 2.6, 2.2, .5, '往厚的那邊', 18, RED)
+A.add('click', [('wipe', x.shape_id, {'dur': 450, 'dir': 'r'}) for x in rr] + [('fade', ar.shape_id, {'dur': 300, 'delay': 600}), ('fade', at.shape_id, {'dur': 300, 'delay': 600})])
+A.add('click', [('wipe', b.shape_id, {'dur': 450, 'dir': 'u'})])
+
+# 祕密 3：凸透鏡＝兩個三稜鏡「厚對厚」
+sl, A, b = why_slide(3, '凸透鏡＝兩個三稜鏡，厚的那邊黏在一起', '上面的光往下折、下面的光往上折——全部聚在一起，就是「焦點」！')
+framed(sl, GEN2 + 'convex-laser.jpg', .7, 2.05, 5.0, 3.4, -1)
+cx, cy = 8.9, 3.85
+p1 = poly(sl, [(cx, 2.15), (cx - .55, cy), (cx + .55, cy)]); p2 = poly(sl, [(cx, 5.55), (cx - .55, cy), (cx + .55, cy)])
+L1s = lens(sl, cx, cy, True, H=1.7); L1s.fill.fore_color.rgb = rgb('BFE6F5')
+fx = 11.6
+rays_c = [ray(sl, [(6.2, cy + dy), (cx, cy + dy), (fx, cy), (12.8, cy - dy * .45)]) for dy in (-1.1, -.55, 0, .55, 1.1)]
+fp = rect(sl, fx - .15, cy - .15, .3, .3, RED, shape=MSO_SHAPE.OVAL); ft = T(sl, fx - .5, cy + .25, 1.3, .5, '焦點', 22, RED)
+A.add('click', [('fade', L1s.shape_id, {'dur': 600})])
+A.add('click', sum([[('wipe', x.shape_id, {'dur': 600, 'dir': 'r'}) for x in r] for r in rays_c], []) + [('zoom', fp.shape_id, {'dur': 300, 'delay': 500}), ('fade', ft.shape_id, {'dur': 300, 'delay': 500})])
+A.add('click', [('wipe', b.shape_id, {'dur': 450, 'dir': 'u'})])
+
+# 祕密 4：凹透鏡＝兩個三稜鏡「尖對尖」
+sl, A, b = why_slide(4, '凹透鏡＝兩個三稜鏡，尖尖的那邊碰在一起', '厚的在上下兩邊——上面的光往上折、下面的光往下折，光就散開了。')
+framed(sl, GEN2 + 'concave-laser.jpg', .7, 2.05, 5.0, 3.4, -1)
+cx, cy = 8.9, 3.85
+q1 = poly(sl, [(cx, cy), (cx - .55, 2.15), (cx + .55, 2.15)]); q2 = poly(sl, [(cx, cy), (cx - .55, 5.55), (cx + .55, 5.55)])
+L2s = lens(sl, cx, cy, False, H=1.7)
+rays_d = [ray(sl, [(6.2, cy + dy), (cx, cy + dy), (12.8, cy + dy * 1.85)]) for dy in (-1.1, -.55, 0, .55, 1.1)]
+A.add('click', [('fade', L2s.shape_id, {'dur': 600})])
+A.add('click', sum([[('wipe', x.shape_id, {'dur': 600, 'dir': 'r'}) for x in r] for r in rays_d], []))
+A.add('click', [('wipe', b.shape_id, {'dur': 450, 'dir': 'u'})])
+
+# 祕密 5：為什麼字變大、變小？眼睛又被騙了
+sl, A, b = why_slide(5, '為什麼字變大、變小？眼睛又被騙了！', '眼睛以為光是直直來的：凸透鏡讓字看起來變大，凹透鏡讓字看起來變小。')
+for k, (thick, label, col) in enumerate([(True, '凸透鏡：看起來變大', LENS_RED), (False, '凹透鏡：看起來變小', LENS_BLUE)]):
+    x0 = .7 + k * 6.25
+    rect(sl, x0, 2.0, 5.95, 4.1, 'FBF8F2', LINEC, 1.5)
+    T(sl, x0 + .2, 2.05, 5.5, .5, label, 22, col)
+    ay, lx, ex = 4.6, x0 + 2.6, x0 + 5.3
+    line(sl, x0 + .2, ay, x0 + 5.75, ay, 'B9AE9A', 1.5, MSO_LINE_DASH_STYLE.DASH)
+    lens(sl, lx, ay - .35, thick, H=1.15)
+    ob = line(sl, x0 + 1.6, ay, x0 + 1.6, ay - .7, INK, 5, arrow=True)          # 真的字
+    T(sl, x0 + 1.05, ay + .05, 1.2, .4, '真的字', 15, INK)
+    ey = ay - .37 if thick else ay - 1.0
+    eye = rect(sl, ex - .25, ey - .18, .5, .36, WHITE, INK, 2.5, MSO_SHAPE.OVAL); rect(sl, ex - .08, ey - .08, .16, .16, INK, shape=MSO_SHAPE.OVAL)
+    if thick:
+        ry = ray(sl, [(x0 + 1.6, ay - .7), (lx, ay - .7), (ex - .25, ay - .37)])
+        ext = line(sl, lx, ay - .7, x0 + .45, ay - 1.45, RED, 3, MSO_LINE_DASH_STYLE.DASH)
+        img = line(sl, x0 + .7, ay, x0 + .7, ay - 1.35, RED, 5, arrow=True); it = T(sl, x0 + .2, ay - 1.95, 2.4, .45, '看起來的字', 15, RED)
+    else:
+        ry = ray(sl, [(x0 + 1.6, ay - .7), (lx, ay - .7), (ex - .25, ay - 1.0)])
+        ext = line(sl, lx, ay - .7, x0 + 1.35, ay - .38, RED, 3, MSO_LINE_DASH_STYLE.DASH)
+        img = line(sl, x0 + 1.95, ay, x0 + 1.95, ay - .53, RED, 5, arrow=True); it = T(sl, x0 + 1.75, ay + .42, 2.4, .45, '看起來的字', 15, RED)
+    A.add('click', [('wipe', x.shape_id, {'dur': 500, 'dir': 'r'}) for x in ry])
+    A.add('click', [('wipe', ext.shape_id, {'dur': 500, 'dir': 'l'}), ('fade', img.shape_id, {'dur': 400, 'delay': 300}), ('fade', it.shape_id, {'dur': 400, 'delay': 300})])
+A.add('click', [('wipe', b.shape_id, {'dur': 450, 'dir': 'u'})])
+
 # ---------- 10 比一比 ----------
 sl, A = new(); bg(sl); toc_link(sl, home); kicker(sl, '比一比')
 T(sl, .7, 1.0, 12, .9, '凸透鏡 vs 凹透鏡', 38)
@@ -205,7 +292,7 @@ b = button(sl, .85, 4.8, 3.6, '🌙  謝幕打卡', G + 'games/checkin.html#end'
 A.add('auto', [('zoom', t.shape_id, {'dur': 500}), ('fade', s.shape_id, {'dur': 500}), ('fade', b.shape_id, {'dur': 400})])
 
 # 流程連結
-targets = {'S:magic': magic, 'S:shape': shape}
+targets = {'S:magic': magic, 'S:shape': shape, 'S:why': whyS}
 for r, url in flow_rows:
     if url.startswith('S:'): r.click_action.target_slide = targets[url]
     else: r.click_action.hyperlink.address = url
