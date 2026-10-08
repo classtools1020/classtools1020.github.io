@@ -233,7 +233,18 @@
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",flowBar);else flowBar();
 
   /* ---------- 🗂️ 每頁都有「回主選單」（頁面自己沒放時自動補上） ---------- */
-  function homeBtn(){const p=location.pathname.replace(/index\.html$/,"");if(/^\/light\/?$/.test(p))return;
+
+  /* ===== 代課模式：從代課包進來時，隱藏主選單與網站其他入口，只留「回代課包」 ===== */
+  FX.sub=(()=>{try{const p=JSON.parse(localStorage.getItem("subpack")||"null");if(p&&Date.now()<p.until)return p;if(p)localStorage.removeItem("subpack");}catch(e){}return null;})();
+  FX.homeURL=()=>FX.sub?FX.sub.url:HOME;
+  if(FX.sub){
+    const st=document.createElement("style");st.textContent='a[href="/light/"],a[href^="https://classtools1020.github.io/light/"],a[href="/"],a.fixbtn,a.mainmenu-btn,#fxhome,#fxflow,.chs ~ .nav button[onclick*="print"]{display:none!important}#fxsub{position:fixed;left:12px;top:12px;z-index:99999;background:#3a2f10;border:2px solid #ffc93c;color:#ffe08a;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:"Noto Sans TC",sans-serif}@media print{#fxsub{display:none!important}}';
+    (document.head||document.documentElement).appendChild(st);
+    document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[href]");if(!a)return;const h=a.getAttribute("href");if(h==="/light/"||h==="/"||/classtools1020\.github\.io\/light\/?$/.test(h)){e.preventDefault();location.href=FX.sub.url;}},true);
+    const add=()=>{if(document.getElementById("fxsub"))return;const a=document.createElement("a");a.id="fxsub";a.href=FX.sub.url;a.textContent="⬅ 回代課包";document.body.appendChild(a);};
+    if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",add);else add();
+  }
+  function homeBtn(){if(FX.sub)return;const p=location.pathname.replace(/index\.html$/,"");if(/^\/light\/?$/.test(p))return;
     if(document.getElementById("fxhome")||document.querySelector('a[href="/light/"],a[href="https://classtools1020.github.io/light/"]'))return;
     const a=document.createElement("a");a.id="fxhome";a.href=HOME;a.textContent="🗂️ 主選單";
     a.style.cssText="position:fixed;right:12px;top:12px;z-index:99999;background:#0f2841;border:2px solid #42e0c8;color:#42e0c8;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:'Noto Sans TC','Microsoft JhengHei',system-ui,sans-serif";

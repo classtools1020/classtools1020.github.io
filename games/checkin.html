@@ -203,7 +203,7 @@ const ICON=s=>/簡報/.test(s)?"🖥️":/影片|🎬/.test(s)?"🎬":/學習單
 const items=flow?flow.steps.filter(s=>!/儀式/.test(s.label)):[{label:"看簡報"},{label:"動手做"},{label:"玩遊戲"},{label:"學習單"}];
 $("plan").innerHTML=items.slice(0,6).map((s,i)=>`<div class="pl"><b>NO.${i+1}</b><span>${ICON(s.label)}</span>${s.label.replace(/^🎬 /,"").slice(0,14)}</div>`).join("");
 if(flow)$("planTitle").textContent=flow.title;
-$("goBtn").onclick=()=>{chimeOk();FX.confetti(60);setTimeout(()=>{if(flow){const i=(flow.i||0)+1;const nx=flow.steps[i];if(nx){flow.i=i;localStorage.setItem("flow",JSON.stringify(flow));if(/gamma\.app|youtube\.com|\.docx$/i.test(nx.url)){window.open(nx.url,"_blank");location.href="/light/";}else location.href=nx.url;return;}}location.href="/light/";},700);};
+$("goBtn").onclick=()=>{chimeOk();FX.confetti(60);setTimeout(()=>{if(flow){const i=(flow.i||0)+1;const nx=flow.steps[i];if(nx){flow.i=i;localStorage.setItem("flow",JSON.stringify(flow));if(/gamma\.app|youtube\.com|\.docx$/i.test(nx.url)){window.open(nx.url,"_blank");location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");}else location.href=nx.url;return;}}location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");},700);};
 /* 收尾 */
 function compare(){const s1=c1.reduce((p,q)=>p+q,0),s2=c2.reduce((p,q)=>p+q,0);const good=a=>a[0]+a[1];if(!s1||!s2){$("cmp").textContent="";return;}
   const d=good(c2)/s2-good(c1)/s1;$("cmp").textContent=d>0.05?"🌈 比上課前更多人心情變好了！":d<-0.05?"今天有點累，沒關係，下次會更好":"心情跟上課前差不多，穩穩的";}
