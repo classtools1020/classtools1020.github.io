@@ -39,7 +39,7 @@
 ## 一條龍自動化工具箱（老師的要求：素材全部自己弄，不要叫老師下載、轉傳）
 | 需要 | 做法 |
 |---|---|
-| 真實感照片 | `mcp__Gamma__generate_image`（type: photo，16:9 用 banner）→ 等 completed 拿到 cdn.gamma.app 網址 → 加一行到 `tools/fetch-list.txt`（`目的地路徑 網址`）→ push。GitHub Actions `.github/workflows/fetch-images.yml` 會自動下載並 commit 進 repo → `git pull` 後用 Read 檢查照片。（雲端容器連不到 cdn.gamma.app，所以一定走這條） |
+| 真實感照片 | （workflow 會 commit 任何目的地資料夾）`mcp__Gamma__generate_image`（type: photo，16:9 用 banner）→ 等 completed 拿到 cdn.gamma.app 網址 → 加一行到 `tools/fetch-list.txt`（`目的地路徑 網址`）→ push。GitHub Actions `.github/workflows/fetch-images.yml` 會自動下載並 commit 進 repo → `git pull` 後用 Read 檢查照片。（雲端容器連不到 cdn.gamma.app，所以一定走這條） |
 | 3D／立體場景 | three.js（`light-refract/vendor/three.module.min.js`），參考 `light-refract/news3d.js`；要截圖用 Playwright＋swiftshader |
 | 動畫 | 網頁用 SVG/CSS/requestAnimationFrame；PPT 用 python-pptx＋手寫 p:timing（參考 scratchpad 的 build.py 寫法：fly/zoom/fade/wipe） |
 | 音效 | Python numpy 合成（豎琴、頌缽、海浪…）→ ffmpeg 轉 mp3，參考 `games/sfx/breath/` |
@@ -53,13 +53,16 @@
 - 10/2（五）甲班、乙班：只上到吸管實驗（R1 前半）。
 - 10/4 完成：光之呼吸站換真實照片（Gamma 生成 6 張）＋真實質感音效＋海浪背景音；所有 Word 學習單修復（結構損毀）並附 PDF；光之環島列車真實地形台灣地圖、每關加提示、熱氣球「開紅燈看看」、修正紫色科學錯誤；光之列車闖關加提示。
 - 已完成並上線：事件簿、新聞台 3D 版、兩者的列印講義、折射 PPT 第2節／第3節（動畫＋超連結，待老師用 PowerPoint 實測）、導覽整理（返回／主選單）、MV 新歌、實驗室站號 1–6、主選單改格子、全站「轉彎」改「折一下」。
-- **10/16（五）老師請喪假，代課**：代課包（只列①②③步驟，不要說明文字、不要心情打卡）放在**老師的體育網域** `hccadaptive.com/f8f9fc3bd1/`（repo `classtools1020/sports-results` 的 `f8f9fc3bd1/` 資料夾），**網址與內容完全不出現 classtools**（老師不希望同事發現本站）。整包自給自足：遊戲、MV、事件簿、透鏡實驗室、照片、音效都複製進去、路徑全改相對；專用 `games/fx.js` 永遠代課模式（只有「⬅ 回代課包」）、每頁浮水印「© 曾瓊瑩老師原創教材・僅供 2026/10/16 代課使用・請勿轉傳」、10/16 16:00 起自動顯示已下架、所有頁 `noindex`。通關碼另給（不寫在任何公開頁）。已排程 10/16 16:01 自動刪除 `sports-results/f8f9fc3bd1/`。打包程式在 scratchpad `subpack/build.py`。classtools 上的舊版 `s/6e4deddfed/` 已刪除。hccadaptive.com 是縣賽成績網站，**別動它的其他檔案**。
+- **10/16（五）老師請喪假，代課**：
+  - **永久保存版（本站）**：`light-refract/1016/`（slides.pptx 18 頁簡報、treasure.pdf、draw.pdf、plan.pdf）；主選單 10/16 三節 SUBA／SUBB6／SUBB7 都有完整步驟。簡報產生程式 `tools/1016/deck.py`（`python3 deck.py 輸出.pptx 網頁根網址 PDF資料夾網址`）。
+  - **代課包（給代課老師）**：老師的體育網域 `hccadaptive.com/f8f9fc3bd1/`（repo `classtools1020/sports-results` 的 `f8f9fc3bd1/`），網址與內容不出現 classtools；通關碼私下給。頁面只列步驟＋分鐘，**不要說明文字、不要心情打卡、不要版權字、不要「怎麼做的」說明（例如 MV 的 Gemini／歌詞）**，白底素雅不要 AI 感。10/16 16:00 自動顯示關閉，16:01 排程刪資料夾。縣賽成績網站其他檔案**不要動**（11/6 有全縣活動）。
+  - 步驟（依 45 分鐘安排）：甲5 MV 5′→透鏡實驗室 12′→放大鏡尋寶 15′→折射大搶答 10′｜乙6 MV 5′→光之環島列車 22′→折射大搶答 15′｜乙7 生活裡的折射 10′→水滴放大鏡 15′→畫卡 13′→MV 再唱 5′。
 - 課表（`light/data.js` 的 SCHED）：
   - 10/5（一）甲 第7節：R2 硬幣浮上來了
   - 10/7（三）乙 第4節：R2；甲 第7節：R3 動手做＋生活結案
   - 10/12（一）甲：L1 透鏡
   - 10/14（三）乙：R3
-  - 10/16（五）甲5、乙6、乙7：代課（見上）
+  - 10/16（五）甲5、乙6、乙7：代課（SUBA／SUBB6／SUBB7，見上）
   - 10/21（三）乙 第4節：L1 透鏡
 
 ## 下一步（待辦）
