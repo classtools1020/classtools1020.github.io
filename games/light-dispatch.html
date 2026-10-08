@@ -110,7 +110,24 @@
   .mini{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px}
   .mini span{background:rgba(255,255,255,.95);color:#1f2a37;border-radius:10px;padding:4px 8px;font-size:15px;font-weight:800}
   canvas#cf{position:fixed;inset:0;pointer-events:none;z-index:7}
-  @media (max-width:760px){.unit .bar{display:none}.rules{grid-template-columns:1fr}.ex{grid-template-columns:1fr}.ex img{height:22vh}}
+  @media (max-width:760px){
+    .hud{flex-wrap:wrap;gap:5px;padding:6px}
+    .nb{padding:8px 10px;font-size:15px}.nb .tx,.unit .nm,.unit .bar,.team .tn{display:none}
+    .unit{font-size:14px;padding:6px 9px;gap:4px}
+    .team{font-size:14px;padding:5px 8px;gap:4px}.team b{font-size:17px;min-width:30px}.team .cards{font-size:12px}
+    .team.on{transform:scale(1.04);box-shadow:0 0 0 3px currentColor}
+    .banner{top:56px;padding:8px 12px 10px;border-width:3px}.banner .k{font-size:13px;padding:3px 10px}.banner .t{font-size:21px}.banner .s{font-size:14px}
+    .card{padding:16px 14px}.card h1{font-size:30px}.card .sub{font-size:15px;margin:4px 0 10px}
+    .rules{grid-template-columns:repeat(3,1fr);gap:6px}.rules div{font-size:12px;padding:8px 4px}.rules span{font-size:28px}
+    .pack{font-size:20px;padding:14px 8px}.pack small{font-size:12px}
+    .big{font-size:22px;padding:14px 22px}
+    .steer{width:96px;height:96px;font-size:44px;bottom:14px}
+    .tip{bottom:126px;font-size:15px;white-space:normal;text-align:center;width:88vw}
+    .combo{font-size:38px}
+    .ex{grid-template-columns:1fr;gap:8px;padding:10px 12px 12px;max-height:72vh;overflow:auto}.ex img{height:20vh}.ex .ok{font-size:24px}.ex .tx{font-size:17px}.ex button{font-size:20px;padding:12px 18px}
+    .face .sk{font-size:15px}
+    .end .sc{flex-direction:column}.end .sc b{font-size:34px}
+  }
 </style>
 </head>
 <body>
@@ -119,12 +136,12 @@
 <div class="flash" id="flash"></div>
 
 <div class="hud">
-  <button class="nb" id="back">← 返回</button>
-  <a class="nb" id="home" href="/light/">🏠 主選單</a>
-  <div class="unit">🚒 竹東分隊 <span class="bar"><i id="prog"></i></span> <span id="cnt">0/6</span></div>
+  <button class="nb" id="back">←<span class="tx"> 返回</span></button>
+  <a class="nb" id="home" href="/light/">🏠<span class="tx"> 主選單</span></a>
+  <div class="unit">🚒<span class="nm"> 竹東分隊</span> <span class="bar"><i id="prog"></i></span> <span id="cnt">0/6</span></div>
   <div class="sp"></div>
-  <div class="team r" id="tR">🔴 紅隊 <b id="sR">0</b><span class="cards" id="cR">🃏0</span></div>
-  <div class="team b" id="tB">🔵 藍隊 <b id="sB">0</b><span class="cards" id="cB">🃏0</span></div>
+  <div class="team r" id="tR">🔴<span class="tn"> 紅隊</span> <b id="sR">0</b><span class="cards" id="cR">🃏0</span></div>
+  <div class="team b" id="tB">🔵<span class="tn"> 藍隊</span> <b id="sB">0</b><span class="cards" id="cB">🃏0</span></div>
   <button class="nb mute" id="mute" title="音效">🔊</button>
 </div>
 
@@ -300,13 +317,24 @@ function updCam(dt) {
   else if (C.to) { C.t = Math.min(1, C.t + dt / C.dur); const e = ease(C.t); C.pos.lerpVectors(C.from.pos, C.to.pos, e); C.look.lerpVectors(C.from.look, C.to.look, e); }
   cam.position.copy(C.pos); cam.lookAt(C.look);
   if (C.shake > 0) { C.shake -= dt; const k = C.shake * .6; cam.position.x += (Math.random() - .5) * k; cam.position.y += (Math.random() - .5) * k; }
-  const wantF = C.chase ? (T.boost > 0 ? 74 : 60) : 48; C.fov += (wantF - C.fov) * Math.min(1, dt * 4); if (Math.abs(cam.fov - C.fov) > .01) { cam.fov = C.fov; cam.updateProjectionMatrix(); }
+  const tallK = innerWidth / innerHeight < .85 ? 14 : 0; const wantF = (C.chase ? (T.boost > 0 ? 74 : 60) : 48) + tallK; C.fov += (wantF - C.fov) * Math.min(1, dt * 4); if (Math.abs(cam.fov - C.fov) > .01) { cam.fov = C.fov; cam.updateProjectionMatrix(); }
   sun.target.position.copy(C.look); sun.position.copy(C.look).addScaledVector(SUN_DIR, 70);
 }
 C.pos.copy(OVER.pos); C.look.copy(OVER.look);
 
 // ---------- 聲音 ----------
 let AC, MASTER, muted = false;
+// iPhone 靜音模式也要有聲音：先播一段無聲的 <audio>，把聲音模式切成「播放」
+let _unlocked = false;
+function unlockAudio() {
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+  try { ac(); if (AC.state !== 'running') AC.resume(); } catch (e) {}
+  if (_unlocked) return; _unlocked = true;
+  try { const n = 4000, b = new ArrayBuffer(44 + n * 2), v = new DataView(b), w = (o, t) => [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+    w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 8000, true); v.setUint32(28, 16000, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+    const el = new Audio(URL.createObjectURL(new Blob([b], { type: 'audio/wav' }))); el.loop = true; el.setAttribute('playsinline', ''); el.play().catch(() => { _unlocked = false; }); } catch (e) {}
+}
+addEventListener('pointerdown', unlockAudio, { capture: true }); addEventListener('touchend', unlockAudio, { capture: true });
 function ac() { if (!AC) { AC = new (window.AudioContext || window.webkitAudioContext)(); MASTER = AC.createGain(); MASTER.gain.value = .9; MASTER.connect(AC.destination); } return AC; }
 let NOISE; function noiseBuf() { const a = ac(); if (NOISE) return NOISE; NOISE = a.createBuffer(1, a.sampleRate, a.sampleRate); const d = NOISE.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return NOISE; }
 function tone(f, d, type = 'sine', vol = .15, t0 = 0, f2) { try { const a = ac(), o = a.createOscillator(), g = a.createGain(); o.type = type; const s = a.currentTime + t0; o.frequency.setValueAtTime(f, s); if (f2) o.frequency.exponentialRampToValueAtTime(f2, s + d); g.gain.setValueAtTime(.0001, s); g.gain.exponentialRampToValueAtTime(vol, s + .015); g.gain.exponentialRampToValueAtTime(.0001, s + d); o.connect(g).connect(MASTER); o.start(s); o.stop(s + d + .05); } catch (e) {} }
@@ -510,13 +538,16 @@ async function arrive() {
   banner(`${TEAM[G.team].e} ${TEAM[G.team].n}・到現場了！`, c.q, `用手指轉一轉卡片，再<b>點</b>對的那一張　｜　沿路撿了 ✨${G.coins} 個光點`, 'q');
   // 卡片放在鏡頭前
   const fwd = look.clone().sub(camPos).normalize(), right = V(0, 1, 0).cross(fwd).normalize().negate(), up = right.clone().cross(fwd).normalize();
-  const n = c.opts.length, gap = n === 3 ? 2.5 : 2.7;
+  const n = c.opts.length, gap = n === 3 ? 2.5 : 2.7, tall = innerWidth / innerHeight < .85;
+  const vf = 48 * Math.PI / 360, hf = Math.atan(Math.tan(vf) * innerWidth / innerHeight);
+  const dist = tall ? Math.max(6.2, ((n - 1) / 2 * 2.95 + 1.5) / Math.tan(vf) * 1.12) : Math.max(6.2, ((n - 1) / 2 * gap + 1.2) / Math.tan(hf) * 1.08);
   cards = [];
   const texs = await Promise.all(c.opts.map(o => cardTex(o)));
   c.opts.forEach((o, j) => {
     const mats = [M('#e8e2d4'), M('#e8e2d4'), M('#e8e2d4'), M('#e8e2d4'), new THREE.MeshBasicMaterial({ map: texs[j] }), new THREE.MeshBasicMaterial({ map: cardBack })];
     const m = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.66, .07), mats); const g = new THREE.Group(); g.add(m); S.add(g);
-    const home = camPos.clone().addScaledVector(fwd, 6.2).addScaledVector(right, (j - (n - 1) / 2) * gap).addScaledVector(up, -.35);
+    const home = tall ? camPos.clone().addScaledVector(fwd, dist).addScaledVector(up, -(j - (n - 1) / 2) * 2.95 - dist * .06)
+      : camPos.clone().addScaledVector(fwd, dist).addScaledVector(right, (j - (n - 1) / 2) * gap).addScaledVector(up, -.35);
     g.position.copy(home); g.lookAt(camPos); g.scale.setScalar(.01);
     cards.push({ g, m, j, home, spin: Math.PI * 2 + (j % 2 ? .3 : -.3), vs: 0, t0: performance.now() + j * 180, dead: false, base: g.quaternion.clone() });
   });
