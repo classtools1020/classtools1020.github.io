@@ -1,7 +1,7 @@
 name: fetch-images
 on:
   push:
-    paths: ['tools/fetch-list.txt']
+    paths: ['tools/fetch-list.txt', '.github/workflows/fetch-images.yml']
   workflow_dispatch:
 permissions:
   contents: write
@@ -22,6 +22,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A games/img
+          git add -A
           git diff --cached --quiet || git commit -m "自動下載 Gamma 生成圖片"
           git push
