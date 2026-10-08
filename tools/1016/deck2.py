@@ -232,7 +232,7 @@ T(sl, 7.0, 6.05, 5.3, .6, 'B　中間薄', 26, INK, align=PP_ALIGN.CENTER)
 ring, badge = check(sl, 1.0, 2.2, 5.3, 4.6)
 ans = band(sl, '放大鏡中間厚＝凸透鏡：讓光換方向，東西看起來變大', y=6.85, h=.65, size=22, fill=GREEN)
 A.add('click', [('fade', ring.shape_id, {'dur': 300}), ('zoom', badge.shape_id, {'dur': 400}), ('wipe', ans.shape_id, {'dur': 500, 'dir': 'u'})])
-link_slide('甲班｜放大鏡偵探', '放大鏡偵探', '先猜再揭曉：字變大？景色倒過來？光聚到焦點？一直按「下一步」就好。', CAP + 's_lensshow.png', '▶  打開簡報', PDF + 'show/')
+link_slide('甲班｜放大鏡偵探', '放大鏡偵探', '還記得前兩節的實驗嗎？真實照片＋光線動畫，複習中間厚、中間薄、焦點、倒過來。一直按「下一步」就好。', CAP + 's_lensshow.png', '▶  打開簡報', PDF + 'show/')
 # 放大鏡尋寶
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '甲班｜放大鏡尋寶')
 framed(sl, CAP + 'w_treasure.png', .9, .9, 4.5, 6.3, -2.5, pad=.08)
