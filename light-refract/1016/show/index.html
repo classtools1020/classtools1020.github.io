@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>放大鏡偵探</title>
+<style>
+  :root{--ink:#1f2a37;--soft:#5b6673;--paper:#f4efe6;--red:#c8372d;--teal:#1f7a8c;--green:#2f8a4c;--line:#d8cfbf;--blue:#1f5fa8}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#2a2e33;overflow:hidden;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  #view{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{position:relative;width:1600px;height:900px;flex:none;background:var(--paper);overflow:hidden;transform-origin:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  #stage::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.2px) 0 0/6px 6px;pointer-events:none}
+  .slide{position:absolute;inset:0;padding:70px 90px;opacity:0;pointer-events:none;transition:opacity .55s ease,transform .55s cubic-bezier(.2,.7,.2,1);transform:translateX(70px)}
+  .slide.on{opacity:1;pointer-events:auto;transform:none}
+  .slide.out{opacity:0;transform:translateX(-70px)}
+  .kick{font-size:26px;font-weight:800;color:var(--red);letter-spacing:.08em}
+  h1{margin:6px 0 0;font-size:72px;line-height:1.15;letter-spacing:.02em}
+  h2{margin:4px 0 0;font-size:58px;line-height:1.2}
+  .sub{font-size:30px;color:var(--soft);font-weight:700;margin-top:14px}
+  .ph{position:absolute;background:#fff;padding:14px 14px 20px;box-shadow:0 14px 34px rgba(0,0,0,.22)}
+  .ph img{display:block;width:100%;height:100%;object-fit:cover}
+  .band{position:absolute;left:0;right:0;bottom:0;background:var(--ink);color:#fff;font-size:40px;font-weight:800;padding:26px 90px;line-height:1.35}
+  .band b{color:#ffd77a}
+  .band.warn{background:var(--red)}
+  /* 出現動畫 */
+  [data-f]{opacity:0;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.8,.25,1.15)}
+  [data-a=l]{transform:translateX(-120px)}[data-a=r]{transform:translateX(120px)}[data-a=u]{transform:translateY(80px)}[data-a=d]{transform:translateY(-80px)}
+  [data-a=pop]{transform:scale(.4)}[data-a=stamp]{transform:scale(2.4) rotate(-14deg)}
+  .show[data-f]{opacity:1;transform:none}
+  .show[data-a=stamp]{transform:rotate(-7deg)}
+  .show[data-a=tilt]{transform:rotate(-2deg)}
+  .show[data-a=tilt2]{transform:rotate(2deg)}
+  [data-a=tilt],[data-a=tilt2]{transform:translateY(80px) rotate(0deg)}
+  /* 預測選項 */
+  .opts{position:absolute;display:flex;gap:30px}
+  .op{width:330px;height:250px;background:#fff;border:4px solid var(--line);border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:46px;font-weight:900;transition:border-color .4s,opacity .4s,transform .4s,background .4s}
+  .op .big{font-size:110px;line-height:1}
+  .op .sm{font-size:34px;line-height:1;height:110px;display:flex;align-items:center}
+  .op .k{font-size:26px;color:var(--soft)}
+  .op.ok{border-color:var(--green);background:#ecf7ee;transform:scale(1.06)}
+  .op.no{opacity:.35}
+  .stamp{position:absolute;border:8px solid var(--red);color:var(--red);font-size:64px;font-weight:900;padding:6px 28px;border-radius:16px;background:rgba(255,255,255,.88);letter-spacing:.06em}
+  .ask{position:absolute;font-size:34px;font-weight:800;color:var(--teal)}
+  /* 鏡片 */
+  .lens{position:absolute;width:560px;height:470px;background:#fff;border:3px solid var(--line);border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .lens svg{width:200px;height:260px}
+  .lens .t{font-size:46px;font-weight:900;margin-top:10px}
+  .lens .n{position:absolute;bottom:-34px;font-size:40px;font-weight:900;color:#fff;border-radius:40px;padding:8px 34px}
+  /* 分類 */
+  .grid6{position:absolute;left:90px;right:90px;top:230px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .tile{position:relative;height:270px;background:#fff;padding:10px 10px 52px;box-shadow:0 8px 22px rgba(0,0,0,.16);cursor:pointer}
+  .tile img{width:100%;height:100%;object-fit:cover;display:block}
+  .tile .nm{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:30px;font-weight:900}
+  .tile .lb{position:absolute;top:18px;right:18px;font-size:30px;font-weight:900;color:#fff;border-radius:30px;padding:6px 20px;transform:scale(0);transition:transform .45s cubic-bezier(.2,.8,.25,1.4)}
+  .tile.flip .lb{transform:scale(1)}
+  .steps{position:absolute;display:flex;flex-direction:column;gap:26px}
+  .st{display:flex;align-items:center;gap:24px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:22px 30px;font-size:42px;font-weight:900;width:700px}
+  .st .no{flex:none;width:70px;height:70px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:38px}
+  .sum{position:absolute;left:90px;right:90px;display:flex;align-items:center;gap:30px;background:#fff;border-radius:24px;padding:26px 34px;border:3px solid var(--line);font-size:44px;font-weight:900}
+  .sum svg{width:80px;height:100px;flex:none}
+  .sum b{color:var(--red)}.sum i{font-style:normal;color:var(--blue)}
+  /* 控制列 */
+  #bar{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:12px;padding:10px;pointer-events:none}
+  #bar>*{pointer-events:auto}
+  .cb{font-family:inherit;font-weight:800;font-size:18px;border:none;border-radius:12px;padding:12px 18px;background:rgba(255,255,255,.92);color:var(--ink);cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.25);touch-action:manipulation}
+  .cb.nx{background:#ffcf2e;font-size:22px;padding:14px 30px}
+  #pg{color:#fff;font-weight:800;font-size:16px;min-width:64px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+  #home{position:fixed;left:12px;top:12px;font-family:inherit;font-weight:800;font-size:16px;background:rgba(255,255,255,.92);color:var(--ink);text-decoration:none;padding:9px 14px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+  #hint{position:fixed;right:14px;top:14px;color:rgba(255,255,255,.75);font-size:14px;font-weight:700}
+  .dots{display:flex;gap:6px}
+  .dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.4)}.dots i.on{background:#ffcf2e}
+  .cb{white-space:nowrap}
+  #rot{display:none;position:fixed;left:50%;top:70px;transform:translateX(-50%);background:rgba(255,255,255,.92);color:#1f2a37;font-weight:800;font-size:15px;padding:8px 14px;border-radius:10px}
+  @media (max-width:760px),(max-height:520px){.dots,#fs,#hint{display:none!important}.cb{font-size:15px;padding:9px 12px}.cb.nx{font-size:17px;padding:10px 18px}#bar{gap:8px}}
+  @media (max-width:760px) and (orientation:portrait){#rot{display:block}}
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="kick" data-f="0" data-a="l">甲班・自然・10/16</div>
+  <h1 data-f="0" data-a="l" style="margin-top:120px;font-size:96px">放大鏡偵探</h1>
+  <div class="sub" data-f="0" data-a="l" style="font-size:40px">放大鏡，只會把東西變大嗎？</div>
+  <div class="sub" data-f="0" data-a="u" style="margin-top:80px;font-size:28px;color:#8a8577">按「下一步」開始 →</div>
+  <div class="ph" data-f="0" data-a="tilt2" style="left:880px;top:120px;width:620px;height:640px"><img src="img/magnifier.jpg" alt=""></div>
+</section>
+
+<!-- 2 鏡片長什麼樣子 -->
+<section class="slide">
+  <div class="kick">第 1 站・看鏡片</div>
+  <h2>鏡片從旁邊看，長什麼樣子？</h2>
+  <div class="lens" data-f="1" data-a="pop" data-s="pop" style="left:150px;top:240px">
+    <svg viewBox="0 0 80 100"><path d="M40 4 Q72 50 40 96 Q8 50 40 4Z" fill="#bfe6f5" stroke="#2a7fb8" stroke-width="3"/></svg>
+    <div class="t">中間厚</div><div class="n" data-f="3" data-a="pop" data-s="ding" style="background:var(--red)">凸透鏡</div></div>
+  <div class="lens" data-f="2" data-a="pop" data-s="pop" style="left:890px;top:240px">
+    <svg viewBox="0 0 80 100"><path d="M24 4 L56 4 Q38 50 56 96 L24 96 Q42 50 24 4Z" fill="#bfe6f5" stroke="#2a7fb8" stroke-width="3"/></svg>
+    <div class="t">中間薄</div><div class="n" data-f="3" data-a="pop" style="background:var(--blue)">凹透鏡</div></div>
+  <div class="ask" data-f="4" data-a="u" style="left:150px;bottom:44px">👉 用手指摸摸看放大鏡：中間鼓鼓的，是哪一種？</div>
+</section>
+
+<!-- 3 字會變大還是變小 -->
+<section class="slide">
+  <div class="kick">第 2 站・先猜猜看</div>
+  <h2>用放大鏡看字，字會？</h2>
+  <div class="opts" style="left:90px;top:300px">
+    <div class="op" id="o3a" data-f="1" data-a="u" data-s="pop"><span class="big">光</span>A　變大</div>
+    <div class="op" id="o3b" data-f="1" data-a="u"><span class="sm">光</span>B　變小</div>
+  </div>
+  <div class="ask" data-f="1" data-a="u" style="left:90px;top:600px">舉手投票：A 還是 B？</div>
+  <div class="ph" data-f="2" data-a="r" data-s="ok" data-ok="o3a" style="left:860px;top:210px;width:650px;height:470px"><img src="img/drop.jpg" alt=""></div>
+  <div class="stamp" data-f="2" data-a="stamp" style="left:1180px;top:600px">變大！</div>
+  <div class="band" data-f="3" data-a="u">放大鏡<b>中間厚</b>，讓光換方向，字看起來<b>變大</b>。</div>
+</section>
+
+<!-- 4 投影倒過來 -->
+<section class="slide">
+  <div class="kick">第 3 站・先猜猜看</div>
+  <h2>放大鏡把窗外的景色，投到白紙上——</h2>
+  <div class="opts" style="left:90px;top:300px">
+    <div class="op" id="o4a" data-f="1" data-a="u" data-s="pop"><span class="big" style="font-size:96px">🌳</span>A　正的</div>
+    <div class="op" id="o4b" data-f="1" data-a="u"><span class="big" style="font-size:96px;transform:rotate(180deg)">🌳</span>B　倒過來</div>
+  </div>
+  <div class="ask" data-f="1" data-a="u" style="left:90px;top:600px">景色是正的？還是倒過來？</div>
+  <div class="ph" data-f="2" data-a="r" data-s="ok" data-ok="o4b" style="left:860px;top:210px;width:650px;height:470px"><img src="img/projection.jpg" alt=""></div>
+  <div class="stamp" data-f="2" data-a="stamp" style="left:1120px;top:600px">倒過來！</div>
+  <div class="band" data-f="3" data-a="u">光走過放大鏡會<b>交叉</b>：上面跑到下面，景色就<b>倒過來</b>了。</div>
+</section>
+
+<!-- 5 焦點 -->
+<section class="slide">
+  <div class="kick">第 4 站・光聚在一起</div>
+  <h2>放大鏡把光，聚到一個點</h2>
+  <div class="ph" data-f="1" data-a="l" data-s="whoosh" style="left:90px;top:220px;width:860px;height:470px"><img src="img/convex.jpg" alt=""></div>
+  <div class="stamp" data-f="2" data-a="stamp" data-s="ok" style="left:1030px;top:300px">焦點</div>
+  <div class="ask" data-f="2" data-a="u" style="left:1020px;top:440px;color:var(--ink);font-size:38px;line-height:1.5">光聚成一個點<br>最亮、也<b style="color:var(--red)">最燙</b></div>
+  <div class="band warn" data-f="3" data-a="u" data-s="warn">⚠ 放大鏡不能對著太陽、不能對著人的眼睛！</div>
+</section>
+
+<!-- 6 中間薄：貓眼 -->
+<section class="slide">
+  <div class="kick">第 5 站・中間薄的鏡片</div>
+  <h2>門上的「貓眼」，是中間薄的鏡片</h2>
+  <div class="ph" data-f="1" data-a="tilt" data-s="whoosh" style="left:90px;top:220px;width:640px;height:470px"><img src="img/peephole.jpg" alt=""></div>
+  <div class="ph" data-f="2" data-a="tilt2" data-s="pop" style="left:820px;top:220px;width:640px;height:470px"><img src="img/concave.jpg" alt=""></div>
+  <div class="stamp" data-f="2" data-a="stamp" style="left:1120px;top:600px;border-color:var(--blue);color:var(--blue)">光散開</div>
+  <div class="band" data-f="3" data-a="u">中間薄＝<b>凹透鏡</b>：東西看起來<b>變小</b>，但看得<b>更廣</b>。</div>
+</section>
+
+<!-- 7 找一找 -->
+<section class="slide" id="sort">
+  <div class="kick">第 6 站・找一找</div>
+  <h2>生活裡的鏡片：中間厚？中間薄？</h2>
+  <div class="sub" style="font-size:26px;margin-top:6px">先讓同學猜，再點照片看答案</div>
+  <div class="grid6">
+    <div class="tile" data-f="1" data-a="pop" data-flip><img src="img/magnifier.jpg" alt=""><div class="nm">放大鏡</div><div class="lb" style="background:var(--red)">中間厚</div></div>
+    <div class="tile" data-f="1" data-a="pop" data-flip><img src="img/drop.jpg" alt=""><div class="nm">一滴水</div><div class="lb" style="background:var(--red)">中間厚</div></div>
+    <div class="tile" data-f="1" data-a="pop" data-flip><img src="img/peephole.jpg" alt=""><div class="nm">門上的貓眼</div><div class="lb" style="background:var(--blue)">中間薄</div></div>
+    <div class="tile" data-f="1" data-a="pop" data-flip><img src="img/camera.jpg" alt=""><div class="nm">相機鏡頭</div><div class="lb" style="background:var(--red)">中間厚</div></div>
+    <div class="tile" data-f="1" data-a="pop" data-flip><img src="img/aquarium.jpg" alt=""><div class="nm">圓圓的魚缸</div><div class="lb" style="background:var(--red)">中間厚</div></div>
+    <div class="tile" data-f="1" data-a="pop" data-flip><img src="img/glasses.jpg" alt=""><div class="nm">近視眼鏡</div><div class="lb" style="background:var(--blue)">中間薄</div></div>
+  </div>
+</section>
+
+<!-- 8 動手做 -->
+<section class="slide">
+  <div class="kick">第 7 站・動手做</div>
+  <h2>拿出放大鏡，開始尋寶！</h2>
+  <div class="steps" style="left:90px;top:250px">
+    <div class="st" data-f="1" data-a="l" data-s="pop"><span class="no">1</span>拿一支放大鏡</div>
+    <div class="st" data-f="2" data-a="l" data-s="pop"><span class="no">2</span>找尋寶單上小小的東西</div>
+    <div class="st" data-f="3" data-a="l" data-s="pop"><span class="no">3</span>找到了，在 ☐ 打勾</div>
+  </div>
+  <div class="ph" data-f="1" data-a="tilt2" style="left:900px;top:230px;width:600px;height:460px"><img src="img/handson.jpg" alt=""></div>
+  <div class="band warn" data-f="4" data-a="u" data-s="warn">⚠ 放大鏡不對著太陽、不對著別人的眼睛</div>
+</section>
+
+<!-- 9 小結 -->
+<section class="slide">
+  <div class="kick">偵探筆記</div>
+  <h2>今天學會的三件事</h2>
+  <div class="sum" data-f="1" data-a="l" data-s="pop" style="top:250px"><svg viewBox="0 0 80 100"><path d="M40 4 Q72 50 40 96 Q8 50 40 4Z" fill="#bfe6f5" stroke="#2a7fb8" stroke-width="3"/></svg><span>中間厚＝<b>凸透鏡</b>：字變大，光<b>聚起來</b></span></div>
+  <div class="sum" data-f="2" data-a="l" data-s="pop" style="top:440px"><svg viewBox="0 0 80 100"><path d="M24 4 L56 4 Q38 50 56 96 L24 96 Q42 50 24 4Z" fill="#bfe6f5" stroke="#2a7fb8" stroke-width="3"/></svg><span>中間薄＝<i>凹透鏡</i>：字變小，光<i>散開</i></span></div>
+  <div class="sum" data-f="3" data-a="l" data-s="pop" style="top:630px"><span style="font-size:70px;display:inline-block;transform:rotate(180deg)">🌳</span><span>放大鏡拿遠一點：景色<b>倒過來</b></span></div>
+  <div class="stamp" data-f="4" data-a="stamp" data-s="fan" style="right:90px;top:70px">破案！</div>
+</section>
+
+</div></div>
+
+<a id="home" href="/light/">← 主選單</a>
+<div id="rot">📱 手機橫過來看，畫面比較大</div>
+<div id="hint">點畫面或按 → 也可以下一步</div>
+<div id="bar"><button class="cb" id="prev">‹ 上一步</button><div class="dots" id="dots"></div><span id="pg"></span><button class="cb nx" id="next">下一步 ›</button><button class="cb" id="snd">🔊</button><button class="cb" id="fs">⛶ 全螢幕</button></div>
+
+<script>
+(function(){
+  const stage=document.getElementById('stage'), slides=[...document.querySelectorAll('.slide')];
+  let cur=0, step=0;
+  // 縮放
+  function fit(){const r=innerHeight<520?56:72;const s=Math.min(innerWidth/1600,(innerHeight-r)/900);stage.style.transform=`scale(${s})`;stage.parentElement.style.paddingBottom=r+'px';}
+  addEventListener('resize',fit);fit();
+  // 聲音（iPhone 靜音也能播）
+  let AC,muted=false,unl=false;
+  function ac(){if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();}if(AC.state!=='running')AC.resume();return AC;}
+  function unlock(){try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}try{ac();}catch(e){}if(unl)return;unl=true;
+    try{const n=4000,b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,t)=>[...t].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,16000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
+      const el=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/wav'})));el.loop=true;el.play().catch(()=>{unl=false;});}catch(e){}}
+  addEventListener('pointerdown',unlock,true);addEventListener('keydown',unlock,true);
+  function tone(f,d,type='sine',vol=.12,t0=0,f2){if(muted)return;try{const a=ac(),o=a.createOscillator(),g=a.createGain(),s=a.currentTime+t0;o.type=type;o.frequency.setValueAtTime(f,s);if(f2)o.frequency.exponentialRampToValueAtTime(f2,s+d);g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(vol,s+.015);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(g).connect(a.destination);o.start(s);o.stop(s+d+.05);}catch(e){}}
+  let NB;function noise(d,vol,f1,f2){if(muted)return;try{const a=ac();if(!NB){NB=a.createBuffer(1,a.sampleRate,a.sampleRate);const c=NB.getChannelData(0);for(let i=0;i<c.length;i++)c[i]=Math.random()*2-1;}const s=a.createBufferSource(),bp=a.createBiquadFilter(),g=a.createGain(),t=a.currentTime;s.buffer=NB;bp.type='bandpass';bp.Q.value=1.2;bp.frequency.setValueAtTime(f1,t);bp.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(bp).connect(g).connect(a.destination);s.start();s.stop(t+d+.05);}catch(e){}}
+  const SFX={
+    page(){noise(.35,.12,600,2400);},
+    whoosh(){noise(.45,.14,300,1800);},
+    pop(){tone(520,.12,'sine',.12,0,900);},
+    ding(){tone(1046,.4,'triangle',.1);tone(1568,.5,'sine',.06,.08);},
+    ok(){[523,659,784,1046].forEach((f,i)=>tone(f,.32,'triangle',.11,i*.08));},
+    warn(){tone(440,.18,'square',.05);tone(440,.18,'square',.05,.25);},
+    fan(){[523,659,784,659,784,1046].forEach((f,i)=>tone(f,.38,'triangle',.12,i*.14));}
+  };
+  // 頁面與步驟
+  const maxStep=s=>Math.max(0,...[...s.querySelectorAll('[data-f]')].map(e=>+e.dataset.f));
+  function apply(k){const s=slides[cur];s.querySelectorAll('[data-f]').forEach(e=>{const on=+e.dataset.f<=k;e.classList.toggle('show',on);});
+    s.querySelectorAll('.op').forEach(o=>o.classList.remove('ok','no'));
+    s.querySelectorAll('[data-ok]').forEach(e=>{if(+e.dataset.f<=k){const ok=document.getElementById(e.dataset.ok);s.querySelectorAll('.op').forEach(o=>o.classList.add(o===ok?'ok':'no'));}});}
+  function sound(k){const s=slides[cur];const e=[...s.querySelectorAll('[data-f="'+k+'"][data-s]')][0];if(e&&SFX[e.dataset.s])SFX[e.dataset.s]();}
+  function go(i,full){if(i<0||i>=slides.length)return;const old=slides[cur];old.classList.remove('on');old.classList.add('out');setTimeout(()=>old.classList.remove('out'),600);
+    cur=i;const s=slides[cur];s.classList.add('on');step=full?maxStep(s):0;
+    s.querySelectorAll('[data-flip]').forEach(t=>t.classList.toggle('flip',!!full));
+    apply(step);ui();SFX.page();if(step===0)setTimeout(()=>sound(0),150);}
+  function next(){const s=slides[cur];
+    if(s.id==='sort'&&step>=1){const t=[...s.querySelectorAll('[data-flip]:not(.flip)')][0];if(t){t.classList.add('flip');SFX.ding();return;}}
+    if(step<maxStep(s)){step++;apply(step);sound(step);ui();}else go(cur+1);}
+  function prev(){if(step>0&&cur===0){return;}go(cur-1,true);}
+  function ui(){document.getElementById('pg').textContent=(cur+1)+' / '+slides.length;document.querySelectorAll('#dots i').forEach((d,j)=>d.classList.toggle('on',j===cur));
+    document.getElementById('next').textContent=(cur===slides.length-1&&step>=maxStep(slides[cur]))?'結束 ✓':'下一步 ›';}
+  document.getElementById('dots').innerHTML=slides.map(()=>'<i></i>').join('');
+  document.querySelectorAll('[data-flip]').forEach(t=>t.addEventListener('click',e=>{e.stopPropagation();if(!t.classList.contains('show'))return;t.classList.toggle('flip');if(t.classList.contains('flip'))SFX.ding();}));
+  document.getElementById('next').onclick=e=>{e.stopPropagation();next();};
+  document.getElementById('prev').onclick=e=>{e.stopPropagation();prev();};
+  document.getElementById('snd').onclick=e=>{e.stopPropagation();muted=!muted;e.target.textContent=muted?'🔇':'🔊';};
+  document.getElementById('fs').onclick=e=>{e.stopPropagation();const d=document.documentElement;(document.fullscreenElement?document.exitFullscreen():(d.requestFullscreen||d.webkitRequestFullscreen||(()=>{})).call(d));};
+  stage.addEventListener('click',()=>next());
+  addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}});
+  slides[0].classList.add('on');apply(0);ui();
+  window.__show={next,prev,go,get cur(){return cur;},get step(){return step;}};
+})();
+</script>
+</body>
+</html>

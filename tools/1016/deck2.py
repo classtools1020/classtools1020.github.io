@@ -115,7 +115,7 @@ def full_photo(sl, path):
 toc, A0 = new(); bg(toc)
 T(toc, .7, .55, 9, .5, '光線特勤隊', 18, RED)
 T(toc, .7, .95, 11, 1.0, '10/16（五）自然', 46)
-CL = [('甲班', '第 5 節　13:10', '放大鏡偵探', GEN + 'treasure.jpg', ['MV〈折一下 Snap!〉', '透鏡快問＋實驗室', '放大鏡尋寶', '折射環島搶答']),
+CL = [('甲班', '第 5 節　13:10', '放大鏡偵探', GEN + 'treasure.jpg', ['MV〈折一下 Snap!〉', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答']),
       ('乙班', '第 6 節　14:05', '光線特勤隊總複習', MV + 'train.jpg', ['MV〈折一下 Snap!〉', '光之環島列車', '折射環島搶答']),
       ('乙班', '第 7 節　15:00', '生活裡的折射', GEN + 'drop-text.jpg', ['折射偵探守則', '四個生活案件', '水滴放大鏡', '我看到的光'])]
 toc_cards = []
@@ -202,7 +202,7 @@ def frame_slide(tag, lines):
 
 # ======================= 甲班 第 5 節 =======================
 sA = cover('甲班', '第 5 節　13:10–13:55', '放大鏡偵探', GEN + 'treasure.jpg',
-           ['MV〈折一下 Snap!〉', '透鏡快問＋透鏡實驗室', '放大鏡尋寶', '折射環島搶答'], '放大鏡、尋寶單', goal='說出放大鏡中間厚，讓東西看起來變大')
+           ['MV〈折一下 Snap!〉', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答'], '放大鏡、尋寶單', goal='說出放大鏡中間厚，讓東西看起來變大')
 link_slide('甲班｜暖身', 'MV\n〈折一下 Snap!〉', '唱到 Snap，全班一起彈指！', CAP + 's_mv.png', '▶  播放 MV', B + 'light-refract/mv.html', (.21, .07, .21, .35))
 # 透鏡快問：中間厚 vs 中間薄（畫鏡片形狀）
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '甲班｜透鏡快問')
@@ -232,7 +232,7 @@ T(sl, 7.0, 6.05, 5.3, .6, 'B　中間薄', 26, INK, align=PP_ALIGN.CENTER)
 ring, badge = check(sl, 1.0, 2.2, 5.3, 4.6)
 ans = band(sl, '放大鏡中間厚＝凸透鏡：讓光換方向，東西看起來變大', y=6.85, h=.65, size=22, fill=GREEN)
 A.add('click', [('fade', ring.shape_id, {'dur': 300}), ('zoom', badge.shape_id, {'dur': 400}), ('wipe', ans.shape_id, {'dur': 500, 'dir': 'u'})])
-link_slide('甲班｜透鏡實驗室', '透鏡實驗室', '一站一站玩：放大鏡、眼鏡、相機，都在讓光換方向。', CAP + 's_lens.png', '▶  打開實驗室', B + 'light-lens/lab.html#lesson')
+link_slide('甲班｜放大鏡偵探', '放大鏡偵探', '先猜再揭曉：字變大？景色倒過來？光聚到焦點？一直按「下一步」就好。', CAP + 's_lensshow.png', '▶  打開簡報', PDF + 'show/')
 # 放大鏡尋寶
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '甲班｜放大鏡尋寶')
 framed(sl, CAP + 'w_treasure.png', .9, .9, 4.5, 6.3, -2.5, pad=.08)
