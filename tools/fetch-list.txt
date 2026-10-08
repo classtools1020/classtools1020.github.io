@@ -12,3 +12,9 @@ img/sub/buzzer.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/g2gKDsz
 img/sub/magnifier.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/3Nw2HHXDyYSdQy4QxqVwz/DU0UMGyWjr_E71jpAyB72.jpg
 img/sub/sheet-on-paper.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/XICylUKJpqdRovS6yVlGE/eRgVKpd3PCxEXsZst3glJ.jpg
 img/sub/dropper.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/JF4wzzvNz4zt55U1tOLsC/EgQM9EnISHCrgRxMUEzPU.jpg
+img/lesson/projection.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/zgBABkXe1Gx4dnYR5n9KE/rCBPba2gf1ql7rEUyn6Ro.jpg
+img/lesson/glasses.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/6G5XeMhvu3FcA6w6Br7hV/Z1iS9ZrpnaCLgzywB3h9n.jpg
+img/lesson/peephole.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/3oYJViJksmAvmMbfRDk6i/LXW9ztV3-OV0upmPifj0c.jpg
+img/lesson/camera.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/NXWy4lY4MHaYuQslQNGWM/FeEyMRuvYY0sZRwwTRLcJ.jpg
+img/lesson/beam.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/xEpV5JWYTe2uh5Y3yKUUF/Ti5fWNBxhvqU6rI88NXrG.jpg
+img/lesson/handson.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/A5QUreg9c5juA0QUCjcqY/AzQHxv1qNhLtToEi_lVu8.jpg
