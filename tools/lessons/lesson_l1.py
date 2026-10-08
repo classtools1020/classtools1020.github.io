@@ -468,7 +468,7 @@ sl, A = new(); bg(sl); toc_link(sl, home); kicker(sl, '寫寫看')
 framed(sl, HERE + '/img/w_lens.png', .9, .9, 4.6, 6.3, -2.5, pad=.08, crop=(0, .03, 0, .28))
 T(sl, 6.3, .95, 6.5, .9, '學習單', 44)
 T(sl, 6.32, 1.85, 6.4, .6, '選一個你可以完成的程度：', 22, SOFT, bold=False)
-lv = [('🔵', '基礎', '圈出中間厚、中間薄'), ('🟠', '進階', '寫出凸透鏡、凹透鏡的不同'), ('⭐', '挑戰', '說出一個生活裡的透鏡')]
+lv = [('🔵', '基礎', '看照片，在 ☐ 打勾'), ('🟠', '進階', '勾答案，再勾「因為」'), ('⭐', '挑戰', '說出一個生活裡的透鏡')]
 for i, (ic, a, b_) in enumerate(lv):
     y = 2.75 + i * 1.0
     c = rect(sl, 6.3, y, 6.4, .82, WHITE, LINEC, 1.5, MSO_SHAPE.ROUNDED_RECTANGLE, rad=.2)

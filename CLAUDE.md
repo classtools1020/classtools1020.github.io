@@ -72,6 +72,7 @@
 - 已完成並上線：事件簿、新聞台 3D 版、兩者的列印講義、折射 PPT 第2節／第3節（動畫＋超連結，待老師用 PowerPoint 實測）、導覽整理（返回／主選單）、MV 新歌、實驗室站號 1–6、主選單改格子、全站「轉彎」改「折一下」。
 - **10/16（五）老師請喪假，代課**：
   - **永久保存版（本站）**：`light-refract/1016/`（slides.pptx 28 頁簡報、treasure.pdf、draw.pdf、plan.pdf）；主選單 10/16 三節 SUBA／SUBB6／SUBB7 都有完整步驟。簡報產生程式 `tools/1016/deck2.py`（第二版：預測→證據照片＋光路圖→答案、偵探守則圖、案件整理、句型小結；`python3 deck2.py 輸出.pptx 網頁根網址 PDF資料夾網址`）。
+  - **學習單一律「勾選」＋真實照片**（老師要求：學生不習慣開放式填寫）：`tools/sheets/sheets.py` 產生透鏡 L1（`light-lens/worksheet.html`＋`files/透鏡第1節_學習單.pdf`）、折射 R3（`light-refract/worksheet.html`＋`files/04_折射_學習單_照片版.pdf`）、10/16 尋寶單／畫卡（`light-refract/1016/` 與代課包）。🔵 基礎＝看照片勾一個；🟠 進階＝先勾答案再勾「因為」；第 3 頁解答卡＋評量記錄。不要再出現＿＿填空。
   - **🚒 光線特勤隊・出勤！** `games/light-dispatch.html`：3D 竹東小鎮（沿用 light-town world.js），紅藍兩隊輪流開特勤車去報案地點；報案與題目用語音念（speechSynthesis zh-TW），兩個大圖示選項、答錯可再選（100／50 分）、揭曉用真實照片＋一句解釋、結案頒獎。兩包案件：🔍 透鏡 6 案（甲班）、💧 折射 6 案（乙班）。10/16 甲5、乙6 最後一步都改成特勤隊（取代折射環島搶答）。測試：`window.__disp.at(pack,i)`、`__dtScale`。代課包版本由 `scratchpad` 的 dispatch_sub.py 複製（拿掉 gate、返回／主選單，改用 fx.js 的回目錄；light-town/lib＋world.js、用到的照片一起複製）。
   - **代課包（給代課老師）**：老師的體育網域 `hccadaptive.com/f8f9fc3bd1/`（repo `classtools1020/sports-results` 的 `f8f9fc3bd1/`），網址與內容不出現 classtools；通關碼私下給。頁面只列步驟（**不寫分鐘**），**不要說明文字、不要心情打卡、不要版權字、不要「怎麼做的」說明（例如 MV 的 Gemini／歌詞）**，白底素雅不要 AI 感。10/16 16:00 自動顯示關閉，16:01 排程刪資料夾。縣賽成績網站其他檔案**不要動**（11/6 有全縣活動）。
   - 步驟：甲5 MV→透鏡實驗室→放大鏡尋寶→折射環島搶答｜乙6 MV→光之環島列車→折射環島搶答｜乙7 生活裡的折射→水滴放大鏡→畫卡→MV 再唱。

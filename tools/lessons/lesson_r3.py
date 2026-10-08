@@ -159,7 +159,7 @@ ws, A = new(); bg(ws); toc_link(ws, home); kicker(ws, '寫寫看')
 framed(ws, HERE + '/img/w_r3.png', .9, .9, 4.6, 6.3, -2.5, pad=.08)
 T(ws, 6.3, .95, 6.5, .9, '學習單', 44)
 T(ws, 6.32, 1.85, 6.4, .6, '看照片，想想剛剛做的實驗：', 22, SOFT, bold=False)
-lv = [('🔵', '基礎', '圈出看起來的樣子'), ('🟠', '進階', '寫出「光在水面折一下」'), ('⭐', '挑戰', '說一個生活裡的折射')]
+lv = [('🔵', '基礎', '看照片，在 ☐ 打勾'), ('🟠', '進階', '勾答案，再勾「因為」'), ('⭐', '挑戰', '說一個生活裡的折射')]
 for i, (ic, a, b_) in enumerate(lv):
     y = 2.75 + i * 1.0
     c = rect(ws, 6.3, y, 6.4, .82, WHITE, LINEC, 1.5, MSO_SHAPE.ROUNDED_RECTANGLE, rad=.2)
