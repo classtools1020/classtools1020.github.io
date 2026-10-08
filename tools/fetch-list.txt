@@ -10,3 +10,5 @@ img/sub/treasure.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/AZbyd
 img/sub/draw.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/KMOxn1CTYSbIhST8UfxNx/8spH6vQ7v12Ig9kEpQ5gr.jpg
 img/sub/buzzer.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/g2gKDszD97DqWyogHY7Qa/fXeAZLlOoJ8yV9yWHxjDu.jpg
 img/sub/magnifier.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/3Nw2HHXDyYSdQy4QxqVwz/DU0UMGyWjr_E71jpAyB72.jpg
+img/sub/sheet-on-paper.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/XICylUKJpqdRovS6yVlGE/eRgVKpd3PCxEXsZst3glJ.jpg
+img/sub/dropper.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/JF4wzzvNz4zt55U1tOLsC/EgQM9EnISHCrgRxMUEzPU.jpg
