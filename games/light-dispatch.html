@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>光線特勤隊出勤</title>
+<style>
+  :root{--ink:#1f2a37;--red:#d8352a;--blue:#2361b8;--gold:#ffcf2e;--paper:#fffaf0}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:#9fc3d8;font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  #stage canvas{display:block;touch-action:none}
+  button{font-family:inherit;touch-action:manipulation;cursor:pointer}
+  .hide{display:none!important}
+  /* 上方資訊列 */
+  .hud{position:fixed;left:0;right:0;top:0;display:flex;align-items:center;gap:8px;padding:8px 10px;pointer-events:none}
+  .hud>*{pointer-events:auto}
+  .nb{font-weight:800;font-size:17px;padding:10px 14px;border-radius:12px;border:none;background:rgba(255,255,255,.94);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.18);text-decoration:none;line-height:1}
+  .unit{background:#fff;border-radius:14px;padding:6px 12px;font-weight:900;font-size:17px;box-shadow:0 2px 8px rgba(0,0,0,.18);display:flex;align-items:center;gap:10px}
+  .unit .bar{width:min(26vw,260px);height:12px;background:#e7e1d4;border-radius:8px;overflow:hidden}
+  .unit .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffb52e,#ffd84d);transition:width .6s}
+  .team{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:14px;background:#fff;font-weight:900;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.18);transition:transform .25s,box-shadow .25s}
+  .team b{font-size:22px;min-width:52px;text-align:right}
+  .team.r{color:var(--red)}.team.b{color:var(--blue)}
+  .team.on{transform:scale(1.12);box-shadow:0 0 0 4px currentColor,0 4px 14px rgba(0,0,0,.2)}
+  .sp{margin-left:auto}
+  /* 報案條 */
+  .alert{position:fixed;left:50%;top:66px;transform:translateX(-50%);width:min(94vw,900px);background:#fff;border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.25);padding:12px 20px 14px;text-align:center;border:4px solid var(--red)}
+  .alert .k{display:inline-block;background:var(--red);color:#fff;font-weight:900;font-size:16px;border-radius:999px;padding:4px 14px;letter-spacing:.1em}
+  .alert .t{font-size:clamp(24px,3.2vw,38px);font-weight:900;margin-top:6px;line-height:1.3}
+  .alert .s{font-size:clamp(16px,1.8vw,21px);color:#5b6673;font-weight:700;margin-top:2px}
+  .alert.pop{animation:pop .45s}
+  @keyframes pop{0%{transform:translateX(-50%) scale(.6);opacity:0}70%{transform:translateX(-50%) scale(1.05)}100%{transform:translateX(-50%) scale(1);opacity:1}}
+  /* 下方按鈕 */
+  .bot{position:fixed;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;padding:0 12px}
+  .big{font-weight:900;font-size:clamp(22px,2.6vw,30px);padding:18px 34px;border-radius:20px;border:none;box-shadow:0 6px 16px rgba(0,0,0,.25);line-height:1}
+  .go{background:var(--red);color:#fff;animation:pulse 1.2s infinite}
+  .go.b{background:var(--blue)}
+  @keyframes pulse{50%{transform:scale(1.06)}}
+  .ghost{background:#fff;color:var(--ink)}
+  /* 題目 */
+  .qp{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(96vw,1040px);background:var(--paper);border-radius:22px;box-shadow:0 10px 34px rgba(0,0,0,.3);padding:14px 18px 16px}
+  .qp .q{font-size:clamp(24px,3vw,36px);font-weight:900;text-align:center;line-height:1.3}
+  .qp .who{text-align:center;font-weight:900;font-size:18px;margin-bottom:4px}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+  .opt{background:#fff;border:4px solid #e4dccb;border-radius:18px;padding:12px;display:flex;align-items:center;gap:14px;font-size:clamp(22px,2.6vw,32px);font-weight:900;color:var(--ink);text-align:left;min-height:110px;transition:transform .15s}
+  .opt:active{transform:scale(.97)}
+  .opt .ic{width:96px;height:86px;flex:none;display:flex;align-items:center;justify-content:center;font-size:60px;border-radius:14px;background:#f4efe6;overflow:hidden}
+  .opt .ic img{width:100%;height:100%;object-fit:cover}
+  .opt .ic svg{width:80px;height:80px}
+  .opt.ok{border-color:#2f9a4c;background:#e9f8ec}
+  .opt.no{border-color:#c9c2b6;opacity:.45}
+  .opt.shake{animation:shake .4s}
+  @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+  .tools{display:flex;justify-content:center;gap:10px;margin-top:10px}
+  .tools button{font-weight:800;font-size:17px;padding:10px 16px;border-radius:12px;border:2px solid #d8cfbf;background:#fff;color:var(--ink)}
+  /* 揭曉 */
+  .rv{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:center}
+  .rv img{width:100%;height:min(34vh,300px);object-fit:cover;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+  .rv .ok{font-size:clamp(28px,3.4vw,44px);font-weight:900;color:#2f9a4c}
+  .rv .ex{font-size:clamp(20px,2.3vw,28px);font-weight:800;line-height:1.45;margin-top:6px}
+  .rv .ex b{color:var(--red)}
+  .rv .safe{margin-top:8px;font-size:clamp(17px,1.8vw,21px);font-weight:900;color:#fff;background:var(--red);border-radius:10px;padding:6px 12px;display:inline-block}
+  .rv .pts{font-size:22px;font-weight:900;margin-top:8px}
+  /* 開始畫面 */
+  .cover{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(18,30,48,.35),rgba(18,30,48,.7))}
+  .card{background:var(--paper);border-radius:26px;padding:26px 30px;width:min(94vw,760px);text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.4)}
+  .card h1{margin:0;font-size:clamp(38px,6vw,64px);font-weight:900;letter-spacing:.06em;color:var(--red);text-shadow:0 3px 0 #ffd84d}
+  .card .sub{font-size:clamp(17px,2vw,22px);font-weight:800;color:#5b6673;margin:6px 0 18px}
+  .packs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .pack{border:none;border-radius:20px;padding:18px 12px;font-size:clamp(22px,2.8vw,30px);font-weight:900;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+  .pack small{display:block;font-size:16px;font-weight:800;opacity:.92;margin-top:6px}
+  .pack.l{background:linear-gradient(135deg,#d8352a,#f07a2a)}.pack.r{background:linear-gradient(135deg,#1f6fb8,#1fa0a0)}
+  .tm{display:flex;justify-content:center;gap:12px;margin-top:16px;font-weight:900;font-size:20px}
+  .tm span{padding:8px 16px;border-radius:12px;color:#fff}
+  .snd{margin-top:14px;font-weight:800;font-size:16px;color:#5b6673}
+  /* 結案 */
+  .end h2{margin:0;font-size:clamp(34px,5vw,56px);color:var(--red)}
+  .end .sc{display:flex;justify-content:center;gap:16px;margin:16px 0}
+  .end .sc div{flex:1;border-radius:18px;padding:14px;color:#fff;font-weight:900;font-size:24px}
+  .end .sc b{display:block;font-size:46px}
+  .end .medal{font-size:20px;font-weight:800;color:#5b6673;margin-bottom:14px}
+  canvas#cf{position:fixed;inset:0;pointer-events:none}
+  @media (max-width:760px){.unit .bar{display:none}.opt{min-height:90px}.opt .ic{width:70px;height:64px;font-size:44px}.rv{grid-template-columns:1fr}.rv img{height:22vh}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<canvas id="cf"></canvas>
+
+<div class="hud">
+  <button class="nb" id="back">← 返回</button>
+  <a class="nb" id="home" href="/light/">🏠 主選單</a>
+  <div class="unit">🚒 竹東分隊 <span class="bar"><i id="prog"></i></span> <span id="cnt">0/6</span></div>
+  <div class="sp"></div>
+  <div class="team r" id="tR">🔴 紅隊 <b id="sR">0</b></div>
+  <div class="team b" id="tB">🔵 藍隊 <b id="sB">0</b></div>
+</div>
+
+<div class="alert hide" id="alert"><span class="k" id="alK">🆘 報案</span><div class="t" id="alT"></div><div class="s" id="alS"></div></div>
+<div class="bot hide" id="bot"><button class="big go" id="go">🚨 紅隊出動！</button></div>
+
+<div class="qp hide" id="qp"></div>
+
+<div class="cover" id="cover">
+  <div class="card">
+    <h1>光線特勤隊・出勤！</h1>
+    <div class="sub">竹東有人報案！紅隊、藍隊輪流開特勤車去幫忙</div>
+    <div class="packs">
+      <button class="pack l" data-p="lens">🔍 透鏡案件<small>放大鏡・眼鏡・貓眼・一滴水</small></button>
+      <button class="pack r" data-p="refract">💧 折射案件<small>吸管・硬幣・泳池・抓魚</small></button>
+    </div>
+    <div class="tm"><span style="background:var(--red)">🔴 紅隊</span><span style="background:var(--blue)">🔵 藍隊</span></div>
+    <div class="snd">🔊 請打開喇叭：報案會念出來</div>
+  </div>
+</div>
+
+<div class="cover hide" id="endC"><div class="card end" id="endCard"></div></div>
+
+<script type="module">
+import * as THREE from '../light-town/lib/three.module.min.js';
+import { RoomEnvironment } from '../light-town/lib/RoomEnvironment.js';
+import { buildWorld, updateWorld, koko, person, walkPose, M } from '../light-town/world.js';
+
+const $ = id => document.getElementById(id);
+const IMG = '../';   // 圖片根目錄（light-refract/mv、img/lesson）
+
+// ---------- 案件 ----------
+const LENS_SVG = thick => { const w0 = thick ? 34 : 10, w1 = thick ? 8 : 34; let L = [], R = [];
+  for (let i = 0; i <= 20; i++) { const t = -1 + i / 10, w = w1 + (w0 - w1) * (1 - t * t); L.push(`${40 - w / 2},${40 + t * 34}`); R.unshift(`${40 + w / 2},${40 + t * 34}`); }
+  return `<svg viewBox="0 0 80 80"><polygon points="${L.concat(R).join(' ')}" fill="#bfe6f5" stroke="#2a7fb8" stroke-width="3"/></svg>`; };
+const THICK = { ic: LENS_SVG(true), t: '中間厚' }, THIN = { ic: LENS_SVG(false), t: '中間薄' };
+const PACKS = {
+  lens: [
+    { at: 'glasses', place: '光光眼鏡行', call: '阿公看報紙，字太小，看不清楚！', q: '要給阿公哪一種鏡片？', opts: [THICK, THIN], a: 0,
+      img: 'light-refract/mv/magnifier.jpg', ex: '<b>中間厚</b>的鏡片（凸透鏡），讓字<b>變大</b>！老花眼鏡就是中間厚。' },
+    { at: 'apt', place: '光明公寓', call: '有人按門鈴，住戶想知道門外是誰！', q: '門上的貓眼，是哪一種鏡片？', opts: [THICK, THIN], a: 1,
+      img: 'img/lesson/peephole.jpg', ex: '貓眼是<b>中間薄</b>的鏡片（凹透鏡）：東西變小，但看得到<b>整條走廊</b>。' },
+    { at: 'school', place: '光線國中', call: '同學拿放大鏡，把窗外的景色投到白紙上！', q: '白紙上的景色是——', opts: [{ ic: '🌳', t: '正的' }, { ic: '<span style="display:inline-block;transform:rotate(180deg)">🌳</span>', t: '倒過來' }], a: 1,
+      img: 'img/lesson/projection.jpg', ex: '光走過焦點會<b>交叉</b>，上面跑到下面——景色<b>倒過來</b>了！' },
+    { at: 'stationery', place: '光華文具', call: '一滴水，滴在作業簿的字上面！', q: '水滴下面的字，看起來？', opts: [{ ic: '🔎', t: '變大' }, { ic: '🤏', t: '變小' }], a: 0,
+      img: 'light-refract/mv/drop.jpg', ex: '一滴水圓圓鼓鼓，<b>中間厚</b>，就是一個小小的放大鏡，字<b>變大</b>！' },
+    { at: 'park', place: '溪邊公園', call: '有人拿放大鏡，對著太陽照樹葉！', q: '樹葉會怎麼樣？', opts: [{ ic: '🔥', t: '冒煙、燒焦' }, { ic: '🍃', t: '沒事' }], a: 0,
+      img: 'img/lesson/convex-laser.jpg', ex: '放大鏡把陽光<b>聚到焦點</b>，焦點<b>很燙</b>，樹葉會燒起來！', safe: '⚠ 放大鏡不能對著太陽、不能對著人' },
+    { at: 'grocery', place: '福利雜貨', call: '店裡的圓魚缸，金魚好像變胖了！', q: '從旁邊看圓魚缸，金魚看起來？', opts: [{ ic: '🐡', t: '變大' }, { ic: '🐟', t: '變小' }], a: 0,
+      img: 'light-refract/mv/aquarium.jpg', ex: '圓圓的魚缸裝滿水，<b>中間厚</b>，像放大鏡一樣，金魚<b>變大</b>了！' },
+  ],
+  refract: [
+    { at: 'tea', place: '光光茶飲', call: '客人大叫：我的吸管斷掉了！', q: '吸管真的斷了嗎？', opts: [{ ic: '🥤', t: '沒有斷' }, { ic: '✂️', t: '真的斷了' }], a: 0,
+      img: 'light-refract/mv/straw.jpg', ex: '吸管<b>沒有斷</b>！光從水裡出來，在<b>水面折一下</b>，眼睛被騙了。' },
+    { at: 'temple', place: '土地公廟', call: '碗裡的硬幣看不見了，廟公要倒水！', q: '倒水以後，會怎樣？', opts: [{ ic: '🪙', t: '硬幣出現了' }, { ic: '🙈', t: '還是看不見' }], a: 0,
+      img: 'light-refract/mv/coin.jpg', ex: '倒了水，光在<b>水面折一下</b>，跑進眼睛——硬幣<b>出現</b>了！' },
+    { at: 'school', place: '光線國中游泳池', call: '游泳池看起來好淺，同學想跳水！', q: '真正的水，有多深？', opts: [{ ic: '🌊', t: '比看起來深' }, { ic: '💧', t: '跟看起來一樣淺' }], a: 0,
+      img: 'light-refract/mv/pool.jpg', ex: '光在水面折一下，池底看起來<b>變淺</b>，其實水<b>比看起來深</b>！', safe: '⚠ 游泳池不可以跳水' },
+    { at: 'creek', place: '竹東溪邊', call: '阿伯要抓魚，可是一直抓不到！', q: '真的魚，在哪裡？', opts: [{ ic: '⬇️', t: '更深一點' }, { ic: '⬆️', t: '更淺一點' }], a: 0,
+      img: 'light-refract/mv/net.jpg', ex: '魚看起來比較淺，真的魚在<b>更深</b>的地方，網子要往<b>下面</b>撈！' },
+    { at: 'school', place: '光線國中理化教室', call: '老師把雷射光，斜斜照進水裡！', q: '光走進水裡，會怎樣？', opts: [{ ic: '↘️', t: '在水面折一下' }, { ic: '➡️', t: '直直走' }], a: 0,
+      img: 'light-refract/mv/laser.jpg', ex: '光斜斜進到水裡，會在<b>水面折一下</b>，讓光<b>換方向</b>！' },
+    { at: 'grocery', place: '福利雜貨', call: '店裡的圓魚缸，金魚好像變大了！', q: '從旁邊看魚缸，金魚看起來？', opts: [{ ic: '🐡', t: '變大' }, { ic: '🐟', t: '變小' }], a: 0,
+      img: 'light-refract/mv/aquarium.jpg', ex: '光穿過圓圓的水，<b>折一下</b>，金魚看起來<b>變大</b>了！' },
+  ],
+};
+// 地點：卡車停車位置（x、靠哪邊）、鏡頭、報案泡泡位置
+const SITES = {
+  glasses:    { x: -36, side: -1, bub: [-36, 9.5, -8.5], look: [-36, 2.6, -9], cam: [-36, 4.2, 4.5] },
+  apt:        { x: -2,  side: -1, bub: [-2, 15, -9], look: [-2, 3, -9], cam: [-2, 4.4, 4.8] },
+  school:     { x: -5,  side: 1,  bub: [-5, 6, 8.5], look: [-5, 2.2, 9], cam: [-5, 4.4, -4.5] },
+  stationery: { x: 22,  side: 1,  bub: [22, 9.5, 8.5], look: [22, 2.6, 9], cam: [22, 4.2, -4.5] },
+  park:       { x: 47,  side: 1,  bub: [47, 5, 14], look: [47, 1.2, 13], cam: [47, 5.5, 1.5] },
+  grocery:    { x: 34,  side: -1, bub: [34, 7.5, -8.5], look: [34, 2.4, -9], cam: [34, 4.2, 4.5] },
+  tea:        { x: -27, side: -1, bub: [-27, 9.5, -8.5], look: [-27, 2.6, -9], cam: [-27, 4.2, 4.5] },
+  temple:     { x: 24,  side: -1, bub: [24, 6.5, -12], look: [24, 2.2, -12], cam: [24, 5, 1.5] },
+  creek:      { x: 54,  side: 1,  bub: [64, 3, 9], look: [64, -1.5, 9], cam: [55, 5, 2] },
+};
+const HQ = { x: -54, z: 9.6 };
+
+// ---------- 3D ----------
+const R = new THREE.WebGLRenderer({ antialias: true });
+R.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+R.outputColorSpace = THREE.SRGBColorSpace; R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = .85;
+R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
+$('stage').appendChild(R.domElement);
+const S = new THREE.Scene(); S.fog = new THREE.Fog('#cfe0ea', 110, 400);
+S.environment = new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(R), .04).texture; S.environmentIntensity = .5;
+const cam = new THREE.PerspectiveCamera(48, 16 / 9, .1, 900);
+S.add(new THREE.HemisphereLight('#cfe4ff', '#7d6e52', .6));
+const sun = new THREE.DirectionalLight('#fff0d2', 2.4); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 1, far: 180 }); sun.shadow.bias = -.0004; sun.shadow.normalBias = .03;
+S.add(sun); S.add(sun.target);
+const SUN_DIR = new THREE.Vector3(-.45, .78, .42).normalize();
+buildWorld(S);
+
+function canvasTex(draw, w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+const FONT = '"Noto Sans TC","Microsoft JhengHei",sans-serif';
+
+// 特勤隊分隊（車庫）
+{ const g = new THREE.Group(); g.position.set(HQ.x, 0, HQ.z + 4.5); S.add(g);
+  const wall = M('#f2ece0'); const red = M('#c8372d');
+  const b = new THREE.Mesh(new THREE.BoxGeometry(14, 6.5, 9), wall); b.position.y = 3.25; b.castShadow = b.receiveShadow = true; g.add(b);
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(14.6, .5, 9.6), red); roof.position.y = 6.7; g.add(roof);
+  const door = new THREE.Mesh(new THREE.PlaneGeometry(5.2, 4.2), new THREE.MeshStandardMaterial({ map: canvasTex((x, w, h) => { x.fillStyle = '#d9d4cb'; x.fillRect(0, 0, w, h); x.strokeStyle = '#b8b1a5'; x.lineWidth = 6; for (let y = 20; y < h; y += 34) { x.beginPath(); x.moveTo(0, y); x.lineTo(w, y); x.stroke(); } }, 256, 200) }));
+  door.position.set(-2.8, 2.1, -4.51); door.rotation.y = Math.PI; g.add(door);
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(9, 1.5), new THREE.MeshStandardMaterial({ map: canvasTex((x, w, h) => { x.fillStyle = '#c8372d'; x.fillRect(0, 0, w, h); x.fillStyle = '#fff'; x.font = `900 ${h * .62}px ${FONT}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('光線特勤隊・竹東分隊', w / 2, h / 2 + 4); }, 1024, 170), emissive: '#ffffff', emissiveIntensity: .15 }));
+  sign.position.set(0, 5.2, -4.52); sign.rotation.y = Math.PI; g.add(sign);
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(.3, 16, 10), new THREE.MeshBasicMaterial({ color: '#ff3b30' })); lamp.position.set(5.6, 5.2, -4.6); g.add(lamp);
+}
+
+// 特勤車
+function makeTruck() {
+  const g = new THREE.Group(); const body = new THREE.Group(); g.add(body);
+  const paint = new THREE.MeshStandardMaterial({ color: '#ffcf2e', roughness: .35, metalness: .1 });
+  const white = M('#f5f5f5'), dark = new THREE.MeshStandardMaterial({ color: '#1d2733', roughness: .2, metalness: .3 }), rub = M('#222', { roughness: .9 });
+  const bx = (w, h, d, m, x, y, z) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.castShadow = true; body.add(o); return o; };
+  bx(4.6, 1.9, 2.3, paint, -.4, 1.45, 0);           // 車廂
+  bx(1.7, 1.6, 2.3, paint, 2.45, 1.3, 0);           // 車頭
+  bx(.06, .9, 2.0, dark, 3.31, 1.6, 0);             // 擋風玻璃
+  [-1, 1].forEach(s => bx(1.2, .7, .06, dark, 2.45, 1.65, s * 1.16));   // 車窗
+  bx(6.4, .25, 2.36, white, .2, .6, 0);             // 白色腰線
+  bx(.2, .35, 2.2, M('#ddd', { metalness: .6, roughness: .3 }), 3.32, .75, 0);   // 保險桿
+  [[3.3, .95, .8], [3.3, .95, -.8]].forEach(([x, y, z]) => { const l = new THREE.Mesh(new THREE.SphereGeometry(.16, 12, 8), new THREE.MeshBasicMaterial({ color: '#fff8d0' })); l.position.set(x, y, z); body.add(l); });
+  // 側邊字
+  const side = canvasTex((x, w, h) => { x.fillStyle = '#ffcf2e'; x.fillRect(0, 0, w, h); x.fillStyle = '#c8372d'; x.fillRect(0, h * .72, w, h * .28); x.fillStyle = '#1f2a37'; x.font = `900 ${h * .42}px ${FONT}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('光線特勤隊', w / 2, h * .38); x.fillStyle = '#fff'; x.font = `900 ${h * .17}px ${FONT}`; x.fillText('LIGHT RESCUE', w / 2, h * .86); }, 512, 200);
+  [-1, 1].forEach(s => { const p = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 1.7), new THREE.MeshStandardMaterial({ map: side, roughness: .4 })); p.position.set(-.4, 1.5, s * 1.162); if (s < 0) p.rotation.y = Math.PI; body.add(p); });
+  // 警示燈
+  const lr = new THREE.MeshBasicMaterial({ color: '#ff2a2a' }), lb = new THREE.MeshBasicMaterial({ color: '#2a6bff' });
+  const L1 = new THREE.Mesh(new THREE.BoxGeometry(.5, .25, .7), lr); L1.position.set(2.45, 2.25, .45); body.add(L1);
+  const L2 = new THREE.Mesh(new THREE.BoxGeometry(.5, .25, .7), lb); L2.position.set(2.45, 2.25, -.45); body.add(L2);
+  // 車頂大放大鏡
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(.55, .09, 10, 28), M('#8a5a2b', { roughness: .5 })); ring.position.set(-.6, 3.05, 0); ring.rotation.y = Math.PI / 2; body.add(ring);
+  const gl = new THREE.Mesh(new THREE.SphereGeometry(.55, 20, 12), new THREE.MeshPhysicalMaterial({ color: '#cdeeff', transparent: true, opacity: .55, roughness: .05, clearcoat: 1 })); gl.scale.set(.25, 1, 1); gl.position.copy(ring.position); body.add(gl);
+  const hd = new THREE.Mesh(new THREE.CylinderGeometry(.08, .08, .9, 8), M('#8a5a2b')); hd.position.set(-.6, 2.25, 0); body.add(hd);
+  // 輪子
+  const wheels = [];
+  [[2.3, 1.12], [2.3, -1.12], [-1.8, 1.12], [-1.8, -1.12]].forEach(([x, z]) => { const w = new THREE.Mesh(new THREE.CylinderGeometry(.5, .5, .4, 20), rub); w.rotation.x = Math.PI / 2; w.position.set(x, .5, z); w.castShadow = true; g.add(w); wheels.push(w);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(.22, .22, .42, 12), M('#ccc', { metalness: .6 })); hub.rotation.x = Math.PI / 2; hub.position.copy(w.position); g.add(hub); });
+  // 光光偵探坐車頂
+  const kg = new THREE.Group(); kg.position.set(.6, 2.35, 0); kg.scale.setScalar(.8); kg.rotation.y = Math.PI / 2; body.add(kg); const kk = koko(kg);
+  return { g, body, wheels, L1, L2, kk };
+}
+const truck = makeTruck(); S.add(truck.g); truck.g.position.set(HQ.x, 0, 2.2);
+const T = { x: HQ.x, z: 2.2, yaw: 0, path: [], speed: 0, siren: false, onArrive: null };
+
+// 報案泡泡
+function bubbleTex(text) { return canvasTex((x, w, h) => { x.fillStyle = '#d8352a'; x.beginPath(); x.roundRect(8, 8, w - 16, h - 60, 40); x.fill(); x.beginPath(); x.moveTo(w / 2 - 34, h - 56); x.lineTo(w / 2 + 34, h - 56); x.lineTo(w / 2, h - 8); x.fill(); x.fillStyle = '#fff'; x.font = `900 ${h * .4}px ${FONT}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, w / 2, (h - 52) / 2 + 6); }, 360, 220); }
+const bubble = new THREE.Sprite(new THREE.SpriteMaterial({ map: bubbleTex('🆘 報案'), depthTest: false })); bubble.scale.set(4.4, 2.7, 1); bubble.renderOrder = 20; bubble.visible = false; S.add(bubble);
+const beacon = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 40, 24, 1, true), new THREE.MeshBasicMaterial({ color: '#ff5a4a', transparent: true, opacity: .18, depthWrite: false, side: THREE.DoubleSide })); beacon.visible = false; S.add(beacon);
+
+// 報案的居民
+const resident = person(S, { shirt: '#7fb3d5', pants: '#3b3b3b', hair: '#555' }); resident.g.visible = false;
+const thanks = new THREE.Sprite(new THREE.SpriteMaterial({ map: bubbleTex('謝謝！'), depthTest: false })); thanks.scale.set(3, 1.8, 1); thanks.renderOrder = 21; thanks.visible = false; S.add(thanks);
+{ const m = thanks.material; m.map = canvasTex((x, w, h) => { x.fillStyle = '#2f9a4c'; x.beginPath(); x.roundRect(8, 8, w - 16, h - 60, 40); x.fill(); x.beginPath(); x.moveTo(w / 2 - 34, h - 56); x.lineTo(w / 2 + 34, h - 56); x.lineTo(w / 2, h - 8); x.fill(); x.fillStyle = '#fff'; x.font = `900 ${h * .4}px ${FONT}`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('謝謝特勤隊！', w / 2, (h - 52) / 2 + 6); }, 520, 220); thanks.scale.set(4.3, 1.8, 1); }
+
+// ---------- 鏡頭 ----------
+const C = { pos: new THREE.Vector3(), look: new THREE.Vector3(), from: null, to: null, t: 1, dur: 1.2, follow: false };
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const OVER = { pos: V(-4, 62, 70), look: V(-2, 0, 4) };
+function setCam(p, dur = 1.4) { C.from = { pos: C.pos.clone(), look: C.look.clone() }; C.to = { pos: p.pos.clone(), look: p.look.clone() }; C.t = 0; C.dur = dur; C.follow = false; }
+function followPose() { const d = V(Math.cos(T.yaw), 0, -Math.sin(T.yaw)); return { pos: V(T.x, 0, T.z).addScaledVector(d, -10).add(V(0, 13, 2.5)), look: V(T.x, 1, T.z).addScaledVector(d, 5) }; }
+const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+function updCam(dt) {
+  if (C.follow) { const f = followPose(); C.pos.lerp(f.pos, 1 - Math.exp(-dt * 3)); C.look.lerp(f.look, 1 - Math.exp(-dt * 4)); }
+  else if (C.to) { C.t = Math.min(1, C.t + dt / C.dur); const e = ease(C.t); C.pos.lerpVectors(C.from.pos, C.to.pos, e); C.look.lerpVectors(C.from.look, C.to.look, e); }
+  cam.position.copy(C.pos); cam.lookAt(C.look);
+  sun.target.position.copy(C.look); sun.position.copy(C.look).addScaledVector(SUN_DIR, 70);
+}
+C.pos.copy(OVER.pos); C.look.copy(OVER.look);
+
+// ---------- 開車 ----------
+function driveTo(site, onArrive) {
+  const lane = site.x >= T.x ? 2.2 : -2.2;     // 往東走南側車道、往西走北側車道
+  const stopZ = site.side > 0 ? 3.0 : -3.0;
+  T.path = [];
+  if (Math.abs(T.z - lane) > .1) T.path.push([T.x + Math.sign(site.x - T.x || 1) * 3, lane]);
+  const sg = Math.sign(site.x - T.x || 1);
+  T.path.push([site.x - sg * 10, lane]);
+  T.path.push([site.x - sg * 5, stopZ]);
+  T.onArrive = onArrive; T.siren = true; C.follow = true;
+}
+function driveHome(onArrive) { T.path = [[T.x + (HQ.x - T.x > 0 ? 3 : -3), -2.2], [HQ.x + 4, -2.2], [HQ.x, 2.2]]; T.onArrive = onArrive; T.siren = false; }
+function updTruck(dt, now) {
+  if (T.path.length) {
+    const [tx, tz] = T.path[0]; const dx = tx - T.x, dz = tz - T.z, L = Math.hypot(dx, dz);
+    const want = Math.atan2(-dz, dx); let dy = ((want - T.yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+    T.yaw += dy * Math.min(1, dt * (Math.abs(dy) > 1.2 ? 2.2 : 5));
+    const target = T.path.length === 1 ? Math.min(14, L * 2.2 + 2) : 14; T.speed += (target - T.speed) * Math.min(1, dt * 1.6);
+    const sp = Math.min(L, T.speed * dt * (Math.abs(dy) > 1.2 ? .35 : 1));
+    if (L < .25) { T.path.shift(); if (!T.path.length) { T.speed = 0; const f = T.onArrive; T.onArrive = null; f && f(); } }
+    else { T.x += dx / L * sp; T.z += dz / L * sp; }
+  } else T.speed *= .9;
+  truck.g.position.set(T.x, 0, T.z); truck.g.rotation.y = T.yaw;
+  truck.wheels.forEach(w => w.rotation.y -= T.speed * dt / .5);
+  truck.body.position.y = T.speed > .5 ? Math.abs(Math.sin(now * 14)) * .04 : 0;
+  const on = T.siren && Math.floor(now * 6) % 2 === 0; truck.L1.material.color.set(T.siren ? (on ? '#ff2a2a' : '#5a1010') : '#7a2020'); truck.L2.material.color.set(T.siren ? (on ? '#1a3060' : '#2a6bff') : '#20307a');
+}
+
+// ---------- 聲音 ----------
+let AC; const ac = () => (AC = AC || new (window.AudioContext || window.webkitAudioContext)());
+function tone(f, d, type = 'sine', vol = .15, t0 = 0) { try { const a = ac(), o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.value = f; const s = a.currentTime + t0; g.gain.setValueAtTime(.0001, s); g.gain.exponentialRampToValueAtTime(vol, s + .02); g.gain.exponentialRampToValueAtTime(.0001, s + d); o.connect(g).connect(a.destination); o.start(s); o.stop(s + d + .05); } catch (e) {} }
+const sfx = {
+  alarm() { for (let i = 0; i < 3; i++) { tone(880, .22, 'square', .07, i * .5); tone(660, .22, 'square', .07, i * .5 + .25); } },
+  siren() { try { const a = ac(), o = a.createOscillator(), g = a.createGain(), l = a.createOscillator(), lg = a.createGain(); o.type = 'triangle'; o.frequency.value = 760; l.frequency.value = 1.6; lg.gain.value = 180; l.connect(lg).connect(o.frequency); g.gain.value = .0001; o.connect(g).connect(a.destination); const s = a.currentTime; g.gain.exponentialRampToValueAtTime(.06, s + .2); g.gain.setValueAtTime(.06, s + 3.2); g.gain.exponentialRampToValueAtTime(.0001, s + 3.8); o.start(); l.start(); o.stop(s + 4); l.stop(s + 4); } catch (e) {} },
+  ok() { [523, 659, 784, 1046].forEach((f, i) => tone(f, .35, 'sine', .16, i * .1)); },
+  no() { tone(220, .35, 'sawtooth', .07); },
+  fan() { [523, 659, 784, 659, 784, 1046].forEach((f, i) => tone(f, .4, 'triangle', .14, i * .16)); },
+};
+// 語音
+let voice = null;
+function pickVoice() { const vs = speechSynthesis?.getVoices?.() || []; voice = vs.find(v => /zh[-_]TW/i.test(v.lang)) || vs.find(v => /zh/i.test(v.lang)) || null; }
+try { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; } catch (e) {}
+function say(text) { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, '')); u.lang = 'zh-TW'; if (voice) u.voice = voice; u.rate = .92; speechSynthesis.speak(u); } catch (e) {} }
+
+// 撒花
+const cf = $('cf'), cx = cf.getContext('2d'); let parts = [];
+function confetti(n = 160) { for (let i = 0; i < n; i++) parts.push({ x: innerWidth / 2 + (Math.random() - .5) * 300, y: innerHeight * .45, vx: (Math.random() - .5) * 16, vy: -Math.random() * 16 - 6, r: Math.random() * 6 + 4, c: ['#ff4d4d', '#ffd84d', '#4dc3ff', '#5fd35f', '#ff8fd1', '#fff'][i % 6], a: Math.random() * 6, life: 1 }); }
+function drawConfetti(dt) { cf.width = innerWidth; cf.height = innerHeight; parts = parts.filter(p => p.life > 0); parts.forEach(p => { p.vy += 30 * dt; p.x += p.vx * dt * 30; p.y += p.vy * dt * 30; p.a += dt * 8; p.life -= dt * .45; cx.save(); cx.globalAlpha = Math.max(0, p.life); cx.translate(p.x, p.y); cx.rotate(p.a); cx.fillStyle = p.c; cx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); cx.restore(); }); }
+
+// ---------- 遊戲流程 ----------
+const G = { pack: null, list: [], i: 0, team: 0, score: [0, 0], tries: 0 };
+const TEAM = [{ n: '紅隊', c: 'r', e: '🔴' }, { n: '藍隊', c: 'b', e: '🔵' }];
+function hud() { $('sR').textContent = G.score[0]; $('sB').textContent = G.score[1]; $('tR').classList.toggle('on', G.team === 0); $('tB').classList.toggle('on', G.team === 1); $('cnt').textContent = `${Math.min(G.i, G.list.length)}/${G.list.length}`; $('prog').style.width = `${G.i / G.list.length * 100}%`; }
+function start(pack) {
+  try { ac().resume(); } catch (e) {}
+  G.pack = pack; G.list = PACKS[pack]; G.i = 0; G.team = 0; G.score = [0, 0];
+  $('cover').classList.add('hide'); $('endC').classList.add('hide'); hud();
+  T.x = HQ.x; T.z = 2.2; T.yaw = 0; T.path = []; setCam(OVER, 1.6);
+  setTimeout(nextCase, 1400);
+}
+function nextCase() {
+  if (G.i >= G.list.length) return finish();
+  const c = G.list[G.i], s = SITES[c.at]; G.tries = 0; hud();
+  bubble.position.set(...s.bub); bubble.visible = true; beacon.position.set(s.bub[0], 20, s.bub[2]); beacon.visible = true;
+  resident.g.visible = false; thanks.visible = false;
+  setCam(T.path.length ? OVER : { pos: V(s.bub[0] - 4, 28, 26), look: V(s.bub[0], 2, s.bub[2] * .5) }, 1.6);
+  const tm = TEAM[G.team];
+  $('alK').textContent = `🆘 報案・${c.place}`; $('alT').textContent = c.call; $('alS').textContent = `輪到 ${tm.e} ${tm.n}出動！`;
+  const al = $('alert'); al.classList.remove('hide', 'pop'); void al.offsetWidth; al.classList.add('pop');
+  $('qp').classList.add('hide');
+  const go = $('go'); go.textContent = `🚨 ${tm.n}出動！`; go.className = 'big go ' + tm.c; $('bot').classList.remove('hide');
+  sfx.alarm(); setTimeout(() => say(`報案！${c.place}。${c.call}`), 900);
+}
+$('go').onclick = () => {
+  const c = G.list[G.i], s = SITES[c.at];
+  $('bot').classList.add('hide'); $('alS').textContent = '特勤車出發！'; sfx.siren(); say('出動！');
+  driveTo(s, () => arrive(c, s));
+};
+function arrive(c, s) {
+  T.siren = false; $('alert').classList.add('hide');
+  const lk = V(...s.look).add(V(0, -1.8, 0)); setCam({ pos: V(...s.cam).add(V(0, 1.2, 0)), look: lk }, 1.6);
+  resident.g.visible = true; const toward = s.side < 0 ? 1 : -1;
+  resident.g.position.set(s.x + 2.2, s.at === 'creek' ? 0 : .15, s.at === 'park' ? 9 : s.at === 'creek' ? 6.5 : s.side * 5.4); resident.g.rotation.y = toward > 0 ? 0 : Math.PI;
+  if (s.at === 'park' || s.at === 'creek') resident.g.rotation.y = Math.PI;
+  setTimeout(() => showQ(c), 1300);
+}
+function showQ(c) {
+  const tm = TEAM[G.team]; const qp = $('qp'); qp.classList.remove('hide');
+  qp.innerHTML = `<div class="who" style="color:var(--${tm.c === 'r' ? 'red' : 'blue'})">${tm.e} ${tm.n}・到現場了！</div><div class="q">${c.q}</div>
+    <div class="opts">${c.opts.map((o, j) => `<button class="opt" data-j="${j}"><span class="ic">${o.ic}</span><span>${o.t}</span></button>`).join('')}</div>
+    <div class="tools"><button id="rep">🔊 再聽一次</button></div>`;
+  say(c.q + '　' + c.opts.map(o => o.t).join('，還是，') + '？');
+  $('rep').onclick = () => say(c.call + '　' + c.q);
+  qp.querySelectorAll('.opt').forEach(b => b.onclick = () => pick(c, +b.dataset.j, b));
+}
+function pick(c, j, btn) {
+  if (j === c.a) {
+    const pts = G.tries === 0 ? 100 : 50; G.score[G.team] += pts; hud();
+    btn.classList.add('ok'); sfx.ok(); confetti();
+    thanks.position.set(resident.g.position.x, 3.2, resident.g.position.z); thanks.visible = true; resident.cheer = 2.5;
+    bubble.visible = false; beacon.visible = false;
+    setTimeout(() => reveal(c, pts), 900);
+  } else {
+    G.tries++; btn.classList.add('shake', 'no'); sfx.no(); say('再想想看！'); setTimeout(() => btn.classList.remove('shake'), 450);
+  }
+}
+function reveal(c, pts) {
+  const qp = $('qp'); const last = G.i + 1 >= G.list.length;
+  qp.innerHTML = `<div class="rv"><img src="${IMG + c.img}" alt=""><div><div class="ok">✔ 任務完成！</div><div class="ex">${c.ex}</div>${c.safe ? `<div class="safe">${c.safe}</div>` : ''}
+    <div class="pts">${TEAM[G.team].e} ${TEAM[G.team].n} 聲望 +${pts}</div></div></div>
+    <div class="tools"><button id="rep2">🔊 再聽一次</button><button id="nx" style="background:var(--ink);color:#fff;border-color:var(--ink);font-size:22px;padding:12px 26px">${last ? '🏆 結案頒獎' : '🚒 回分隊，等下一個報案'}</button></div>`;
+  say('任務完成！' + c.ex + (c.safe ? '。' + c.safe.replace('⚠', '') : ''));
+  $('rep2').onclick = () => say(c.ex);
+  $('nx').onclick = () => { speechSynthesis?.cancel?.(); qp.classList.add('hide'); G.i++; G.team = 1 - G.team; hud(); resident.g.visible = false; thanks.visible = false;
+    setCam(OVER, 1.8); driveHome(() => {}); setTimeout(nextCase, 1500); };
+}
+function finish() {
+  bubble.visible = beacon.visible = false; $('alert').classList.add('hide'); $('bot').classList.add('hide'); setCam(OVER, 1.6);
+  const [a, b] = G.score; const win = a === b ? '兩隊一樣厲害！' : (a > b ? '🔴 紅隊' : '🔵 藍隊') + ' 聲望最高！';
+  $('endCard').innerHTML = `<h2>🏆 全部結案！</h2><div class="sub" style="font-size:22px;font-weight:800;margin-top:6px">竹東今天很安全，謝謝光線特勤隊！</div>
+    <div class="sc"><div style="background:var(--red)">🔴 紅隊<b>${a}</b></div><div style="background:var(--blue)">🔵 藍隊<b>${b}</b></div></div>
+    <div class="medal">${win} 每一位隊員都拿到 🎖️ 特勤勳章</div>
+    <button class="big go" id="again" style="animation:none">↺ 再出勤一次</button>`;
+  $('endC').classList.remove('hide'); sfx.fan(); confetti(260); say('全部結案！謝謝光線特勤隊！' + win.replace(/🔴|🔵/g, ''));
+  $('again').onclick = () => { $('endC').classList.add('hide'); $('cover').classList.remove('hide'); };
+}
+document.querySelectorAll('.pack').forEach(b => b.onclick = () => start(b.dataset.p));
+$('back').onclick = () => history.length > 1 ? history.back() : (location.href = $('home').href);
+
+// ---------- 迴圈 ----------
+function resize() { R.setSize(innerWidth, innerHeight); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); }
+addEventListener('resize', resize); resize();
+const clock = new THREE.Clock(); let tAll = 0;
+function loop() {
+  requestAnimationFrame(loop);
+  const dt = Math.min(clock.getDelta(), .05) * (window.__dtScale || 1); tAll += dt;
+  updTruck(dt, tAll); updCam(dt); updateWorld(tAll, dt);
+  if (bubble.visible) { bubble.position.y += Math.sin(tAll * 4) * .01; bubble.material.rotation = Math.sin(tAll * 3) * .05; }
+  if (beacon.visible) beacon.material.opacity = .12 + Math.sin(tAll * 5) * .06;
+  if (resident.g.visible) { if (resident.cheer > 0) { resident.cheer -= dt; resident.g.position.y = .15 + Math.abs(Math.sin(tAll * 9)) * .45; resident.armL.rotation.x = resident.armR.rotation.x = -2.6; }
+    else { resident.g.position.y = .15; resident.armR.rotation.x = -2.4 + Math.sin(tAll * 8) * .5; resident.armL.rotation.x = 0; } }
+  truck.kk.g.position.y = Math.abs(Math.sin(tAll * 3)) * .1;
+  R.render(S, cam);
+  if (parts.length) drawConfetti(dt); else if (cf.width) { cf.width = 0; }
+}
+loop();
+window.__disp = { at(pack, i) { G.pack = pack; G.list = PACKS[pack]; G.i = i; $('cover').classList.add('hide'); const c = G.list[i], s = SITES[c.at]; T.x = s.x - 5; T.z = s.side * 3; T.yaw = 0; arrive(c, s); }, start, G, T, get busy() { return T.path.length > 0; }, go: () => $('go').click(), pick: j => { const b = document.querySelector('.opt[data-j="' + j + '"]'); b && b.click(); }, next: () => $('nx')?.click() };
+</script>
+</body>
+</html>
