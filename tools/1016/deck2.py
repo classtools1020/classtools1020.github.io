@@ -246,7 +246,7 @@ for i, (ic, a, b_) in enumerate(lv):
     t1 = T(sl, 6.4, y, 1.9, .82, f'{ic} {a}', 22, INK, anchor=MSO_ANCHOR.MIDDLE); t2 = T(sl, 8.2, y, 4.3, .82, b_, 22, INK, bold=False, anchor=MSO_ANCHOR.MIDDLE)
     lvs.append([c, t1, t2])
 T(sl, 6.22, 5.85, 6.4, .5, '⚠ 放大鏡不對著太陽、不對著別人的眼睛', 18, RED)
-button(sl, 6.2, 6.45, 3.0, '📄  尋寶單', PDF + 'treasure.pdf', h=.72, size=20)
+button(sl, 6.2, 6.45, 3.0, '📄  尋寶單', PDF + 'treasure.pdf?v=1008', h=.72, size=20)
 for g in lvs: A.add('click', [('fly', s.shape_id, {'dir': 'r', 'dur': 400}) for s in g])
 link_slide('甲班｜出勤', '光線特勤隊・\n出勤！', '按 ◀ ▶ 開特勤車撿光點，到現場轉一轉、點對的證據卡，還能抽夥伴卡！先按「透鏡案件」。', CAP + 's_dispatch.png', '▶  出勤', B + 'games/light-dispatch.html', (0, .17, 0, 0))
 frame_slide('甲班｜小結', [['放大鏡中間', '厚', '，'], ['讓光', '換方向', '，'], ['東西看起來', '變大', '。']])
@@ -374,7 +374,7 @@ for i, (img, cap) in enumerate(STEPS):
     t = T(sl, x, 4.95, 3.8, .6, cap, 24, INK, align=PP_ALIGN.CENTER)
     grp.append(fr + [n, t])
 q = T(sl, .7, 5.75, 8.4, .6, '比一比：水滴和放大鏡，哪一個讓字變得比較大？', 20, TEAL)
-button(sl, 9.6, 5.7, 3.0, '📄  尋寶單', PDF + 'treasure.pdf', h=.72, size=20)
+button(sl, 9.6, 5.7, 3.0, '📄  尋寶單', PDF + 'treasure.pdf?v=1008', h=.72, size=20)
 for g in grp: A.add('click', [('fade', s.shape_id, {'dur': 400}) for s in g])
 A.add('click', [('fade', q.shape_id, {'dur': 400})])
 
@@ -385,7 +385,7 @@ T(sl, .7, 1.0, 6.4, .9, '我看到的光', 44)
 T(sl, .72, 1.95, 6.2, .6, '畫下今天最神奇的發現。', 22, SOFT, bold=False)
 for i, t_ in enumerate(['① 畫下來（也可以貼）', '② 勾一勾：今天最神奇的是？', '③ 勾一勾：我的心情']):
     T(sl, .72, 2.85 + i * .85, 6.4, .7, t_, 26, INK)
-button(sl, .72, 5.6, 3.0, '📄  畫卡', PDF + 'draw.pdf', h=.72, size=20)
+button(sl, .72, 5.6, 3.0, '📄  畫卡', PDF + 'draw.pdf?v=1008', h=.72, size=20)
 
 link_slide('乙班｜一起唱', 'MV\n再唱一次！', '光走直線，碰到水面——Snap! 折一下', CAP + 's_mv.png', '▶  播放 MV', B + 'light-refract/mv.html', (.21, .07, .21, .35))
 
