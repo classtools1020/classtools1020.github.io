@@ -94,7 +94,7 @@ def eff_xml(A, kind, spid, node, delay=0, opt=None):
         body = set_vis() + anim('ppt_w', '0', '#ppt_w') + anim('ppt_h', '0', '#ppt_h') + fade('in')
         head = 'presetID="53" presetClass="entr" presetSubtype="16" fill="hold"'
     elif kind == 'wipe':
-        sub = {'l': 8, 'u': 1, 'd': 4}[opt.get('dir', 'l')]; filt = {'l': 'wipe(left)', 'u': 'wipe(up)', 'd': 'wipe(down)'}[opt.get('dir', 'l')]
+        sub = {'l': 8, 'u': 1, 'd': 4, 'r': 2}[opt.get('dir', 'l')]; filt = {'l': 'wipe(left)', 'u': 'wipe(up)', 'd': 'wipe(down)', 'r': 'wipe(right)'}[opt.get('dir', 'l')]
         body = set_vis() + f'<p:animEffect transition="in" filter="{filt}"><p:cBhvr><p:cTn id="{A.nid()}" dur="{dur}"/><p:tgtEl><p:spTgt spid="{spid}"/></p:tgtEl></p:cBhvr></p:animEffect>'
         head = f'presetID="22" presetClass="entr" presetSubtype="{sub}" fill="hold"'
     elif kind == 'out':
@@ -142,3 +142,20 @@ def finish(sl, A, k):
         ids = set(sp for _, effs in A.groups for (_, sp, _) in effs)
         txt = [sh.shape_id for sh in sl.shapes if sh.shape_id in ids and sh._element.tag == qn('p:sp') and sh.has_text_frame]
         el.append(etree.fromstring(timing_xml(A, txt)))
+def line(sl, x1, y1, x2, y2, color, w, dash=None, arrow=False):
+    c = sl.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Inches(x1), Inches(y1), Inches(x2), Inches(y2))
+    c.line.color.rgb = rgb(color); c.line.width = Pt(w)
+    if dash: c.line.dash_style = dash
+    if arrow:
+        ln = c.line._get_or_add_ln(); t = etree.SubElement(ln, qn('a:tailEnd')); t.set('type', 'triangle'); t.set('w', 'med'); t.set('len', 'med')
+    return c
+
+def oval(sl, x, y, w, h, color, lw, dash=None, fill=None):
+    s = sl.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(y), Inches(w), Inches(h))
+    if fill: s.fill.solid(); s.fill.fore_color.rgb = rgb(fill)
+    else: s.fill.background()
+    if color: s.line.color.rgb = rgb(color); s.line.width = Pt(lw)
+    else: s.line.fill.background()
+    if dash: s.line.dash_style = dash
+    s.shadow.inherit = False
+    return s
