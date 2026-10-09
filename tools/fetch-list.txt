@@ -29,3 +29,16 @@ img/review/peepview.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/bQ
 img/review/students.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/uOvXzvy7Ae00f5TdKdtah/nPhXRTl0z9anUbB-4_1U0.jpg
 img/review/projflip.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/JvqFrt7n6IGgMSXsVDYIq/9PmKN1FksyzOfDAFlaBuD.jpg
 img/review/kit.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/R2XjhCEZbb1E0vs0W2HN0/wkcmjTacqlzaXlo6mPKAY.jpg
+temp/img/bowls.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/bYkaUwqbuCM6hL2tujrsw/v7FRZ3Twmrm-u-wvwCqBp.jpg
+temp/img/hands2.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/KqZGWFQEszrZyZ7aztrM3/F_E2-E205Tf-egkAF4VE5.jpg
+temp/img/hands-mid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/vlWfZ5iAU8fzLFf6VNIpW/E50p-akbX6ZMfwUymSI0B.jpg
+temp/img/forehead.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/cV1DhBmdDDuNylhQui8Yo/jwbQlGm9slM5tdR_3Tv3Q.jpg
+temp/img/gun.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/xIOqKKTikspwvn1OlvwlK/tXe8EPPkh0rDBl_a4MIHT.jpg
+temp/img/t-ice.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/xBAlMWzBb6UXxCQvF33DX/1j4ZPzSqm0fwnCvXDHgiQ.jpg
+temp/img/t-hot.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/YVhfbmbjU1erIWGd8e8Em/SZXhJqkMnbP8sjmKJGptX.jpg
+temp/img/three-cups.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/i25m2d4DsEf9dqNBWUy7R/K30OpAbH6pOk8cozjslIO.jpg
+temp/img/sun.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/jXwt232x3i7TVWZtbWKfJ/Ry_3AQUy17GKwOlFq4qLx.jpg
+temp/img/shade.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/iDFT8DoQ20jOP2YFj8mBA/O0yBLc0xSn80g6WvqDhKE.jpg
+temp/img/team.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DdtNJEZuFbJO89IBFBWSC/inFq82Wqo19v5rZ5lobnB.jpg
+temp/img/soup.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/0M3LXhqT0eRJ1qpIad1hL/XBmqkb8RlRpHuLywg89r1.jpg
+temp/img/bath.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/nkdxhIhRBmeS71RedahcH/xMbYdAFGmwnpmWq_X9pFy.jpg
