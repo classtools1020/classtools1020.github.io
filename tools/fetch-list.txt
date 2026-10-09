@@ -42,3 +42,8 @@ temp/img/shade.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/iDFT8Do
 temp/img/team.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DdtNJEZuFbJO89IBFBWSC/inFq82Wqo19v5rZ5lobnB.jpg
 temp/img/soup.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/0M3LXhqT0eRJ1qpIad1hL/XBmqkb8RlRpHuLywg89r1.jpg
 temp/img/bath.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/nkdxhIhRBmeS71RedahcH/xMbYdAFGmwnpmWq_X9pFy.jpg
+temp/img/outdoor.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/89fHchbr9lw2RIeWOMhcZ/iQpFcLe10lnApg3djiQJL.jpg
+temp/img/classroom.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/BJzKVDb6TDJ4TJToWWeBr/bTlaqRYbL9A2pP4-Yvsgu.jpg
+temp/img/fridge.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/rYbmZPkPtRiQaOmMx9d7V/gT2jjIVwcKe6x7FzQdny6.jpg
+temp/img/bangs.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/wHDYFZzdwafzkRLXo3cna/_cg5E_RMcSfshkWGTNqrk.jpg
+temp/img/shade-raw.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/54V7BIlyiVx71blFaj22E/PLHEuFCibAQkC8ALQqFaT.jpg

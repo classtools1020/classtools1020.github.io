@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>額溫槍出動｜溫度特勤隊</title>
+<style>
+  :root{--ink:#1f2a37;--soft:#5b6673;--paper:#f4efe6;--red:#c8372d;--teal:#1f7a8c;--green:#2f8a4c;--line:#d8cfbf;--blue:#1f5fa8;--gold:#d99a22}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#22262b;overflow:hidden;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  #view{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{position:relative;width:1600px;height:900px;flex:none;background:var(--paper);overflow:hidden;transform-origin:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  #stage::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.2px) 0 0/6px 6px;pointer-events:none}
+  header{position:absolute;left:170px;top:0;height:96px;display:flex;align-items:center;gap:30px;right:200px}
+  .kick{font-size:22px;font-weight:800;color:var(--red);letter-spacing:.08em}
+  h1{margin:0;font-size:44px;letter-spacing:.04em}
+  .tabs{margin-left:auto;display:flex;gap:10px}
+  .tab{font-family:inherit;font-size:24px;font-weight:900;border:3px solid var(--ink);background:#fff;color:var(--ink);border-radius:999px;padding:10px 22px;cursor:pointer}
+  .tab.on{background:var(--ink);color:#fff}
+  #back,#menu{position:absolute;top:22px;z-index:20;font-family:inherit;font-weight:900;font-size:20px;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:9px 18px}
+  #back{left:22px}#menu{right:22px}
+  #scene{position:absolute;left:30px;top:100px;width:820px;height:780px}
+  #scene svg{width:820px;height:780px;overflow:visible}
+  #panel{position:absolute;left:880px;top:118px;right:44px;bottom:30px}
+  .steps{display:flex;flex-direction:column;gap:12px}
+  .st{font-family:inherit;display:flex;align-items:center;gap:18px;font-size:31px;font-weight:900;background:#fff;border:3px solid var(--line);border-radius:20px;padding:12px 20px;text-align:left;color:var(--ink);cursor:pointer;transition:border-color .3s,background .3s,opacity .3s,transform .2s}
+  .st .no{flex:none;width:54px;height:54px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:27px}
+  .st .ic{margin-left:auto;font-size:34px}
+  .st.now{border-color:var(--gold);background:#fff8e6;transform:scale(1.02)}
+  .st.done{opacity:.55}.st.done .no{background:var(--green)}
+  .st:disabled{cursor:default}
+  .msg{font-size:32px;font-weight:900;min-height:50px;margin-top:14px;line-height:1.45}
+  .msg b{color:var(--red)}
+  .ans{display:flex;gap:20px;margin-top:10px}
+  .ab{font-family:inherit;width:170px;height:120px;font-size:64px;font-weight:900;background:#fff;border:5px solid var(--line);border-radius:24px;cursor:pointer;color:var(--ink);transition:transform .2s,border-color .2s,background .2s,opacity .2s}
+  .ab.ok{border-color:var(--green);background:#ecf7ee;transform:scale(1.08)}.ab.no{opacity:.3}
+  .big{font-family:inherit;font-size:30px;font-weight:900;border:none;border-radius:18px;padding:14px 28px;cursor:pointer;background:var(--ink);color:#fff}
+  .big.y{background:#ffcf2e;color:var(--ink)}
+  table.rec{border-collapse:collapse;font-size:28px;font-weight:900;margin-top:10px;background:#fff;border-radius:16px;overflow:hidden}
+  table.rec td,table.rec th{border:2px solid var(--line);padding:6px 18px;text-align:center}
+  table.rec th{background:#efe7d8;font-size:22px}
+  .dist{position:absolute;left:60px;bottom:30px;display:flex;align-items:center;gap:16px;font-size:28px;font-weight:900;background:#fff;border:3px solid var(--line);border-radius:20px;padding:10px 20px}
+  .dist input{width:300px;height:40px;accent-color:#1f2a37}
+  .pill{border-radius:999px;padding:4px 16px;color:#fff}
+  .hidden{display:none!important}
+  #bangs{transition:transform .9s cubic-bezier(.3,.8,.3,1.2);transform-origin:410px 240px}
+  #bangs.up{transform:translateY(-70px) rotate(-6deg) scaleY(.55)}
+  #hand{transition:transform .9s ease, opacity .5s;opacity:0}
+  #hand.on{opacity:1}
+  #gun{transition:transform 1s cubic-bezier(.3,.8,.3,1)}
+  #beam{opacity:0;transition:opacity .2s}
+  #beam.on{opacity:1}
+  .lcd{font-family:"DSEG7 Classic","Consolas","Courier New",monospace}
+  #rot{display:none;position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#fff;font-weight:800;padding:8px 14px;border-radius:10px;z-index:30}
+  @media (max-width:760px) and (orientation:portrait){#rot{display:block}}
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+  <a id="back" href="./">⬅ 返回</a>
+  <a id="menu" href="/light/">🗂️ 主選單</a>
+  <header>
+    <div><div class="kick">溫度特勤隊</div><h1>額溫槍出動！</h1></div>
+    <div class="tabs"><button class="tab" data-m="do">🌡️ 一步一步量</button><button class="tab" data-m="quiz">🎯 讀數字</button></div>
+  </header>
+
+  <div id="scene">
+    <svg viewBox="0 0 820 780">
+      <defs>
+        <radialGradient id="skin" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#ffe2c8"/><stop offset="1" stop-color="#f1c19a"/></radialGradient>
+        <linearGradient id="gunG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe6ea"/></linearGradient>
+      </defs>
+      <!-- 同學（原創插畫） -->
+      <g id="kid">
+        <path d="M150 780 Q160 610 300 580 L520 580 Q660 610 670 780Z" fill="#2f5d8a"/>
+        <path d="M330 580 L410 660 L490 580Z" fill="#fff"/>
+        <path d="M352 580 L410 640 L468 580" fill="none" stroke="#d8cfbf" stroke-width="4"/>
+        <rect x="372" y="520" width="76" height="80" rx="20" fill="#efbb92"/>
+        <ellipse cx="236" cy="380" rx="34" ry="52" fill="#f1c19a"/><ellipse cx="584" cy="380" rx="34" ry="52" fill="#f1c19a"/>
+        <path d="M230 300 Q236 120 410 112 Q584 120 590 300 L594 380 L226 380Z" fill="#2a2522"/>
+        <ellipse cx="410" cy="360" rx="176" ry="200" fill="url(#skin)"/>
+        <g id="face">
+          <ellipse cx="345" cy="370" rx="16" ry="21" fill="#2a2522"/><ellipse cx="475" cy="370" rx="16" ry="21" fill="#2a2522"/>
+          <circle cx="350" cy="363" r="6" fill="#fff"/><circle cx="480" cy="363" r="6" fill="#fff"/>
+          <ellipse cx="318" cy="430" rx="26" ry="14" fill="#f4a39a" opacity=".55"/><ellipse cx="502" cy="430" rx="26" ry="14" fill="#f4a39a" opacity=".55"/>
+          <path id="mouth" d="M370 455 Q410 488 450 455" fill="none" stroke="#7a3b2e" stroke-width="7" stroke-linecap="round"/>
+          <path d="M318 322 Q345 308 372 320" fill="none" stroke="#2a2522" stroke-width="6" stroke-linecap="round"/><path d="M448 320 Q475 308 502 322" fill="none" stroke="#2a2522" stroke-width="6" stroke-linecap="round"/>
+        </g>
+        <!-- 額頭目標 -->
+        <g id="target" opacity="0"><circle cx="410" cy="255" r="30" fill="none" stroke="#c8372d" stroke-width="5" stroke-dasharray="8 7"/><circle cx="410" cy="255" r="7" fill="#c8372d"/></g>
+        <!-- 瀏海 -->
+        <path id="bangs" d="M236 300 Q240 150 410 140 Q580 150 584 300 Q560 250 520 290 Q500 230 460 292 Q440 220 400 292 Q370 225 340 290 Q300 240 280 300 Q260 260 236 300Z" fill="#2a2522"/>
+        <!-- 撥瀏海的手 -->
+        <g id="hand"><path d="M560 210 Q610 170 650 200 Q690 240 640 268 L560 262Z" fill="#efbb92" stroke="#d79f78" stroke-width="3"/><rect x="600" y="240" width="90" height="140" rx="40" fill="#efbb92" transform="rotate(-25 645 310)"/></g>
+      </g>
+      <!-- 距離尺 -->
+      <g id="ruler" opacity="0" style="transition:opacity .4s">
+        <line id="rline" x1="410" y1="255" x2="600" y2="255" stroke="#c8372d" stroke-width="5" stroke-dasharray="10 8"/>
+        <text id="rtext" x="500" y="232" text-anchor="middle" style="font-size:28px;font-weight:900;paint-order:stroke;stroke:#fff;stroke-width:6px"></text>
+      </g>
+      <!-- 額溫槍 -->
+      <g id="gun" transform="translate(560 77) scale(.8)">
+        <path d="M0 210 Q0 150 60 150 L250 150 Q300 150 300 200 L300 250 Q300 290 250 290 L190 290 L165 420 Q160 446 132 446 L104 446 Q82 446 86 420 L104 290 L60 290 Q0 290 0 230Z" fill="url(#gunG)" stroke="#9aa9b2" stroke-width="5"/>
+        <rect x="-26" y="196" width="34" height="54" rx="10" fill="#c9d3d9" stroke="#9aa9b2" stroke-width="4"/>
+        <rect id="lcd" x="70" y="172" width="196" height="96" rx="12" fill="#2a3a2e" stroke="#7d8b84" stroke-width="4"/>
+        <text id="lcdT" x="168" y="240" text-anchor="middle" class="lcd" style="font-size:60px;font-weight:900;fill:#111"></text>
+        <text id="lcdU" x="252" y="200" text-anchor="end" style="font-size:20px;font-weight:900;fill:#111"></text>
+        <circle id="btn" cx="150" cy="335" r="20" fill="#1f7a8c" stroke="#13525e" stroke-width="4"/>
+        <path id="beam" d="M-26 223 L-120 205 L-120 241Z" fill="#ff3b30" opacity="0"/>
+      </g>
+      <g id="hint" opacity="0"><rect x="520" y="560" width="270" height="70" rx="16" fill="#fff" stroke="#d8cfbf" stroke-width="3"/><text id="hintT" x="655" y="607" text-anchor="middle" style="font-size:32px;font-weight:900;fill:#1f2a37"></text></g>
+    </svg>
+    <div class="dist hidden" id="distBox">距離：<input type="range" id="dist" min="0" max="100" value="80"><span class="pill" id="distT" style="background:#c8372d">太遠</span></div>
+  </div>
+
+  <div id="panel">
+    <section id="m-do">
+      <div class="steps" id="steps">
+        <button class="st" data-k="1"><span class="no">1</span>撥開瀏海<span class="ic">💇</span></button>
+        <button class="st" data-k="2"><span class="no">2</span>對準額頭中間<span class="ic">🎯</span></button>
+        <button class="st" data-k="3"><span class="no">3</span>距離剛好（一根手指寬）<span class="ic">☝️</span></button>
+        <button class="st" data-k="4"><span class="no">4</span>按一下，聽到「嗶」<span class="ic">🔔</span></button>
+        <button class="st" data-k="5"><span class="no">5</span>看數字：讀大數字<span class="ic">👀</span></button>
+        <button class="st" data-k="6"><span class="no">6</span>記下來<span class="ic">✏️</span></button>
+      </div>
+      <div class="msg" id="msg"></div>
+      <div class="ans hidden" id="ans"></div>
+      <div id="recBox" class="hidden">
+        <table class="rec"><thead><tr><th>第幾次</th><th>螢幕</th><th>大數字</th></tr></thead><tbody id="recBody"></tbody></table>
+        <button class="big y" id="again" style="margin-top:12px">🔁 再量一位同學</button>
+      </div>
+    </section>
+    <section id="m-quiz" class="hidden">
+      <div class="msg" style="font-size:38px">額溫槍螢幕寫著——<br>大數字是多少？</div>
+      <div class="ans" id="qans"></div>
+      <div class="msg" id="qmsg"></div>
+      <button class="big y" id="qnext">下一題 ➡</button>
+      <div class="msg" style="font-size:26px;color:var(--soft)">小訣竅：<b>小數點前面</b>的數字就是大數字。<br>36.8 → 讀「36 度多」</div>
+    </section>
+  </div>
+</div></div>
+<div id="rot">📱 手機橫過來看，畫面比較大</div>
+
+<script src="../games/fx.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);const stage=$('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
+const S=n=>{try{FX.sound[n]();}catch(e){}};
+let AC;function beep(n=2){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();for(let i=0;i<n;i++){const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+i*.18;o.type='square';o.frequency.value=2200;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.09,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+.12);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+.14);}}catch(e){}}
+
+let step=1,temp=36.5,count=0;
+const GUN_HOME='translate(560 77) scale(.8)';
+function lcd(on,text,unit){$('lcd').setAttribute('fill',on?'#b9f0a6':'#2a3a2e');$('lcdT').textContent=text||'';$('lcdU').textContent=unit||'';}
+function setStep(k){step=k;document.querySelectorAll('#steps .st').forEach(b=>{const n=+b.dataset.k;b.classList.toggle('done',n<k);b.classList.toggle('now',n===k);b.disabled=n!==k;});}
+function hint(t){if(!t){$('hint').setAttribute('opacity',0);return;}$('hintT').textContent=t;$('hint').setAttribute('opacity',1);}
+function resetScene(){$('bangs').classList.remove('up');$('hand').classList.remove('on');$('target').setAttribute('opacity',0);$('ruler').setAttribute('opacity',0);$('gun').setAttribute('transform',GUN_HOME);$('gun').style.transform='';
+  lcd(false);$('beam').classList.remove('on');$('distBox').classList.add('hidden');$('ans').classList.add('hidden');hint('');$('msg').innerHTML='';}
+function newTemp(){const v=[35.8,36.0,36.2,36.4,36.5,36.6,36.7,36.8,36.9,37.0,37.1];temp=v[Math.floor(Math.random()*v.length)];}
+
+/* 槍的位置：x 越小越靠近額頭 */
+function gunAt(d){ // d 0..100：0 貼額頭，40 剛好，100 很遠
+  const x=431+ d*1.5, y=77; $('gun').setAttribute('transform',`translate(${x} ${y}) scale(.8)`);
+  const sx=x-21,st=distState(d);const L=$('rline');L.setAttribute('x2',sx);L.setAttribute('stroke',st==='ok'?'#2f8a4c':'#c8372d');$('rtext').setAttribute('x',(410+sx)/2);$('rtext').textContent=st==='ok'?'☝️ 剛好':st==='tooNear'?'太近':'太遠';$('rtext').style.fill=st==='ok'?'#2f8a4c':'#c8372d';}
+function distState(d){return d<22?'tooNear':d<=50?'ok':'tooFar';}
+$('dist').oninput=e=>{const d=+e.target.value;gunAt(d);const s=distState(d);
+  $('distT').textContent={tooNear:'太近',ok:'剛好 ✔',tooFar:'太遠'}[s];$('distT').style.background=s==='ok'?'#2f8a4c':'#c8372d';
+  if(s==='ok'&&step===3){S('coin');setTimeout(()=>{if(distState(+$('dist').value)==='ok'&&step===3){setStep(4);$('msg').innerHTML='距離剛好！按一下 <b>4</b> 量量看';hint('距離剛好 ✔');}},400);}};
+
+const ACT={
+  1(){S('whoosh');$('hand').classList.add('on');setTimeout(()=>$('bangs').classList.add('up'),250);setTimeout(()=>$('hand').classList.remove('on'),1300);
+    $('msg').innerHTML='瀏海撥開，<b>額頭露出來</b>，才量得準！';setStep(2);},
+  2(){S('pop');$('target').setAttribute('opacity',1);$('ruler').setAttribute('opacity',1);gunAt(90);$('msg').innerHTML='對準<b>額頭中間</b>（紅點）';setStep(3);
+    setTimeout(()=>{$('distBox').classList.remove('hidden');$('dist').value=90;$('dist').oninput({target:$('dist')});$('msg').innerHTML='拉拉看：額溫槍<b>靠近一點</b>，到「剛好」';},700);},
+  3(){/* 由滑桿完成 */ $('dist').value=36;$('dist').oninput({target:$('dist')});},
+  4(){if(distState(+$('dist').value)!=='ok'){S('wrong');$('msg').innerHTML='距離還不對喔，先拉到「剛好」';return;}
+    $('beam').classList.add('on');$('ruler').setAttribute('opacity',0);lcd(true,'- - -');S('blip');
+    setTimeout(()=>{beep(2);$('beam').classList.remove('on');lcd(true,temp.toFixed(1),'°C');$('msg').innerHTML='嗶嗶！數字出來了 👀';setStep(5);hint('');},1200);},
+  5(){const big=Math.floor(temp);$('msg').innerHTML=`螢幕：<b>${temp.toFixed(1)}</b>　大數字是？`;
+    const opts=[big-1,big,big+1].sort(()=>Math.random()-.5);$('ans').innerHTML='';$('ans').classList.remove('hidden');
+    opts.forEach(v=>{const b=document.createElement('button');b.className='ab';b.textContent=v;b.onclick=()=>{
+      if(v===big){b.classList.add('ok');[...$('ans').children].forEach(x=>{if(x!==b)x.classList.add('no');});S('right');$('msg').innerHTML=`對！<b>${big}</b> 度多。小數點前面就是大數字`;setStep(6);try{FX.confetti(60);}catch(e){}}
+      else{b.classList.add('no');S('wrong');$('msg').innerHTML='再看一次：<b>小數點前面</b>是幾？';}};$('ans').appendChild(b);});},
+  6(){count++;S('coin');$('recBox').classList.remove('hidden');$('ans').classList.add('hidden');
+    $('recBody').insertAdjacentHTML('beforeend',`<tr><td>${count}</td><td>${temp.toFixed(1)}</td><td style="color:#c8372d;font-size:36px">${Math.floor(temp)}</td></tr>`);
+    $('msg').innerHTML='記好了！🎉 <b>六個步驟完成</b>';setStep(7);try{FX.stamp({text:'量好了'});}catch(e){}
+    if(temp>=37.5){$('msg').innerHTML+='<br>⚠ 37.5 度以上要<b>告訴老師</b>';}}
+};
+document.querySelectorAll('#steps .st').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;if(k===step&&ACT[k])ACT[k]();});
+$('again').onclick=()=>{S('whoosh');newTemp();resetScene();setStep(1);$('msg').innerHTML='換下一位同學！從第 1 步開始';};
+
+/* 讀數字練習 */
+let qv=36.5;
+function newQ(){const pool=[35.6,35.9,36.1,36.3,36.5,36.7,36.8,36.9,37.0,37.2,37.4,36.0,35.8,37.1];qv=pool[Math.floor(Math.random()*pool.length)];
+  lcd(true,qv.toFixed(1),'°C');gunAt(110);$('gun').style.transform='';$('qmsg').innerHTML='';const big=Math.floor(qv);
+  const opts=[big-1,big,big+1,Math.round(qv*10)].filter((v,i,a)=>a.indexOf(v)===i).slice(0,3).sort(()=>Math.random()-.5);
+  $('qans').innerHTML='';opts.forEach(v=>{const b=document.createElement('button');b.className='ab';b.textContent=v;b.onclick=()=>{
+    if(v===big){b.classList.add('ok');S('right');$('qmsg').innerHTML=`答對！${qv.toFixed(1)} → <b>${big}</b> 度多`;try{FX.confetti(50);}catch(e){}}
+    else{b.classList.add('no');S('wrong');$('qmsg').innerHTML='看<b>小數點前面</b>就好喔';}};$('qans').appendChild(b);});}
+$('qnext').onclick=()=>{S('whoosh');newQ();};
+
+function setMode(m){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.m===m));$('m-do').classList.toggle('hidden',m!=='do');$('m-quiz').classList.toggle('hidden',m!=='quiz');
+  resetScene();if(m==='do'){newTemp();setStep(1);$('recBox').classList.add('hidden');$('recBody').innerHTML='';count=0;$('msg').innerHTML='點 <b>1</b> 開始量體溫';}else{newQ();$('bangs').classList.add('up');}
+  try{history.replaceState(null,'','#'+m);}catch(e){}}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{S('blip');setMode(b.dataset.m);});
+window.__fh={setMode,act:k=>ACT[k](),get step(){return step;}};
+setMode(location.hash==='#quiz'?'quiz':'do');
+})();
+</script>
+</body>
+</html>

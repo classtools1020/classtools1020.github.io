@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>手會騙人？三碗水｜溫度特勤隊</title>
+<style>
+  :root{--ink:#1f2a37;--soft:#5b6673;--paper:#f4efe6;--red:#c8372d;--teal:#1f7a8c;--green:#2f8a4c;--line:#d8cfbf;--blue:#1f5fa8;--gold:#d99a22}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#22262b;overflow:hidden;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  #view{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{position:relative;width:1600px;height:900px;flex:none;background:var(--paper);overflow:hidden;transform-origin:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  #stage::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.2px) 0 0/6px 6px;pointer-events:none}
+  header{position:absolute;left:170px;top:0;height:96px;display:flex;align-items:center;right:200px}
+  .kick{font-size:22px;font-weight:800;color:var(--red);letter-spacing:.08em}
+  h1{margin:0;font-size:44px;letter-spacing:.04em}
+  #back,#menu{position:absolute;top:22px;z-index:20;font-family:inherit;font-weight:900;font-size:20px;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:9px 18px}
+  #back{left:22px}#menu{right:22px}
+  #scene{position:absolute;left:40px;top:96px;width:1520px;height:560px}
+  #scene svg{width:1520px;height:560px;overflow:visible}
+  .hand{transition:transform 1.2s cubic-bezier(.4,.1,.3,1)}
+  .bub{opacity:0;transition:opacity .5s,transform .5s;transform-box:fill-box;transform-origin:center bottom}
+  .bub.on{opacity:1}
+  #ctl{position:absolute;left:60px;right:60px;bottom:30px;height:200px;display:flex;align-items:center;gap:30px}
+  .big{font-family:inherit;font-size:36px;font-weight:900;border:none;border-radius:22px;padding:22px 40px;cursor:pointer;background:var(--ink);color:#fff;white-space:nowrap}
+  .big.y{background:#ffcf2e;color:var(--ink)}
+  .big:disabled{opacity:.35}
+  .say{flex:1;font-size:40px;font-weight:900;line-height:1.4}
+  .say b{color:var(--red)}.say i{font-style:normal;color:var(--blue)}
+  .opts{display:flex;gap:22px}
+  .op{font-family:inherit;font-size:40px;font-weight:900;background:#fff;border:5px solid var(--line);border-radius:24px;padding:18px 30px;cursor:pointer;color:var(--ink)}
+  .op.ok{border-color:var(--green);background:#ecf7ee}
+  .count{font-size:110px;font-weight:900;fill:#1f2a37}
+  .stamp{position:absolute;left:50%;top:470px;transform:translateX(-50%) rotate(-6deg) scale(2.5);opacity:0;border:10px solid var(--red);color:var(--red);font-size:72px;font-weight:900;padding:6px 34px;border-radius:18px;background:rgba(255,255,255,.92);transition:transform .45s cubic-bezier(.2,.8,.3,1.3),opacity .3s;z-index:9;white-space:nowrap}
+  .stamp.on{opacity:1;transform:translateX(-50%) rotate(-6deg) scale(1)}
+  #rot{display:none;position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#fff;font-weight:800;padding:8px 14px;border-radius:10px;z-index:30}
+  @media (max-width:760px) and (orientation:portrait){#rot{display:block}}
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+  <a id="back" href="./">⬅ 返回</a>
+  <a id="menu" href="/light/">🗂️ 主選單</a>
+  <header><div><div class="kick">溫度特勤隊・開場實驗</div><h1>手會騙人嗎？三碗水的祕密</h1></div></header>
+  <div id="scene">
+    <svg viewBox="0 0 1520 560">
+      <defs>
+        <linearGradient id="hot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c49b"/><stop offset="1" stop-color="#e98c5e"/></linearGradient>
+        <linearGradient id="mid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe9f4"/><stop offset="1" stop-color="#9fd0e6"/></linearGradient>
+        <linearGradient id="cold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b5dcf3"/><stop offset="1" stop-color="#5fa8d8"/></linearGradient>
+        <radialGradient id="skinH" cx=".5" cy=".3" r=".8"><stop offset="0" stop-color="#ffe0c6"/><stop offset="1" stop-color="#eeb68e"/></radialGradient>
+      </defs>
+      <!-- 碗 -->
+      <g id="bowls">
+        <g transform="translate(130 300)"><path d="M0 40 Q20 230 200 240 Q380 230 400 40Z" fill="url(#hot)" stroke="#a5653f" stroke-width="5"/><ellipse cx="200" cy="40" rx="200" ry="42" fill="#fbd6b6" stroke="#a5653f" stroke-width="5"/>
+          <g stroke="#b59b88" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"><path d="M140 10 q-20 -30 0 -60 q20 -30 0 -60"><animate attributeName="opacity" values=".2;.9;.2" dur="2.2s" repeatCount="indefinite"/></path><path d="M210 0 q-20 -30 0 -60 q20 -30 0 -60"><animate attributeName="opacity" values=".9;.2;.9" dur="2.6s" repeatCount="indefinite"/></path><path d="M280 10 q-20 -30 0 -60 q20 -30 0 -60"><animate attributeName="opacity" values=".3;.8;.3" dur="2s" repeatCount="indefinite"/></path></g>
+          <text x="200" y="300" text-anchor="middle" style="font-size:44px;font-weight:900;fill:#c8372d">熱熱的水</text></g>
+        <g transform="translate(560 300)"><path d="M0 40 Q20 230 200 240 Q380 230 400 40Z" fill="url(#mid)" stroke="#5e8fa6" stroke-width="5"/><ellipse cx="200" cy="40" rx="200" ry="42" fill="#e3f3f9" stroke="#5e8fa6" stroke-width="5"/>
+          <text x="200" y="300" text-anchor="middle" style="font-size:44px;font-weight:900;fill:#1f2a37">普通的水</text></g>
+        <g transform="translate(990 300)"><path d="M0 40 Q20 230 200 240 Q380 230 400 40Z" fill="url(#cold)" stroke="#2f6f9c" stroke-width="5"/><ellipse cx="200" cy="40" rx="200" ry="42" fill="#d4ecf9" stroke="#2f6f9c" stroke-width="5"/>
+          <g fill="#fff" stroke="#6aa6cc" stroke-width="3" opacity=".95"><rect x="90" y="18" width="60" height="44" rx="9" transform="rotate(-10 120 40)"/><rect x="190" y="26" width="56" height="40" rx="9" transform="rotate(12 218 46)"/><rect x="270" y="14" width="54" height="40" rx="9" transform="rotate(-6 297 34)"/></g>
+          <text x="200" y="300" text-anchor="middle" style="font-size:44px;font-weight:900;fill:#1f5fa8">冰冰的水</text></g>
+      </g>
+      <!-- 手（從上面伸下來） -->
+      <g id="handL" class="hand" style="transform:translate(240px,-260px)">
+        <rect x="40" y="-200" width="110" height="260" rx="40" fill="#2f5d8a"/>
+        <path d="M20 40 Q20 -10 95 -10 Q170 -10 170 40 L170 170 Q170 230 95 230 Q20 230 20 170Z" fill="url(#skinH)" stroke="#d79f78" stroke-width="4"/>
+        <g stroke="#d79f78" stroke-width="4" fill="none"><path d="M58 150 L58 225"/><path d="M95 160 L95 230"/><path d="M132 150 L132 225"/></g>
+        <rect id="tintL" x="20" y="-10" width="150" height="240" rx="60" fill="#e8553c" opacity="0"/>
+      </g>
+      <g id="handR" class="hand" style="transform:translate(1100px,-260px)">
+        <rect x="40" y="-200" width="110" height="260" rx="40" fill="#2f5d8a"/>
+        <path d="M20 40 Q20 -10 95 -10 Q170 -10 170 40 L170 170 Q170 230 95 230 Q20 230 20 170Z" fill="url(#skinH)" stroke="#d79f78" stroke-width="4"/>
+        <g stroke="#d79f78" stroke-width="4" fill="none"><path d="M58 150 L58 225"/><path d="M95 160 L95 230"/><path d="M132 150 L132 225"/></g>
+        <rect id="tintR" x="20" y="-10" width="150" height="240" rx="60" fill="#3a8fd8" opacity="0"/>
+      </g>
+      <text x="335" y="40" text-anchor="middle" style="font-size:34px;font-weight:900;fill:#5b6673" id="lblL">左手</text>
+      <text x="1195" y="40" text-anchor="middle" style="font-size:34px;font-weight:900;fill:#5b6673" id="lblR">右手</text>
+      <!-- 想法泡泡 -->
+      <g id="bubL" class="bub"><path d="M150 40 h400 a30 30 0 0 1 30 30 v80 a30 30 0 0 1 -30 30 h-20 l70 50 l-120 -50 h-330 a30 30 0 0 1 -30 -30 v-80 a30 30 0 0 1 30 -30z" fill="#fff" stroke="#1f5fa8" stroke-width="5"/><text x="365" y="128" text-anchor="middle" style="font-size:54px;font-weight:900;fill:#1f5fa8">左手：好冰！🥶</text></g>
+      <g id="bubR" class="bub"><path d="M970 40 h400 a30 30 0 0 1 30 30 v80 a30 30 0 0 1 -30 30 h-330 l-120 50 l70 -50 h-20 a30 30 0 0 1 -30 -30 v-80 a30 30 0 0 1 30 -30z" fill="#fff" stroke="#c8372d" stroke-width="5"/><text x="1185" y="128" text-anchor="middle" style="font-size:54px;font-weight:900;fill:#c8372d">右手：好熱！🥵</text></g>
+      <text id="cnt" x="760" y="200" text-anchor="middle" class="count" opacity="0"></text>
+      <!-- 溫度計（最後出現） -->
+      <g id="therm" opacity="0" style="transition:opacity .6s">
+        <rect x="745" y="40" width="30" height="300" rx="15" fill="#fff" stroke="#8aa0ad" stroke-width="4"/>
+        <rect id="tcol" x="754" y="340" width="12" height="0" rx="6" fill="#e2453a" style="transition:all 2s ease"/>
+        <circle cx="760" cy="350" r="26" fill="#e2453a" stroke="#8aa0ad" stroke-width="4"/>
+        <g id="tread" opacity="0" style="transition:opacity .5s"><rect x="800" y="150" width="200" height="90" rx="18" fill="#fff" stroke="#1f2a37" stroke-width="4"/><text x="900" y="214" text-anchor="middle" style="font-size:56px;font-weight:900;fill:#c8372d">26 °C</text></g>
+      </g>
+    </svg>
+  </div>
+  <div class="stamp" id="stamp">手會騙人！溫度計不會</div>
+  <div id="ctl">
+    <button class="big y" id="go">▶ 第 1 步</button>
+    <div class="say" id="say">左手放進<b>熱水</b>，右手放進<i>冰水</i>，一起數到 30！</div>
+  </div>
+</div></div>
+<div id="rot">📱 手機橫過來看，畫面比較大</div>
+<script src="../games/fx.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);const stage=$('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
+const S=n=>{try{FX.sound[n]();}catch(e){}};
+let st=0;
+const say=h=>$('say').innerHTML=h;
+function btn(t,fn,y){const b=$('go');b.textContent=t;b.className='big'+(y?' y':'');b.onclick=fn;b.disabled=false;}
+function step1(){S('whoosh');$('go').disabled=true;
+  $('handL').style.transform='translate(240px,150px)';$('handR').style.transform='translate(1100px,150px)';
+  say('左手泡<b>熱水</b>、右手泡<i>冰水</i>…… 一起數！');
+  let n=0;const T=$('cnt');T.setAttribute('opacity',1);
+  const tick=()=>{n+=3;T.textContent=n;S('tick');$('tintL').setAttribute('opacity',Math.min(.35,n/80));$('tintR').setAttribute('opacity',Math.min(.35,n/80));
+    if(n<30)setTimeout(tick,330);else{S('coin');setTimeout(()=>{T.setAttribute('opacity',0);say('好了！現在兩隻手<b>一起</b>放進<b>中間</b>那碗普通的水。');btn('▶ 第 2 步：一起放中間',step2,true);},500);}};
+  setTimeout(tick,1300);
+}
+function step2(){S('whoosh');$('go').disabled=true;
+  $('handL').style.transform='translate(-400px,-560px)';$('handR').style.transform='translate(1700px,-560px)';
+  setTimeout(()=>{$('handL').style.transform='translate(575px,150px)';$('handR').style.transform='translate(765px,150px)';},700);
+  setTimeout(()=>{$('bubL').classList.add('on');S('pop');},2300);
+  setTimeout(()=>{$('bubR').classList.add('on');S('pop');},3000);
+  setTimeout(()=>{say('咦？？<b>同一碗水</b>，左手說冰、右手說熱！<br>中間的水到底是冷還是熱？');
+    const c=$('ctl');const o=document.createElement('div');o.className='opts';o.id='opts';
+    [['🥶 冷的',0],['🥵 熱的',0],['🌡️ 用溫度計量！',1]].forEach(([t,ok])=>{const b=document.createElement('button');b.className='op';b.textContent=t;b.onclick=()=>{if(ok){b.classList.add('ok');S('right');step3();}else{S('wrongsoft');say('手說的話……可以相信嗎？🤔 <b>有沒有更準的方法？</b>');}};o.appendChild(b);});
+    $('go').style.display='none';c.insertBefore(o,$('say'));$('say').style.fontSize='32px';},3800);
+}
+function step3(){const o=$('opts');if(o)o.remove();
+  $('bubL').classList.remove('on');$('bubR').classList.remove('on');
+  $('handL').style.transform='translate(-400px,-560px)';$('handR').style.transform='translate(1700px,-560px)';
+  $('therm').setAttribute('opacity',1);
+  setTimeout(()=>{$('tcol').setAttribute('y',190);$('tcol').setAttribute('height',150);},300);
+  setTimeout(()=>{$('tread').setAttribute('opacity',1);S('coin');say('溫度計說：<b>26 度</b>。不冷也不熱，是<b>普通的水</b>！');},2500);
+  setTimeout(()=>{$('stamp').classList.add('on');S('stamp');try{FX.confetti(120);}catch(e){}},3800);
+  setTimeout(()=>{say('剛泡過熱水的手覺得<i>冰</i>，剛泡過冰水的手覺得<b>熱</b>。<br>👉 <b>手會騙人，要用溫度計量才準！</b>');$('say').style.fontSize='34px';
+    const b=$('go');b.style.display='';btn('🔁 再玩一次',()=>location.reload());},5000);
+}
+btn('▶ 第 1 步：放進熱水和冰水',step1,true);
+window.__bowls={step1,step2,step3};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>溫度計實驗室｜溫度特勤隊</title>
+<style>
+  :root{--ink:#1f2a37;--soft:#5b6673;--paper:#f4efe6;--red:#c8372d;--teal:#1f7a8c;--green:#2f8a4c;--line:#d8cfbf;--blue:#1f5fa8;--gold:#d99a22;--warm:#e0662f}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#22262b;overflow:hidden;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  #view{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{position:relative;width:1600px;height:900px;flex:none;background:var(--paper);overflow:hidden;transform-origin:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  #stage::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.2px) 0 0/6px 6px;pointer-events:none}
+  header{position:absolute;left:0;right:0;top:0;height:96px;display:flex;align-items:center;gap:18px;padding:0 200px 0 170px}
+  .kick{font-size:22px;font-weight:800;color:var(--red);letter-spacing:.08em}
+  h1{margin:0;font-size:44px;letter-spacing:.04em}
+  .tabs{margin-left:auto;display:flex;gap:10px}
+  .tab{font-family:inherit;font-size:24px;font-weight:900;border:3px solid var(--ink);background:#fff;color:var(--ink);border-radius:999px;padding:10px 22px;cursor:pointer;touch-action:manipulation}
+  .tab.on{background:var(--ink);color:#fff}
+  #back,#menu{position:absolute;top:22px;z-index:20;font-family:inherit;font-weight:900;font-size:20px;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:9px 18px}
+  #back{left:22px}#menu{right:22px}
+  /* 溫度計區 */
+  #tw{position:absolute;left:60px;top:104px;width:560px;height:780px}
+  #tsvg{width:560px;height:780px;overflow:visible}
+  .tick{stroke:var(--ink);stroke-width:3}
+  .num{font-size:34px;font-weight:900;fill:var(--ink)}
+  .num.hi{fill:var(--red)}
+  /* 右側面板 */
+  #panel{position:absolute;left:660px;top:120px;right:50px;bottom:40px}
+  .card{background:#fff;border:3px solid var(--line);border-radius:26px;padding:24px 30px}
+  .cups{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .cup{font-family:inherit;background:#fff;border:4px solid var(--line);border-radius:24px;padding:14px 8px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:28px;font-weight:900;color:var(--ink);transition:transform .2s,border-color .2s;touch-action:manipulation}
+  .cup svg{width:120px;height:120px}
+  .cup.on{border-color:var(--red);transform:translateY(-6px);box-shadow:0 10px 20px rgba(200,55,45,.18)}
+  .cup small{font-size:18px;color:var(--soft);font-weight:800}
+  .steps{display:flex;flex-direction:column;gap:14px;margin-top:22px}
+  .st{display:flex;align-items:center;gap:18px;font-size:32px;font-weight:900;background:#fff;border:3px solid var(--line);border-radius:20px;padding:14px 22px;transition:border-color .3s,background .3s,opacity .3s}
+  .st .no{flex:none;width:56px;height:56px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px}
+  .st.now{border-color:var(--gold);background:#fff8e6}
+  .st.done{opacity:.55}.st.done .no{background:var(--green)}
+  .big{font-family:inherit;font-size:34px;font-weight:900;border:none;border-radius:20px;padding:18px 34px;cursor:pointer;background:var(--ink);color:#fff;touch-action:manipulation}
+  .big.y{background:#ffcf2e;color:var(--ink)}
+  .big:disabled{opacity:.35;cursor:default}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .ans{display:flex;gap:22px;margin-top:18px}
+  .ab{font-family:inherit;width:190px;height:150px;font-size:76px;font-weight:900;background:#fff;border:5px solid var(--line);border-radius:26px;cursor:pointer;color:var(--ink);transition:transform .2s,border-color .2s,background .2s,opacity .2s;touch-action:manipulation}
+  .ab.ok{border-color:var(--green);background:#ecf7ee;transform:scale(1.08)}.ab.no{opacity:.3}
+  .msg{font-size:34px;font-weight:900;min-height:52px;margin-top:16px;line-height:1.4}
+  .msg b{color:var(--red)}
+  .q{font-size:40px;font-weight:900}
+  .tag{display:inline-block;font-size:20px;font-weight:900;color:#fff;background:var(--teal);border-radius:999px;padding:4px 16px;margin-bottom:10px}
+  table.rec{width:100%;border-collapse:separate;border-spacing:0 12px;font-size:32px;font-weight:900}
+  table.rec td{background:#fff;border-top:3px solid var(--line);border-bottom:3px solid var(--line);padding:10px 16px;vertical-align:middle}
+  table.rec td:first-child{border-left:3px solid var(--line);border-radius:18px 0 0 18px;width:150px}
+  table.rec td:last-child{border-right:3px solid var(--line);border-radius:0 18px 18px 0}
+  table.rec svg{width:90px;height:90px;display:block}
+  .val{display:inline-block;min-width:150px;text-align:center;font-size:48px;color:var(--red)}
+  .order{display:flex;gap:16px;margin-top:10px}
+  .ob{font-family:inherit;flex:1;background:#fff;border:4px solid var(--line);border-radius:22px;padding:10px;cursor:pointer;font-size:28px;font-weight:900;display:flex;flex-direction:column;align-items:center;color:var(--ink)}
+  .ob svg{width:96px;height:96px}
+  .ob.pick{border-color:var(--green);background:#ecf7ee}
+  .ob .badge{font-size:26px;color:#fff;background:var(--green);border-radius:999px;padding:2px 14px;visibility:hidden}
+  .ob.pick .badge{visibility:visible}
+  .arrow{font-size:30px;font-weight:900;color:var(--soft);display:flex;justify-content:space-between;margin-top:8px}
+  .hidden{display:none!important}
+  .lens{position:absolute;width:250px;height:250px;border-radius:50%;border:8px solid #333;box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 0 0 4px #fff;overflow:hidden;background:#fff;pointer-events:none;transition:opacity .3s;opacity:0;z-index:5}
+  .lens.on{opacity:1}
+  .lens::after{content:"";position:absolute;right:-80px;bottom:-80px;width:120px;height:26px;background:#333;transform:rotate(45deg)}
+  #rot{display:none;position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#fff;font-weight:800;padding:8px 14px;border-radius:10px;z-index:30}
+  @media (max-width:760px) and (orientation:portrait){#rot{display:block}}
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+  <a id="back" href="./">⬅ 返回</a>
+  <a id="menu" href="/light/">🗂️ 主選單</a>
+  <header>
+    <div><div class="kick">溫度特勤隊</div><h1>溫度計實驗室</h1></div>
+    <div class="tabs">
+      <button class="tab" data-m="see">🔬 看紅線</button>
+      <button class="tab" data-m="quiz">🎯 考考你</button>
+      <button class="tab" data-m="record">📋 三杯水</button>
+    </div>
+  </header>
+
+  <div id="tw">
+    <svg id="tsvg" viewBox="0 0 560 780">
+      <defs>
+        <linearGradient id="glassG" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".5" stop-color="#eef7fb" stop-opacity=".9"/><stop offset="1" stop-color="#d7e9f1" stop-opacity=".95"/></linearGradient>
+        <linearGradient id="redG" x1="0" x2="1"><stop offset="0" stop-color="#e2453a"/><stop offset=".45" stop-color="#ff6b5b"/><stop offset="1" stop-color="#b52a20"/></linearGradient>
+        <radialGradient id="bulbG" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#ff8b7d"/><stop offset=".6" stop-color="#e2453a"/><stop offset="1" stop-color="#a5241b"/></radialGradient>
+        <clipPath id="beakerClip"><rect x="150" y="560" width="300" height="210" rx="18"/></clipPath>
+      </defs>
+      <!-- 杯子（下方） -->
+      <g id="beaker">
+        <rect x="140" y="530" width="320" height="245" rx="22" fill="#eaf6fb" fill-opacity=".55" stroke="#7aa9bf" stroke-width="5"/>
+        <rect id="water" x="146" y="580" width="308" height="190" rx="16" fill="#9fd3ea" fill-opacity=".75"/>
+        <g id="ice" clip-path="url(#beakerClip)"></g>
+        <g id="steam"></g>
+      </g>
+      <!-- 溫度計 -->
+      <g id="therm">
+        <rect x="266" y="40" width="68" height="660" rx="34" fill="url(#glassG)" stroke="#8aa0ad" stroke-width="4"/>
+        <g id="ticks"></g>
+        <rect id="col" x="290" y="300" width="20" height="400" rx="10" fill="url(#redG)"/>
+        <circle cx="300" cy="712" r="40" fill="url(#bulbG)" stroke="#8aa0ad" stroke-width="4"/>
+        <rect x="276" y="60" width="8" height="620" rx="4" fill="#fff" opacity=".7"/>
+        <text x="300" y="30" text-anchor="middle" style="font-size:26px;font-weight:900;fill:#5b6673">°C</text>
+      </g>
+      <!-- 讀數輔助線 -->
+      <g id="guide" opacity="0">
+        <line id="gline" x1="120" x2="480" y1="300" y2="300" stroke="#d99a22" stroke-width="5" stroke-dasharray="14 10"/>
+        <g id="eye"><circle cx="520" cy="300" r="26" fill="#fff" stroke="#1f2a37" stroke-width="4"/><circle cx="512" cy="300" r="11" fill="#1f2a37"/></g>
+      </g>
+      <g id="count"></g>
+    </svg>
+  </div>
+  <div class="lens" id="lens"><svg id="lsvg" viewBox="0 0 250 250" width="250" height="250"></svg></div>
+
+  <div id="panel">
+    <!-- 看紅線 -->
+    <section id="m-see">
+      <div class="cups" id="cups"></div>
+      <div class="steps" id="steps">
+        <div class="st" data-k="1"><span class="no">1</span>溫度計放進水裡</div>
+        <div class="st" data-k="2"><span class="no">2</span>等紅線不動（數 1、2、3）</div>
+        <div class="st" data-k="3"><span class="no">3</span>眼睛和紅線一樣高，平平看</div>
+        <div class="st" data-k="4"><span class="no">4</span>看紅線的頂端，讀大數字</div>
+      </div>
+      <div class="row" style="margin-top:22px">
+        <button class="big y" id="readBtn" disabled>👀 讀讀看</button>
+        <button class="big" id="lensBtn">🔍 放大鏡</button>
+        <div class="msg" id="seeMsg" style="margin:0">先點一杯水 👆</div>
+      </div>
+    </section>
+
+    <!-- 考考你 -->
+    <section id="m-quiz" class="hidden">
+      <div class="card">
+        <span class="tag" id="qno">第 1 題</span>
+        <div class="q">紅線停在幾度？</div>
+        <div class="ans" id="ans"></div>
+        <div class="msg" id="qMsg"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="big" id="countBtn">🪜 一起數</button>
+          <button class="big" id="lensBtn2">🔍 放大鏡</button>
+          <button class="big y" id="nextQ">下一題 ➡</button>
+        </div>
+      </div>
+      <div class="row" style="margin-top:22px;font-size:28px;font-weight:900">
+        <span>⭐ 答對：<span id="score">0</span></span>
+        <span style="color:var(--soft)">小訣竅：先找<b style="color:var(--red)">最近的大數字</b>，再往上數小格</span>
+      </div>
+    </section>
+
+    <!-- 三杯水 -->
+    <section id="m-record" class="hidden">
+      <div class="tag">任務：量三杯水，寫下溫度，再從冷排到熱</div>
+      <table class="rec" id="rec"></table>
+      <div id="orderBox" class="card hidden" style="padding:16px 24px">
+        <div class="q" style="font-size:32px">從<b style="color:var(--blue)">最冷</b>點到<b style="color:var(--red)">最熱</b>：</div>
+        <div class="order" id="order"></div>
+        <div class="arrow"><span>🧊 冷</span><span>────────────▶</span><span>熱 ♨️</span></div>
+        <div class="msg" id="oMsg"></div>
+      </div>
+    </section>
+  </div>
+</div></div>
+<div id="rot">📱 手機橫過來看，畫面比較大</div>
+
+<script src="../games/fx.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const stage=$('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}
+addEventListener('resize',fit);fit();
+const S=(n)=>{try{FX.sound[n]();}catch(e){}};
+
+/* ---------- 溫度計刻度 0～60°C，每 1 度一小格 ---------- */
+const T0=0,T1=60,Y0=660,Y1=80;            // 0°C 在 y=660，60°C 在 y=80
+const yOf=t=>Y0-(t-T0)*(Y0-Y1)/(T1-T0);
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+(function ticks(){const g=$('ticks');
+  for(let t=T0;t<=T1;t++){const y=yOf(t),L=t%10===0?40:t%5===0?28:16;
+    el('line',{x1:334,x2:334+L,y1:y,y2:y,class:'tick','stroke-width':t%10===0?4:t%5===0?3:2},g);
+    el('line',{x1:266,x2:266-L*.55,y1:y,y2:y,class:'tick','stroke-width':t%10===0?4:2,opacity:.5},g);
+    if(t%10===0){const tx=el('text',{x:390,y:y+12,class:'num','data-t':t},g);tx.textContent=t;}}
+})();
+
+/* ---------- 紅線：慢慢爬到目標溫度（像真的溫度計） ---------- */
+let cur=25,target=25,settledAt=0,moving=false;
+function setCol(t){const y=yOf(t);$('col').setAttribute('y',y);$('col').setAttribute('height',712-y);}
+setCol(cur);
+let lastTick=0;
+function loop(ts){
+  const dt=Math.min(.2,(ts-(loop.t||ts))/1000);loop.t=ts;
+  const d=target-cur;
+  if(Math.abs(d)>.02){cur+=d*Math.min(1,dt*2.3);moving=true;setCol(cur);
+    if(ts-lastTick>140){lastTick=ts;try{FX.sound.tick();}catch(e){}}}
+  else if(moving){cur=target;setCol(cur);moving=false;settledAt=ts;onSettle&&onSettle();}
+  drawLens();
+  requestAnimationFrame(loop);
+}
+let onSettle=null;
+requestAnimationFrame(loop);
+
+/* ---------- 杯子 ---------- */
+const CUPS=[
+  {id:'ice',name:'冰水',t:3,sub:'加冰塊',water:'#8fc7e8',ice:true},
+  {id:'tap',name:'自來水',t:26,sub:'水龍頭',water:'#a9d8ec'},
+  {id:'warm',name:'溫水',t:40,sub:'像洗澡水',water:'#f3c9a2',steam:1},
+  {id:'hot',name:'熱水',t:58,sub:'⚠ 小心燙',water:'#f2a983',steam:2},
+];
+function cupSVG(c){
+  const ice=c.ice?'<rect x="34" y="52" width="22" height="20" rx="4" fill="#fff" stroke="#7aa9bf" stroke-width="2" transform="rotate(-12 45 62)"/><rect x="62" y="60" width="20" height="18" rx="4" fill="#fff" stroke="#7aa9bf" stroke-width="2" transform="rotate(10 72 69)"/>':'';
+  const st=c.steam?Array.from({length:c.steam+1},(_,i)=>`<path d="M${44+i*16} 34 q-8 -10 0 -18 q8 -8 0 -18" stroke="#b8a89a" stroke-width="4" fill="none" stroke-linecap="round"/>`).join(''):'';
+  return `<svg viewBox="0 0 120 120"><g>${st}</g><rect x="22" y="38" width="76" height="74" rx="10" fill="#eaf6fb" stroke="#7aa9bf" stroke-width="4"/><rect x="26" y="50" width="68" height="58" rx="7" fill="${c.water}"/>${ice}</svg>`;
+}
+const cupsBox=$('cups');
+CUPS.forEach(c=>{const b=document.createElement('button');b.className='cup';b.dataset.id=c.id;b.innerHTML=cupSVG(c)+c.name+`<small>${c.sub}</small>`;b.onclick=()=>pickCup(c);cupsBox.appendChild(b);});
+
+function setBeaker(c){
+  $('water').setAttribute('fill',c?c.water:'#9fd3ea');
+  const ice=$('ice');ice.innerHTML='';
+  if(c&&c.ice){[[180,600,-12],[372,606,14],[230,640,8],[340,650,-6],[200,700,20]].forEach(([x,y,r])=>el('rect',{x,y,width:56,height:48,rx:8,fill:'#fff','fill-opacity':.85,stroke:'#7aa9bf','stroke-width':3,transform:`rotate(${r} ${x+28} ${y+24})`},ice));}
+  const st=$('steam');st.innerHTML='';
+  if(c&&c.steam){for(let i=0;i<c.steam*2+1;i++){const p=el('path',{d:`M${190+i*48} 560 q-16 -24 0 -46 q16 -22 0 -46`,stroke:'#b8a89a','stroke-width':6,fill:'none','stroke-linecap':'round',opacity:.7},st);
+    p.innerHTML=`<animate attributeName="opacity" values=".1;.75;.1" dur="${1.8+i*.3}s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0 10;0 -16" dur="${1.8+i*.3}s" repeatCount="indefinite"/>`;}}
+}
+
+/* ---------- 讀數輔助：金色虛線＋眼睛 ---------- */
+function showGuide(t,on){const y=yOf(t);$('gline').setAttribute('y1',y);$('gline').setAttribute('y2',y);$('eye').setAttribute('transform',`translate(0 ${y-300})`);$('guide').style.transition='opacity .4s';$('guide').setAttribute('opacity',on?1:0);}
+function hiNum(t){document.querySelectorAll('#ticks .num').forEach(n=>n.classList.toggle('hi',t!=null&&+n.dataset.t===t));}
+
+/* ---------- 放大鏡：跟著紅線頂端 ---------- */
+let lensOn=false;
+function drawLens(){
+  if(!lensOn)return;
+  const y=yOf(cur);
+  const L=$('lens');L.style.left='1px';L.style.top=Math.max(110,Math.min(620,104+y-125))+'px';
+  const ls=$('lsvg');
+  ls.setAttribute('viewBox',`${350-66} ${y-66} 132 132`);
+}
+(function lensContent(){const ls=$('lsvg');ls.innerHTML=$('therm').outerHTML.replace('id="therm"','')+'';})();
+function setLens(on){lensOn=on;$('lens').classList.toggle('on',on);if(on){$('lsvg').innerHTML=$('therm').outerHTML.replace(/id="[^"]*"/g,'');}}
+function refreshLens(){if(lensOn){$('lsvg').innerHTML=$('therm').outerHTML.replace(/id="[^"]*"/g,'');}}
+const _setCol=setCol;setCol=function(t){_setCol(t);refreshLens();};
+
+/* ---------- 一起數：從最近的大數字往上數 ---------- */
+function countUp(t,done){
+  const g=$('count');g.innerHTML='';const base=Math.floor(t/10)*10;hiNum(base);
+  let k=0;const step=()=>{
+    if(k===0){const y=yOf(base);const c=el('circle',{cx:300,cy:y,r:16,fill:'none',stroke:'#d99a22','stroke-width':6},g);el('text',{x:236,y:y+12,class:'num','text-anchor':'end',style:'fill:#d99a22'},g).textContent='從 '+base;S('pop');}
+    else{const v=base+k,y=yOf(v);el('line',{x1:220,x2:266,y1:y,y2:y,stroke:'#d99a22','stroke-width':6},g);
+      const tx=el('text',{x:206,'text-anchor':'end',y:y+11,style:'font-size:30px;font-weight:900;fill:#d99a22'},g);tx.textContent='+'+k;S('blip');}
+    k++;if(base+k<=t)setTimeout(step,650);else setTimeout(()=>{hiNum(null);done&&done();},500);};
+  step();
+}
+
+/* ---------- 模式 ---------- */
+let mode='see';
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  ['see','quiz','record'].forEach(k=>$('m-'+k).classList.toggle('hidden',k!==m));
+  showGuide(cur,false);$('count').innerHTML='';hiNum(null);setLens(false);onSettle=null;
+  if(m==='see'){setBeaker(null);resetSteps();}
+  if(m==='quiz'){setBeaker(null);newQ();}
+  if(m==='record'){initRecord();}
+  try{history.replaceState(null,'','#'+m);}catch(e){}
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{S('blip');setMode(b.dataset.m);});
+
+/* 看紅線 */
+function resetSteps(){document.querySelectorAll('#steps .st').forEach(s=>s.classList.remove('now','done'));$('readBtn').disabled=true;$('seeMsg').innerHTML='先點一杯水 👆';document.querySelectorAll('.cup').forEach(b=>b.classList.remove('on'));}
+function stepOn(k){document.querySelectorAll('#steps .st').forEach(s=>{const n=+s.dataset.k;s.classList.toggle('done',n<k);s.classList.toggle('now',n===k);});}
+let curCup=null;
+function pickCup(c){
+  curCup=c;S('whoosh');document.querySelectorAll('.cup').forEach(b=>b.classList.toggle('on',b.dataset.id===c.id));
+  setBeaker(c);showGuide(cur,false);hiNum(null);$('count').innerHTML='';
+  stepOn(1);$('readBtn').disabled=true;
+  $('seeMsg').innerHTML=c.t>cur?'紅線<b>往上爬</b>了！':'紅線<b>往下掉</b>了！';
+  setTimeout(()=>{stepOn(2);},700);
+  target=c.t;
+  onSettle=()=>{onSettle=null;stepOn(3);$('seeMsg').innerHTML='紅線不動了，可以讀了 👀';$('readBtn').disabled=false;S('coin');};
+}
+$('readBtn').onclick=()=>{if(!curCup)return;stepOn(4);showGuide(cur,true);S('pop');
+  countUp(Math.round(cur),()=>{$('seeMsg').innerHTML=`${curCup.name}是 <b style="font-size:54px">${Math.round(cur)}</b> 度 °C`;S('right');
+    document.querySelectorAll('#steps .st').forEach(s=>s.classList.add('done'));});};
+$('lensBtn').onclick=()=>{S('blip');setLens(!lensOn);};
+$('lensBtn2').onclick=()=>{S('blip');setLens(!lensOn);};
+
+/* 考考你：隨機整數溫度、三個大按鈕 */
+let qn=0,score=0,qt=0,answered=false;
+const pool=[];
+function newQ(){
+  qn++;answered=false;$('qno').textContent='第 '+qn+' 題';$('qMsg').innerHTML='';showGuide(cur,false);$('count').innerHTML='';hiNum(null);
+  let t;do{t=2+Math.floor(Math.random()*55);}while(pool.includes(t)||t%10===0&&Math.random()<.6);pool.push(t);if(pool.length>8)pool.shift();
+  qt=t;target=t;
+  const opts=new Set([t]);const n10=[t-10,t+10].filter(v=>v>=0&&v<=60),n4=[t-4,t+4,t-3,t+3].filter(v=>v>=0&&v<=60);
+  opts.add(n10[Math.floor(Math.random()*n10.length)]);opts.add(n4[Math.floor(Math.random()*n4.length)]);
+  const arr=[...opts].sort((a,b)=>a-b);
+  $('ans').innerHTML='';arr.forEach(v=>{const b=document.createElement('button');b.className='ab';b.textContent=v;b.onclick=()=>pick(b,v);$('ans').appendChild(b);});
+  onSettle=null;
+}
+function pick(b,v){if(answered||moving)return;
+  if(v===qt){answered=true;b.classList.add('ok');document.querySelectorAll('.ab').forEach(x=>{if(x!==b)x.classList.add('no');});
+    score++;$('score').textContent=score;showGuide(qt,true);S('right');
+    $('qMsg').innerHTML=['太厲害了！','眼睛好利！','溫度偵探就是你！','完全正確！'][qn%4]+` 紅線停在 <b>${qt}</b> 度`;
+    try{FX.confetti(70);}catch(e){}
+  }else{b.classList.add('no');S('wrong');$('qMsg').innerHTML='再看一次喔～按「🪜 一起數」幫你數';}
+}
+$('countBtn').onclick=()=>{if(moving)return;showGuide(qt,true);countUp(qt);};
+$('nextQ').onclick=()=>{S('whoosh');newQ();};
+
+/* 三杯水：量 → 記錄 → 排冷熱 */
+const REC=[CUPS[0],CUPS[1],CUPS[2]];
+let recVals={},recIdx=0;
+function initRecord(){
+  recVals={};recIdx=0;$('orderBox').classList.add('hidden');
+  $('rec').innerHTML=REC.map((c,i)=>`<tr id="r${i}"><td>${cupSVG(c)}</td><td>${c.name}</td><td><span class="val" id="v${i}">？</span> 度</td><td><button class="big" id="mb${i}" style="font-size:26px;padding:12px 22px">📏 量量看</button></td></tr>`).join('');
+  REC.forEach((c,i)=>{$('mb'+i).onclick=()=>measure(i);});
+  setBeaker(null);
+}
+function measure(i){
+  if(moving)return;const c=REC[i];S('whoosh');setBeaker(c);target=c.t;showGuide(cur,false);
+  $('mb'+i).disabled=true;$('mb'+i).textContent='⏳ 等紅線…';
+  onSettle=()=>{onSettle=null;showGuide(c.t,true);
+    $('mb'+i).outerHTML=`<span class="ans" id="ch${i}" style="margin:0;gap:12px"></span>`;
+    const opts=[...new Set([c.t,c.t+2,c.t-1>=0?c.t-1:c.t+3])].sort((a,b)=>a-b);
+    opts.forEach(v=>{const b=document.createElement('button');b.className='ab';b.style.cssText='width:110px;height:84px;font-size:44px';b.textContent=v;
+      b.onclick=()=>{if(v===c.t){S('right');recVals[i]=v;$('v'+i).textContent=v;$('ch'+i).innerHTML='✅';if(Object.keys(recVals).length===3)startOrder();}else{S('wrong');b.classList.add('no');}};
+      $('ch'+i).appendChild(b);});
+  };
+}
+let orderPick=[];
+function startOrder(){
+  orderPick=[];$('orderBox').classList.remove('hidden');$('oMsg').innerHTML='';
+  const sh=[...REC.keys()].sort(()=>Math.random()-.5);
+  $('order').innerHTML=sh.map(i=>`<button class="ob" data-i="${i}">${cupSVG(REC[i])}${REC[i].name}　${recVals[i]}°<span class="badge">第 <span class="bn"></span></span></button>`).join('');
+  document.querySelectorAll('.ob').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;if(b.classList.contains('pick'))return;
+    const remain=REC.map((_,k)=>k).filter(k=>!orderPick.includes(k));
+    const coldest=remain.reduce((a,k)=>recVals[k]<recVals[a]?k:a,remain[0]);
+    if(i===coldest){orderPick.push(i);b.classList.add('pick');b.querySelector('.bn').textContent=orderPick.length;S('coin');
+      if(orderPick.length===3){$('oMsg').innerHTML='排好了！<b>數字越小越冷，數字越大越熱</b> 🎉';S('fanfare');try{FX.stamp({text:'記錄完成'});FX.confetti(120);}catch(e){}}}
+    else{S('wrong');$('oMsg').innerHTML='再比比看：哪一個<b>數字最小</b>？';}
+  });
+}
+
+/* 測試用 */
+window.__thermo={get moving(){return moving;},get target(){return target;},get os(){return !!onSettle;},setMode,pickCup:(id)=>pickCup(CUPS.find(c=>c.id===id)),get cur(){return cur;},set fast(v){}};
+const h=(location.hash||'').slice(1);setMode(['see','quiz','record'].includes(h)?h:'see');
+})();
+</script>
+</body>
+</html>
