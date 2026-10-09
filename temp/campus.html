@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex,nofollow,noarchive"><script src="/gate.js"></script>
+<title>溫度探險校園</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+/* 竹東國中俯視手繪地圖（鏡頭跟隨）+ 頂部課表與溫度計進度 + 底部任務列；暖夜藍木框面板 */
+:root{
+  --ink:#1b2a33; --panel:#26383f; --line:#4b6168; --paper:#fbf7ee; --mute:#a9bcb8;
+  --cold:#3d9be0; --comfy:#58b85c; --hot:#ef6536; --gold:#f5c94b; --wood:#8b5e3c; --red:#c8372d;
+  --display:'Huninn','Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  --body:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+[hidden]{display:none!important}
+body{background:var(--ink);color:var(--paper);font-family:var(--body);margin:0;overflow:hidden;-webkit-user-select:none;user-select:none}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+#app{height:100%;display:flex;flex-direction:column}
+header{background:linear-gradient(#2c4148,var(--panel));padding:8px 16px;display:flex;flex-direction:column;gap:7px;border-bottom:4px solid var(--wood)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nav{font-size:13px;font-weight:900;color:var(--paper);text-decoration:none;border:1.5px solid var(--line);border-radius:99px;padding:4px 10px;white-space:nowrap}
+.day{font-size:13px;color:var(--mute);letter-spacing:.05em}
+.clock{font-family:var(--display);font-size:32px;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums}
+.wx{font-family:var(--display);font-size:17px;padding:5px 10px;border-radius:12px;color:#fff;white-space:nowrap}
+.pill{font-family:var(--display);font-size:15px;padding:5px 9px;border-radius:12px;background:#132026;border:1.5px solid var(--line);color:var(--paper);white-space:nowrap}
+.hud-r{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.toggles{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.tg{background:transparent;border:1.5px solid var(--line);color:var(--paper);border-radius:10px;padding:5px 8px;font-size:13px;font-weight:700}
+.tg[aria-pressed="false"]{color:var(--mute);border-style:dashed}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;font-size:13px;padding:3px 10px;border-radius:99px;border:1.5px solid var(--line);color:var(--mute);font-weight:700}
+.chip.on{background:var(--gold);color:#2a2105;border-color:var(--gold)}
+.chip.done{color:var(--paper);border-color:var(--comfy)}
+.merc{display:flex;align-items:center;gap:8px}
+.merc .lbl{font-size:12px;color:var(--mute);flex:none;font-variant-numeric:tabular-nums}
+.tube{position:relative;flex:1;height:14px;background:#0f1a1e;border-radius:99px;border:2px solid #5d7479}
+.tube .fill{position:absolute;inset:0 auto 0 0;border-radius:99px;background:linear-gradient(90deg,var(--cold),var(--comfy),var(--hot));transition:width .8s ease}
+.bulb{width:22px;height:22px;border-radius:50%;background:var(--hot);border:2px solid #5d7479;flex:none;margin-right:-12px;z-index:1}
+.stars{font-family:var(--display);font-size:18px;color:var(--gold);flex:none;font-variant-numeric:tabular-nums}
+#mapwrap{flex:1;min-height:0;position:relative;background:#6e9a57;overflow:hidden}
+canvas#map{display:block;width:100%;height:100%;touch-action:none}
+footer{background:linear-gradient(var(--panel),#22333a);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:4px solid var(--wood);display:flex;align-items:center;gap:10px}
+.goal-ic{font-size:32px;width:52px;height:52px;display:grid;place-items:center;background:#132026;border-radius:14px;border:2px solid var(--gold);flex:none}
+.goal-tx{flex:1;min-width:0}
+.goal-tx small{display:block;font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.goal-tx b{font-family:var(--display);font-size:21px;font-weight:400;color:var(--gold)}
+.btn{border:none;border-radius:14px;padding:12px 16px;font-size:17px;font-weight:900;background:var(--gold);color:#2a2105;box-shadow:0 4px 0 #a9862a}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a9862a}
+.btn.ghost{background:#132026;color:var(--paper);box-shadow:0 4px 0 #08111a;border:2px solid var(--line)}
+.ic-btn{width:48px;height:48px;border-radius:14px;font-size:22px;padding:0;flex:none}
+#sheet{position:fixed;inset:0;background:rgba(8,14,20,.5);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.card{background:var(--paper);color:var(--ink);width:100%;max-width:780px;border-radius:22px 22px 0 0;border-top:6px solid var(--wood);padding:16px 16px calc(20px + env(safe-area-inset-bottom,0px));max-height:94%;overflow-y:auto;animation:up .3s ease;display:flex;flex-direction:column;gap:12px;position:relative}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+.who{display:flex;align-items:center;gap:10px}
+.who .av{font-size:30px;width:48px;height:48px;border-radius:50%;background:var(--ink);display:grid;place-items:center;flex:none}
+.who b{display:block;font-size:15px}
+.who span{font-size:13px;color:#6b7d78;font-weight:700}
+.prompt{display:flex;gap:10px;align-items:flex-start}
+.prompt p{flex:1;margin:0;font-size:22px;font-weight:900;line-height:1.45;text-wrap:balance}
+.speak{background:var(--ink);color:#fff;border:none;border-radius:12px;width:46px;height:46px;font-size:20px;flex:none}
+.visual{display:flex;justify-content:center;align-items:center;gap:18px;padding:2px 0;flex-wrap:wrap}
+.ph{width:min(300px,44vw);aspect-ratio:4/3;object-fit:cover;border-radius:16px;border:4px solid #fff;box-shadow:0 6px 16px rgba(40,30,20,.25);transform:rotate(-1.5deg)}
+.ph.sq{width:min(220px,40vw)}
+.big-emo{font-size:64px;line-height:1}
+.thsvg{height:min(250px,32vh);width:auto}
+.thsvg.sm{height:min(210px,28vh)}
+.thtag{display:flex;flex-direction:column;align-items:center;font-family:var(--display);font-size:26px}
+.lcd{background:#eef3f0;border:5px solid #9aa9b2;border-radius:28px;padding:16px 24px;box-shadow:0 10px 22px rgba(0,0,0,.18)}
+.lcd .scr{background:#b9f0a6;border:4px solid #7d8b84;border-radius:12px;padding:4px 18px;font-family:"Consolas","Courier New",monospace;font-weight:900;font-size:72px;color:#111;display:flex;align-items:baseline}
+.lcd .dec{opacity:.35}.lcd .u{font-size:26px;margin-left:6px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.opt{background:#fff;border:3px solid #d6d0c2;border-radius:18px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink);min-width:0}
+.opt .e{font-size:44px;line-height:1.1;font-family:var(--display)}
+.opt .oi{width:100%;max-width:150px;aspect-ratio:4/3;object-fit:cover;border-radius:12px}
+.opt .l{font-size:19px;font-weight:900}
+.opt .s{font-size:13px;color:#6b7d78;font-weight:700}
+.opt.ok{border-color:var(--comfy);background:#e4f6e4}
+.opt.no{border-color:var(--hot);background:#fde8e0;opacity:.6}
+.opt.shake{animation:sh .4s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fb{display:flex;align-items:center;gap:10px;min-height:56px;margin:0}
+.fb svg{width:44px;height:58px;flex:none}
+.fb span{font-size:18px;font-weight:900;line-height:1.4}
+.fb.good span{color:#2f8a34}.fb.bad span{color:#c4471d}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.actions .btn{flex:1;min-width:140px}
+/* 巡邏記錄卡 */
+.rec{background:#fffdf6;border:3px solid #d6c7a6;border-radius:18px;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;background-image:repeating-linear-gradient(#fffdf6 0 31px,#efe6d2 31px 32px)}
+.rec .it{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.rec img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+.rec b{font-size:16px}.rec .v{font-family:var(--display);font-size:34px;line-height:1;color:var(--red)}
+.rec .v.q{color:#b9ad95}
+.rec .bar{width:70%;height:10px;border-radius:99px;background:#eadfc8;overflow:hidden}.rec .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cold),var(--hot))}
+.cover{position:fixed;inset:0;z-index:20;background:radial-gradient(ellipse at 50% -10%,#5c8a6a,#2a4246 55%,var(--ink));display:flex;justify-content:center;padding:24px 16px;overflow-y:auto}
+.cover-in{max-width:520px;width:100%;display:flex;flex-direction:column;gap:14px;text-align:center;margin:auto 0}
+.hero{display:flex;align-items:flex-end;justify-content:center;gap:6px}
+.hero svg.m{width:96px;height:125px}
+.cover h1{font-family:var(--display);font-weight:400;font-size:44px;margin:0;color:var(--gold);text-shadow:0 3px 0 #3b2a14;text-wrap:balance}
+.cover p{margin:0;font-size:17px;line-height:1.6}
+.grp{display:flex;flex-direction:column;gap:8px;text-align:left}
+.grp>span{font-size:14px;color:var(--mute);font-weight:700}
+.seg{display:grid;gap:8px}
+.seg.c2{grid-template-columns:1fr 1fr}.seg.c4{grid-template-columns:repeat(4,1fr)}
+.pick{background:rgba(19,32,38,.7);border:2px solid var(--line);color:var(--paper);border-radius:14px;padding:10px 4px;font-weight:900;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pick .e{font-size:28px}
+.pick small{font-size:12px;color:var(--mute);font-weight:700}
+.pick[aria-pressed="true"]{border-color:var(--gold);background:#35504f;box-shadow:0 0 0 2px var(--gold) inset}
+.spr{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.spr canvas{width:64px;height:64px;background:rgba(255,255,255,.08);border-radius:16px}
+.cert{background:var(--paper);color:var(--ink);border-radius:22px;padding:20px 16px;border:6px double var(--gold);display:flex;flex-direction:column;gap:10px;align-items:center}
+.cert h2{font-family:var(--display);font-weight:400;font-size:34px;margin:0}
+.cert .st{font-size:20px;letter-spacing:1px;line-height:1.4;word-break:break-all}
+.cert .rec{width:100%}
+details.tlog{background:rgba(255,255,255,.08);border-radius:14px;padding:10px 14px;text-align:left;font-size:14px}
+details.tlog summary{font-weight:900;cursor:pointer}
+.tlog table{width:100%;border-collapse:collapse;margin-top:8px;font-variant-numeric:tabular-nums}
+.tlog td,.tlog th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}
+#toast{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:var(--paper);color:var(--ink);font-weight:900;font-size:17px;padding:10px 16px;border-radius:14px;border:3px solid var(--wood);box-shadow:0 6px 18px rgba(0,0,0,.35);max-width:calc(100% - 32px);text-align:center;pointer-events:none}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
+#fx i{position:absolute;width:10px;height:14px;border-radius:2px}
+@media (max-width:520px){.clock{font-size:26px}.prompt p{font-size:19px}.lcd .scr{font-size:54px}}
+@media (prefers-reduced-motion:reduce){.card,.opt.shake{animation:none}.tube .fill{transition:none}}
+</style>
+
+<div id="app">
+  <header>
+    <div class="row">
+      <div style="display:flex;gap:10px;align-items:center;min-width:0">
+        <div><div class="day">竹東國中 · <span id="period">到校</span></div><div class="clock" id="clock">07:40</div></div>
+      </div>
+      <div class="hud-r">
+        <a class="nav site" href="./">⬅ 返回</a><a class="nav site" href="/light/">🗂️ 主選單</a>
+        <div class="wx" id="wx">🌡️</div>
+        <button class="pill" id="recBtn">📋 記錄卡</button>
+        <div class="pill" id="pets">🐾 0/6</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="chips" id="chips" style="flex:1;min-width:0"></div>
+      <div class="toggles">
+        <button class="tg" id="tgHint" aria-pressed="true">提示 開</button>
+        <button class="tg" id="tgVoice" aria-pressed="true">配音 開</button>
+      </div>
+    </div>
+    <div class="merc"><span class="lbl" id="cnt">0 / 11 站</span><span class="bulb"></span><div class="tube"><div class="fill" id="fill" style="width:4%"></div></div><span class="stars" id="stars">⭐ 0</span></div>
+  </header>
+  <div id="mapwrap"><canvas id="map" aria-label="竹東國中校園地圖：點地點、人物或精靈就會走過去"></canvas><div id="toast" hidden></div></div>
+  <footer>
+    <div class="goal-ic" id="goalIc">👮</div>
+    <div class="goal-tx"><small id="goalSub">目標：走到</small><b id="goalTx">警衛伯伯</b></div>
+    <button class="btn ghost ic-btn" id="goalSay" aria-label="唸目標">🔊</button>
+    <button class="btn" id="autoWalk">👣 帶我走</button>
+  </footer>
+</div>
+<div id="sheet" hidden><div class="card" id="card"></div></div>
+<div id="fx"></div>
+
+<div class="cover" id="cover"><div class="cover-in" id="coverIn">
+  <div class="hero" id="hero"></div>
+  <h1>溫度探險校園</h1>
+  <p>溫溫隊長帶你走遍竹東國中：讀溫度計、量額溫，<br>把三個地方的溫度寫進巡邏記錄卡！</p>
+  <div class="spr" id="sprRow"></div>
+  <button class="btn" id="resumeBtn" hidden style="font-size:19px;padding:14px;background:#7ccf7f;box-shadow:0 4px 0 #3f8a48"></button>
+  <div class="grp"><span>今天的天氣</span>
+    <div class="seg c4" id="dayPick">
+      <button class="pick" data-v="rand" aria-pressed="true"><span class="e">🎲</span>隨機</button>
+      <button class="pick" data-v="cold" aria-pressed="false"><span class="e">🧊</span>冷天</button>
+      <button class="pick" data-v="comfy" aria-pressed="false"><span class="e">😊</span>舒服</button>
+      <button class="pick" data-v="hot" aria-pressed="false"><span class="e">☀️</span>熱天</button>
+    </div></div>
+  <div class="grp"><span>怎麼玩</span>
+    <div class="seg c2" id="modePick">
+      <button class="pick" data-v="story" aria-pressed="true"><span class="e">🕗</span>跟著課表走<small>一站一站，照時間</small></button>
+      <button class="pick" data-v="free" aria-pressed="false"><span class="e">🗺️</span>自由探險<small>發光的站都能去</small></button>
+    </div></div>
+  <button class="btn" id="startBtn" style="font-size:22px;padding:16px">開始探險 ➜</button>
+</div></div>
+
+<script>
+const SITE=true;
+const IMG={"classroom": "img/sm/classroom.jpg", "shade": "img/sm/shade.jpg", "sun": "img/sm/sun.jpg", "forehead": "img/sm/forehead.jpg", "outdoor": "img/sm/outdoor.jpg", "bath": "img/sm/bath.jpg", "three-cups": "img/sm/three-cups.jpg", "soup": "img/sm/soup.jpg", "fridge": "img/sm/fridge.jpg"};
+const $=s=>document.querySelector(s);
+if(!SITE)document.querySelectorAll('.site').forEach(e=>e.hidden=true);
+const W=30,H=49,T=40,SAVE='ct_tempcampus_v1';
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+const hash=(x,y)=>(((x*73856093)^(y*19349663))>>>0)%100003;
+const MASCOT=`<svg class="m" viewBox="0 0 230 300"><ellipse cx="115" cy="290" rx="70" ry="9" fill="#000" opacity=".12"/><path d="M40 150 Q10 130 18 100" stroke="#1f2a37" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M190 150 Q222 120 206 88" stroke="#1f2a37" stroke-width="10" fill="none" stroke-linecap="round"/><rect x="62" y="40" width="106" height="200" rx="53" fill="#fff" stroke="#1f2a37" stroke-width="7"/><rect x="102" y="120" width="26" height="120" rx="13" fill="#e2453a"/><circle cx="115" cy="238" r="42" fill="#e2453a" stroke="#1f2a37" stroke-width="7"/><circle cx="100" cy="226" r="9" fill="#ff9f94"/><g stroke="#1f2a37" stroke-width="4"><line x1="150" y1="80" x2="166" y2="80"/><line x1="150" y1="100" x2="160" y2="100"/><line x1="150" y1="120" x2="166" y2="120"/></g><circle cx="96" cy="88" r="8" fill="#1f2a37"/><circle cx="134" cy="88" r="8" fill="#1f2a37"/><circle cx="99" cy="85" r="2.5" fill="#fff"/><circle cx="137" cy="85" r="2.5" fill="#fff"/><path d="M100 106 Q115 118 130 106" stroke="#1f2a37" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="84" cy="104" rx="9" ry="5" fill="#f4a39a" opacity=".7"/><ellipse cx="146" cy="104" rx="9" ry="5" fill="#f4a39a" opacity=".7"/><path d="M58 46 Q115 2 172 46 L172 56 L58 56Z" fill="#c8372d" stroke="#1f2a37" stroke-width="6"/><rect x="48" y="52" width="134" height="14" rx="7" fill="#1f2a37"/><circle cx="115" cy="34" r="9" fill="#ffd77a" stroke="#1f2a37" stroke-width="4"/></svg>`;
+const MODES=[
+  {k:'cold',name:'冷',e:'🧊',range:'18 度以下',c:'#3d9be0'},
+  {k:'comfy',name:'剛剛好',e:'😊',range:'18～28 度',c:'#45a04a'},
+  {k:'hot',name:'熱',e:'☀️',range:'28 度以上',c:'#e45a2c'}];
+const modeOf=t=>t<18?MODES[0]:t<=28?MODES[1]:MODES[2];
+
+/* ================= 竹東國中地圖（依 115 防災地圖配置） ================= */
+const inR=(x,y,r)=>x>=r[0]&&x<r[0]+r[2]&&y>=r[1]&&y<r[1]+r[3];
+const ROADS=[[3,22,26,1],[3,30,26,1],[3,35,26,2],[7,10,1,6],[7,19,1,11],[18,35,1,13],[24,22,2,26],[3,47,26,1],[3,33,2,2]];
+const BLD=[
+ {id:'gym',name:'活動中心',r:[4,2,6,8],roof:'#7f9a62',doors:[{d:[7,9],s:[7,10]}]},
+ {id:'stage',name:'司令台',r:[10,5,2,4],roof:'#a48b72',doors:[],small:1},
+ {id:'qinxue',name:'勤學樓',r:[3,12,4,15],roof:'#5f87b5',doors:[{d:[6,19],s:[7,19],sign:'美術教室',fun:'這是勤學樓的美術教室，畫畫的地方 🎨'}]},
+ {id:'tkd',name:'跆拳教室',r:[7,16,5,3],roof:'#b55f4f',doors:[{d:[9,18],s:[9,19],fun:'跆拳教室，嘿！哈！🥋'}]},
+ {id:'wc',name:'洗手台',r:[13,16,2,2],roof:'#7a9fae',doors:[{d:[13,17],s:[13,18]}],small:1,sinks:1},
+ {id:'yangcai',name:'揚才樓',r:[18,23,6,6],roof:'#4f8f7a',doors:[{d:[18,26],s:[17,26],sign:'自然教室'}]},
+ {id:'qilin',name:'杞林樓',r:[8,31,15,4],roof:'#8a73b0',doors:[{d:[15,31],s:[15,30],sign:'圖書館',fun:'圖書館要安靜唷 🤫'},{d:[12,34],s:[12,35],sign:'校長室',fun:'校長室！跟校長問聲好 👋'}]},
+ {id:'guard',name:'警衛室',r:[3,31,3,2],roof:'#6d7f8f',doors:[{d:[4,32],s:[4,33]}],small:1},
+ {id:'g9',name:'九年級教室',r:[3,38,4,9],roof:'#c79a4a',doors:[{d:[6,41],s:[7,41],fun:'九年級學長姐的教室唷 📖'}]},
+ {id:'yingxi',name:'迎曦樓',r:[8,43,10,4],roof:'#c06f63',doors:[{d:[11,43],s:[11,42],sign:'健康中心'}]},
+ {id:'zhishan',name:'至善樓',r:[19,37,5,10],roof:'#c77d55',doors:[{d:[19,40],s:[18,40],sign:'特教教室'},{d:[19,44],s:[18,44],sign:'餐廳'},{d:[23,45],s:[24,45],sign:'家政教室'}]}];
+const ZONE={field:[12,1,17,15],court:[15,16,13,6],plaza2:[8,23,9,6],plaza1:[8,37,10,5]};
+const SOLID=[[9,24,2,1],[14,24,2,1],[12,38,2,1]];
+const TREES=[[3,1],[3,6],[10,1],[11,11],[9,12],[11,14],[25,24],[27,26],[26,29],[28,32],[27,38],[28,41],[27,46],[8,28],[16,23],[8,41],[17,37],[6,28],[28,19],[3,28],[13,21],[6,36],[11,27],[13,27]];
+const isTree=(x,y)=>TREES.some(t=>t[0]===x&&t[1]===y);
+const bAt=(x,y)=>BLD.find(b=>inR(x,y,b.r));
+function walk(x,y){if(x<3||y<1||x>28||y>47)return false;if(bAt(x,y)||isTree(x,y))return false;if(SOLID.some(r=>inR(x,y,r)))return false;return true;}
+function bfs(s,t,maxLen=999){
+  const key=(x,y)=>y*W+x,prev=new Map([[key(...s),null]]),q=[s];let found=false,qi=0;
+  while(qi<q.length){const [x,y]=q[qi++];if(x===t[0]&&y===t[1]){found=true;break;}
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=key(nx,ny);if(walk(nx,ny)&&!prev.has(k)){prev.set(k,[x,y]);q.push([nx,ny]);}}}
+  if(!found)return null;const p=[];let c=t;while(c&&!(c[0]===s[0]&&c[1]===s[1])){p.unshift(c);c=prev.get(key(...c));}
+  return p.length>maxLen?null:p;}
+
+/* ================= 視覺元件：溫度計（同 T3 的 0–60 度、一小格 1 度）、額溫槍、照片 ================= */
+function thSVG(v,cls,tag){
+  const y=d=>330-d*5,parts=[];
+  for(let d=0;d<=60;d++){const L=d%10===0?24:d%5===0?16:9;parts.push(`<line x1="66" x2="${66+L}" y1="${y(d)}" y2="${y(d)}" stroke="#1f2a37" stroke-width="${d%10===0?4:2}"/>`);
+    if(d%10===0)parts.push(`<text x="98" y="${y(d)+8}" font-size="22" font-weight="900" fill="#1f2a37" font-family="Noto Sans TC,sans-serif">${d}</text>`);}
+  const s=`<svg class="thsvg ${cls||''}" viewBox="0 0 132 392" aria-label="溫度計"><text x="40" y="18" font-size="16" fill="#5b6673" font-weight="700">°C</text>
+   <rect x="38" y="24" width="26" height="320" rx="13" fill="#f7fbff" stroke="#8fa3b3" stroke-width="4"/>${parts.join('')}
+   <rect x="45" y="${y(v)}" width="12" height="${348-y(v)}" rx="6" fill="#d9392e"/>
+   <circle cx="51" cy="360" r="25" fill="#d9392e" stroke="#8fa3b3" stroke-width="4"/><circle cx="43" cy="352" r="6" fill="#ff8f86"/></svg>`;
+  return tag?`<div class="thtag">${s}<span>${tag}</span></div>`:s;}
+const lcd=v=>{const [a,b]=String(v).split('.');return `<div class="lcd"><div class="scr"><span>${a}</span><span class="dec">${b?'.'+b:''}</span><span class="u">°C</span></div></div>`;};
+const ph=(k,sq)=>`<img class="ph ${sq?'sq':''}" src="${IMG[k]}" alt="">`;
+const emo=(...e)=>e.map(x=>`<span class="big-emo">${x}</span>`).join('');
+const O=(e,l,s,ok,img)=>({e,l,s:s||'',ok:!!ok,img});
+const Q=(say,v,opts,why,hint,extra)=>Object.assign({say,v,opts,why,hint},extra||{});
+function readQ(place,v,photo,rec){
+  const far=v+10>60?v-10:v+10,near=v+2<=60?v+2:v-2;
+  return Q(`${place}的溫度計，紅線停在幾度？`,ph(photo)+thSVG(v),shuffle([O(String(v),`${v} 度`,'',1),O(String(far),`${far} 度`,'',0),O(String(near),`${near} 度`,'',0)]),
+    `紅線停在 ${v} 度！`,'先找最近的大數字，再往上數小格。',{rec,val:v});}
+const PATROL=[['room','教室','classroom'],['shade','大樹下','shade'],['sun','操場太陽下','sun']];
+function recHTML(){return `<div class="rec">${PATROL.map(([k,n,p])=>{const v=S.rec[k];return `<div class="it"><img src="${IMG[p]}" alt=""><b>${n}</b><span class="v ${v==null?'q':''}">${v==null?'？':v+'°'}</span><span class="bar"><i style="width:${v==null?0:Math.min(100,v/40*100)}%"></i></span></div>`;}).join('')}</div>`;}
+
+/* ================= 站點與題目 ================= */
+const STA=[
+ {id:'gate',place:'校門口',spot:[4,33],staff:'警衛伯伯',sicon:'👮',shirt:'#3e5a7a',period:'到校',time:'07:40',
+  make:d=>{const m=modeOf(d.t);return {qs:[
+   Q(`早安！校門口的溫度計，紅線停在幾度？`,thSVG(d.t),shuffle([O(String(d.t),`${d.t} 度`,'',1),O(String(d.t+10),`${d.t+10} 度`,'',0),O(String(d.t-3),`${d.t-3} 度`,'',0)]),`今天 ${d.t} 度！`,'先找最近的大數字，再往上數小格。'),
+   Q(`今天 ${d.t} 度，要穿什麼？`,thSVG(d.t,'sm'),[O('🧥','厚外套','18 度以下',m.k==='cold'),O('👕','短袖','帶薄外套',m.k==='comfy'),O('🩳','短袖短褲','28 度以上・戴帽子',m.k==='hot')],
+     m.k==='cold'?'好冷，穿厚外套！':m.k==='hot'?'好熱，穿清涼、戴帽子！':'剛剛好，帶一件薄外套！',`${d.t} 度，身體覺得冷還是熱？`,{dress:true})],
+   ch:Q('早上 18 度，中午 28 度，怎麼穿最聰明？',emo('🌅','➜','☀️'),shuffle([O('🧅','洋蔥式','短袖＋外套',1),O('👕','只穿短袖','',0)]),'洋蔥式！冷就穿、熱就脫。','早上涼涼的，中午會變熱唷。')};}},
+ {id:'room',place:'至善樓特教教室',spot:[18,40],staff:'班導',sicon:'🏫',shirt:'#8a6bc4',period:'早自習',time:'07:55',patrol:1,
+  make:d=>({qs:[
+   Q('巡邏開始！量空氣的溫度，溫度計要放多久再讀？',ph('outdoor'),shuffle([O('⏱️','等 1 分鐘','數到 60',1),O('⚡','1 秒鐘','馬上讀',0)]),'等 1 分鐘，紅線才會停好！','紅線要慢慢爬，等它不動唷。'),
+   readQ('教室',d.temps.room,'classroom','room')],
+   ch:Q('教室冷氣開幾度最剛好？',emo('❄️','🏫'),shuffle([O('26','26 度','剛剛好',1),O('16','16 度','太冷',0)]),'26 度剛剛好，又省電！','16 度很冷唷。')})},
+ {id:'shade',place:'五指山廣場大樹下',spot:[12,26],staff:'園丁伯伯',sicon:'🌳',shirt:'#7a8f3a',period:'下課',time:'08:55',patrol:1,
+  make:d=>({qs:[
+   readQ('大樹下',d.temps.shade,'shade','shade'),
+   Q('量溫度的時候，手可以握著紅色泡泡嗎？',thSVG(d.temps.shade,'sm'),shuffle([O('✋','不行','手會讓它變熱',1),O('👌','可以','',0)]),'不要握紅色泡泡，手的熱會跑進去！','手是溫溫的唷。')],
+   ch:Q('曬衣服，什麼天氣最快乾？',emo('👕'),shuffle([O('☀️','大太陽','熱熱的',1),O('🌧️','下雨天','',0)]),'太陽熱熱的，衣服很快乾！','熱可以讓水跑掉唷。')})},
+ {id:'sun',place:'操場太陽下',spot:[20,8],staff:'體育老師',sicon:'🏃',shirt:'#e0523f',period:'體育課',time:'09:10',patrol:1,
+  make:d=>({qs:[
+   readQ('操場太陽下',d.temps.sun,'sun','sun'),
+   Q('跑完三圈，流了好多汗！要做什麼？',emo('🏃','💦'),shuffle([O('💧','喝水','',1),O('🧥','穿上厚外套','',0)]),'流汗要喝水！','流汗了，身體需要補充水分唷。')],
+   ch:Q('太陽下好熱，要怎麼做？',ph('shade',1),shuffle([O('🌳','到樹蔭下','戴帽子、喝水',1),O('☀️','一直曬太陽','',0)]),'好熱就去樹蔭，多喝水！','有影子的地方比較涼。')})},
+ {id:'sink',place:'籃球場旁的洗手台',spot:[13,18],staff:'衛生股長',sicon:'🧼',shirt:'#4aa3a0',period:'下課',time:'10:00',
+  make:d=>({qs:[
+   Q('打開水龍頭，要先怎麼做？',emo('🚰'),shuffle([O('☝️','手指先試水溫','',1),O('🙌','整隻手衝下去','',0)]),'先用手指摸摸看，才不會燙到！','水可能很燙，要小小的試。'),
+   Q('哪一邊是熱水？',emo('🔴','🔵'),shuffle([O('🔴','紅色','',1),O('🔵','藍色','',0)]),'紅色是熱水，藍色是冷水！','紅色像火，是熱的。')],
+   ch:Q('洗澡水大約幾度？',ph('bath'),shuffle([O('40','40 度','',1),O('5','5 度','',0)]),'洗澡水大約 40 度，溫溫的！','5 度像冰箱一樣冰唷。')})},
+ {id:'nurse',place:'迎曦樓健康中心',spot:[11,42],staff:'護理師阿姨',sicon:'🩺',shirt:'#f08aa0',period:'健康檢查',time:'10:10',
+  make:d=>{const v=pick(['36.4','36.8','36.5','37.1']),big=v.split('.')[0],dec=v.split('.')[1];return {qs:[
+   Q('額溫槍要對準哪裡？',ph('forehead'),shuffle([O('🙂','額頭','',1),O('🦶','腳底','',0)]),'對準額頭，按一下！','額溫槍，量的是「額」頭唷。'),
+   Q(`額溫槍顯示 ${v}，大數字是多少？`,lcd(v),shuffle([O(big,big,'度多',1),O(dec,dec,'',0),O(String(+big+2),String(+big+2),'',0)]),`小數點前面的 ${big}，就是 ${big} 度多！`,'只看小數點「前面」的大數字。')],
+   ch:Q('36.5 和 36.9，大數字都是幾？',lcd('36.5')+lcd('36.9'),shuffle([O('36','36','',1),O('5','5','',0),O('9','9','',0)]),'兩個都是 36 度多！','看小數點前面唷。')};}},
+ {id:'lab',place:'揚才樓自然教室',spot:[17,26],staff:'自然老師',sicon:'🔬',shirt:'#5aa877',period:'自然課',time:'11:05',
+  make:d=>{const vs=shuffle([5,26,45]),abc=['A','B','C'],hot=abc[vs.indexOf(45)];return {qs:[
+   Q('三杯水排排站！哪一杯最熱？',vs.map((v,i)=>thSVG(v,'sm',abc[i])).join(''),abc.map((a,i)=>O(a,`${a} 杯`,'',a===hot)),`${hot} 杯的紅線最高，最熱！`,'紅線越高，越熱。'),
+   Q('15 度和 30 度，哪個比較熱？',emo('⚖️'),shuffle([O('30','30 度','',1),O('15','15 度','',0)]),'數字大的比較熱！','數字比較大的那個唷。')],
+   ch:Q('冰塊放進熱水裡，會怎樣？',ph('three-cups'),shuffle([O('💧','融化','變成水',1),O('🧊','變更大','',0)]),'冰塊遇到熱，會融化！','熱熱的水會讓冰變成水。')};}},
+ {id:'food',place:'至善樓餐廳',spot:[18,44],staff:'廚房阿姨',sicon:'🍲',shirt:'#f2f2f2',period:'午餐',time:'12:00',
+  make:d=>({qs:[
+   Q('午餐的湯在冒煙，是熱的還是冰的？',ph('soup'),shuffle([O('♨️','熱的','',1),O('🧊','冰的','',0)]),'冒煙的湯是熱的！','冒煙代表很熱唷。'),
+   Q('湯好燙！要怎麼喝？',emo('🥣','♨️'),shuffle([O('🌬️','先吹一吹','小口喝',1),O('😮','大口喝','',0)]),'吹一吹、小口喝，不會燙到！','太燙會燙到嘴巴唷。')],
+   ch:Q('冷冷的便當，要怎麼變熱熱的？',emo('🍱'),shuffle([O('♨️','放蒸飯箱','',1),O('🧊','放冰箱','',0)]),'蒸飯箱會讓便當變熱！','冰箱是讓東西變冷的。')})},
+ {id:'homeec',place:'至善樓家政教室',spot:[24,45],staff:'家政老師',sicon:'🧑‍🍳',shirt:'#e7a23a',period:'家政課',time:'13:10',
+  make:d=>({qs:[
+   Q('冰箱裡面大約幾度？',ph('fridge'),shuffle([O('5','5 度','',1),O('50','50 度','',0)]),'冰箱大約 5 度，冷冷的！','冰箱裡面很冰，數字很小。'),
+   d.k==='comfy'?Q('冰棒拿在手上太久，會怎樣？',emo('🍡','✋'),shuffle([O('💧','融化','滴下來',1),O('🧊','越來越冰','',0)]),'手熱熱的，冰棒會融化！','手是溫溫的唷。')
+     :Q(`今天 ${d.t} 度，要做什麼飲料？`,thSVG(d.t,'sm'),shuffle([O('🧃','冰紅茶','',d.k==='hot'),O('☕','熱可可','',d.k==='cold')]),d.k==='hot'?'好熱，喝冰涼的！':'好冷，喝熱熱的！',`${d.t} 度，身體想要${d.k==='hot'?'涼':'暖'}一點。`)],
+   ch:Q('5 度、26 度、40 度，哪個最熱？',emo('🔥'),shuffle([O('40','40 度','',1),O('26','26 度','',0),O('5','5 度','',0)]),'40 最大，最熱！','找最大的數字。')})},
+ {id:'gym',place:'活動中心',spot:[7,10],staff:'體育老師',sicon:'🤸',shirt:'#3c8fd6',period:'室內體育',time:'14:05',
+  make:d=>({qs:[
+   d.k==='hot'?Q(`今天 ${d.t} 度，活動中心好悶熱，要怎麼做？`,thSVG(d.t,'sm'),shuffle([O('🪭','開電風扇','',1),O('🧥','穿上外套','',0)]),'開電風扇，涼一點！','風吹過來會涼涼的。')
+    :d.k==='cold'?Q(`今天 ${d.t} 度好冷，運動前先做什麼？`,thSVG(d.t,'sm'),shuffle([O('🤸','先暖身','',1),O('🧊','坐著不動','',0)]),'暖身讓身體熱起來！','動一動，身體會變熱唷。')
+    :Q(`今天 ${d.t} 度，跳完舞流汗了，要怎麼做？`,thSVG(d.t,'sm'),shuffle([O('🧻','擦擦汗','',1),O('🧥','穿厚外套','',0)]),'擦擦汗就好！','剛剛好的天氣，不用穿厚厚。'),
+   Q('運動完，身體會變熱還是變冷？',emo('🤸','➜','❓'),shuffle([O('🔥','變熱','',1),O('🧊','變冷','',0)]),'運動會讓身體變熱！','摸摸臉，是不是熱熱的？')],
+   ch:Q('汗乾掉的時候，皮膚感覺怎樣？',emo('💦','🌬️'),shuffle([O('🌬️','涼涼的','',1),O('🔥','更熱','',0)]),'汗乾掉會把熱帶走，涼涼的！','流汗是身體在降溫唷。')})},
+ {id:'review',place:'至善樓特教教室',spot:[18,40],staff:'班導',sicon:'📋',shirt:'#8a6bc4',period:'班會',time:'15:00',needs:['room','shade','sun'],
+  make:d=>{const v=PATROL.map(([k,n,p])=>({k,n,p,v:S.rec[k]??d.temps[k]})),hi=v.reduce((a,b)=>b.v>a.v?b:a),lo=v.reduce((a,b)=>b.v<a.v?b:a);return {qs:[
+   Q('回教室比一比！巡邏記錄卡上，哪裡最熱？',recHTML(),v.map(o=>O('',o.n,o.v+' 度',o===hi,IMG[o.p])),`${hi.n} ${hi.v} 度，數字最大，最熱！`,'看記錄卡，找最大的數字。'),
+   Q('那哪裡最涼？',recHTML(),v.map(o=>O('',o.n,o.v+' 度',o===lo,IMG[o.p])),`${lo.n} ${lo.v} 度，數字最小，最涼！`,'找最小的數字。')],
+   ch:Q('天氣好熱，怎麼辦？',ph('sun'),shuffle([O('🌳','待在樹蔭、多喝水','',1),O('☀️','一直曬太陽','',0)]),'量到溫度，就能做聰明的決定！','太陽下最熱唷。')};}}];
+const CHIPS=[...STA.map(s=>s.period),'放學'];
+
+/* ================= 狀態 ================= */
+const S={mode:'story',dayK:'rand',day:null,stage:0,done:new Set(),stars:0,hint:true,voice:true,busy:false,outfit:'uniform',
+  p:{x:3,y:35,fx:3,fy:35,path:[],face:1},trail:[],pets:[],rec:{},log:{}};
+const avail=s=>!s.needs||s.needs.every(n=>S.done.has(n));
+const goals=()=>S.mode==='story'?(S.stage<STA.length?[STA[S.stage]]:[]):STA.filter(s=>!S.done.has(s.id)&&avail(s));
+let AC;
+function beep(ok,alt){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  (alt?[784,988,1175,1568]:ok?[523,659,784]:[330,262]).forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+i*.09;o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.09,t);g.gain.exponentialRampToValueAtTime(.001,t+.18);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+.2);});}catch(e){}}
+function say(t){if(!S.voice||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/～/g,'到').replace(/°/g,'度'));u.lang='zh-TW';u.rate=.9;speechSynthesis.speak(u);}catch(e){}}
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function confetti(n=40){if(RM)return;const fx=$('#fx'),cols=['#f5c94b','#ef6536','#3d9be0','#58b85c','#f6b3c8','#fff'];
+  for(let i=0;i<n;i++){const e=document.createElement('i');e.style.background=pick(cols);e.style.left=(30+Math.random()*40)+'%';e.style.top='55%';fx.appendChild(e);
+    const dx=(Math.random()-.5)*700,dy=-200-Math.random()*400;
+    e.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:`translate(${dx*.6}px,${dy}px) rotate(${Math.random()*720}deg)`,opacity:1,offset:.45},{transform:`translate(${dx}px,${dy+700}px) rotate(${Math.random()*1440}deg)`,opacity:0}],{duration:1600+Math.random()*600,easing:'cubic-bezier(.2,.7,.4,1)'}).onfinish=()=>e.remove();}}
+
+/* 存檔（每台電腦各自） */
+function save(){try{localStorage.setItem(SAVE,JSON.stringify({mode:S.mode,day:S.day,stage:S.stage,done:[...S.done],stars:S.stars,outfit:S.outfit,pets:S.pets.map(w=>w.i),rec:S.rec,log:S.log,pos:[S.p.x,S.p.y]}));}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(SAVE)||'null');}catch(e){return null;}}
+function clearSave(){try{localStorage.removeItem(SAVE);}catch(e){}}
+
+/* ================= HUD ================= */
+let chipNow=0;
+function hud(){
+  $('#chips').innerHTML=CHIPS.map((c,k)=>{const st=STA[k],d=st&&S.done.has(st.id);return `<span class="chip ${k===chipNow?'on':d?'done':''}">${d?'✓ ':''}${c}</span>`}).join('');
+  const on=$('#chips .on');if(on)on.scrollIntoView({inline:'center',block:'nearest'});
+  $('#fill').style.width=(4+S.done.size/STA.length*96)+'%';$('#cnt').textContent=`${S.done.size} / ${STA.length} 站`;
+  $('#stars').textContent='⭐ '+S.stars;$('#pets').textContent=`🐾 ${S.pets.length}/${SPRITES.length}`;
+  const g=goals();
+  if(S.mode==='story'&&g[0]){$('#goalIc').textContent=g[0].sicon;$('#goalSub').textContent=`目標：走到${g[0].place}，找`;$('#goalTx').textContent=g[0].staff;}
+  else if(S.mode==='free'){$('#goalIc').textContent='🗺️';$('#goalSub').textContent=`還有 ${STA.length-S.done.size} 站，去找`;$('#goalTx').textContent='頭上發光的人';}
+}
+function setTime(period,time,chip){$('#period').textContent=period;$('#clock').textContent=time;chipNow=chip;hud();}
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2800);say(t);}
+
+/* ================= 手繪風靜態地圖 ================= */
+const cv=$('#map'),cx=cv.getContext('2d');
+let vw=0,vh=0,zoom=1,dpr=1,off=null,cam={x:0,y:0};
+function rr(c,x,y,w,h,r,f){c.fillStyle=f;c.beginPath();if(c.roundRect)c.roundRect(x,y,w,h,r);else c.rect(x,y,w,h);c.fill();}
+function blob(c,x,y,r,f){c.fillStyle=f;c.beginPath();c.arc(x,y,r,0,7);c.fill();}
+function shade(hex,k){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=v=>Math.max(0,Math.min(255,Math.round(k>0?v+(255-v)*k:v*(1+k))));return `rgb(${f(r)},${f(g)},${f(b)})`;}
+function sign(c,text,x,y,size,icon){
+  c.font=`${size}px Huninn,'Noto Sans TC',sans-serif`;const w=c.measureText(text).width+size*1.1,h=size*1.55;
+  c.save();c.shadowColor='rgba(40,25,10,.35)';c.shadowBlur=6;c.shadowOffsetY=3;rr(c,x-w/2,y-h/2,w,h,h*.3,'#8b5e3c');c.restore();
+  rr(c,x-w/2+3,y-h/2+3,w-6,h-6,h*.25,'#fbf3df');c.fillStyle='#3b2a14';c.textAlign='center';c.textBaseline='middle';c.fillText(text,x,y+1);
+  if(icon){c.font=`${size*1.3}px sans-serif`;c.fillText(icon,x,y-h);}
+}
+function tree(c,x,y,big){const X=x*T+T/2,Y=y*T+T/2,s=big?1.25:1;
+  c.save();c.fillStyle='rgba(30,50,25,.28)';c.beginPath();c.ellipse(X+8,Y+14,24*s,11*s,0,0,7);c.fill();c.restore();
+  rr(c,X-4,Y+2,8,14,3,'#6b4a2f');
+  const h=hash(x,y),greens=['#2f5e34','#3b7140','#4a8549','#5f9a55','#7fb465'];
+  [[0,-4,20],[-11,0,13],[11,0,13],[-6,-12,13],[7,-12,12]].forEach(([dx,dy,r],i)=>blob(c,X+dx*s,Y+dy*s,r*s,greens[i%2]));
+  [[-5,-10,10],[5,-8,9],[0,-15,8]].forEach(([dx,dy,r])=>blob(c,X+dx*s,Y+dy*s,r*s,greens[2]));
+  [[-7,-14,6],[2,-17,5]].forEach(([dx,dy,r])=>blob(c,X+dx*s,Y+dy*s,r*s,greens[3]));
+  blob(c,X-9*s,Y-17*s,3*s,greens[4]);
+  for(let i=0;i<5;i++){const a=(h>>i)%20;blob(c,X+(a-10)*s,Y-((h>>(i+3))%22)*s,1.6,'rgba(220,240,180,.7)');}
+}
+function bush(c,X,Y){[[0,0,9],[-8,3,7],[8,3,7]].forEach(([dx,dy,r])=>blob(c,X+dx,Y+dy,r,'#3f7a45'));blob(c,X-2,Y-3,4,'#6aa35a');}
+function building(c,b){
+  const [x,y,w,h]=b.r,X=x*T,Y=y*T,Wd=w*T,Hd=h*T,roofH=Math.min(Hd*.5,T*1.6);
+  c.save();c.shadowColor='rgba(25,40,30,.45)';c.shadowBlur=14;c.shadowOffsetX=8;c.shadowOffsetY=10;rr(c,X+2,Y+2,Wd-4,Hd-4,8,'#f4ead3');c.restore();
+  const g=c.createLinearGradient(X,Y,X,Y+Hd);g.addColorStop(0,'#fbf4e2');g.addColorStop(1,'#e6d6b5');rr(c,X+2,Y+2,Wd-4,Hd-4,8,g);
+  const rg=c.createLinearGradient(X,Y,X,Y+roofH);rg.addColorStop(0,shade(b.roof,.25));rg.addColorStop(1,shade(b.roof,-.18));
+  rr(c,X,Y,Wd,roofH,8,rg);c.strokeStyle=shade(b.roof,-.3);c.lineWidth=1.5;
+  for(let i=8;i<Wd-4;i+=10){c.beginPath();c.moveTo(X+i,Y+3);c.lineTo(X+i,Y+roofH-3);c.stroke();}
+  c.fillStyle='rgba(255,255,255,.25)';c.fillRect(X+4,Y+3,Wd-8,3);rr(c,X,Y+roofH-5,Wd,6,3,shade(b.roof,-.35));
+  const vertical=h>w;
+  if(!b.small){
+    if(vertical){for(let j=1;j*T<Hd-roofH-T*.4;j++){const wy=Y+roofH+j*T-T*.75;[X+8,X+Wd-26].forEach(wx=>{const wg=c.createLinearGradient(wx,wy,wx+18,wy+22);wg.addColorStop(0,'#bfe3f2');wg.addColorStop(1,'#6fa9c9');rr(c,wx,wy,18,22,3,wg);c.fillStyle='rgba(255,255,255,.7)';c.fillRect(wx+3,wy+3,4,10);});}}
+    else{for(let i=0;i<w;i++){const wx=X+i*T+9,wy=Y+roofH+(Hd-roofH)*.25;if(b.doors.some(d=>d.d[0]===x+i&&d.d[1]===y+h-1))continue;const wg=c.createLinearGradient(wx,wy,wx+22,wy+20);wg.addColorStop(0,'#bfe3f2');wg.addColorStop(1,'#6fa9c9');rr(c,wx,wy,T-18,Math.min(22,(Hd-roofH)*.5),3,wg);c.fillStyle='rgba(255,255,255,.7)';c.fillRect(wx+3,wy+3,5,8);}}
+  }
+  if(b.sinks){for(let i=0;i<2;i++){rr(c,X+6+i*36,Y+Hd-16,28,12,4,'#ffffff');blob(c,X+20+i*36,Y+Hd-10,3,'#7fb7d6');}}
+  b.doors.forEach(dd=>{const [dx,dy]=dd.d,[sx,sy]=dd.s;
+    if(sy>dy)rr(c,dx*T+9,Y+Hd-T*.6,T-18,T*.6-2,4,'#7a4e2d');else if(sy<dy)rr(c,dx*T+9,Y+roofH,T-18,T*.55,4,'#7a4e2d');
+    else if(sx<dx)rr(c,X+2,dy*T+7,T*.42,T-14,4,'#7a4e2d');else rr(c,X+Wd-T*.42-2,dy*T+7,T*.42,T-14,4,'#7a4e2d');
+    if(dd.sign){const lx=(sx+.5)*T,ly=sy>dy?Y+Hd-T*.95:sy<dy?Y+roofH+T*.9:(dy+.5)*T-T*.62;sign(c,dd.sign,lx+(sx<dx?-T*.15:sx>dx?T*.15:0),ly,13);}
+  });
+  sign(c,b.name,X+Wd/2,vertical?Y+roofH*.55:Y+roofH*.5,b.small?13:17);
+  if(!b.small)for(let i=0;i<w;i+=3)bush(c,X+i*T+14,Y+Hd+4);
+}
+function renderStatic(){
+  const s=Math.min(1.6,dpr*zoom);off=document.createElement('canvas');off.width=Math.ceil(W*T*s);off.height=Math.ceil(H*T*s);
+  const c=off.getContext('2d');c.scale(s,s);
+  const gg=c.createLinearGradient(0,0,W*T,H*T);gg.addColorStop(0,'#8cbd68');gg.addColorStop(.5,'#7fb35f');gg.addColorStop(1,'#88b866');c.fillStyle=gg;c.fillRect(0,0,W*T,H*T);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const h=hash(x,y);
+    blob(c,x*T+h%T,y*T+(h>>3)%T,14+h%10,`rgba(${h%2?'110,160,80':'150,195,110'},.28)`);
+    c.strokeStyle='rgba(70,120,55,.45)';c.lineWidth=1.4;for(let i=0;i<3;i++){const a=(h>>(i*3))%34+3,b=(h>>(i*4+1))%30+6;c.beginPath();c.moveTo(x*T+a,y*T+b+5);c.lineTo(x*T+a+1.5,y*T+b);c.stroke();}
+    if(h%17===0){[0,6,-5].forEach((o,i)=>blob(c,x*T+18+o,y*T+16+i*4,2.4,['#fff6c9','#f6b3c8','#ffffff'][(h+i)%3]));}
+  }
+  {const g=c.createLinearGradient(0,0,2*T,0);g.addColorStop(0,'#8d8f8c');g.addColorStop(1,'#a3a59f');c.fillStyle=g;c.fillRect(0,0,2*T,H*T);
+   c.strokeStyle='#f1f1e8';c.lineWidth=3;c.setLineDash([22,18]);c.beginPath();c.moveTo(T,0);c.lineTo(T,H*T);c.stroke();c.setLineDash([]);
+   c.save();c.translate(T*.55,6*T);c.rotate(Math.PI/2);c.font='18px Huninn,sans-serif';c.fillStyle='#fff';c.fillText('公 園 路',0,0);c.restore();}
+  {const [x,y,w,h]=ZONE.field,X=x*T,Y=y*T;for(let i=0;i<w;i++){c.fillStyle=i%2?'rgba(120,175,85,.9)':'rgba(105,160,72,.9)';c.fillRect(X+i*T,Y,T,h*T);}
+   const cxp=X+w*T/2,cyp=Y+h*T/2;c.strokeStyle='#c66b4c';c.lineWidth=T*1.3;c.beginPath();c.ellipse(cxp,cyp,w*T*.4,h*T*.38,0,0,7);c.stroke();
+   c.strokeStyle='rgba(255,255,255,.85)';c.lineWidth=1.6;[-.6,-.2,.2,.6].forEach(o=>{c.beginPath();c.ellipse(cxp,cyp,w*T*.4+o*T,h*T*.38+o*T,0,0,7);c.stroke();});
+   c.lineWidth=2.5;c.strokeRect(cxp-w*T*.22,cyp-h*T*.2,w*T*.44,h*T*.4);c.beginPath();c.moveTo(cxp,cyp-h*T*.2);c.lineTo(cxp,cyp+h*T*.2);c.stroke();c.beginPath();c.arc(cxp,cyp,T*.9,0,7);c.stroke();
+   sign(c,'操場',cxp,Y+T*1.2,20,'🏃');}
+  {const [x,y,w,h]=ZONE.court,X=x*T,Y=y*T;const g=c.createLinearGradient(X,Y,X,Y+h*T);g.addColorStop(0,'#5fa294');g.addColorStop(1,'#4d8c7f');rr(c,X+4,Y+4,w*T-8,h*T-8,6,g);
+   c.strokeStyle='#fff';c.lineWidth=2;const half=w*T/2;[X+12,X+half+6].forEach(cx0=>{c.strokeRect(cx0,Y+12,half-18,h*T-24);});
+   [[X+16,1],[X+w*T-16,-1],[X+half-6,-1],[X+half+12,1]].forEach(([hx,d])=>{c.fillStyle='#fff';c.fillRect(hx-2,Y+h*T/2-14,4,28);c.strokeStyle='#e8603c';c.lineWidth=3;c.beginPath();c.arc(hx+d*10,Y+h*T/2,7,0,7);c.stroke();});
+   sign(c,'籃球場',X+half,Y+T*.4,14,'🏀');}
+  [['plaza2','五指山廣場'],['plaza1','第一集結點']].forEach(([k,name])=>{const [x,y,w,h]=ZONE[k],X=x*T,Y=y*T;
+    rr(c,X+3,Y+3,w*T-6,h*T-6,14,'#e9dcc3');c.strokeStyle='rgba(160,130,95,.35)';c.lineWidth=1;
+    for(let j=0;j<h*2;j++){c.beginPath();c.moveTo(X+6,Y+j*T/2+6);c.lineTo(X+w*T-6,Y+j*T/2+6);c.stroke();for(let i=0;i<w*2;i++){const o=j%2?T/4:0;c.beginPath();c.moveTo(X+i*T/2+o+6,Y+j*T/2+6);c.lineTo(X+i*T/2+o+6,Y+j*T/2+T/2+6);c.stroke();}}
+    sign(c,name,X+w*T/2,k==='plaza2'?Y+T*.55:Y+T*.6,15,k==='plaza2'?'🌳':'🚩');});
+  SOLID.forEach(([x,y,w,h])=>{rr(c,x*T+3,y*T+5,w*T-6,h*T-10,10,'#7a5236');for(let i=0;i<12;i++){const a=hash(x*13+i,y*7+i);blob(c,x*T+8+a%(w*T-16),y*T+10+(a>>4)%(h*T-20),4,['#f6b3c8','#fff6c9','#ef8a5a','#ffffff','#c9a0e8'][a%5]);blob(c,x*T+8+(a>>2)%(w*T-16),y*T+10+(a>>6)%(h*T-20),3,'#4a8549');}});
+  ROADS.forEach(([x,y,w,h])=>{rr(c,x*T+2,y*T+2,w*T-4,h*T-4,12,'#e4d8bf');c.strokeStyle='rgba(150,120,80,.25)';c.lineWidth=1;
+    for(let i=0;i<w;i++)for(let j=0;j<h;j++){if(hash(x+i,y+j)%3===0){c.beginPath();c.ellipse((x+i)*T+T/2,(y+j)*T+T/2,6,3,0,0,7);c.stroke();}}});
+  BLD.forEach(b=>b.doors.forEach(d=>rr(c,d.s[0]*T+4,d.s[1]*T+4,T-8,T-8,10,'#e4d8bf')));
+  for(let y=0;y<H;y++){if(y===35||y===36)continue;wallTile(c,2,y);wallTile(c,29,y);}
+  for(let x=2;x<W;x++){wallTile(c,x,0);wallTile(c,x,48);}
+  rr(c,2*T,35*T,T,2*T,4,'#e4d8bf');
+  [[2,34.8],[2,37.0]].forEach(([gx,gy])=>{rr(c,gx*T+4,gy*T-4,T-8,16,4,'#6f6a64');});
+  c.save();c.translate(2*T+T*.55,36*T);c.rotate(-Math.PI/2);sign(c,'竹東國中',0,0,14);c.restore();
+  sign(c,'校門',3.5*T,37.3*T,13);sign(c,'後校門',3.5*T,1.4*T,12);
+  BLD.forEach(b=>building(c,b));
+  TREES.forEach(([x,y],i)=>tree(c,x,y,i%4===0));
+}
+function wallTile(c,x,y){const X=x*T,Y=y*T;rr(c,X+3,Y,T-6,T,3,'#c9b79a');c.fillStyle='rgba(120,95,60,.35)';c.fillRect(X+3,Y+T/2,T-6,2);bush(c,X+T/2,Y+T*.3);}
+function resize(){const w=$('#mapwrap');vw=w.clientWidth;vh=w.clientHeight;if(!vw||!vh)return;dpr=Math.min(2,devicePixelRatio||1);
+  cv.width=vw*dpr;cv.height=vh*dpr;zoom=Math.max(.85,Math.min(1.6,Math.min(vw,vh*1.3)/(9.5*T)));renderStatic();}
+new ResizeObserver(resize).observe($('#mapwrap'));
+
+/* ================= Q 版人物 ================= */
+const OUT={
+  uniform:{top:'#f7f7f2',pants:'#2f4f86',arm:'#f7f7f2',collar:'#2f4f86'},
+  cold:{top:'#9a6440',pants:'#3a3f4a',arm:'#9a6440',scarf:'#d9433b',hat:'#d9433b',long:1},
+  comfy:{top:null,pants:'#3a5f8a',arm:'#8d9aa6',jacket:'#8d9aa6'},
+  hot:{top:null,pants:'#3a5f8a',arm:null,shorts:1,cap:'#f0b429'}};
+function person(c,px,py,o,t){
+  const f=o.staff?{top:o.shirt,pants:'#4a4a55',arm:o.shirt}:OUT[o.outfit]||OUT.uniform,skin=o.skin||'#f7dcc4',shirt=f.top||o.shirt;
+  const sw=o.moving?Math.sin(t/85):0,bob=o.moving?Math.abs(Math.sin(t/85))*2:0;py-=bob;
+  c.fillStyle='rgba(20,40,20,.28)';c.beginPath();c.ellipse(px,py+15+bob,12,4.5,0,0,7);c.fill();
+  const leg=f.shorts?skin:f.pants;rr(c,px-7,py+4,5,10+sw*3,2.5,leg);rr(c,px+2,py+4,5,10-sw*3,2.5,leg);
+  rr(c,px-7,py+12+sw*3,6,4,2,'#5a3a28');rr(c,px+1,py+12-sw*3,6,4,2,'#5a3a28');
+  if(f.shorts)rr(c,px-8,py+2,16,6,3,f.pants);
+  const arm=f.arm===null?skin:f.arm;rr(c,px-12,py-7+sw*2,4.5,11,2.5,arm);rr(c,px+7.5,py-7-sw*2,4.5,11,2.5,arm);
+  rr(c,px-9,py-9,18,f.long?16:14,6,shirt);
+  if(f.arm===null){rr(c,px-12,py-8,5,5,2,shirt);rr(c,px+7,py-8,5,5,2,shirt);}
+  if(f.jacket){c.fillStyle=f.jacket;c.fillRect(px-9,py-8,5,13);c.fillRect(px+4,py-8,5,13);}
+  if(f.collar){c.fillStyle=f.collar;c.beginPath();c.moveTo(px-4,py-9);c.lineTo(px,py-4);c.lineTo(px+4,py-9);c.fill();}
+  if(o.staff){c.fillStyle='rgba(255,255,255,.75)';c.fillRect(px-3,py-6,6,8);}
+  if(f.scarf)rr(c,px-9,py-11,18,5,2.5,f.scarf);
+  const hy=py-21;blob(c,px,hy,12,skin);
+  const hair=o.hair||'#3a2618';c.fillStyle=hair;c.beginPath();c.arc(px,hy-2,12.5,Math.PI*1.02,Math.PI*1.98);c.fill();
+  c.beginPath();c.moveTo(px-12,hy-2);c.quadraticCurveTo(px-6,hy+3,px-2,hy-4);c.quadraticCurveTo(px+4,hy+2,px+12,hy-2);c.lineTo(px+12,hy-6);c.lineTo(px-12,hy-6);c.fill();
+  if(f.hat){c.fillStyle=f.hat;c.beginPath();c.arc(px,hy-4,12.5,Math.PI,0);c.fill();blob(c,px,hy-17,3.5,'#fff');}
+  if(f.cap){c.fillStyle=f.cap;c.beginPath();c.arc(px,hy-4,12.5,Math.PI,0);c.fill();rr(c,px+(o.face<0?-16:2),hy-6,14,4,2,shade(f.cap,-.15));}
+  const ex=o.face<0?-1.5:1.5;[-4.5,4.5].forEach(d=>{c.fillStyle='#2a1a12';c.beginPath();c.ellipse(px+d+ex,hy+2,2.3,3.2,0,0,7);c.fill();blob(c,px+d+ex+.8,hy+.8,1,'#fff');});
+  blob(c,px-7.5+ex,hy+6,2.2,'rgba(240,120,120,.45)');blob(c,px+7.5+ex,hy+6,2.2,'rgba(240,120,120,.45)');
+  c.strokeStyle='#8a4a3a';c.lineWidth=1.2;c.beginPath();c.arc(px+ex,hy+6.5,2,0.2,Math.PI-.2);c.stroke();
+}
+function bubbleAt(c,x,y,text){
+  c.font=`900 14px 'Noto Sans TC',sans-serif`;const w=Math.min(230,c.measureText(text).width+20),h=30;
+  c.save();c.shadowColor='rgba(0,0,0,.2)';c.shadowBlur=6;rr(c,x-w/2,y-h,w,h,12,'#fffdf6');c.restore();
+  c.fillStyle='#fffdf6';c.beginPath();c.moveTo(x-6,y-1);c.lineTo(x+6,y-1);c.lineTo(x,y+7);c.fill();
+  c.fillStyle='#2a2015';c.textAlign='center';c.textBaseline='middle';c.fillText(text,x,y-h/2+1,w-12);}
+// 溫溫隊長（地圖上的小隊長，站在下一站旁邊招手）
+function captain(c,x,y,t,sc=.22){c.save();c.translate(x,y);c.scale(sc,sc);const wv=Math.sin(t/200)*.3;
+  c.fillStyle='rgba(0,0,0,.15)';c.beginPath();c.ellipse(115,290,70,9,0,0,7);c.fill();
+  c.strokeStyle='#1f2a37';c.lineWidth=10;c.lineCap='round';c.beginPath();c.moveTo(40,150);c.quadraticCurveTo(10,130,18,100);c.stroke();
+  c.save();c.translate(190,150);c.rotate(wv);c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(32,-30,16,-62);c.stroke();c.restore();
+  c.lineWidth=7;rr(c,62,40,106,200,53,'#fff');c.beginPath();if(c.roundRect)c.roundRect(62,40,106,200,53);c.stroke();
+  rr(c,102,120,26,120,13,'#e2453a');blob(c,115,238,42,'#e2453a');c.beginPath();c.arc(115,238,42,0,7);c.stroke();
+  blob(c,96,88,8,'#1f2a37');blob(c,134,88,8,'#1f2a37');blob(c,99,85,2.5,'#fff');blob(c,137,85,2.5,'#fff');
+  c.lineWidth=5;c.beginPath();c.moveTo(100,106);c.quadraticCurveTo(115,118,130,106);c.stroke();
+  c.fillStyle='#c8372d';c.beginPath();c.moveTo(58,46);c.quadraticCurveTo(115,2,172,46);c.lineTo(172,56);c.lineTo(58,56);c.closePath();c.fill();c.lineWidth=6;c.stroke();
+  rr(c,48,52,134,14,7,'#1f2a37');blob(c,115,34,9,'#ffd77a');c.restore();}
+
+/* ================= 原創溫度精靈 ================= */
+const SPRITES=[
+ {k:'cold',name:'雪糰糰',line:'好冰～我住在冷冷的地方！'},{k:'cold',name:'雪糰糰',line:'好冰～我住在冷冷的地方！'},
+ {k:'comfy',name:'葉風風',line:'剛剛好～樹蔭下最舒服！'},{k:'comfy',name:'葉風風',line:'剛剛好～樹蔭下最舒服！'},
+ {k:'hot',name:'火豆豆',line:'好熱！我最喜歡曬太陽！'},{k:'hot',name:'火豆豆',line:'好熱！我最喜歡曬太陽！'}];
+const SPOTS={cold:[[26,40],[21,34],[5,29],[16,36]],comfy:[[12,27],[10,40],[14,22],[27,23]],hot:[[16,4],[25,12],[20,18],[13,13]]};
+let WILD=[];
+function spawnSprites(){const used={cold:0,comfy:0,hot:0};WILD=SPRITES.map((s,i)=>{const pool=SPOTS[s.k];let [x,y]=pool[(used[s.k]++ + Math.floor(Math.random()*4))%4];
+  let g=0;while(!walk(x,y)&&g++<60){x=3+((x-2)%26);if(g%26===0)y=Math.min(47,y+1);}return {...s,i,x,y,fx:x,fy:y,path:[],wait:Math.random()*2000,face:1,caught:false};});}
+function drawSprite(c,k,x,y,t,sc=1){
+  const hop=Math.abs(Math.sin(t/260+x))*5*sc;y-=hop;
+  c.fillStyle='rgba(20,40,20,.25)';c.beginPath();c.ellipse(x,y+12*sc+hop,10*sc,3.5*sc,0,0,7);c.fill();
+  if(k==='cold'){
+    const g=c.createRadialGradient(x-4*sc,y-4*sc,2,x,y,14*sc);g.addColorStop(0,'#ffffff');g.addColorStop(1,'#a9d6f2');blob(c,x,y,13*sc,g);
+    c.strokeStyle='#7fc0ea';c.lineWidth=2*sc;for(let i=0;i<3;i++){const a=-Math.PI/2+(i-1)*.5;c.beginPath();c.moveTo(x,y-11*sc);c.lineTo(x+Math.cos(a)*9*sc,y-11*sc+Math.sin(a)*9*sc);c.stroke();}
+    blob(c,x-6*sc,y+9*sc,3*sc,'#d9eefa');blob(c,x+6*sc,y+9*sc,3*sc,'#d9eefa');
+  }else if(k==='comfy'){
+    c.fillStyle='#8fcf6a';c.beginPath();c.ellipse(x-9*sc,y-11*sc,4*sc,9*sc,-.6,0,7);c.ellipse(x+9*sc,y-11*sc,4*sc,9*sc,.6,0,7);c.fill();
+    c.strokeStyle='#5b9a44';c.lineWidth=1;c.beginPath();c.moveTo(x-9*sc,y-5*sc);c.lineTo(x-11*sc,y-17*sc);c.moveTo(x+9*sc,y-5*sc);c.lineTo(x+11*sc,y-17*sc);c.stroke();
+    const g=c.createRadialGradient(x-4*sc,y-4*sc,2,x,y,14*sc);g.addColorStop(0,'#d8f5b8');g.addColorStop(1,'#7cc35a');blob(c,x,y,12.5*sc,g);
+    blob(c,x-6*sc,y+9*sc,3*sc,'#6aae4c');blob(c,x+6*sc,y+9*sc,3*sc,'#6aae4c');
+  }else{
+    const fl=Math.sin(t/120)*1.5;c.fillStyle='#ffcf3d';c.beginPath();c.moveTo(x-8*sc,y-8*sc);c.lineTo(x-6*sc,y-20*sc+fl);c.lineTo(x-1*sc,y-12*sc);c.lineTo(x+2*sc,y-24*sc-fl);c.lineTo(x+5*sc,y-12*sc);c.lineTo(x+9*sc,y-19*sc+fl);c.lineTo(x+9*sc,y-6*sc);c.fill();
+    const g=c.createRadialGradient(x-4*sc,y-4*sc,2,x,y,14*sc);g.addColorStop(0,'#ffd27a');g.addColorStop(1,'#f0743a');blob(c,x,y,13*sc,g);
+    blob(c,x-6*sc,y+9*sc,3*sc,'#d85a2a');blob(c,x+6*sc,y+9*sc,3*sc,'#d85a2a');
+  }
+  [-4.5,4.5].forEach(d=>{c.fillStyle='#2a1a12';c.beginPath();c.ellipse(x+d*sc,y,2*sc,2.8*sc,0,0,7);c.fill();blob(c,x+d*sc+.7*sc,y-1*sc,.9*sc,'#fff');});
+  blob(c,x-8*sc,y+4*sc,2.2*sc,'rgba(240,110,120,.5)');blob(c,x+8*sc,y+4*sc,2.2*sc,'rgba(240,110,120,.5)');
+  c.strokeStyle='#5a2a1a';c.lineWidth=1.2*sc;c.beginPath();c.arc(x,y+3.5*sc,2*sc,.2,Math.PI-.2);c.stroke();
+}
+function spriteCanvas(row,k,i){const c=document.createElement('canvas');c.width=128;c.height=128;row.appendChild(c);const g=c.getContext('2d');g.scale(2,2);
+  (function an(t){if(!c.isConnected)return;g.clearRect(0,0,64,64);drawSprite(g,k,32,38,t+i*300,1.3);requestAnimationFrame(an);})(0);}
+$('#hero').innerHTML=MASCOT;['cold','comfy','hot'].forEach((k,i)=>spriteCanvas($('#sprRow'),k,i));
+
+/* NPC 同學 */
+const SHIRTS=['#e86a5c','#5aa0e0','#f0b429','#7cc47a','#c58ce0','#4cc3c0','#f28fb1','#9b7653'];
+const HAIRS=['#3a2618','#5a3a22','#1f1a18','#7a4a2a'];
+let NPCS=[];
+function spawnNPCs(){NPCS=[];let n=0,guard=0;while(n<14&&guard++<800){const x=3+Math.floor(Math.random()*26),y=1+Math.floor(Math.random()*47);
+  if(walk(x,y)){NPCS.push({x,y,fx:x,fy:y,path:[],wait:Math.random()*3000,shirt:SHIRTS[n%8],hair:pick(HAIRS),face:1,bubble:null});n++;}}}
+const TIPS={hot:['好熱喔，我要多喝水！','記得戴帽子！','我要躲到樹下乘涼～','太陽下最熱！'],
+  cold:['好冷！我穿了厚外套！','手好冰，搓一搓～','今天好冷喔！','圍巾好溫暖～'],
+  comfy:['今天天氣剛剛好！','我帶了薄外套～','量溫度要等 1 分鐘唷！','數字越大越熱！']};
+
+/* ================= 主迴圈 ================= */
+let last=0,hintKey='',hintPath=[],sparks=[];
+function step(o,dt,speed,onEnd){if(!o.path.length)return;const [nx,ny]=o.path[0],sp=dt*speed,dx=nx-o.fx,dy=ny-o.fy,d=Math.hypot(dx,dy);
+  if(Math.abs(dx)>.01)o.face=Math.sign(dx);if(d<=sp){o.fx=o.x=nx;o.fy=o.y=ny;o.path.shift();if(!o.path.length&&onEnd)onEnd();}else{o.fx+=dx/d*sp;o.fy+=dy/d*sp;}}
+function wander(n,dt,speed,range){if(n.path.length){step(n,dt,speed);return;}if((n.wait-=dt)>0)return;n.wait=1500+Math.random()*4000;
+  const tx=n.x+Math.round((Math.random()-.5)*range),ty=n.y+Math.round((Math.random()-.5)*range);if(walk(tx,ty)){const p=bfs([n.x,n.y],[tx,ty],range+4);if(p)n.path=p;}}
+function loop(t){
+  const dt=Math.min(50,t-(last||t));last=t;const p=S.p;
+  const wasMoving=p.path.length>0;step(p,dt,.0055,arrived);
+  if(wasMoving){const lt=S.trail[0];if(!lt||Math.hypot(lt[0]-p.fx,lt[1]-p.fy)>.12){S.trail.unshift([p.fx,p.fy]);if(S.trail.length>80)S.trail.pop();}
+    if(Math.random()<.25)sparks.push({x:p.fx*T+T/2+(Math.random()-.5)*10,y:p.fy*T+T/2+12,t0:t,dust:1});}
+  NPCS.forEach(n=>{wander(n,dt,.0022,12);if(n.bubble&&t>n.bubble.until)n.bubble=null;});
+  WILD.forEach(w=>{if(!w.caught)wander(w,dt,.0018,6);});
+  const tvw=vw/zoom,tvh=vh/zoom;let tx=(p.fx+.5)*T-tvw/2,ty=(p.fy+.5)*T-tvh/2;
+  tx=W*T<tvw?(W*T-tvw)/2:Math.max(0,Math.min(W*T-tvw,tx));ty=H*T<tvh?(H*T-tvh)/2:Math.max(0,Math.min(H*T-tvh,ty));
+  cam.x+=(tx-cam.x)*.12;cam.y+=(ty-cam.y)*.12;draw(t);requestAnimationFrame(loop);}
+function draw(t){
+  const c=cx;c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,vw,vh);if(!off)return;
+  c.setTransform(dpr*zoom,0,0,dpr*zoom,-cam.x*dpr*zoom,-cam.y*dpr*zoom);c.drawImage(off,0,0,W*T,H*T);
+  for(let i=0;i<5;i++){const ph=(t/1700+i/5)%1;blob(c,22.6*T+Math.sin(t/500+i)*6,37*T+8-ph*70,6+ph*12,`rgba(255,255,255,${.55*(1-ph)})`);}
+  for(let i=0;i<10;i++){const tr=TREES[i*2%TREES.length],a=(Math.sin(t/700+i)+1)/2;blob(c,tr[0]*T+T/2-8+i%3*6,tr[1]*T+T/2-14,2.2,`rgba(255,250,200,${a*.6})`);}
+  if(S.day&&S.day.k==='comfy')for(let i=0;i<4;i++){const bx=(11+i*1.6+Math.sin(t/1300+i)*1.5)*T,by=(25+Math.cos(t/1100+i*2)*1.6)*T,fl=Math.abs(Math.sin(t/120+i));c.fillStyle=['#fff6c9','#ffffff','#f6b3c8','#c9a0e8'][i];c.beginPath();c.ellipse(bx-5*fl,by,5*fl+1,4,0,0,7);c.ellipse(bx+5*fl,by,5*fl+1,4,0,0,7);c.fill();}
+  sparks=sparks.filter(s=>t-s.t0<(s.dust?500:900));sparks.forEach(s=>{const a=(t-s.t0)/(s.dust?500:900);
+    if(s.dust)blob(c,s.x,s.y-a*6,3+a*4,`rgba(235,222,190,${.6*(1-a)})`);else{blob(c,s.x+s.vx*a*40,s.y+s.vy*a*40-a*20,3*(1-a)+1,`rgba(255,230,120,${1-a})`);}});
+  const gs=goals(),p=S.p;
+  if(S.hint&&!S.busy&&gs.length){let tgt=gs[0];if(gs.length>1){let best=1e9;gs.forEach(g=>{const d=Math.abs(g.spot[0]-p.x)+Math.abs(g.spot[1]-p.y);if(d<best){best=d;tgt=g;}});}
+    const key=p.x+','+p.y+'>'+tgt.id;if(key!==hintKey){hintKey=key;hintPath=bfs([p.x,p.y],tgt.spot)||[];}
+    hintPath.forEach(([x,y],i)=>{const a=.4+.45*Math.sin(t/200-i*.6);c.fillStyle=`rgba(255,214,90,${a})`;c.beginPath();c.ellipse(x*T+T/2+(i%2?4:-4),y*T+T/2,4,6,i%2?.3:-.3,0,7);c.fill();});}
+  gs.forEach(g=>{const gx=g.spot[0]*T+T/2,gy=g.spot[1]*T+T/2;c.strokeStyle=`rgba(255,214,90,${.55+Math.sin(t/300)*.35})`;c.lineWidth=4;c.beginPath();c.ellipse(gx+8,gy+8,24+Math.sin(t/300)*3,10,0,0,7);c.stroke();});
+  const list=[];
+  STA.forEach(s=>{if(s.id==='review'&&!S.done.has('room'))return;if(s.id==='room'&&S.done.has('room'))return;
+    list.push({y:s.spot[1],draw:()=>{const px=(s.spot[0]+.75)*T,py=s.spot[1]*T+T/2-4;person(c,px,py,{staff:1,shirt:s.shirt,face:-1},t);
+    const isG=gs.includes(s),done=S.done.has(s.id),locked=!avail(s),by=py-52+(isG?Math.sin(t/250)*4:0);
+    c.save();c.shadowColor='rgba(0,0,0,.25)';c.shadowBlur=5;blob(c,px,by,16,isG?'#ffd65a':done?'#7ccf7f':'rgba(255,253,246,.95)');c.restore();
+    c.strokeStyle='#5a3a1a';c.lineWidth=2;c.beginPath();c.arc(px,by,16,0,7);c.stroke();
+    c.font='18px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(done?'✅':locked?'🔒':s.sicon,px,by+1);
+    if(isG){c.fillStyle='#ffd65a';c.beginPath();c.moveTo(px-6,by+15);c.lineTo(px+6,by+15);c.lineTo(px,by+22);c.fill();}}});});
+  if(S.mode==='story'&&gs[0]){const g=gs[0];list.push({y:g.spot[1]+.02,draw:()=>captain(c,(g.spot[0]-.35)*T-12,g.spot[1]*T-30,t)});}
+  NPCS.forEach(n=>list.push({y:n.fy,draw:()=>{const px=n.fx*T+T/2,py=n.fy*T+T/2-4;person(c,px,py,{outfit:S.day?S.day.k:'uniform',shirt:n.shirt,hair:n.hair,moving:n.path.length>0,face:n.face},t);if(n.bubble)bubbleAt(c,px,py-40,n.bubble.text);}}));
+  WILD.forEach(w=>{if(w.caught)return;list.push({y:w.fy,draw:()=>{const px=w.fx*T+T/2,py=w.fy*T+T/2;drawSprite(c,w.k,px,py,t);
+    c.strokeStyle=`rgba(255,255,255,${.4+.4*Math.sin(t/200+w.i)})`;c.lineWidth=2;c.beginPath();c.arc(px,py-2,19,0,7);c.stroke();}});});
+  S.pets.forEach((w,i)=>{const tr=S.trail[Math.min(S.trail.length-1,(i+1)*9)]||[p.fx,p.fy];list.push({y:tr[1]-.02,draw:()=>drawSprite(c,w.k,tr[0]*T+T/2,tr[1]*T+T/2+4,t,.8)});});
+  list.push({y:p.fy+.01,draw:()=>{const px=p.fx*T+T/2,py=p.fy*T+T/2-4;person(c,px,py,{outfit:S.outfit,shirt:'#3d6fc0',moving:p.path.length>0,face:p.face},t);
+    rr(c,px-13,py-58,26,18,6,'#d9433b');c.fillStyle='#fff';c.font=`900 13px 'Noto Sans TC',sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText('你',px,py-49);}});
+  list.sort((a,b)=>a.y-b.y).forEach(o=>o.draw());
+  c.setTransform(dpr,0,0,dpr,0,0);light(c,t);
+  gs.slice(0,S.mode==='story'?1:3).forEach(g=>{const sx=((g.spot[0]+.75)*T-cam.x)*zoom,sy=((g.spot[1]+.3)*T-cam.y)*zoom;
+    if(sx>20&&sx<vw-20&&sy>20&&sy<vh-20)return;const cxp=vw/2,cyp=vh/2,ang=Math.atan2(sy-cyp,sx-cxp),m=36;
+    const k=Math.min((vw/2-m)/Math.abs(Math.cos(ang)||1e-6),(vh/2-m)/Math.abs(Math.sin(ang)||1e-6)),ex=cxp+Math.cos(ang)*k,ey=cyp+Math.sin(ang)*k;
+    c.save();c.translate(ex,ey);c.rotate(ang);c.fillStyle='#ffd65a';c.beginPath();c.moveTo(32,0);c.lineTo(17,-12);c.lineTo(17,12);c.fill();c.restore();
+    blob(c,ex,ey,21,'#ffd65a');c.strokeStyle='#5a3a1a';c.lineWidth=2.5;c.beginPath();c.arc(ex,ey,21,0,7);c.stroke();c.font='20px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(g.sicon,ex,ey+1);});
+  minimap(c,t,gs);
+}
+function light(c,t){
+  for(let i=0;i<3;i++){const x=((t/40+i*420)%(vw+500))-250,y=vh*(.15+i*.33);c.fillStyle='rgba(30,50,60,.08)';c.beginPath();c.ellipse(x,y,170,60,0,0,7);c.ellipse(x+90,y+20,110,45,0,0,7);c.fill();}
+  const k=S.day&&S.day.k;
+  if(k==='hot'){const g=c.createRadialGradient(vw,0,10,vw,0,vw*.95);g.addColorStop(0,'rgba(255,200,90,.42)');g.addColorStop(1,'rgba(255,140,50,0)');c.fillStyle=g;c.fillRect(0,0,vw,vh);
+    c.save();c.translate(20,20);c.rotate(t/5000);c.strokeStyle='rgba(255,230,150,.55)';c.lineWidth=5;for(let i=0;i<10;i++){c.rotate(Math.PI/5);c.beginPath();c.moveTo(44,0);c.lineTo(66,0);c.stroke();}c.restore();blob(c,20,20,34,'#ffdb66');}
+  else if(k==='cold'){c.fillStyle='rgba(120,170,230,.13)';c.fillRect(0,0,vw,vh);
+    c.strokeStyle='rgba(255,255,255,.6)';c.lineWidth=2;for(let i=0;i<9;i++){const a=hash(i,3),x=((t/4+a%997)%(vw+200))-100,y=a%Math.max(1,Math.floor(vh));c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+30,y-7,x+75,y);c.stroke();}
+    for(let i=0;i<8;i++){const a=hash(i,9),x=((t/7+a%811)%(vw+40))-20,y=((t/11+a%577)%(vh+40))-20;c.save();c.translate(x,y);c.rotate(t/500+i);c.fillStyle='#c98a4a';c.beginPath();c.ellipse(0,0,6,3,0,0,7);c.fill();c.restore();}}
+  else{const g=c.createLinearGradient(0,0,vw,vh);g.addColorStop(0,'rgba(255,240,200,.16)');g.addColorStop(1,'rgba(255,240,200,0)');c.fillStyle=g;c.fillRect(0,0,vw,vh);
+    for(let i=0;i<10;i++){const a=hash(i,5),x=((t/9+a%700)%(vw+40))-20,y=((t/14+a%500)%(vh+40))-20;c.save();c.translate(x,y);c.rotate(t/600+i);c.fillStyle='rgba(250,190,205,.9)';c.beginPath();c.ellipse(0,0,4,2.5,0,0,7);c.fill();c.restore();}}
+  // 一天的光線：早上偏藍、下午偏金
+  const hr=parseInt(($('#clock').textContent||'08').split(':')[0],10);if(hr>=13){const a=Math.min(.18,(hr-12)*.045);c.fillStyle=`rgba(255,170,80,${a})`;c.fillRect(0,0,vw,vh);}else if(hr<9){c.fillStyle='rgba(150,190,255,.07)';c.fillRect(0,0,vw,vh);}
+  const v=c.createRadialGradient(vw/2,vh/2,Math.min(vw,vh)*.45,vw/2,vh/2,Math.max(vw,vh)*.75);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(20,30,20,.28)');c.fillStyle=v;c.fillRect(0,0,vw,vh);
+}
+function minimap(c,t,gs){
+  const s=Math.max(2.2,Math.min(3.4,Math.min(vw,vh)/180)),mw=W*s,mh=H*s,ox=vw-mw-10,oy=10;
+  c.save();c.shadowColor='rgba(0,0,0,.35)';c.shadowBlur=8;rr(c,ox-5,oy-5,mw+10,mh+10,8,'#8b5e3c');c.restore();c.fillStyle='#86b867';c.fillRect(ox,oy,mw,mh);
+  c.fillStyle='#9a9c96';c.fillRect(ox,oy,2*s,mh);
+  c.fillStyle='#c66b4c';c.fillRect(ox+ZONE.field[0]*s,oy+ZONE.field[1]*s,ZONE.field[2]*s,ZONE.field[3]*s);c.fillStyle='#79ad5c';c.fillRect(ox+(ZONE.field[0]+2)*s,oy+(ZONE.field[1]+2)*s,(ZONE.field[2]-4)*s,(ZONE.field[3]-4)*s);
+  c.fillStyle='#5fa294';c.fillRect(ox+ZONE.court[0]*s,oy+ZONE.court[1]*s,ZONE.court[2]*s,ZONE.court[3]*s);
+  c.fillStyle='#e9dcc3';[ZONE.plaza1,ZONE.plaza2,...ROADS].forEach(r=>c.fillRect(ox+r[0]*s,oy+r[1]*s,r[2]*s,r[3]*s));
+  BLD.forEach(b=>{c.fillStyle=b.roof;c.fillRect(ox+b.r[0]*s,oy+b.r[1]*s,b.r[2]*s,b.r[3]*s);});
+  STA.forEach(st=>{if(S.done.has(st.id)){c.fillStyle='#2f8a34';c.fillRect(ox+st.spot[0]*s-1,oy+st.spot[1]*s-1,5,5);}});
+  WILD.forEach(w=>{if(!w.caught){c.fillStyle='#fff';c.fillRect(ox+w.fx*s,oy+w.fy*s,3,3);}});
+  if(Math.sin(t/200)>-.3)gs.forEach(g=>blob(c,ox+(g.spot[0]+.5)*s,oy+(g.spot[1]+.5)*s,4,'#ffd65a'));
+  c.strokeStyle='rgba(255,255,255,.9)';c.lineWidth=1;c.strokeRect(ox+cam.x/T*s,oy+cam.y/T*s,vw/zoom/T*s,vh/zoom/T*s);
+  blob(c,ox+(S.p.fx+.5)*s,oy+(S.p.fy+.5)*s,4,'#d9433b');c.strokeStyle='#fff';c.beginPath();c.arc(ox+(S.p.fx+.5)*s,oy+(S.p.fy+.5)*s,4,0,7);c.stroke();
+}
+
+/* ================= 互動 ================= */
+function goTo(x,y){if(S.busy)return;const pth=bfs([S.p.x,S.p.y],[x,y]);if(!pth)return;if(!pth.length){arrived();return;}S.p.path=pth;}
+cv.addEventListener('pointerdown',e=>{
+  if(S.busy||!S.day)return;const r=cv.getBoundingClientRect(),wx=(e.clientX-r.left)/zoom+cam.x,wy=(e.clientY-r.top)/zoom+cam.y;
+  for(const w of WILD){if(!w.caught&&Math.hypot(w.fx*T+T/2-wx,w.fy*T+T/2-wy)<24){catchSprite(w);return;}}
+  for(const n of NPCS){if(Math.hypot(n.fx*T+T/2-wx,n.fy*T+T/2-20-wy)<22){const tip=pick(TIPS[S.day.k]);n.bubble={text:tip,until:performance.now()+2600};say(tip);return;}}
+  for(const s of STA){if(Math.hypot((s.spot[0]+.75)*T-wx,s.spot[1]*T+T/2-24-wy)<26){goTo(...s.spot);return;}}
+  const x=Math.floor(wx/T),y=Math.floor(wy/T),b=bAt(x,y);
+  if(b&&b.doors.length){let best=b.doors[0],bd=1e9;b.doors.forEach(d=>{const dd=Math.hypot(d.d[0]-x,d.d[1]-y);if(dd<bd){bd=dd;best=d;}});goTo(...best.s);return;}
+  if(walk(x,y))goTo(x,y);
+});
+function catchSprite(w){
+  const d=Math.hypot(w.fx-S.p.fx,w.fy-S.p.fy);
+  if(d>3.2){toast(`那是${w.name}！走近一點再點它唷 🐾`);goTo(w.x,w.y);return;}
+  w.caught=true;S.pets.push(w);beep(true,1);hud();save();
+  for(let i=0;i<16;i++){const a=i/16*Math.PI*2;sparks.push({x:w.fx*T+T/2,y:w.fy*T+T/2,vx:Math.cos(a),vy:Math.sin(a),t0:performance.now()});}
+  toast(`${w.name}加入隊伍！「${w.line}」`);
+}
+function arrived(){
+  const p=S.p,here=STA.filter(s=>s.spot[0]===p.x&&s.spot[1]===p.y);
+  if(!here.length){let fun=null;BLD.forEach(b=>b.doors.forEach(d=>{if(d.s[0]===p.x&&d.s[1]===p.y&&d.fun)fun=d.fun;}));
+    const near=WILD.find(w=>!w.caught&&Math.hypot(w.fx-p.fx,w.fy-p.fy)<1.6);if(fun)toast(fun);else if(near)toast(`${near.name}就在旁邊，點它一下！`);return;}
+  const gs=goals(),st=here.find(s=>gs.includes(s));
+  if(st){openStation(st);return;}
+  const todo=here.find(s=>!S.done.has(s.id));
+  if(todo&&!avail(todo)){toast('先去巡邏三個地方：教室、大樹下、操場太陽下！');return;}
+  if(S.mode==='story'){const g=STA[S.stage];if(g)toast(`這裡是${here[0].place}。我們要去${g.place}找${g.staff}唷！`);return;}
+  toast(`${here[0].place}已經完成囉 ✅`);
+}
+
+/* ================= 任務卡 ================= */
+function showCard(h){$('#card').innerHTML=h;$('#sheet').hidden=false;$('#card').scrollTop=0;}
+const whoHTML=(st,extra)=>`<div class="who"><div class="av">${st.sicon}</div><div><b>${st.staff}</b><span>${st.place} · ${st.period}${extra||''}</span></div></div>`;
+const capSVG=MASCOT.replace('class="m"','');
+function openStation(st){
+  S.busy=true;setTime(st.period,st.time,STA.indexOf(st));const set=st.make(S.day);let k=0;
+  S.log[st.id]=S.log[st.id]||{q:0,first:0,miss:0};
+  const next=()=>{if(k<set.qs.length)ask(set.qs[k++],st,next);else choice();};
+  const choice=()=>{showCard(`${whoHTML(st)}<div class="fb good">${capSVG}<span>這一站完成了！要再挑戰一題嗎？</span></div>
+    ${st.patrol?recHTML():''}
+    <div class="actions"><button class="btn" id="chBtn">⭐ 挑戰題</button><button class="btn ghost" id="nxBtn">下一站 ➜</button></div>`);
+    say('這一站完成了！要再挑戰一題嗎？');$('#chBtn').onclick=()=>ask(set.ch,st,()=>done(st),true);$('#nxBtn').onclick=()=>done(st);};
+  next();}
+function ask(q,st,cb,challenge){
+  let first=true;const L=S.log[st.id];L.q++;
+  showCard(`${whoHTML(st,challenge?' · ⭐ 挑戰題':'')}
+    <div class="prompt"><p>${q.say}</p><button class="speak" id="spk" aria-label="唸題目">🔊</button></div>
+    <div class="visual">${q.v}</div>
+    <div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}">${o.img?`<img class="oi" src="${o.img}" alt="">`:`<span class="e">${o.e}</span>`}<span class="l">${o.l}</span>${o.s?`<span class="s">${o.s}</span>`:''}</button>`).join('')}</div>
+    <div class="fb" id="fb"></div>`);
+  say(q.say);$('#spk').onclick=()=>say(q.say);
+  document.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{
+    if(btn.disabled)return;const o=q.opts[+btn.dataset.k],fb=$('#fb');
+    if(o.ok){btn.classList.add('ok');document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+      if(first){S.stars++;L.first++;hud();}if(q.dress)S.outfit=S.day.k;
+      let extra='';if(q.rec){S.rec[q.rec]=q.val;extra=' ✏️ 寫進巡邏記錄卡了！';}else if(q.dress)extra=' 換好衣服囉！';
+      fb.className='fb good';fb.innerHTML=`${capSVG}<span>${first?'⭐ ':''}答對了！${q.why}${extra}</span>`;beep(true);confetti(first?46:20);say('答對了！'+q.why);save();setTimeout(cb,2100);}
+    else{first=false;L.miss++;btn.classList.add('no','shake');btn.disabled=true;fb.className='fb bad';fb.innerHTML=`${capSVG}<span>沒關係，再看一次！${q.hint}</span>`;beep(false);say('沒關係，再看一次。'+q.hint);}
+  });}
+function done(st){
+  $('#sheet').hidden=true;S.done.add(st.id);if(S.mode==='story')S.stage++;S.busy=false;hintKey='';hud();save();
+  if(S.done.size>=STA.length){finish();return;}
+  if(S.mode==='story'){const g=STA[S.stage];setTimeout(()=>say(`下一站，走到${g.place}，找${g.staff}！`),300);}
+  else setTimeout(()=>say(`還有 ${STA.length-S.done.size} 站，繼續探險！`),300);}
+$('#recBtn').onclick=()=>{if(S.busy||!S.day)return;S.busy=true;
+  showCard(`<div class="who"><div class="av">📋</div><div><b>巡邏記錄卡</b><span>到三個地方讀溫度計，答對就會自動寫上去</span></div></div>${recHTML()}
+  <div class="actions"><button class="btn" id="closeRec">好，繼續探險</button></div>`);say('巡邏記錄卡：教室、大樹下、操場太陽下。');
+  $('#closeRec').onclick=()=>{$('#sheet').hidden=true;S.busy=false;};};
+function finish(){
+  setTime('放學','16:00',STA.length);clearSave();const max=STA.length*3;
+  const rows=STA.map(s=>{const L=S.log[s.id]||{q:0,first:0,miss:0};return `<tr><td>${s.place}</td><td>${L.first} / ${L.q}</td><td>${L.miss}</td></tr>`;}).join('');
+  $('#coverIn').innerHTML=`<div class="cert"><div class="hero">${MASCOT}</div><div style="font-size:14px;font-weight:900;color:#6b7d78">今天平安放學！${S.day.t} 度的一天</div>
+    <h2>溫度特勤隊員</h2><div class="st">${'⭐'.repeat(S.stars)}</div><div style="font-weight:900">${S.stars} / ${max} 顆星 · 溫度精靈 ${S.pets.length} / ${SPRITES.length} 隻</div>${recHTML()}</div>
+    <div class="spr" id="sprEnd"></div>
+    <details class="tlog"><summary>👩‍🏫 老師看：這次的紀錄</summary><table><tr><th>站</th><th>一次答對</th><th>答錯次數</th></tr>${rows}</table></details>
+    <button class="btn" id="again" style="font-size:20px;padding:14px">🔁 換個天氣再玩</button>`;
+  $('#cover').hidden=false;S.pets.forEach((w,i)=>spriteCanvas($('#sprEnd'),w.k,i));confetti(80);
+  say(`恭喜你平安放學！得到 ${S.stars} 顆星，還帶走 ${S.pets.length} 隻溫度精靈！`);beep(true,1);$('#again').onclick=()=>location.reload();}
+
+/* ================= 開始／接續 ================= */
+function seg(id,key){document.querySelectorAll(id+' .pick').forEach(b=>b.onclick=()=>{document.querySelectorAll(id+' .pick').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');S[key]=b.dataset.v;});}
+seg('#dayPick','dayK');seg('#modePick','mode');
+function tog(id,key,name){const b=$(id);b.onclick=()=>{S[key]=!S[key];b.setAttribute('aria-pressed',S[key]);b.textContent=name+(S[key]?' 開':' 關');if(key==='voice'&&!S.voice&&'speechSynthesis' in window)speechSynthesis.cancel();};}
+tog('#tgHint','hint','提示');tog('#tgVoice','voice','配音');
+$('#goalSay').onclick=()=>{const g=goals();if(!g.length)return;say(S.mode==='story'?`走到${g[0].place}，找${g[0].staff}`:`還有 ${g.length} 站，去找頭上發光的人`);};
+$('#autoWalk').onclick=()=>{const g=goals();if(!g.length)return;let best=null,bl=1e9;g.forEach(s=>{const pth=bfs([S.p.x,S.p.y],s.spot);if(pth&&pth.length<bl){bl=pth.length;best=s;}});if(best)goTo(...best.spot);};
+function temps(k,t){return k==='hot'?{room:t-4,shade:t-2,sun:t+4}:k==='cold'?{room:t+3,shade:t-1,sun:t+5}:{room:t,shade:t-1,sun:t+5};}
+function begin(){const m=modeOf(S.day.t),wx=$('#wx');wx.textContent=`${m.e} ${S.day.t}°C`;wx.style.background=m.c;
+  spawnNPCs();spawnSprites();$('#cover').hidden=true;hud();beep(true);}
+$('#startBtn').onclick=()=>{
+  const k=S.dayK==='rand'?pick(['cold','comfy','hot']):S.dayK,t=k==='cold'?pick([13,14,15,16]):k==='hot'?pick([30,31,32,33]):pick([21,22,23,24]);
+  S.day={k,t,temps:temps(k,t)};clearSave();begin();
+  say(S.mode==='story'?'溫度特勤隊出動！先找校門口的警衛伯伯！':'自由探險！去找頭上發光的人！');};
+const SV=load();
+if(SV&&SV.day&&SV.done&&SV.done.length<STA.length){const b=$('#resumeBtn');b.hidden=false;b.textContent=`▶ 繼續上次的探險（已完成 ${SV.done.length} / ${STA.length} 站）`;
+  b.onclick=()=>{Object.assign(S,{mode:SV.mode,day:SV.day,stage:SV.stage,done:new Set(SV.done),stars:SV.stars,outfit:SV.outfit,rec:SV.rec||{},log:SV.log||{}});
+    S.p.x=S.p.fx=SV.pos[0];S.p.y=S.p.fy=SV.pos[1];begin();
+    (SV.pets||[]).forEach(i=>{const w=WILD[i];if(w){w.caught=true;S.pets.push(w);}});
+    const last=STA.filter(s=>S.done.has(s.id)).pop();if(last)setTime(last.period,last.time,STA.indexOf(last));hud();say('歡迎回來！繼續探險！');};}
+resize();hud();requestAnimationFrame(loop);
+window.__camp={S,STA,openStation,goTo,finish};
+</script>
