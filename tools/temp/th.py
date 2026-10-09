@@ -60,3 +60,27 @@ if __name__ == '__main__':
         th(v, f'{out}/z_{v}_mark.png', lo=0, hi=40, mark=m)
         th(v, f'{out}/z_{v}_count.png', lo=0, hi=40, mark=m, count=True)
     print('ok')
+
+def thh(value, path, lo=0, hi=60, W=1600, H=400, scale=2):
+    """橫的溫度計（給搶答遊戲的寬照片框用）"""
+    s = scale; W2, H2 = W * s, H * s
+    im = Image.new('RGB', (W2, H2), (247, 243, 234)); d = ImageDraw.Draw(im)
+    cy = 150 * s; x0 = 150 * s; x1 = (W - 60) * s
+    xl, xh = x0 + 40 * s, x1 - 50 * s
+    xo = lambda t: xl + (t - lo) * (xh - xl) / (hi - lo)
+    d.rounded_rectangle([x0, cy - 40 * s, x1, cy + 40 * s], radius=40 * s, fill=(252, 254, 255), outline=(138, 160, 173), width=5 * s)
+    f = ImageFont.truetype(FONT, 64 * s)
+    for t in range(lo, hi + 1):
+        x = xo(t); L = 56 if t % 10 == 0 else 36 if t % 5 == 0 else 22
+        d.line([x, cy + 40 * s, x, cy + (40 + L) * s], fill=INK, width=(6 if t % 10 == 0 else 3) * s)
+        if t % 10 == 0:
+            d.text((x, cy + 110 * s), str(t), font=f, fill=INK, anchor='mt')
+    x = xo(value)
+    d.rounded_rectangle([x0 - 20 * s, cy - 14 * s, x, cy + 14 * s], radius=14 * s, fill=RED)
+    d.ellipse([x0 - 120 * s, cy - 62 * s, x0 + 4 * s, cy + 62 * s], fill=RED, outline=(138, 160, 173), width=5 * s)
+    d.text((x1 + 10 * s, cy - 50 * s), '°C', font=ImageFont.truetype(FONT, 40 * s), fill=(91, 102, 115), anchor='rs')
+    im = im.resize((W, H), Image.LANCZOS); im.save(path, quality=90); return path
+
+if __name__ == '__main__':
+    for v in (33, 18, 26, 52, 12, 45):
+        thh(v, f'{out}/h_{v}.jpg')

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#efe9dd">
+<title>溫度環島・搶答</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--paper:#efe9dd;--paper2:#f7f3ea;--ink:#1f2a37;--soft:#5b6673;--line:#d8cfbf;--red:#c8372d;--red2:#f3d6d2;--blue:#1f5fa8;--blue2:#d3e1f2;--gold:#d99a22;
+    --serif:"Noto Serif TC","Songti TC",serif;--sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--sans);color:var(--ink);min-height:100vh;background:var(--paper);
+    background-image:radial-gradient(rgba(120,100,70,.06) 1px,transparent 1px);background-size:5px 5px;
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+  button{font-family:inherit;touch-action:manipulation}
+  .fixbtn{position:fixed;top:12px;z-index:50;background:var(--paper2);font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;border:2px solid var(--ink);color:var(--ink)}
+  .home{left:12px}.menu{right:12px}
+  .wrap{max-width:1400px;margin:0 auto;padding:56px 18px 12px}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:10px;padding:0 4px}
+  h1{font-family:var(--serif);font-weight:900;font-size:clamp(30px,4vw,46px);margin:0;letter-spacing:.06em}
+  h1 small{display:block;font-family:var(--sans);font-size:16px;font-weight:700;color:var(--soft);letter-spacing:0;margin-top:4px}
+  .tickets{display:flex;gap:12px}
+  .ticket{position:relative;min-width:170px;padding:10px 18px 10px 22px;border-radius:10px;color:#fff;display:flex;align-items:center;gap:14px;
+    -webkit-mask:radial-gradient(circle 8px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 8px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+            mask:radial-gradient(circle 8px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 8px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
+  .ticket.r{background:var(--red)}.ticket.b{background:var(--blue)}
+  .ticket .tn{font-weight:900;font-size:18px;line-height:1.2}.ticket .tn small{display:block;font-size:12px;opacity:.8;font-weight:700}
+  .ticket .ts{font-family:var(--serif);font-weight:900;font-size:40px;line-height:1;margin-left:auto}
+  .ticket .ts small{font-size:15px;margin-left:2px}
+  .ticket.bump{animation:bump .5s}
+  @keyframes bump{40%{transform:scale(1.08)}}
+  .main{display:grid;grid-template-columns:minmax(300px,.82fr) 1.18fr;gap:22px;align-items:start}
+  @media(min-width:921px){.wrap{padding-right:84px}}
+  @media(max-width:920px){.main{grid-template-columns:1fr}.mapbox{width:100%}.mapbox svg{max-height:none}}
+  @media(max-height:820px){h1 small{display:none}}
+  .mapbox{background:#fff;padding:10px;border-radius:6px;box-shadow:0 1px 0 #cbbfa9,0 14px 30px rgba(60,45,20,.18);position:relative}
+  .mapbox svg{display:block;width:100%;height:auto;max-height:calc(100vh - 190px);border-radius:3px;background:#1d4a6b}
+  .mapbox{justify-self:center;width:min(100%,calc((100vh - 190px) * .75 + 20px))}
+  .mapcap{display:flex;justify-content:space-between;font-size:14px;color:var(--soft);font-weight:700;padding:8px 4px 0}
+  .city text{font-family:var(--serif);font-weight:900;font-size:21px;paint-order:stroke;stroke:#fffaf0;stroke-width:6px;fill:var(--ink)}
+  .city .dot{fill:#fffaf0;stroke:var(--ink);stroke-width:3}
+  .city .ring{fill:none;stroke:none}
+  .city.r .dot{fill:var(--red);stroke:#fff}.city.b .dot{fill:var(--blue);stroke:#fff}
+  .city.now .ring{stroke:var(--gold);stroke-width:4;animation:ring 1.4s infinite;transform-box:fill-box;transform-origin:center}
+  @keyframes ring{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.8);opacity:0}}
+  .flag{transform-box:fill-box;transform-origin:50% 100%;animation:flagin .5s cubic-bezier(.2,1.6,.4,1)}
+  @keyframes flagin{from{transform:scale(0)}to{transform:scale(1)}}
+  .panel{background:var(--paper2);border:2px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 10px 26px rgba(60,45,20,.12);transition:border-color .3s,box-shadow .3s}
+  .panel.r{border-color:var(--red);box-shadow:0 0 0 4px var(--red2),0 10px 26px rgba(60,45,20,.12)}
+  .panel.b{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue2),0 10px 26px rgba(60,45,20,.12)}
+  .panel.all{border-color:var(--gold);box-shadow:0 0 0 4px #f6e6c4,0 10px 26px rgba(60,45,20,.12)}
+  .post{position:relative;background:#fff;padding:10px 10px 12px;border-radius:4px;box-shadow:0 1px 0 #cbbfa9,0 8px 18px rgba(60,45,20,.15);transform:rotate(-.6deg)}
+  .post img{display:block;width:100%;height:clamp(140px,calc(100vh - 600px),380px);object-fit:cover;border-radius:2px;background:#ddd}
+  .post .place{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;font-weight:900}
+  .post .place b{font-family:var(--serif);font-size:22px}.post .place span{font-size:15px;color:var(--soft)}
+  .pm{position:absolute;right:22px;top:18px;width:86px;height:86px;border-radius:50%;border:3px solid rgba(200,55,45,.85);color:rgba(200,55,45,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-family:var(--serif);font-weight:900;transform:rotate(-12deg);background:rgba(255,255,255,.6);line-height:1.15;text-align:center}
+  .pm b{font-size:20px}.pm small{font-size:12px}
+  .q{font-size:clamp(22px,2.3vw,29px);font-weight:900;line-height:1.4;margin:12px 2px 10px}
+  .opts{display:grid;gap:12px}
+  .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 18px;font-size:clamp(19px,2vw,24px);font-weight:800;color:var(--ink);cursor:pointer;min-height:62px;transition:transform .12s,border-color .2s,background .2s,opacity .2s}
+  .opt .k{flex:none;width:40px;height:40px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:20px}
+  .opt:active{transform:scale(.98)}
+  .opts.off .opt{opacity:.5;pointer-events:none}
+  .opt.ok{border-color:#2f8a4c;background:#e3f3e6;opacity:1}.opt.ok .k{background:#2f8a4c;border-color:#2f8a4c;color:#fff}
+  .opt.no{border-color:var(--red);background:#fbe9e7;animation:shake .35s}
+  .opt.used{opacity:.35;pointer-events:none}
+  @keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+  .buzz{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .bz{border:none;border-radius:14px;padding:18px 10px;font-size:clamp(20px,2.2vw,26px);font-weight:900;color:#fff;cursor:pointer;min-height:70px;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+  .bz:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+  .bz.r{background:var(--red)}.bz.b{background:var(--blue)}
+  .bz[disabled]{opacity:.3;pointer-events:none}
+  .status{font-weight:900;font-size:20px;color:var(--soft);flex:1}
+  .status.r{color:var(--red)}.status.b{color:var(--blue)}.status.all{color:#9a6a10}
+  .tools{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center}
+  .tool{background:transparent;border:2px solid var(--ink);color:var(--ink);border-radius:999px;padding:9px 18px;font-weight:900;font-size:17px;cursor:pointer;min-height:46px}
+  .hint{display:none;margin-top:10px;background:#fff7e0;border-left:5px solid var(--gold);padding:10px 14px;font-weight:800;font-size:19px;line-height:1.6;border-radius:4px}
+  .hint.show{display:block}
+  .explain{display:none;position:absolute;left:18px;right:18px;bottom:52px;background:rgba(255,255,255,.95);border:2px solid var(--ink);border-radius:10px;padding:10px 14px;font-size:clamp(18px,1.8vw,22px);font-weight:800;line-height:1.5;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+  .explain.show{display:block;animation:rise .35s}
+  .explain .term{display:inline-block;background:var(--ink);color:#fff;border-radius:6px;padding:2px 10px;font-size:15px;margin-right:8px;vertical-align:2px}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}}
+  .go{display:none;width:100%;margin-top:12px;min-height:70px;border:none;border-radius:14px;padding:18px;font-size:clamp(20px,2.2vw,26px);font-weight:900;background:var(--ink);color:#fff;cursor:pointer;min-height:70px}
+  .go.show{display:block}
+  .cover{position:fixed;inset:0;z-index:60;background:rgba(239,233,221,.97);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+  .cover.hide{display:none}
+  .cbox{max-width:780px;width:100%;text-align:center}
+  .cbox h2{font-family:var(--serif);font-weight:900;font-size:clamp(36px,5.5vw,64px);margin:0;letter-spacing:.1em}
+  .cbox p{font-size:21px;font-weight:700;color:var(--soft);margin:10px 0 22px;line-height:1.6}
+  .cbox .big{border:none;border-radius:16px;background:var(--ink);color:#fff;font-size:28px;font-weight:900;padding:18px 60px;cursor:pointer;min-height:76px}
+  .route{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:0 0 24px;font-family:var(--serif);font-weight:900;font-size:19px;color:var(--ink)}
+  .route i{font-style:normal;color:#b9ae9a}
+  .result{display:flex;gap:14px;justify-content:center;margin:18px 0}
+  .postgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:8px 0 24px}
+  .pg{background:#fff;padding:5px 5px 6px;border-radius:3px;box-shadow:0 4px 10px rgba(60,45,20,.15);border-top:6px solid #bbb;font-weight:900;font-size:14px}
+  .pg img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;margin-bottom:4px}
+  .pg.r{border-top-color:var(--red)}.pg.b{border-top-color:var(--blue)}
+  @media(max-width:600px){.postgrid{grid-template-columns:repeat(2,1fr)}.tickets{width:100%}.ticket{flex:1;min-width:0}}
+</style>
+</head>
+<body>
+<a class="fixbtn home" href="/light/" onclick="if(history.length>1){history.back();return false;}">⬅ 返回</a>
+<a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
+<div class="wrap">
+  <header>
+    <h1>溫度環島<small>搶到、答對，這一站就變成你們隊的顏色</small></h1>
+    <div class="tickets">
+      <div class="ticket r" id="tkR"><div class="tn">紅隊<small>RED EXPRESS</small></div><div class="ts"><span id="sR">0</span><small>站</small></div></div>
+      <div class="ticket b" id="tkB"><div class="tn">藍隊<small>BLUE EXPRESS</small></div><div class="ts"><span id="sB">0</span><small>站</small></div></div>
+    </div>
+  </header>
+  <div class="main">
+    <div class="mapbox">
+      <svg id="map" viewBox="0 0 600 800">
+        <image href="img/taiwan-map.jpg" x="0" y="0" width="600" height="800" preserveAspectRatio="none"/>
+        <g id="rails"></g><g id="cities"></g><g id="trainG"></g>
+      </svg>
+      <div class="mapcap"><span id="leg">從竹東出發，順時針環島</span><span id="cnt">第 1 / 10 站</span></div>
+    </div>
+    <div class="panel" id="panel">
+      <div class="post"><img id="photo" src="" alt=""><div class="place"><b id="place"></b><span id="placeSub"></span></div><div class="pm" id="pm"></div><div class="explain" id="explain"></div></div>
+      <div class="q" id="q"></div>
+      <div class="opts off" id="opts"></div>
+      <div class="buzz" id="buzz"><button class="bz r" id="bzR">紅隊搶答</button><button class="bz b" id="bzB">藍隊搶答</button></div>
+      <div class="tools"><div class="status" id="status"></div><button class="tool" id="hintBtn">💡 提示</button><button class="tool" id="allBtn">全班一起答</button></div>
+      <div class="hint" id="hint"></div>
+      <button class="go" id="go"></button>
+    </div>
+  </div>
+</div>
+
+<div class="cover" id="start"><div class="cbox">
+  <h2>溫度環島</h2>
+  <p>小火車從竹東出發，繞台灣一圈。<br>每一站都是溫度特勤隊的任務——搶到、答對，這一站就是你們隊的！</p>
+  <div class="route" id="routeTxt"></div>
+  <button class="big" id="startBtn">出發</button>
+</div></div>
+<div class="cover hide" id="end"><div class="cbox">
+  <h2 id="endT">回到竹東！</h2>
+  <div class="result" id="endScore"></div>
+  <div class="postgrid" id="postgrid"></div>
+  <button class="big" id="againBtn">再環島一次</button>
+</div></div>
+
+<script src="fx.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const PH="../temp/img/",TW="../light-color/img/tw/";
+const C=[
+ {n:"新竹・竹東",x:338,y:182,pc:"hsinchu",img:"t-hot.jpg",sub:"竹東溪畔",q:"溫度計放進熱水，紅線會？",o:["往上爬", "往下掉"],a:0,
+  h:"熱的時候，紅線會跑到大數字那邊還是小數字那邊？",e:"越<b>熱</b>，紅線<b>往上爬</b>；越冷，紅線往下掉。",t:"溫度計"},
+ {n:"台中",x:277,y:284,pc:"taichung",img:"forehead.jpg",sub:"早上進校門",q:"用額溫槍量體溫之前，要先？",o:["撥開瀏海", "戴上帽子"],a:0,
+  h:"額溫槍要量的是哪裡？",e:"額溫槍量<b>額頭</b>，要先<b>撥開瀏海</b>才量得準。",t:"額溫槍"},
+ {n:"嘉義・阿里山",x:300,y:419,pc:"alishan",img:"th/h_33.jpg",sub:"森林小火車",q:"這支溫度計，紅線停在幾度？",o:["33 度", "43 度"],a:0,
+  h:"紅線頂端下面最近的大數字是 30，再往上數。",e:"先找 <b>30</b>，再往上數 3 格：<b>33 度</b>。",t:"讀溫度計"},
+ {n:"台南",x:186,y:529,pc:"tainan",img:"gun.jpg",sub:"古蹟巡禮",q:"額溫槍螢幕寫 36.8，大數字是？",o:["36", "8"],a:0,
+  h:"看小數點前面就好。",e:"小數點<b>前面</b>是大數字：<b>36 度多</b>。",t:"額溫槍"},
+ {n:"高雄",x:203,y:605,pc:"kaohsiung",img:"hands-mid.jpg",sub:"港都",q:"右手剛泡過冰水，再摸普通的水，會覺得？",o:["熱熱的", "冰冰的"],a:0,
+  h:"想想三碗水實驗！",e:"泡過冰水的手覺得普通水<b>熱熱的</b>——<b>手會騙人</b>，要用溫度計量。",t:"手會騙人"},
+ {n:"台東・嘉明湖",x:368,y:578,pc:"taitung",img:"three-cups.jpg",sub:"山上的湖",q:"哪一杯水最熱？",o:["40 度的溫水", "3 度的冰水"],a:0,
+  h:"數字大的比較熱。",e:"數字越<b>大</b>越熱：<b>40 度</b>比 3 度熱。",t:"比一比"},
+ {n:"花蓮・七星潭",x:455,y:320,pc:"hualien",img:"th/h_26.jpg",sub:"石頭海灘",q:"讀溫度計的時候，眼睛要？",o:["和紅線一樣高", "從很上面往下看"],a:0,
+  h:"眼睛太高或太低都會看錯喔。",e:"眼睛和紅線<b>一樣高、平平看</b>，才讀得準。",t:"讀溫度計"},
+ {n:"宜蘭",x:492,y:178,pc:"yilan",img:"bath.jpg",sub:"溫泉之鄉",q:"安全的洗澡水，大約幾度？",o:["大約 40 度", "大約 60 度"],a:0,
+  h:"60 度會怎麼樣？",e:"洗澡水大約 <b>40 度</b>；60 度會<b>燙傷</b>！先開冷水再開熱水。",t:"生活安全"},
+ {n:"台北",x:439,y:94,pc:"taipei",img:"sun.jpg",sub:"運動中心",q:"中午，太陽下和大樹下，哪裡比較熱？",o:["太陽下", "大樹下"],a:0,
+  h:"巡邏時哪一站的紅線最高？",e:"<b>太陽下</b>最熱；好熱就去樹蔭、多喝水。",t:"校園巡邏"},
+ {n:"桃園",x:372,y:128,pc:"taoyuan",img:"th/h_18.jpg",sub:"機場",q:"這支溫度計，紅線停在幾度？",o:["18 度", "28 度"],a:0,
+  h:"紅線頂端下面最近的大數字是 10。",e:"先找 <b>10</b>，再往上數 8 格：<b>18 度</b>。",t:"讀溫度計"}
+];
+const HOME={n:"竹東",x:338,y:182};
+/* ===== 音效 ===== */
+let AC=null;const ac=()=>{if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;};
+function tone(f,d,t0=0,v=.12,type="sine"){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.015);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.03);}
+function noise(d,t0=0,v=.08,f=800){const a=ac();if(!a)return;const b=a.createBuffer(1,Math.floor(a.sampleRate*d),a.sampleRate),c=b.getChannelData(0);for(let i=0;i<c.length;i++)c[i]=(Math.random()*2-1)*(1-i/c.length);const s=a.createBufferSource();s.buffer=b;const fl=a.createBiquadFilter();fl.type="bandpass";fl.frequency.value=f;const g=a.createGain();g.gain.value=v;s.connect(fl);fl.connect(g);g.connect(a.destination);s.start(a.currentTime+t0);}
+const SND={
+  tap:()=>tone(900,.06,0,.06,"triangle"),
+  buzz:t=>{const f=t==="r"?523:t==="b"?659:587;tone(f,.18,0,.12,"square");tone(f*1.5,.25,.12,.1,"square");},
+  ok:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.35,i*.08,.12,"triangle"));tone(1568,.5,.34,.06);},
+  no:()=>{tone(392,.16,0,.08,"triangle");tone(330,.28,.14,.08,"triangle");},
+  bell:()=>{tone(1319,.9,0,.08);tone(1760,.9,.02,.05);tone(1319,.9,.45,.07);},
+  stamp:()=>{noise(.12,0,.25,240);tone(95,.22,0,.3);},
+  whistle:()=>{tone(740,.55,0,.07,"triangle");tone(988,.55,.05,.06,"triangle");},
+  chug:n=>{for(let i=0;i<n;i++){noise(.07,i*.21,.07,500);tone(105,.07,i*.21,.05,"triangle");}},
+  fanfare:()=>{[[523,0],[659,.12],[784,.24],[1047,.4],[784,.58],[1047,.7]].forEach(([f,t])=>tone(f,.35,t,.12,"triangle"));}
+};
+/* ===== 地圖 ===== */
+const NS="http://www.w3.org/2000/svg";const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e;};
+const PTS=[...C,HOME];
+function legPath(i){
+  const a=PTS[i],b=PTS[i+1],p0=i===0?C[9]:PTS[i-1],p3=PTS[i+2]||C[1];
+  const c1={x:a.x+(b.x-p0.x)/6,y:a.y+(b.y-p0.y)/6},c2={x:b.x-(p3.x-a.x)/6,y:b.y-(p3.y-a.y)/6};
+  return `M${a.x} ${a.y}C${c1.x} ${c1.y} ${c2.x} ${c2.y} ${b.x} ${b.y}`;}
+const legs=[];
+(function draw(){
+  const R=$("rails");
+  for(let i=0;i<10;i++){const d=legPath(i);
+    el("path",{d,stroke:"rgba(0,0,0,.35)","stroke-width":11,fill:"none","stroke-linecap":"round"},R);
+    el("path",{d,stroke:"#fffaf0","stroke-width":7,fill:"none","stroke-linecap":"round"},R);
+    el("path",{d,stroke:"#3b3227","stroke-width":7,fill:"none","stroke-dasharray":"2 9"},R);
+    const done=el("path",{d,stroke:"#d99a22","stroke-width":5,fill:"none","stroke-linecap":"round",opacity:0},R);
+    legs.push({p:el("path",{d,fill:"none",stroke:"none"},R),done});}
+  const G=$("cities");
+  C.forEach((c,i)=>{const g=el("g",{class:"city",id:"c"+i},G);const left=c.x<330||i===9;
+    el("circle",{class:"ring",cx:c.x,cy:c.y,r:16},g);el("circle",{class:"dot",cx:c.x,cy:c.y,r:11},g);
+    const tx=el("text",{x:left?c.x-18:c.x+18,y:c.y+7,"text-anchor":left?"end":"start"},g);tx.textContent=c.n.replace("・","·");});
+  const T=el("g",{id:"train"},$("trainG"));
+  const car=x=>{el("rect",{x:x-15,y:-8,width:30,height:16,rx:6,fill:"#f4efe4",stroke:"#2b2118","stroke-width":2},T);el("rect",{x:x-11,y:-3,width:22,height:6,rx:2,fill:"#24313d"},T);};
+  car(-34);car(-1);el("rect",{x:14,y:-9,width:24,height:18,rx:8,fill:"#e0702b",stroke:"#2b2118","stroke-width":2},T);el("rect",{x:17,y:-2,width:18,height:4,fill:"#fff"},T);
+})();
+function placeTrain(p,ang){$("train").setAttribute("transform",`translate(${p.x},${p.y}) rotate(${ang}) scale(.9)`);}
+function puff(p){const s=el("circle",{cx:p.x,cy:p.y,r:5,fill:"#fff",opacity:.8},$("trainG"));let k=0;const iv=setInterval(()=>{k+=.06;s.setAttribute("r",5+k*16);s.setAttribute("opacity",Math.max(0,.8*(1-k)));s.setAttribute("cy",p.y-k*18);if(k>=1){clearInterval(iv);s.remove();}},30);}
+function drive(i,done){const L=legs[i],len=L.p.getTotalLength();SND.whistle();SND.chug(10);let t0=null;const dur=2300;
+  L.done.setAttribute("opacity",1);L.done.setAttribute("stroke-dasharray",len);L.done.setAttribute("stroke-dashoffset",len);
+  function f(ts){if(!t0)t0=ts;const k=Math.min(1,(ts-t0)/dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,s=e*len;
+    const p=L.p.getPointAtLength(s),q=L.p.getPointAtLength(Math.min(len,s+1.5)),ang=Math.atan2(q.y-p.y,q.x-p.x)*180/Math.PI;placeTrain(p,ang);
+    L.done.setAttribute("stroke-dashoffset",len-s);if(Math.random()<.2)puff(p);
+    if(k<1)requestAnimationFrame(f);else{SND.bell();done&&done();}}
+  requestAnimationFrame(f);}
+/* ===== 遊戲 ===== */
+let idx=0,owner=Array(10).fill(null),team=null,tried=new Set(),locked=false;
+const NAME={r:"紅隊",b:"藍隊",all:"全班"};
+function setCity(){C.forEach((c,i)=>$("c"+i).setAttribute("class","city"+(owner[i]?" "+owner[i]:"")+(i===idx?" now":"")));}
+function score(){$("sR").textContent=owner.filter(o=>o==="r").length;$("sB").textContent=owner.filter(o=>o==="b").length;}
+function status(t,cls){$("status").className="status"+(cls?" "+cls:"");$("status").textContent=t;}
+function show(){
+  const c=C[idx];locked=false;team=null;tried=new Set();
+  $("photo").src=PH+c.img;$("photo").style.objectFit=/\.png$/.test(c.img)?"contain":"";$("photo").style.background=/\.png$/.test(c.img)?"#f7f3ea":"";$("place").textContent=c.n;$("placeSub").textContent=c.sub;
+  $("pm").innerHTML=`<small>第 ${idx+1} 站</small><b>${c.n.split("・")[0]}</b><small>溫度環島</small>`;
+  $("q").textContent=c.q;$("cnt").textContent=`第 ${idx+1} / 10 站`;$("leg").textContent=idx?`抵達 ${c.n}`:"從竹東出發，順時針環島";
+  const order=c.o.map((t,i)=>({t,i})).sort(()=>Math.random()-.5);
+  $("opts").innerHTML=order.map((o,k)=>`<button class="opt" data-i="${o.i}"><span class="k">${"AB"[k]}</span><span>${o.t}</span></button>`).join("");
+  $("opts").className="opts off";$("opts").querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b));
+  $("bzR").disabled=$("bzB").disabled=false;$("buzz").style.display="";$("allBtn").style.display="";$("panel").className="panel";
+  status("哪一隊先舉手？點那一隊。");
+  $("hint").classList.remove("show");$("hint").innerHTML="💡 "+c.h;$("explain").classList.remove("show");$("go").classList.remove("show");
+  setCity();
+}
+function choose(t){if(locked||team)return;team=t;SND.buzz(t);$("panel").className="panel "+t;$("opts").className="opts";
+  status(NAME[t]+"作答中……",t);$("bzR").disabled=$("bzB").disabled=true;$("allBtn").style.display="none";}
+function pick(b){if(locked||!team)return;const c=C[idx];
+  if(+b.dataset.i===c.a){locked=true;b.classList.add("ok");SND.ok();
+    if(team==="r"||team==="b"){owner[idx]=team;score();const tk=$(team==="r"?"tkR":"tkB");tk.classList.remove("bump");void tk.offsetWidth;tk.classList.add("bump");
+      const t=team;setTimeout(()=>{SND.stamp();setCity();plant(idx,t);},350);}
+    try{const r=b.getBoundingClientRect();FX.confetti(90,r.left+r.width/2,r.top);}catch(e){}
+    status(team==="all"?"全班答對！":NAME[team]+"拿下這一站！",team);
+    finish();}
+  else{b.classList.add("no");b.classList.add("used");SND.no();tried.add(team);
+    const other=team==="r"?"b":team==="b"?"r":null;
+    if(other&&!tried.has(other)){team=other;$("panel").className="panel "+other;status(`可惜！換${NAME[other]}答`,other);}
+    else{locked=true;const right=[...$("opts").children].find(x=>+x.dataset.i===c.a);right.classList.add("ok");status("沒關係，答案在這裡");finish();}}
+}
+function plant(i,t){const c=C[i];const g=$("c"+i);const f=el("g",{class:"flag"},g);el("line",{x1:c.x,y1:c.y-10,x2:c.x,y2:c.y-42,stroke:"#2b2118","stroke-width":3},f);
+  el("path",{d:`M${c.x} ${c.y-42} L${c.x+24} ${c.y-34} L${c.x} ${c.y-26}Z`,fill:t==="r"?"#c8372d":"#1f5fa8",stroke:"#fff","stroke-width":1.5},f);}
+function finish(){const c=C[idx];$("opts").querySelectorAll(".opt").forEach(b=>b.onclick=null);$("buzz").style.display="none";$("allBtn").style.display="none";
+  $("explain").innerHTML=`<span class="term">${c.t}</span>${c.e}`;$("explain").classList.add("show");
+  $("go").textContent=idx<9?`開往 ${C[idx+1].n} →`:"開回竹東（終點）→";$("go").classList.add("show");}
+$("go").onclick=()=>{SND.tap();$("go").classList.remove("show");const from=idx;$("leg").textContent=from<9?`${C[from].n} → ${C[from+1].n}`:`${C[from].n} → 竹東`;
+  drive(from,()=>{if(from>=9)return finale();idx++;show();});};
+$("bzR").onclick=()=>choose("r");$("bzB").onclick=()=>choose("b");
+$("allBtn").onclick=()=>choose("all");
+$("hintBtn").onclick=()=>{SND.tap();$("hint").classList.toggle("show");};
+addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(k==="a")choose("r");if(k==="l")choose("b");if(k==="1"||k==="2"){const b=$("opts").children[+k-1];b&&b.onclick&&pick(b);}});
+function finale(){const r=owner.filter(o=>o==="r").length,b=owner.filter(o=>o==="b").length;
+  $("endT").textContent=r>b?"紅隊環島冠軍！":b>r?"藍隊環島冠軍！":"兩隊平手，都是冠軍！";
+  $("endScore").innerHTML=$("tkR").outerHTML.replace(' id="tkR"','')+$("tkB").outerHTML.replace(' id="tkB"','');
+  $("postgrid").innerHTML=C.map((c,i)=>`<div class="pg ${owner[i]||""}"><img src="${TW+c.pc}.jpg" alt="">${c.n}</div>`).join("");
+  $("end").classList.remove("hide");SND.fanfare();try{FX.confetti(220);FX.fireworks(2600);}catch(e){}}
+$("routeTxt").innerHTML=C.map(c=>c.n.split("・").pop()).concat(["竹東"]).join("<i>—</i>");
+$("startBtn").onclick=()=>{ac();SND.whistle();$("start").classList.add("hide");};
+$("againBtn").onclick=()=>{idx=0;owner=Array(10).fill(null);score();document.querySelectorAll(".flag").forEach(f=>f.remove());legs.forEach(l=>l.done.setAttribute("opacity",0));placeTrain(C[0],-30);$("end").classList.add("hide");show();};
+placeTrain(C[0],-30);show();
+</script>
+</body>
+</html>
