@@ -67,7 +67,7 @@ def render_slide(i, s, L):
         if s.get('band'):
             out.append(f'<div class="band{" warn" if s.get("warn") else ""}"{ff(n+1,"u","ding")}>{s["band"]}</div>')
     elif t == 'predict':
-        out.append(f'<div class="kick">{k or "先猜猜看"}</div><h2 style="max-width:1430px">{s["q"]}</h2>')
+        out.append(f'<div class="kick">{k or "先猜猜看"}</div><h2 style="max-width:1430px;font-size:{50 if len(s["q"])>26 else 58}px">{s["q"]}</h2>')
         ops = s['opts']; n = len(ops)
         w = 300 if n == 3 else 330
         left_w = n * w + (n - 1) * 26
@@ -77,21 +77,21 @@ def render_slide(i, s, L):
             out.append(f'<div class="op" id="o{i}_{j}" style="width:{w}px"{ff(1,"u","pop" if j==0 else None)}>{big}<span class="l"><span class="k">{"ABC"[j]}</span>{o[1]}</span></div>')
         out.append('</div>')
         out.append(f'<div class="ask"{ff(1,"u")} style="left:86px;top:{s.get("opt_top",300)+270}px">{s.get("ask","舉手投票：你選哪一個？")}</div>')
+        if s.get('pre'):   # 題目照片（猜之前就看得到）
+            p = s['pre']
+            out.append(f'<div class="ph"{ff(0,"r")} style="left:{left_w+150}px;top:250px;width:{1520-left_w-150}px;height:440px"><img src="{p}" alt=""></div>')
         ev = s.get('evidence')
         if ev:
             if ev[0] == 'img':
-                out.append(f'<div class="ph"{ff(2,"r","ok")} data-ok="o{i}_{s["ans"]}" style="left:{left_w+150}px;top:190px;width:{1520-left_w-150}px;height:470px"><img src="{ev[1]}" alt=""></div>')
+                out.append(f'<div class="ph"{ff(2,"r","ok")} data-ok="o{i}_{s["ans"]}" style="left:{left_w+150}px;top:250px;width:{1520-left_w-150}px;height:440px"><img src="{ev[1]}" alt=""></div>')
             elif ev[0] == 'th':
-                out.append(f'<div class="ph th"{ff(2,"r","ok")} data-ok="o{i}_{s["ans"]}" style="left:{left_w+190}px;top:150px;width:240px;height:640px"><img src="{ev[1]}" alt=""></div>')
+                out.append(f'<div class="ph th"{ff(2,"r","ok")} data-ok="o{i}_{s["ans"]}" style="left:{left_w+190}px;top:200px;width:220px;height:600px"><img src="{ev[1]}" alt=""></div>')
             elif ev[0] == 'lcd':
                 out.append(lcd(ev[1], f'left:{left_w+150}px;top:260px', None, 110, 2, 'r').replace('class="lcd"', f'class="lcd" data-ok="o{i}_{s["ans"]}" data-s="ok"', 1))
         else:
             out.append(f'<span{ff(2,"u","ok")} data-ok="o{i}_{s["ans"]}"></span>')
-        if s.get('pre'):   # 題目照片（猜之前就看得到）
-            p = s['pre']
-            out.append(f'<div class="ph"{ff(0,"r")} style="left:{left_w+150}px;top:190px;width:{1520-left_w-150}px;height:470px"><img src="{p}" alt=""></div>')
         if s.get('stamp'):
-            st = s['stamp']; out.append(f'<div class="stamp{(" "+st[1]) if len(st)>1 and st[1] else ""}"{ff(2,"stamp")} style="{st[2] if len(st)>2 else "left:"+str(left_w+400)+"px;top:600px"}">{st[0]}</div>')
+            st = s['stamp']; out.append(f'<div class="stamp{(" "+st[1]) if len(st)>1 and st[1] else ""}"{ff(2,"stamp")} style="{st[2] if len(st)>2 else "left:"+str(left_w+230)+"px;top:610px"}">{st[0]}</div>')
         if s.get('band'):
             out.append(f'<div class="band{" warn" if s.get("warn") else ""}"{ff(3,"u","ding")}>{s["band"]}</div>')
     elif t == 'steps':
@@ -101,7 +101,7 @@ def render_slide(i, s, L):
         for j, it in enumerate(s['items']):
             ic = f'<span class="ic">{it[1]}</span>' if isinstance(it, (list, tuple)) and len(it) > 1 else ''
             tx = it[0] if isinstance(it, (list, tuple)) else it
-            out.append(f'<div class="st" style="font-size:{s.get("fs",40)}px;width:{s.get("sw",760)}px"{ff(j+1,"l","pop")}><span class="no">{j+1}</span>{tx}{ic}</div>')
+            out.append(f'<div class="st" style="font-size:{s.get("fs",40)}px;width:{s.get("sw",760)}px"{ff(j+1,"l","pop")}><span class="no">{j+1}</span><span>{tx}</span>{ic}</div>')
         out.append('</div>')
         if s.get('img'):
             out.append(f'<div class="ph"{ff(0,"r")} style="left:{s.get("ix",900)}px;top:{s.get("iy",210)}px;width:{1520-s.get("ix",900)}px;height:{s.get("ih",470)}px"><img src="{s["img"]}" alt=""></div>')
@@ -134,10 +134,10 @@ def render_slide(i, s, L):
             out.append(f'<div class="ph th"{ff(j+1,"pop")} style="left:1000px;top:120px;width:260px;height:760px;background:var(--paper)"><img src="{im}" alt=""></div>')
         out.append('<div class="steps" style="left:86px;top:220px">')
         for j, it in enumerate(s['items']):
-            out.append(f'<div class="st" style="width:820px;font-size:38px"{ff(j+1,"l","pop")}><span class="no">{j+1}</span>{it}</div>')
+            out.append(f'<div class="st" style="width:820px;font-size:38px"{ff(j+1,"l","pop")}><span class="no">{j+1}</span><span>{it}</span></div>')
         out.append('</div>')
         n = len(s['items'])
-        out.append(f'<div class="stamp"{ff(n+1,"stamp","stamp")} style="left:1240px;top:430px">{s["answer"]}</div>')
+        out.append(f'<div class="stamp"{ff(n+1,"stamp","stamp")} style="left:1290px;top:250px">{s["answer"]}</div>')
     elif t == 'qa':
         out.append(f'<div class="kick">{k or "快問快答"}</div><h2>{s.get("title","看誰最快！")}</h2>')
         for j, it in enumerate(s['items']):
@@ -147,7 +147,8 @@ def render_slide(i, s, L):
             elif it.get('emoji'):
                 pic = f'<div class="pic" style="font-size:96px">{it["emoji"]}</div>'
             else:
-                pic = f'<div class="pic"><img src="{it["img"]}" class="{"ct" if it.get("contain") else ""}" alt=""></div>'
+                wide = 'style="width:440px"' if '/h_' in it['img'] else ''
+                pic = f'<div class="pic" {wide}><img src="{it["img"]}" class="{"ct" if it.get("contain") else ""}" alt=""></div>'
             out.append(f'<div class="qa"{ff(2*j+1,"l","pop")} style="top:{top}px">{pic}<div class="q">{it["q"]}<small>{it.get("sub","")}</small></div>'
                        f'<div class="a {it.get("c","")}"{ff(2*j+2,"stamp","ok")}>{it["a"]}</div></div>')
     elif t == 'lcdrule':
@@ -176,7 +177,7 @@ def render_slide(i, s, L):
         lo, hi = s.get('lo', 0), s.get('hi', 60)
         for j, (nm, v, em) in enumerate(s['items']):
             x = 120 + (v - lo) / (hi - lo) * 1360
-            out.append(f'<div class="pin"{ff(j+1,"d","pop")} style="left:{x:.0f}px;top:{s.get("ptop",300)}px"><div class="bub">{em} {nm}<b>{v}°</b></div><div class="stk"></div><div class="dot"></div></div>')
+            out.append(f'<div class="pin"{ff(j+1,"d","pop")} style="left:{x:.0f}px;top:{s.get("ptop",300)-(j%2)*150}px"><div class="bub">{em} {nm}<b>{v}°</b></div><div class="stk" style="height:{60+(j%2)*150}px"></div><div class="dot"></div></div>')
         if s.get('band'):
             out.append(f'<div class="band"{ff(len(s["items"])+1,"u","ding")}>{s["band"]}</div>')
     elif t == 'sum':

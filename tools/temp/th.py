@@ -82,5 +82,5 @@ def thh(value, path, lo=0, hi=60, W=1600, H=400, scale=2):
     im = im.resize((W, H), Image.LANCZOS); im.save(path, quality=90); return path
 
 if __name__ == '__main__':
-    for v in (33, 18, 26, 52, 12, 45):
+    for v in (33, 18, 26, 52, 12, 45, 40):
         thh(v, f'{out}/h_{v}.jpg')
