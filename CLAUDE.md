@@ -29,6 +29,7 @@
   - `main.js` 玩家（光光偵探 3D）、鏡頭、導覽、集章卡、放大鏡疊圖（第二支相機→render target→圓形 shader）、慢電腦自動降畫質。
   - `missions.js` 每站 `{stand, face, tp, build, enter, update, exit}`；水裡「看起來」用 `splitWater`（clipping plane 上下分開，水下那段 y 壓扁＝在水面折一下）。
   - 測試：雲端 swiftshader 一格要 2–5 秒，截圖前設 `window.__dtScale=30`；`__town.startRoute('lens'); __town.goStop(i)` 直接跳站。
+- **🕵️ 放大鏡偵探・竹東國中大搜查 `light-lens/detective.html`**（L1 20 分鐘遊戲，10/12 甲班第 7 節）：同一張竹東國中手繪地圖＋一支可拖曳的放大鏡（鏡片裡把地圖重畫一次：放大／縮小／負倍率＝倒過來）。三幕：① 找 6 個超小線索（瓢蟲、司令台小紙條、跑道硬幣、警衛室鑰匙、餐廳螞蟻、勤學樓蝸牛；停在線索上 0.45 秒算找到）② 神秘鏡片 4 片，看變大／變小選「中間厚／中間薄」③ 滑桿拿遠：近變大→中間模糊→遠倒過來，接開場投影魔術。光光偵探（koko.js）帶路、配音預設關（老師講）、上方幕次可直接點。原始碼 `tools/lens/detective_src.html`，`python3 tools/lens/detective_build.py`（`--artifact 路徑` 產生內嵌版）。**地圖與人物共用 `tools/temp/campus_src.html` 的 MAPDATA／MAPDRAW／PEOPLE 三段**，改地圖兩個遊戲都要重 build。測試掛勾 `window.__lens`（aim(i)、startAct(i)、setDist(d)）。
 - **折射環島搶答** `games/light-refract-quiz.html`：真實台灣地形圖＋小火車沿鐵路開、紅藍兩隊搶答佔站（插旗）、答錯換另一隊、提示鈕、全班一起答、結算明信片。紙張＋墨色風（不要螢光霓虹、不要滿版表情符號），觸控大按鈕，1366×768 一頁不捲動。
 - 共用：`games/fx.js`（音效、主選單按鈕、底部導覽列）、`games/checkin.html`（心情打卡／謝幕）
 
@@ -78,6 +79,7 @@
 - 做完一定自己截圖驗證再交給老師。
 
 ## 目前進度（2026-10-09）
+- 10/9 新增「放大鏡偵探」`light-lens/detective.html`，放進主選單 L1（10/12 甲班第 7 節）第 3 步、透鏡首頁第1節 ③。
 - 10/9 新增「溫度探險校園」`temp/campus.html`，放進主選單 T5（甲 10/28、乙 10/30）第 4 步，溫度首頁互動教具第 5 格。
 - 10/9 完成溫度特勤隊 T1–T6（網頁簡報、PPT、講義＋學習單、互動教具、搶答、檢核表）並排進主選單。待老師確認 10/19–10/30 的節次。
 - 10/2（五）甲班、乙班：只上到吸管實驗（R1 前半）。
