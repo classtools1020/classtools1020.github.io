@@ -13,7 +13,7 @@
     { id: 'mv', name: 'MV 劇場', icon: '🎵', note: '上課一起唱', color: '#8a7fc0', byType: 'mv' },
     { id: 'class', name: '開場與收心', icon: '🌿', note: '心情打卡、呼吸、謝幕', color: '#5f9ea0' },
     { id: 'print', name: '列印與 PPT', icon: '🖨️', note: '講義、學習單、教案、投影片', color: '#7b8fa6', byType: ['print', 'ppt'] },
-    { id: 'archive', name: '舊教材區', icon: '📦', note: '芎林時期與早期版本，網址都還能用', color: '#a08a6a' }
+    { id: 'archive', name: '舊教材區', icon: '📦', note: '以前的教材與早期版本，網址都還能用', color: '#a08a6a' }
   ];
 
   window.TYPES = {
@@ -122,7 +122,7 @@
   add('class', '開場與收心', 'breathe', 'tool', '光之呼吸站', '海浪聲・跟著呼吸', '/games/breathe.html');
 
   /* ===== 舊教材 ===== */
-  G = '芎林國中時期';
+  G = '以前的教材';
   add('archive', G, 'old-career', 'tool', '15 群科探索護照', '暑假生涯探索任務', '/career-passport.html');
   add('archive', G, 'old-mosaic', 'game', '馬賽克猜猜樂', '原住民飲食文化', '/games/mosaic-quiz.html');
   add('archive', G, 'old-triangle', 'game', '三角形闖關', '數學個別練習', '/haijun-triangle_2.html');
