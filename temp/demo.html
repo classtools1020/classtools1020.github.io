@@ -126,7 +126,7 @@ h1{margin:0;font-size:42px;letter-spacing:.04em}
   </div>
   <div id="cap"></div>
   <div id="ctrl"><button id="play">▶ 播放</button><button id="prev">⏮</button><button id="next">⏭</button><div id="bar"><div id="barF"></div></div></div>
-  <label id="auto"><input type="checkbox" id="autoC" checked> 每一步播完先停下來（老師講解再按 ▶）</label>
+  <label id="auto"><input type="checkbox" id="autoC" checked> 每一步播完先停下來（講解完，點一下畫面繼續）</label>
   <svg viewBox="0 0 230 300" class="mascot" style="left:1450px;top:604px;width:110px;height:144px;z-index:2" >
  <ellipse cx="115" cy="290" rx="70" ry="9" fill="#000" opacity=".12"/>
  <path d="M40 150 Q10 130 18 100" stroke="#1f2a37" stroke-width="10" fill="none" stroke-linecap="round"/>
@@ -249,6 +249,7 @@ $('prev').onclick=()=>{const ch=render(t);jump(t-CH[ch][0]>1.5?ch:ch-1);};
 document.querySelectorAll('.st').forEach(e=>e.onclick=()=>jump(+e.dataset.k));
 $('bar').onclick=e=>{const r=$('bar').getBoundingClientRect();t=cl((e.clientX-r.left)/r.width)*T_END;render(t);};
 $('cover').onclick=()=>{t=3.9;render(t);play();};
+$('scene').onclick=()=>playing?pause():play();$('scene').style.cursor='pointer';$('cap').onclick=$('scene').onclick;$('cap').style.cursor='pointer';
 addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'||e.key==='PageDown'||e.key==='ArrowRight'){e.preventDefault();playing?pause():play();}if(e.key==='ArrowLeft'||e.key==='PageUp')$('prev').onclick();});
 render(0);
 window.__demo={render,T_END,CH,SFX,seek:x=>{t=x;return render(x);}};
