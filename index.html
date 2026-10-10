@@ -179,6 +179,18 @@ h3.g small{font-family:var(--sans);font-size:13px;color:var(--ink3);font-weight:
 .dchip small{display:block;font-size:12px;font-weight:700;color:var(--ink2)}
 .dchip.past{color:var(--ink3);background:#f1eee5;box-shadow:none}
 .dchip.on{background:var(--mist-d);border-color:var(--mist-d);color:#fff}.dchip.on small{color:rgba(255,255,255,.85)}
+.sched{display:flex;flex-direction:column;gap:8px}
+.srow{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow)}
+.srow:hover{border-color:var(--mist)}
+.srow.past{background:#f1eee5;box-shadow:none;opacity:.75}
+.srow.now{border:2px solid var(--mist-d)}
+.sd{flex:none;width:118px;font-weight:900;font-size:15.5px}
+.sd em{display:block;font-style:normal;font-size:12px;color:#fff;background:var(--mist-d);border-radius:99px;padding:1px 8px;width:max-content;margin-top:3px}
+.sl{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
+.si{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px}
+.si .cls{font-size:12px;padding:2px 9px}.sp{font-size:13px;color:var(--ink2);font-weight:700}
+.sgo{font-size:24px;color:var(--ink3)}
+@media (max-width:560px){.srow{gap:10px;padding:10px 12px}.sd{width:auto;font-size:13.5px;white-space:nowrap}.si{font-size:14px}}
 .scrim{display:none}
 @media (max-width:960px){
   :root{--side:290px}
@@ -246,7 +258,7 @@ function buildMenu(){
     const n=s.id==='home'?'':`<span class="n">${itemsOf(s).length}</span>`;
     h+=`<button class="mi" data-go="${s.id}" style="--c:${s.color||'var(--mist)'}"><span class="ic">${s.icon}</span>${s.name}${n}</button>`;
     if(s.groups){h+=`<div class="sub" data-sub="${s.id}">`+s.groups.map((g,i)=>`<button data-go="${s.id}/${i}">${esc(g)}</button>`).join('')+`</div>`;}
-    if(s.id==='home')h+=`<button class="mi" data-go="fav"><span class="ic">⭐</span>我的收藏<span class="n" id="favn">${fav.length}</span></button>`;
+    if(s.id==='home')h+=`<button class="mi" data-go="schedule"><span class="ic">📆</span>全部課表</button><button class="mi" data-go="all"><span class="ic">📚</span>全部教材<span class="n">${C.length}</span></button><button class="mi" data-go="fav"><span class="ic">⭐</span>我的收藏<span class="n" id="favn">${fav.length}</span></button>`;
   });
   h+=`<div class="sep"></div><a class="mi ext" href="${L.sports.u}" target="_blank" rel="noopener"><span class="ic">${L.sports.icon}</span>${L.sports.name}</a>`;
   $('#menu').innerHTML=h;
@@ -321,6 +333,7 @@ function home(){
   setTimeout(scrollChip,50);
 }
 document.addEventListener('click',e=>{
+  const sr=e.target.closest('[data-sdi]');if(sr){di=+sr.dataset.sdi;location.hash='#/';return;}
   const dc=e.target.closest('[data-di]');if(dc){di=+dc.dataset.di;$('#todayBox').innerHTML=todayHTML();scrollChip();return;}
   const n=e.target.closest('[data-dd]');if(n){const v=+n.dataset.dd;if(v===0){di=Math.max(0,DATES.findIndex(d=>d>=TODAY));if(DATES[di]<TODAY)di=DATES.length-1;}else di=Math.min(DATES.length-1,Math.max(0,di+v));$('#todayBox').innerHTML=todayHTML();scrollChip();return;}
   const sp=e.target.closest('[data-seen]');if(sp){seen[sp.dataset.seen]=1;ls.set('seen-'+TODAY,seen);sp.classList.add('seen');sp.querySelector('.no').textContent='✓';}
@@ -346,6 +359,26 @@ function section(sec,gi){
     body+=(multi||gi==null&&groups.length>1?`<h3 class="g">${esc(g)} <small>${l.length} 項</small></h3>`:'')+grid(l,false);});
   $('#view').innerHTML=`<header class="head" style="--c:${sec.color}"><h1>${sec.icon} ${esc(gi!=null&&sec.groups?sec.groups[gi]:sec.name)}</h1><p>${esc(gi!=null?sec.name:sec.note||'')}</p>${jump}</header>${chips}${body||'<div class="empty">這一類還沒有東西</div>'}`;
 }
+function scheduleView(){
+  markMenu('schedule');crumbs([['🏡 首頁','#/'],['📆 全部課表','#/schedule']]);
+  if(!LG){$('#view').innerHTML='<div class="empty">課表讀不到，請重新整理。</div>';return;}
+  let h=`<header class="head" style="--c:var(--mist)"><h1>📆 全部課表</h1><p>每一天上什麼一次看完，點一列就打開那天的步驟</p></header>`;
+  let lastM='';
+  h+='<div class="sched">';
+  DATES.forEach((d,i)=>{const m=+d.split('-')[1];if(m!==lastM){h+=`<h3 class="g">${m} 月</h3>`;lastM=m;}
+    const items=LG.SCHED.filter(x=>x.d===d);
+    h+=`<button class="srow${d<TODAY?' past':''}${d===TODAY?' now':''}" data-sdi="${i}"><span class="sd">${fmtD(d)}${d===TODAY?'<em>今天</em>':''}</span><span class="sl">${items.map(x=>{const Ls=LG.LESSONS[x.l]||{name:x.l};return `<span class="si"><span class="cls${x.c==='乙班'?' b':''}">${esc(x.c)}</span><span class="sp">${esc(x.p.split(' ')[0])}</span><b>${esc(Ls.name)}</b></span>`;}).join('')}</span><span class="sgo">›</span></button>`;});
+  h+='</div>';$('#view').innerHTML=h;
+  const now=document.querySelector('.srow.now')||[...document.querySelectorAll('.srow')].find(r=>!r.classList.contains('past'));if(now)setTimeout(()=>now.scrollIntoView({block:'center'}),30);
+}
+function allView(){
+  markMenu('all');crumbs([['🏡 首頁','#/'],['📚 全部教材','#/all']]);
+  let h=`<header class="head" style="--c:var(--leaf)"><h1>📚 全部教材</h1><p>網站裡所有東西，依分類排好（共 ${C.length} 項）</p></header>`;
+  S.filter(x=>x.id!=='home'&&!x.byType).forEach(sec=>{const l=C.filter(i=>i.sec===sec.id);if(!l.length)return;
+    h+=`<h2 class="h">${sec.icon} ${esc(sec.name)} <small>${l.length} 項</small></h2>`;
+    [...new Set(l.map(i=>i.grp))].forEach(g=>{const gl=l.filter(i=>i.grp===g);h+=`<h3 class="g">${esc(g)} <small>${gl.length} 項</small></h3>`+grid(gl,false);});});
+  $('#view').innerHTML=h;
+}
 function favView(){
   markMenu('fav');crumbs([['🏡 首頁','#/'],['⭐ 我的收藏','#/fav']]);
   const fv=fav.map(id=>C.find(i=>i.id===id)).filter(Boolean);
@@ -363,6 +396,8 @@ function route(){
   if(h.startsWith('search')){q?searchView(q):home();}
   else if(!h)home();
   else if(h==='fav')favView();
+  else if(h==='schedule')scheduleView();
+  else if(h==='all')allView();
   else{const [sid,g]=h.split('/');const sec=secOf(sid);sec?section(sec,g!=null&&g!==''?+g:null):home();}
   window.scrollTo(0,0);
 }
