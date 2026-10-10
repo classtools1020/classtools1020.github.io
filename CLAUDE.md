@@ -78,7 +78,8 @@
 ## 一條龍自動化工具箱（老師的要求：素材全部自己弄，不要叫老師下載、轉傳）
 | 需要 | 做法 |
 |---|---|
-| 真實感照片 | （workflow 會 commit 任何目的地資料夾）`mcp__Gamma__generate_image`（type: photo，16:9 用 banner）→ 等 completed 拿到 cdn.gamma.app 網址 → 加一行到 `tools/fetch-list.txt`（`目的地路徑 網址`）→ push。GitHub Actions `.github/workflows/fetch-images.yml` 會自動下載並 commit 進 repo → `git pull` 後用 Read 檢查照片。（雲端容器連不到 cdn.gamma.app，所以一定走這條） |
+| 高畫質生圖（優先） | **OpenAI gpt-image-1**：`python3 tools/img/gen.py 輸出.png photo|mix|anime "場景"`。金鑰**絕不進 repo**，只放雲端工作區 `/root/.openai_key`（新工作區沒有就請老師到 platform.openai.com/api-keys 開一把貼上）。風格由 Claude 決定：證據／判斷用 photo，封面／講義主視覺用 mix，溫暖故事偶爾 anime。 |
+| 真實感照片（備用） | （workflow 會 commit 任何目的地資料夾）`mcp__Gamma__generate_image`（type: photo，16:9 用 banner）→ 等 completed 拿到 cdn.gamma.app 網址 → 加一行到 `tools/fetch-list.txt`（`目的地路徑 網址`）→ push。GitHub Actions `.github/workflows/fetch-images.yml` 會自動下載並 commit 進 repo → `git pull` 後用 Read 檢查照片。（雲端容器連不到 cdn.gamma.app，所以一定走這條） |
 | 3D／立體場景 | three.js（`light-refract/vendor/three.module.min.js`），參考 `light-refract/news3d.js`；要截圖用 Playwright＋swiftshader |
 | 動畫 | 網頁用 SVG/CSS/requestAnimationFrame；PPT 用 python-pptx＋手寫 p:timing（參考 scratchpad 的 build.py 寫法：fly/zoom/fade/wipe） |
 | 音效 | Python numpy 合成（豎琴、頌缽、海浪…）→ ffmpeg 轉 mp3，參考 `games/sfx/breath/` |
