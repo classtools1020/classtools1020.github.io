@@ -35,6 +35,7 @@
   });
   G = '互動教具';
   add('temp', G, 'temp-bowls', 'tool', '三碗水', '手會騙人？冷熱感覺實驗', '/temp/bowls.html');
+  add('temp', G, 'temp-news', 'slide', '溫度新聞台', '3D 溫溫隊長播報：校園哪裡最熱？', '/temp/news.html');
   add('temp', G, 'temp-demo', 'tool', '額溫槍六步驟・示範影片', '動畫示範，每一步自動暫停', '/temp/demo.html', [['下載影片', '/temp/files/T2-demo.mp4']]);
   add('temp', G, 'temp-forehead', 'tool', '額溫槍出動', '六步驟練習＋讀大數字', '/temp/forehead.html', [['讀大數字考考你', '/temp/forehead.html#quiz']]);
   add('temp', G, 'temp-thermo', 'tool', '溫度計實驗室', '看紅線、一起數、三杯水記錄', '/temp/thermo.html#see', [['考考你', '/temp/thermo.html#quiz'], ['三杯水排排站', '/temp/thermo.html#record']]);

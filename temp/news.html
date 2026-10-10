@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>溫度新聞台｜溫度特勤隊</title>
+<style>
+:root{--ink:#1f2a37;--soft:#5b6673;--paper:#f4efe6;--red:#c8372d;--blue:#1f5fa8;--green:#2f8a4c;--gold:#ffcf2e;--line:#d8cfbf}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#1b1f24;overflow:hidden;font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#view{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1600px;height:900px;flex:none;background:var(--paper);overflow:hidden;transform-origin:center;cursor:pointer}
+#back,#menu{position:absolute;top:20px;z-index:40;font-family:inherit;font-weight:900;font-size:20px;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:8px 18px}
+#back{left:20px}#menu{right:20px}
+/* 新聞台框 */
+.bug{position:absolute;left:190px;top:22px;z-index:30;display:flex;align-items:center;gap:10px}
+.bug .live{background:var(--red);color:#fff;font-weight:900;font-size:20px;letter-spacing:.12em;padding:6px 14px;border-radius:8px;display:flex;align-items:center;gap:8px}
+.bug .live i{width:12px;height:12px;border-radius:50%;background:#fff;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+.bug .nm{background:var(--ink);color:#fff;font-weight:900;font-size:22px;padding:6px 16px;border-radius:8px;letter-spacing:.08em}
+.bug .sy{background:#fff;color:var(--soft);font-weight:900;font-size:16px;padding:6px 12px;border-radius:8px;border:2px solid var(--line)}
+#ticker{position:absolute;left:0;right:0;bottom:0;height:52px;background:var(--ink);color:#fff;z-index:30;display:flex;align-items:center;overflow:hidden;font-weight:900;font-size:22px}
+#ticker b{flex:none;background:var(--gold);color:var(--ink);height:100%;display:flex;align-items:center;padding:0 22px;letter-spacing:.1em}
+#ticker .run{white-space:nowrap;padding-left:100%;animation:run 38s linear infinite}
+@keyframes run{to{transform:translateX(-100%)}}
+.scene{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .5s}
+.scene.on{opacity:1;pointer-events:auto}
+.full{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.l3{position:absolute;left:60px;bottom:96px;right:60px;display:flex;flex-direction:column;gap:0;transform:translateX(-40px);opacity:0;transition:all .6s cubic-bezier(.2,.8,.2,1)}
+.l3.in{transform:none;opacity:1}
+.l3 .k{align-self:flex-start;background:var(--red);color:#fff;font-weight:900;font-size:24px;padding:6px 18px;border-radius:10px 10px 0 0;letter-spacing:.08em}
+.l3 .t{background:rgba(255,255,255,.96);font-size:46px;font-weight:900;padding:16px 26px;border-radius:0 14px 14px 14px;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.l3 .t small{display:block;font-size:26px;color:var(--soft);margin-top:4px}
+.ttl{position:absolute;left:80px;top:200px;max-width:760px}
+.ttl .k{display:inline-block;background:var(--red);color:#fff;font-weight:900;font-size:26px;padding:6px 18px;border-radius:99px;letter-spacing:.1em}
+.ttl h1{margin:16px 0 0;font-size:96px;letter-spacing:.06em;line-height:1.1;color:#fff;text-shadow:0 6px 24px rgba(0,0,0,.45)}
+.ttl p{font-size:34px;font-weight:900;color:#fff;text-shadow:0 4px 18px rgba(0,0,0,.5);margin:14px 0 0}
+.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,30,40,.75),rgba(20,30,40,.1) 60%)}
+.hd{position:absolute;left:80px;top:96px;font-size:50px;font-weight:900;letter-spacing:.04em}
+.hd small{display:block;font-size:26px;color:var(--soft);margin-top:4px}
+/* 猜一猜卡片 */
+.cards{position:absolute;left:80px;right:80px;top:230px;display:grid;grid-template-columns:repeat(3,1fr);gap:34px}
+.pc{background:#fff;border:4px solid var(--line);border-radius:26px;overflow:hidden;transition:transform .3s,border-color .3s,opacity .3s;box-shadow:0 16px 30px -18px rgba(0,0,0,.45)}
+.pc img{width:100%;height:270px;object-fit:cover;display:block}
+.pc .n{font-size:40px;font-weight:900;text-align:center;padding:16px}
+.pc .deg{font-size:64px;font-weight:900;text-align:center;color:var(--red);padding-bottom:16px;opacity:0;transform:scale(.6);transition:all .45s cubic-bezier(.3,1.5,.5,1)}
+.pc.show .deg{opacity:1;transform:none}
+.pc.win{border-color:var(--red);transform:translateY(-12px) scale(1.03)}
+.pc.dim{opacity:.55}
+.crown{position:absolute;top:-14px;right:16px;font-size:56px;opacity:0;transition:opacity .3s}
+.pc{position:relative}.pc.win .crown{opacity:1}
+/* 記者連線 */
+.rep{position:absolute;left:0;top:0;width:600px;height:848px;object-fit:cover}
+.spot{position:absolute;left:640px;top:110px;width:900px}
+.spot .ph{width:900px;height:380px;object-fit:cover;border-radius:24px;border:4px solid #fff;box-shadow:0 18px 40px -20px rgba(0,0,0,.6)}
+.spot .tag{position:absolute;left:18px;top:18px;background:var(--ink);color:#fff;font-weight:900;font-size:28px;padding:8px 18px;border-radius:12px}
+.spot .sy2{position:absolute;right:18px;top:18px;background:rgba(255,255,255,.9);font-weight:900;font-size:18px;padding:5px 12px;border-radius:10px;color:var(--soft)}
+.thm{margin-top:22px;background:#fff;border:4px solid var(--line);border-radius:24px;padding:14px 22px;display:flex;align-items:center;gap:22px}
+.thm img{width:520px;display:block}
+.thm .read{font-size:30px;font-weight:900;line-height:1.5}
+.thm .read b{display:block;font-size:84px;color:var(--red);line-height:1.1;opacity:0;transform:scale(.5);transition:all .45s cubic-bezier(.3,1.5,.5,1)}
+.thm .read b.in{opacity:1;transform:none}
+.thm .read .how{font-size:24px;color:var(--soft);opacity:0;transition:opacity .4s}
+.thm .read .how.in{opacity:1}
+/* 比一比 */
+.bars{position:absolute;left:120px;right:120px;top:250px;display:flex;align-items:flex-end;justify-content:space-around;height:470px}
+.bar{width:300px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.bar .v{font-size:56px;font-weight:900;color:var(--red)}
+.bar .col{width:150px;border-radius:20px 20px 8px 8px;background:linear-gradient(180deg,#ff7a5c,#c8372d);height:0;transition:height 1s cubic-bezier(.2,.8,.2,1)}
+.bar img{width:260px;height:120px;object-fit:cover;border-radius:16px;border:3px solid #fff;box-shadow:0 10px 20px -12px rgba(0,0,0,.5)}
+.bar .n{font-size:34px;font-weight:900}
+.say{position:absolute;right:90px;top:110px;font-size:44px;font-weight:900;background:#fff;border:4px solid var(--ink);border-radius:999px;padding:10px 36px;opacity:0;transition:opacity .4s}
+.say.in{opacity:1}
+/* 提醒 */
+.tips{position:absolute;left:640px;top:180px;display:flex;flex-direction:column;gap:22px}
+.tip{display:flex;align-items:center;gap:24px;background:#fff;border:4px solid var(--line);border-radius:26px;padding:14px 26px 14px 14px;width:860px;font-size:44px;font-weight:900;opacity:0;transform:translateX(60px);transition:all .5s cubic-bezier(.2,.8,.2,1)}
+.tip.in{opacity:1;transform:none}
+.tip img,.tip .em{width:170px;height:110px;object-fit:cover;border-radius:16px;flex:none}
+.tip .em{display:flex;align-items:center;justify-content:center;font-size:72px;background:#f7f3ea}
+/* 練習 */
+.q{position:absolute;left:80px;right:80px;top:120px}
+.q h2{margin:0 0 6px;font-size:50px}
+.q .lv{display:inline-block;font-size:24px;font-weight:900;padding:4px 14px;border-radius:99px;margin-right:12px;vertical-align:6px}
+.lv.b{background:#e8f0fa;color:var(--blue)}.lv.o{background:#ffe2c0;color:#a8560f}
+.opts{display:grid;gap:26px;margin-top:22px}
+.op{font-family:inherit;background:#fff;border:5px solid var(--line);border-radius:26px;padding:0;cursor:pointer;font-size:40px;font-weight:900;color:var(--ink);overflow:hidden;transition:transform .2s,border-color .2s,opacity .2s}
+.op img{width:100%;height:220px;object-fit:cover;display:block}
+.op span{display:block;padding:16px}
+.op.ok{border-color:var(--green);transform:scale(1.04);background:#ecf7ee}
+.op.no{opacity:.4}
+.op.txt{padding:34px 20px}
+.fb{margin-top:20px;font-size:38px;font-weight:900;min-height:56px}
+.fb.ok{color:var(--green)}.fb.no{color:#b2681a}
+/* 結尾 */
+.end{position:absolute;right:90px;top:220px;width:700px;text-align:center}
+.end h2{font-size:80px;margin:0}
+.end p{font-size:36px;font-weight:900;color:var(--soft)}
+.go{display:inline-block;margin-top:20px;font-size:40px;font-weight:900;background:var(--gold);color:var(--ink);text-decoration:none;border-radius:22px;padding:18px 36px;box-shadow:0 8px 0 #c79b0c}
+/* 導覽 */
+#nav{position:absolute;right:24px;bottom:66px;z-index:35;display:flex;gap:8px}
+#nav button{font-family:inherit;width:46px;height:46px;border-radius:50%;border:3px solid var(--ink);background:#fff;font-weight:900;font-size:18px;cursor:pointer;opacity:.85}
+#nav button.on{background:var(--ink);color:#fff}
+#hint{position:absolute;left:24px;bottom:72px;z-index:35;font-weight:900;font-size:18px;color:var(--soft);background:rgba(255,255,255,.85);padding:6px 14px;border-radius:99px}
+#rot{display:none;position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#fff;font-weight:800;padding:8px 14px;border-radius:10px;z-index:50}
+@media (max-width:760px) and (orientation:portrait){#rot{display:block}}
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+  <a id="back" href="./">⬅ 返回</a>
+  <a id="menu" href="/light/">🗂️ 主選單</a>
+  <div class="bug"><span class="live"><i></i>LIVE</span><span class="nm">溫度新聞台</span><span class="sy">示意・教學練習</span></div>
+
+  <!-- 0 封面 -->
+  <section class="scene" data-steps="0">
+    <img class="full" src="img/news/anchor.jpg" alt=""><div class="shade"></div>
+    <div class="ttl"><span class="k">溫度特勤隊・新聞時間</span><h1>今天好熱！<br>校園哪裡最熱？</h1><p>溫溫隊長 帶你到校園量溫度</p></div>
+  </section>
+
+  <!-- 1 主播開場 -->
+  <section class="scene" data-steps="2">
+    <img class="full" src="img/news/anchor.jpg" alt="">
+    <div class="l3" data-at="1"><span class="k">主播 溫溫隊長</span><div class="t">今天天氣很熱，記者到校園三個地方量溫度<small>記者平安，大家都有喝水 💧</small></div></div>
+  </section>
+
+  <!-- 2 先猜 -->
+  <section class="scene" data-steps="1" id="guess">
+    <div class="hd">先猜一猜 🤔 哪裡最熱？<small>點一張照片，或請同學舉手猜</small></div>
+    <div class="cards">
+      <div class="pc" data-k="room"><span class="crown">👑</span><img src="img/classroom.jpg" alt=""><div class="n">🏫 教室裡</div><div class="deg">27 度</div></div>
+      <div class="pc" data-k="tree"><span class="crown">👑</span><img src="img/news/shade.jpg" alt=""><div class="n">🌳 大樹下</div><div class="deg">30 度</div></div>
+      <div class="pc" data-k="sun"><span class="crown">👑</span><img src="img/sun.jpg" alt=""><div class="n">☀️ 太陽下</div><div class="deg">36 度</div></div>
+    </div>
+  </section>
+
+  <!-- 3,4,5 記者連線 -->
+  <section class="scene rep-s" data-steps="2" data-v="27" data-place="🏫 教室裡" data-img="img/classroom.jpg" data-how="先找 20，再往上數 7 小格"></section>
+  <section class="scene rep-s" data-steps="2" data-v="30" data-place="🌳 大樹下" data-img="img/news/shade.jpg" data-how="紅線停在大數字 30"></section>
+  <section class="scene rep-s" data-steps="2" data-v="36" data-place="☀️ 太陽下" data-img="img/sun.jpg" data-how="先找 30，再往上數 6 小格"></section>
+
+  <!-- 6 比一比 -->
+  <section class="scene" data-steps="2" id="cmp">
+    <div class="hd">比一比：數字越大，越熱</div>
+    <div class="say" data-at="2">☀️ 太陽下最熱！</div>
+    <div class="bars">
+      <div class="bar"><div class="v">27</div><div class="col" data-h="200"></div><img src="img/classroom.jpg" alt=""><div class="n">教室裡</div></div>
+      <div class="bar"><div class="v">30</div><div class="col" data-h="225"></div><img src="img/news/shade.jpg" alt=""><div class="n">大樹下</div></div>
+      <div class="bar"><div class="v">36</div><div class="col" data-h="270"></div><img src="img/sun.jpg" alt=""><div class="n">太陽下</div></div>
+    </div>
+  </section>
+
+  <!-- 7 提醒 -->
+  <section class="scene" data-steps="3">
+    <img src="img/news/cheer.jpg" alt="" style="position:absolute;left:0;top:0;width:600px;height:848px;object-fit:cover">
+    <div class="hd" style="left:640px">天氣好熱，特勤隊這樣做</div>
+    <div class="tips">
+      <div class="tip" data-at="1"><img src="img/news/shade.jpg" alt="">待在樹蔭下</div>
+      <div class="tip" data-at="2"><div class="em">💧</div>多喝水</div>
+      <div class="tip" data-at="3"><div class="em">🧢</div>戴帽子</div>
+    </div>
+  </section>
+
+  <!-- 8 練習 🔵 -->
+  <section class="scene" data-steps="0" id="q1">
+    <div class="q"><h2><span class="lv b">🔵 基礎</span>哪裡最熱？點一張</h2>
+      <div class="opts" style="grid-template-columns:repeat(3,1fr)">
+        <button class="op" data-ok="0"><img src="img/classroom.jpg" alt=""><span>教室裡</span></button>
+        <button class="op" data-ok="0"><img src="img/news/shade.jpg" alt=""><span>大樹下</span></button>
+        <button class="op" data-ok="1"><img src="img/sun.jpg" alt=""><span>太陽下</span></button>
+      </div><div class="fb"></div></div>
+  </section>
+
+  <!-- 9 練習 🟠 -->
+  <section class="scene" data-steps="0" id="q2">
+    <div class="q"><h2><span class="lv o">🟠 挑戰</span>太陽下最熱，因為……</h2>
+      <div class="opts" style="grid-template-columns:1fr 1fr">
+        <button class="op txt" data-ok="1">☀️ 太陽直接照到</button>
+        <button class="op txt" data-ok="0">🌳 樹蔭擋住太陽</button>
+      </div><div class="fb"></div></div>
+  </section>
+
+  <!-- 10 結尾 -->
+  <section class="scene" data-steps="0">
+    <img src="img/news/field.jpg" alt="" style="position:absolute;left:0;top:0;width:760px;height:848px;object-fit:cover">
+    <div class="end"><h2>換你們出任務！</h2><p>拿溫度計，到三個地方<br>量一量、記下來</p><a class="go" href="campus.html">🗺️ 出發：溫度探險校園</a></div>
+  </section>
+
+  <div id="hint">點畫面 → 下一步</div>
+  <div id="nav"></div>
+  <div id="ticker"><b>快訊</b><div class="run">☀️ 今天好熱，記得多喝水　｜　🌳 樹蔭下比較涼　｜　🌡️ 讀溫度計：先找大數字，再往上數小格　｜　📺 本新聞為教學示意畫面，人物平安</div></div>
+</div></div>
+<div id="rot">📱 手機橫過來看，畫面比較大</div>
+<script>
+(function(){
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const stage=$('#stage');function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
+/* 記者連線場景 */
+$$('.rep-s').forEach((sc,i)=>{const v=sc.dataset.v;
+  sc.innerHTML=`<img class="rep" src="img/news/field.jpg" alt=""><div class="hd" style="left:640px;top:40px;font-size:34px;color:var(--red)">📡 記者連線 ${i+1}／3</div>
+  <div class="spot"><img class="ph" src="${sc.dataset.img}" alt=""><span class="tag">${sc.dataset.place}</span><span class="sy2">示意</span>
+  <div class="thm"><img src="img/th/h_${v}.jpg" alt=""><div class="read">紅線停在……<b data-at="1">${v} 度</b><div class="how" data-at="2">${sc.dataset.how}</div></div></div></div>`;});
+let AC;function tone(f,d,at=0,type='triangle',g0=.07){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+at;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(g0,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.05);}catch(e){}}
+const ding=()=>{tone(784,.25);tone(1047,.35,.1);},whoosh=()=>tone(440,.12,0,'sine',.04),boo=()=>tone(330,.25,0,'sine',.05);
+const SC=$$('.scene');let si=0,st=0;
+$('#nav').innerHTML=SC.map((_,i)=>`<button data-i="${i}">${i+1}</button>`).join('');
+function show(){SC.forEach((s,i)=>s.classList.toggle('on',i===si));
+  $$('#nav button').forEach((b,i)=>b.classList.toggle('on',i===si));
+  const sc=SC[si];sc.querySelectorAll('[data-at]').forEach(e=>e.classList.toggle('in',+e.dataset.at<=st));
+  if(sc.id==='cmp')sc.querySelectorAll('.col').forEach(c=>c.style.height=(st>=1?c.dataset.h:0)+'px');
+  if(sc.id==='guess'){const rev=st>=1;sc.querySelectorAll('.pc').forEach(p=>{p.classList.toggle('show',rev);p.classList.toggle('win',rev&&p.dataset.k==='sun');p.classList.toggle('dim',rev&&p.dataset.k!=='sun');});}
+  $('#hint').style.display=(sc.id==='q1'||sc.id==='q2')?'none':'';}
+function next(){const n=+SC[si].dataset.steps;if(st<n){st++;(st===n?ding:whoosh)();}else if(si<SC.length-1){si++;st=0;whoosh();}show();}
+function prev(){if(st>0)st--;else if(si>0){si--;st=+SC[si].dataset.steps;}show();}
+stage.addEventListener('click',e=>{if(e.target.closest('a,button,#nav'))return;const sc=SC[si];
+  if(sc.id==='guess'&&st===0){const p=e.target.closest('.pc');if(p){p.style.borderColor='var(--gold)';}st=1;ding();show();return;}
+  if((sc.id==='q1'||sc.id==='q2')&&!sc.dataset.done)return;
+  next();});
+$$('.op').forEach(b=>b.onclick=e=>{e.stopPropagation();const sc=b.closest('.scene'),fb=sc.querySelector('.fb');
+  if(b.dataset.ok==='1'){b.classList.add('ok');sc.querySelectorAll('.op').forEach(o=>{if(o!==b)o.classList.add('no')});fb.className='fb ok';fb.textContent=sc.id==='q1'?'答對了！太陽下 36 度最熱 🎉 點畫面繼續':'答對了！太陽直接照到，所以最熱 🎉 點畫面繼續';sc.dataset.done=1;ding();}
+  else{b.classList.add('no');fb.className='fb no';fb.textContent=sc.id==='q1'?'再想想：數字最大的是哪裡？':'再想想：樹蔭會讓那裡變涼喔';boo();}});
+$('#nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();si=+b.dataset.i;st=0;show();};
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();if(!((SC[si].id==='q1'||SC[si].id==='q2')&&!SC[si].dataset.done))next();}if(['ArrowLeft','PageUp'].includes(e.key))prev();});
+addEventListener('contextmenu',e=>{e.preventDefault();prev();});
+show();
+window.__news={go:(i,s=0)=>{si=i;st=s;show();},next,n:SC.length};
+})();
+</script>
+</body>
+</html>
