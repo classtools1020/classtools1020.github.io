@@ -3,6 +3,7 @@
 <head>
 <meta name="robots" content="noindex,nofollow,noarchive">
 <script src="/gate.js"></script>
+<script>try{localStorage.removeItem("subpack")}catch(e){}</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#e8eef2">
@@ -137,6 +138,42 @@ h3.g small{font-family:var(--sans);font-size:13px;color:var(--ink3);font-weight:
 .star.on{color:#d99a1e}
 .empty{padding:28px;border:2px dashed var(--line);border-radius:16px;color:var(--ink2);font-weight:700;text-align:center;background:rgba(255,253,247,.5)}
 
+/* 今天上課 */
+.tdhead{position:relative;border-radius:22px;overflow:hidden;min-height:168px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:22px 24px;box-shadow:var(--shadow);isolation:isolate;margin-top:4px}
+.tdhead svg.land{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.tdhead .cl{animation:drift 70s linear infinite}.tdhead .cl.b{animation-duration:110s;animation-delay:-40s}
+@keyframes drift{from{transform:translateX(-30%)}to{transform:translateX(130%)}}
+.tdl{font-weight:900;font-size:15px;letter-spacing:.2em;color:#3e566c}
+.tdl .nt{margin-left:8px;font-size:13px;letter-spacing:.05em;background:rgba(255,253,247,.9);border-radius:99px;padding:2px 10px}
+.tdd{font-family:var(--serif);font-weight:900;font-size:clamp(30px,4vw,44px);letter-spacing:.06em;color:#24384c;text-shadow:0 2px 0 rgba(255,255,255,.55);line-height:1.2}
+.tdc{font-weight:700;color:#3e566c;font-size:15px}
+.tdnav{display:flex;gap:8px;flex-wrap:wrap}
+.tdnav button{border:0;background:rgba(255,253,247,.94);border-radius:12px;padding:9px 14px;font-weight:900;font-size:14.5px;box-shadow:var(--shadow)}
+.tdnav button:disabled{opacity:.45;cursor:default}
+.slot{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:18px 20px 20px}
+.sh{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cls{font-weight:900;font-size:14px;color:#fff;background:var(--mist-d);border-radius:99px;padding:4px 12px}
+.cls.b{background:var(--rose)}
+.per{font-weight:700;color:var(--ink2);font-size:14.5px}
+.ln{font-family:var(--serif);font-weight:900;font-size:clamp(22px,2.6vw,28px);letter-spacing:.06em;margin:8px 0 4px}
+.cpl{margin:0 0 14px;color:var(--ink2);font-weight:700;font-size:14.5px;line-height:1.6}
+.steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.stp{position:relative;display:flex;flex-direction:column;gap:6px;padding:14px 14px 14px;border-radius:16px;background:linear-gradient(180deg,#f3f7fa,#e9f0f5);border:1px solid rgba(70,104,138,.18);min-height:112px;transition:transform .15s,box-shadow .15s}
+.stp:hover{transform:translateY(-2px);box-shadow:0 12px 22px -14px rgba(44,58,71,.5);border-color:var(--mist)}
+.stp .no{position:absolute;right:10px;top:10px;width:26px;height:26px;border-radius:50%;background:var(--mist-d);color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center}
+.stp .em{font-size:30px;line-height:1}
+.stp .lb{font-weight:900;font-size:15.5px;line-height:1.45}
+.stp.seen{background:#f1f0ea;border-color:transparent}
+.stp.seen .no{background:var(--leaf)}
+.stp.seen .lb{color:var(--ink2)}
+.tip{margin-top:14px;background:#fbf4e2;border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;line-height:1.65;color:#6d5524}
+.prep{margin-top:10px}
+.prep summary{cursor:pointer;font-weight:900;color:var(--ink2);padding:6px 0}
+.prep label{display:flex;align-items:center;gap:8px;font-weight:700;padding:5px 0;cursor:pointer}
+.prep input{width:20px;height:20px;accent-color:var(--leaf)}
+.prep label.done{opacity:.5;text-decoration:line-through}
+@media (max-width:560px){.steps{grid-template-columns:1fr 1fr;gap:8px}.stp{min-height:96px;padding:11px}.stp .lb{font-size:14px}.stp .em{font-size:25px}.slot{padding:14px}.tdhead{padding:18px 16px;min-height:200px}}
+
 .scrim{display:none}
 @media (max-width:960px){
   :root{--side:290px}
@@ -166,7 +203,7 @@ h3.g small{font-family:var(--sans);font-size:13px;color:var(--ink3);font-weight:
     <div><b>Stacey 老師的教室</b><small>竹東國中・特教班</small></div>
   </a>
   <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="q" type="search" placeholder="找教材：溫度計、折射…" autocomplete="off"></label>
-  <a class="today" id="today" href="/light/">📅 今天上課 <span>主選單 →</span></a>
+  <a class="today" id="today" href="#/">📅 今天上課 <span>首頁最上面</span></a>
   <nav class="menu" id="menu"></nav>
   <div class="foot">曾瓊瑩老師 製作</div>
 </aside>
@@ -181,6 +218,7 @@ h3.g small{font-family:var(--sans);font-size:13px;color:var(--ink3);font-weight:
   <div id="view"></div>
 </main>
 
+<script src="/light/data.js"></script>
 <script src="hub/catalog.js"></script>
 <script>
 (function(){
@@ -237,21 +275,47 @@ function crumbs(parts){ // parts: [[name,hash]...], 最後一個是目前
   const up=parts.length>1?parts[parts.length-2][1]:null;
   const bk=$('#back');bk.hidden=!up;bk.onclick=()=>{location.hash=up;};
 }
+/* ===== 今天上課（資料來自 /light/data.js，和主選單共用） ===== */
+const LG=window.LIGHT||null, WK=['日','一','二','三','四','五','六'];
+const TODAY=new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Taipei'});
+const DATES=LG?[...new Set(LG.SCHED.map(x=>x.d))].sort():[];
+let di=Math.max(0,DATES.findIndex(d=>d>=TODAY)); if(DATES.length&&DATES[di]<TODAY)di=DATES.length-1;
+const fmtD=d=>{const [y,m,dd]=d.split('-');return `${+m}/${+dd}（週${WK[new Date(d+'T12:00:00+08:00').getDay()]}）`;};
+let seen=ls.get('seen-'+TODAY,{});
+function todayHTML(){
+  if(!LG)return `<div class="empty">課表讀不到，請重新整理。也可以先開 <a href="/light/" style="text-decoration:underline">舊主選單</a>。</div>`;
+  const d=DATES[di], items=LG.SCHED.filter(x=>x.d===d);
+  const lab=d===TODAY?'今天':d>TODAY?(DATES.findIndex(x=>x>=TODAY)===di?'下一堂':'之後'):'已上過';
+  const noToday=d>TODAY&&!DATES.includes(TODAY)&&lab==='下一堂'?`<span class="nt">今天沒有自然課</span>`:'';
+  let h=`<div class="tdhead">${LAND}
+    <div class="tdtxt"><div class="tdl">${lab} ${noToday}</div><div class="tdd">${fmtD(d)}</div><div class="tdc">${items.map(x=>x.c+' '+x.p.split(' ')[0]).join('・')}</div></div>
+    <div class="tdnav"><button data-dd="-1" ${di?'':'disabled'}>‹ 前一次</button><button data-dd="0">回到今天</button><button data-dd="1" ${di<DATES.length-1?'':'disabled'}>下一次 ›</button></div></div>`;
+  items.forEach(x=>{const Ls=LG.LESSONS[x.l];if(!Ls)return;const done=ls.get('prep-'+x.l,{});
+    h+=`<article class="slot"><div class="sh"><span class="cls${x.c==='乙班'?' b':''}">${esc(x.c)}</span><span class="per">${esc(x.p)}</span></div>
+      <h3 class="ln">${esc(Ls.name)}</h3><p class="cpl">🎯 ${esc(Ls.cp)}</p>
+      <div class="steps">${Ls.steps.map((st,i)=>{const m=st[0].match(/^(\p{Extended_Pictographic}[\uFE0F\u200D\p{Extended_Pictographic}]*|▶)\s*(.*)$/u)||[0,'📄',st[0]];const k=x.l+'-'+i;
+        return `<a class="stp${seen[k]?' seen':''}" href="${esc(st[1])}"${tgt(st[1])} data-seen="${k}"><span class="no">${seen[k]?'✓':i+1}</span><span class="em">${m[1]}</span><span class="lb">${esc(m[2])}</span></a>`;}).join('')}</div>
+      ${Ls.tip?`<div class="tip">💡 ${esc(Ls.tip)}</div>`:''}
+      ${Ls.prep&&Ls.prep.length?`<details class="prep"><summary>🛒 上課前準備（${Ls.prep.length} 項，勾了會記住）</summary>${Ls.prep.map((q,i)=>`<label class="${done[i]?'done':''}"><input type="checkbox" data-pl="${x.l}" data-pi="${i}" ${done[i]?'checked':''}> ${esc(q)}</label>`).join('')}</details>`:''}
+    </article>`;});
+  return h;
+}
 function home(){
   markMenu('home');crumbs([['🏡 首頁','#/']]);
   const tiles=S.filter(s=>s.id!=='home').map(s=>`<button class="tile" data-go="${s.id}" style="--c:${s.color}"><span class="ic">${s.icon}</span><b>${s.name}</b><span>${esc(s.note||'')}</span><em>${itemsOf(s).length} 項</em></button>`).join('')
     +`<a class="tile" href="${L.sports.u}" target="_blank" rel="noopener" style="--c:#c9a14a"><span class="ic">${L.sports.icon}</span><b>${L.sports.name}</b><span>${L.sports.note}</span><em>另開新視窗 ↗</em></a>`;
   const rec=recent.map(id=>C.find(i=>i.id===id)).filter(Boolean).slice(0,8);
   const fv=fav.map(id=>C.find(i=>i.id===id)).filter(Boolean);
-  $('#view').innerHTML=`
-  <section class="hero">${LAND}
-    <div class="txt"><h1>Stacey 老師的教室</h1><p>看得到、摸得到、玩得到的自然課</p>
-      <div class="go"><a class="btn pri" href="/light/">📅 今天上課</a><a class="btn sec" href="#/temp">🌡️ 溫度特勤隊</a><a class="btn sec" href="#/light">🔦 光線特勤隊</a></div></div>
-  </section>
-  <h2 class="h">📚 全部分類 <small>點一下進去</small></h2><div class="tiles">${tiles}</div>
+  $('#view').innerHTML=`<section id="todayBox">${todayHTML()}</section>
   ${fv.length?`<h2 class="h">⭐ 我的收藏 <small>${fv.length} 項</small></h2>${grid(fv,true)}`:''}
+  <h2 class="h">📚 教材庫 <small>備課、找東西用</small></h2><div class="tiles">${tiles}</div>
   ${rec.length?`<h2 class="h">🕘 最近開過</h2>${grid(rec,true)}`:''}`;
 }
+document.addEventListener('click',e=>{
+  const n=e.target.closest('[data-dd]');if(n){const v=+n.dataset.dd;if(v===0){di=Math.max(0,DATES.findIndex(d=>d>=TODAY));if(DATES[di]<TODAY)di=DATES.length-1;}else di=Math.min(DATES.length-1,Math.max(0,di+v));$('#todayBox').innerHTML=todayHTML();return;}
+  const sp=e.target.closest('[data-seen]');if(sp){seen[sp.dataset.seen]=1;ls.set('seen-'+TODAY,seen);sp.classList.add('seen');sp.querySelector('.no').textContent='✓';}
+});
+document.addEventListener('change',e=>{const c=e.target.closest('[data-pl]');if(!c)return;const k='prep-'+c.dataset.pl,o=ls.get(k,{});o[c.dataset.pi]=c.checked;ls.set(k,o);c.parentElement.classList.toggle('done',c.checked);});
 function section(sec,gi){
   markMenu(sec.id,gi);
   const parts=[['🏡 首頁','#/'],[sec.icon+' '+sec.name,'#/'+sec.id]];

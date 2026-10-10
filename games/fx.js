@@ -235,7 +235,7 @@
   /* ---------- 🗂️ 每頁都有「回主選單」（頁面自己沒放時自動補上） ---------- */
 
   /* ===== 代課模式：從代課包進來時，隱藏主選單與網站其他入口，只留「回代課包」 ===== */
-  FX.sub=(()=>{try{const p=JSON.parse(localStorage.getItem("subpack")||"null");if(p&&Date.now()<p.until)return p;if(p)localStorage.removeItem("subpack");}catch(e){}return null;})();
+  FX.sub=(()=>{try{if(/^\/(light\/)?(index\.html)?$/.test(location.pathname)){localStorage.removeItem("subpack");return null;}const p=JSON.parse(localStorage.getItem("subpack")||"null");if(p&&Date.now()<p.until)return p;if(p)localStorage.removeItem("subpack");}catch(e){}return null;})();
   FX.homeURL=()=>FX.sub?FX.sub.url:HOME;
   if(FX.sub){
     const st=document.createElement("style");st.textContent='a[href="/light/"],a[href^="https://classtools1020.github.io/light/"],a[href="/"],a.fixbtn,a.mainmenu-btn,#fxhome,#fxflow,.chs ~ .nav button[onclick*="print"]{display:none!important}#fxsub{position:fixed;left:12px;top:12px;z-index:99999;background:#3a2f10;border:2px solid #ffc93c;color:#ffe08a;font-weight:900;font-size:15px;text-decoration:none;padding:8px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.45);font-family:"Noto Sans TC",sans-serif}@media print{#fxsub{display:none!important}}';
