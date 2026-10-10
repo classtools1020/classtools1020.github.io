@@ -47,4 +47,3 @@ temp/img/classroom.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/BJz
 temp/img/fridge.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/rYbmZPkPtRiQaOmMx9d7V/gT2jjIVwcKe6x7FzQdny6.jpg
 temp/img/bangs.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/wHDYFZzdwafzkRLXo3cna/_cg5E_RMcSfshkWGTNqrk.jpg
 temp/img/shade-raw.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/54V7BIlyiVx71blFaj22E/PLHEuFCibAQkC8ALQqFaT.jpg
-light-lens/img/raw/finger2.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/1uapdaXOy8b3Jg9KmhhMj/aisZpzIQTZ2-NQoC_ilcu.jpg
