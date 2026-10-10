@@ -33,6 +33,11 @@
 - **折射環島搶答** `games/light-refract-quiz.html`：真實台灣地形圖＋小火車沿鐵路開、紅藍兩隊搶答佔站（插旗）、答錯換另一隊、提示鈕、全班一起答、結算明信片。紙張＋墨色風（不要螢光霓虹、不要滿版表情符號），觸控大按鈕，1366×768 一頁不捲動。
 - 共用：`games/fx.js`（音效、主選單按鈕、底部導覽列）、`games/checkin.html`（心情打卡／謝幕）
 
+## 🏡 網站大門＝總目錄（10/10 重做）
+- `index.html`：左側選單（首頁／我的收藏／溫度特勤隊／光線特勤隊＋任務一～五子選單／遊戲／MV／開場與收心／列印與PPT／舊教材／適應體育↗）＋上方「⬅ 返回」與麵包屑＋卡片（縮圖、類型標籤、篩選、☆收藏、最近開過、搜尋）。水彩田園風（霧藍、原創山景＋小學校，不放卡通角色）。手機選單收成 ☰。舊布幕版大門留在 `gala.html`。
+- **新增教材只要在 `hub/catalog.js` 加一行 `add(...)`**，縮圖：`python3 tools/hub/thumbs.py http://localhost:埠 id`（網頁截圖，3D 頁太慢就拿現成圖裁成 640×360 放 `img/hub/{id}.jpg`）、PDF 用 `tools/hub/pdfthumbs.py`。本機預覽要用會送 charset=utf-8 的伺服器，否則舊頁面截到亂碼。
+- 老師不要邀約、不要自我介紹，只要「好找、好點、好回去」。
+
 ## 上課簡報（新版，紙張＋墨色風）
 - 產生程式在 `tools/lessons/`：`kit.py`（共用元件：封面、流程頁、預測卡→打勾、證據照片＋光路線、句型小結、學習單預覽）、`lesson_l1.py`（10/12 透鏡第1節 → `light-lens/files/L1-lens.pptx`）、`lesson_r3.py`（10/14 折射第3節 → `light-refract/files/R3-refraction.pptx`）。
 - 透鏡「為什麼」用**牽手走沙灘**比喻（老師聽不懂三稜鏡版，已換掉）：同學＝光、馬路＝空氣（快）、沙灘＝玻璃/水（慢）。`walk.py` 用 Snell 模擬每位同學的位置畫出時間快照；L1 第 10–16 頁＝走沙灘 7 步（斜進→中間厚聚焦→中間薄散開→過焦點上下交換→眼睛直直往回看→三句話）。PPT 不放備忘稿（老師用無線簡報筆、不看講稿模式）；逐頁台詞另做 Word＋PDF：`light-lens/files/01_透鏡_第1節教案台詞.docx/.pdf`，由 `tools/lessons/l1_script.js` 產生（🖱️＝按一下翻頁鍵）。老師小抄 `light-lens/files/lens-cheatsheet.html`＋PDF 由 `tools/lessons/cheat_gen.py` 產生。說明一律要具體、看得到、摸得到，老師自己要聽得懂。
