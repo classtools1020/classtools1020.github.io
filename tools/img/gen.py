@@ -1,12 +1,13 @@
 """OpenAI 生圖（gpt-image-1，高畫質）。金鑰不放 repo：讀環境變數 OPENAI_API_KEY 或 /root/.openai_key。
-python3 tools/img/gen.py 輸出.png 風格(photo|anime|mix) "場景描述（英文較準）" [1536x1024|1024x1024|1024x1536]
-風格規則（老師授權 Claude 決定）：證據／要學生判斷的畫面＝photo；封面、講義主視覺、故事開場＝mix；偶爾溫暖故事＝anime。
+python3 tools/img/gen.py 輸出.png 風格(photo|anime|mix|toy3d) "場景描述（英文較準）" [1536x1024|1024x1024|1024x1536]
+風格規則（老師授權 Claude 決定）：證據／要學生判斷的畫面＝photo；封面、講義主視覺、故事開場＝mix；偶爾溫暖故事＝anime；可愛遊戲感、封面角色＝toy3d。
 不畫現成卡通角色、不放文字與商標、學生不露清楚臉部。
 """
 import json, base64, os, sys, urllib.request
 KEY = os.environ.get('OPENAI_API_KEY') or open('/root/.openai_key').read().strip()
 STY = {'photo': "Ultra-realistic professional photograph, natural light, 35mm lens, rich detail, documentary news photo look. ",
        'anime': "Hand-painted anime film background art style, soft watercolor and gouache textures, lush greens, warm nostalgic light, painterly clouds, cinematic composition. ",
+       'toy3d': "Cute stylized 3D render like a cozy toy-diorama video game: soft clay-like plastic materials, rounded chibi characters with big heads and small bodies, bright clean colors, soft global illumination, slight tilt-shift depth of field, Pixar-quality lighting. ",
        'mix': "Modern trending illustration style: realistic photographic scene with soft hand-painted watercolor anime touches, gentle pastel color grading, dreamy light, high detail. "}
 out, sty, scene = sys.argv[1], sys.argv[2], sys.argv[3]
 size = sys.argv[4] if len(sys.argv) > 4 else '1536x1024'
