@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>額溫槍六步驟・示範影片｜溫度特勤隊</title>
+<style>
+:root{--ink:#1f2a37;--soft:#5b6673;--paper:#f4efe6;--red:#c8372d;--green:#2f8a4c;--line:#d8cfbf;--gold:#d99a22}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#22262b;overflow:hidden;font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#view{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1600px;height:900px;flex:none;background:var(--paper);overflow:hidden;transform-origin:center}
+#stage::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.2px) 0 0/6px 6px;pointer-events:none}
+#back,#menu{position:absolute;top:22px;z-index:30;font-family:inherit;font-weight:900;font-size:20px;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:9px 18px}
+#back{left:22px}#menu{right:22px}
+body.rec #back,body.rec #menu,body.rec #ctrl,body.rec #auto{display:none}
+header{position:absolute;left:190px;top:18px;display:flex;align-items:baseline;gap:18px}
+.kick{font-size:22px;font-weight:900;color:var(--red);letter-spacing:.1em}
+h1{margin:0;font-size:42px;letter-spacing:.04em}
+#scene{position:absolute;left:40px;top:96px;width:820px;height:700px;background:#fff;border:3px solid var(--line);border-radius:28px;overflow:hidden}
+#scene svg{width:820px;height:780px;position:absolute;left:0;top:-40px}
+#steps{position:absolute;left:900px;top:104px;width:660px;display:flex;flex-direction:column;gap:12px}
+.st{display:flex;align-items:center;gap:18px;font-size:31px;font-weight:900;background:#fff;border:3px solid var(--line);border-radius:20px;padding:12px 20px;cursor:pointer;transition:border-color .3s,background .3s,opacity .3s,transform .25s}
+.st .no{flex:none;width:54px;height:54px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:27px;transition:background .3s}
+.st .ic{margin-left:auto;font-size:34px}
+.st.now{border-color:var(--gold);background:#fff8e6;transform:scale(1.03);box-shadow:0 10px 24px -14px rgba(0,0,0,.5)}
+.st.done{opacity:.55}.st.done .no{background:var(--green)}
+#cap{position:absolute;left:40px;top:806px;width:820px;height:76px;border-radius:20px;background:var(--ink);color:#fff;font-size:36px;font-weight:900;display:flex;align-items:center;justify-content:center;letter-spacing:.04em}
+#cap b{color:#ffd77a}
+#ctrl{position:absolute;left:900px;top:762px;width:660px;display:flex;align-items:center;gap:14px}
+#ctrl button{font-family:inherit;font-size:24px;font-weight:900;border:3px solid var(--ink);background:#fff;border-radius:16px;padding:10px 18px;cursor:pointer}
+#play{background:var(--ink)!important;color:#fff;min-width:150px}
+#bar{flex:1;height:14px;border-radius:9px;background:#e4dccb;position:relative;cursor:pointer}
+#barF{position:absolute;left:0;top:0;bottom:0;border-radius:9px;background:var(--red)}
+#auto{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:900;position:absolute;left:900px;top:836px}
+#auto input{width:24px;height:24px;accent-color:var(--ink)}
+.mascot{position:absolute}
+#cover{position:absolute;inset:0;z-index:20;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+#cover h2{margin:0;font-size:78px;letter-spacing:.06em}
+#cover p{margin:0;font-size:34px;font-weight:900;color:var(--soft)}
+#cover .k{font-size:28px;font-weight:900;color:#fff;background:var(--red);border-radius:99px;padding:6px 24px;letter-spacing:.12em}
+.lcd{font-family:"DejaVu Sans Mono","Consolas",monospace}
+#rot{display:none;position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#fff;font-weight:800;padding:8px 14px;border-radius:10px;z-index:30}
+@media (max-width:760px) and (orientation:portrait){#rot{display:block}}
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+  <a id="back" href="./">⬅ 返回</a>
+  <a id="menu" href="/light/">🗂️ 主選單</a>
+  <header><span class="kick">溫度特勤隊・示範影片</span><h1>額溫槍六步驟</h1></header>
+
+  <div id="scene">
+    <svg viewBox="0 0 820 780">
+      <defs>
+        <radialGradient id="skin" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#ffe2c8"/><stop offset="1" stop-color="#f1c19a"/></radialGradient>
+        <linearGradient id="gunG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe6ea"/></linearGradient>
+      </defs>
+      <rect x="0" y="40" width="820" height="740" fill="#eaf1f5"/>
+      <rect x="0" y="560" width="820" height="220" fill="#dfe7ec"/>
+      <g id="kid">
+        <path d="M150 780 Q160 610 300 580 L520 580 Q660 610 670 780Z" fill="#2f5d8a"/>
+        <path d="M330 580 L410 660 L490 580Z" fill="#fff"/>
+        <rect x="372" y="520" width="76" height="80" rx="20" fill="#efbb92"/>
+        <ellipse cx="236" cy="380" rx="34" ry="52" fill="#f1c19a"/><ellipse cx="584" cy="380" rx="34" ry="52" fill="#f1c19a"/>
+        <path d="M230 300 Q236 120 410 112 Q584 120 590 300 L594 380 L226 380Z" fill="#2a2522"/>
+        <ellipse cx="410" cy="360" rx="176" ry="200" fill="url(#skin)"/>
+        <g id="eyes"><ellipse cx="345" cy="370" rx="16" ry="21" fill="#2a2522"/><ellipse cx="475" cy="370" rx="16" ry="21" fill="#2a2522"/>
+        <circle cx="350" cy="363" r="6" fill="#fff"/><circle cx="480" cy="363" r="6" fill="#fff"/></g>
+        <ellipse cx="318" cy="430" rx="26" ry="14" fill="#f4a39a" opacity=".55"/><ellipse cx="502" cy="430" rx="26" ry="14" fill="#f4a39a" opacity=".55"/>
+        <path id="mouth" d="M370 455 Q410 488 450 455" fill="none" stroke="#7a3b2e" stroke-width="7" stroke-linecap="round"/>
+        <path d="M318 322 Q345 308 372 320" fill="none" stroke="#2a2522" stroke-width="6" stroke-linecap="round"/><path d="M448 320 Q475 308 502 322" fill="none" stroke="#2a2522" stroke-width="6" stroke-linecap="round"/>
+        <g id="target" opacity="0"><circle id="tring" cx="410" cy="255" r="30" fill="none" stroke="#c8372d" stroke-width="5" stroke-dasharray="8 7"/><circle cx="410" cy="255" r="7" fill="#c8372d"/></g>
+        <path id="bangs" d="M236 300 Q240 150 410 140 Q580 150 584 300 Q560 250 520 290 Q500 230 460 292 Q440 220 400 292 Q370 225 340 290 Q300 240 280 300 Q260 260 236 300Z" fill="#2a2522"/>
+        <g id="hand" opacity="0"><path d="M560 210 Q610 170 650 200 Q690 240 640 268 L560 262Z" fill="#efbb92" stroke="#d79f78" stroke-width="3"/><rect x="600" y="240" width="90" height="140" rx="40" fill="#efbb92" transform="rotate(-25 645 310)"/></g>
+      </g>
+      <g id="ruler" opacity="0">
+        <line id="rline" x1="410" y1="255" x2="600" y2="255" stroke="#c8372d" stroke-width="5" stroke-dasharray="10 8"/>
+        <g id="finger"><rect x="-14" y="-62" width="28" height="70" rx="14" fill="#efbb92" stroke="#c98f68" stroke-width="3"/><rect x="-9" y="-58" width="18" height="16" rx="6" fill="#fff3ea"/></g>
+        <g id="rtag"><rect x="-70" y="-110" width="140" height="52" rx="26" id="rtagB" fill="#c8372d"/><text id="rtext" x="0" y="-74" text-anchor="middle" style="font-size:30px;font-weight:900;fill:#fff"></text></g>
+      </g>
+      <g id="gun" transform="translate(700 77) scale(.8)">
+        <path d="M0 210 Q0 150 60 150 L250 150 Q300 150 300 200 L300 250 Q300 290 250 290 L190 290 L165 420 Q160 446 132 446 L104 446 Q82 446 86 420 L104 290 L60 290 Q0 290 0 230Z" fill="url(#gunG)" stroke="#9aa9b2" stroke-width="5"/>
+        <rect x="-26" y="196" width="34" height="54" rx="10" fill="#c9d3d9" stroke="#9aa9b2" stroke-width="4"/>
+        <rect id="lcd" x="70" y="172" width="196" height="96" rx="12" fill="#2a3a2e" stroke="#7d8b84" stroke-width="4"/>
+        <text id="lcdT" x="168" y="240" text-anchor="middle" class="lcd" style="font-size:60px;font-weight:900;fill:#111"></text>
+        <text id="lcdU" x="252" y="200" text-anchor="end" style="font-size:20px;font-weight:900;fill:#111"></text>
+        <circle id="btn" cx="150" cy="335" r="20" fill="#1f7a8c" stroke="#13525e" stroke-width="4"/>
+        <path id="beam" d="M-26 223 L-120 205 L-120 241Z" fill="#ff3b30" opacity="0"/>
+        <g id="press" opacity="0"><path d="M150 420 l0 -50" stroke="#1f2a37" stroke-width="6" stroke-linecap="round"/><path d="M135 385 l15 -18 l15 18" fill="none" stroke="#1f2a37" stroke-width="6" stroke-linecap="round"/></g>
+      </g>
+      <g id="beepB" opacity="0"><path d="M200 120 h170 a24 24 0 0 1 24 24 v50 a24 24 0 0 1 -24 24 h-110 l-30 26 l4 -26 h-34 a24 24 0 0 1 -24 -24 v-50 a24 24 0 0 1 24 -24z" fill="#fff" stroke="#1f2a37" stroke-width="5"/><text x="285" y="186" text-anchor="middle" style="font-size:52px;font-weight:900;fill:#c8372d">嗶！</text></g>
+      <g id="zoom" opacity="0">
+        <rect x="70" y="470" width="680" height="250" rx="30" fill="#fff" stroke="#1f2a37" stroke-width="5"/>
+        <rect x="110" y="505" width="340" height="180" rx="20" fill="#b9f0a6" stroke="#7d8b84" stroke-width="5"/>
+        <text id="zBig" x="250" y="640" text-anchor="middle" class="lcd" style="font-size:130px;font-weight:900;fill:#111">36</text>
+        <text id="zSmall" x="370" y="640" text-anchor="middle" class="lcd" style="font-size:130px;font-weight:900;fill:#111">.8</text>
+        <ellipse id="zRing" cx="250" cy="598" rx="100" ry="80" fill="none" stroke="#c8372d" stroke-width="8"/>
+        <text x="600" y="580" text-anchor="middle" style="font-size:40px;font-weight:900;fill:#5b6673">大數字</text>
+        <text id="zSay" x="600" y="650" text-anchor="middle" style="font-size:58px;font-weight:900;fill:#c8372d">36 度多</text>
+      </g>
+      <g id="card" opacity="0">
+        <rect x="120" y="440" width="580" height="300" rx="26" fill="#fffdf6" stroke="#1f2a37" stroke-width="5"/>
+        <text x="410" y="505" text-anchor="middle" style="font-size:40px;font-weight:900;fill:#1f2a37">量額溫記錄</text>
+        <line x1="160" y1="530" x2="660" y2="530" stroke="#d8cfbf" stroke-width="4"/>
+        <text x="200" y="620" style="font-size:44px;font-weight:900;fill:#5b6673">大數字：</text>
+        <rect x="400" y="560" width="180" height="90" rx="14" fill="#fff" stroke="#1f2a37" stroke-width="5"/>
+        <text id="cNum" x="490" y="633" text-anchor="middle" style="font-size:64px;font-weight:900;fill:#1f5fa8"></text>
+        <text x="600" y="633" style="font-size:44px;font-weight:900;fill:#5b6673">度</text>
+        <g id="pencil"><rect x="-10" y="-90" width="20" height="90" rx="4" fill="#ffcf2e" stroke="#1f2a37" stroke-width="4" transform="rotate(30)"/><path d="M-10 0 L0 18 L10 0Z" fill="#f1c19a" stroke="#1f2a37" stroke-width="4" transform="rotate(30)"/></g>
+        <g id="okStamp" opacity="0" transform="translate(620 700) rotate(-12)"><circle r="46" fill="none" stroke="#2f8a4c" stroke-width="7"/><text y="14" text-anchor="middle" style="font-size:40px;font-weight:900;fill:#2f8a4c">完成</text></g>
+      </g>
+      <g id="stars" opacity="0" style="font-size:60px"><text x="120" y="160">⭐</text><text x="660" y="140">✨</text><text x="680" y="420">⭐</text><text x="90" y="460">✨</text></g>
+    </svg>
+  </div>
+
+  <div id="steps">
+    <div class="st" data-k="1"><span class="no">1</span>撥開瀏海<span class="ic">💇</span></div>
+    <div class="st" data-k="2"><span class="no">2</span>對準額頭中間<span class="ic">🎯</span></div>
+    <div class="st" data-k="3"><span class="no">3</span>距離一根手指<span class="ic">☝️</span></div>
+    <div class="st" data-k="4"><span class="no">4</span>按一下，聽到「嗶」<span class="ic">🔔</span></div>
+    <div class="st" data-k="5"><span class="no">5</span>讀大數字<span class="ic">👀</span></div>
+    <div class="st" data-k="6"><span class="no">6</span>記下來<span class="ic">✏️</span></div>
+  </div>
+  <div id="cap"></div>
+  <div id="ctrl"><button id="play">▶ 播放</button><button id="prev">⏮</button><button id="next">⏭</button><div id="bar"><div id="barF"></div></div></div>
+  <label id="auto"><input type="checkbox" id="autoC" checked> 每一步播完先停下來（老師講解再按 ▶）</label>
+  %%MASCOT%%
+  <div id="cover">%%MASCOT2%%<span class="k">溫度特勤隊・示範影片</span><h2>額溫槍六步驟</h2><p>看一次，再自己做一次！</p></div>
+</div></div>
+<div id="rot">📱 手機橫過來看，畫面比較大</div>
+<script>
+(function(){
+const $=id=>document.getElementById(id);const stage=$('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
+/* 時間軸（秒） */
+const CH=[[0,4],[4,12.5],[12.5,21],[21,31],[31,38],[38,48],[48,57],[57,61]];
+const T_END=61;
+const CAPS=['看一次，再自己做一次！','第 1 步：把<b>瀏海撥開</b>，露出額頭','第 2 步：對準<b>額頭中間</b>','第 3 步：離額頭<b>一根手指</b>那麼遠','第 4 步：<b>按一下</b>，聽到「嗶」','第 5 步：讀<b>小數點前面的大數字</b>','第 6 步：把大數字<b>記下來</b>','六個步驟完成！換你試試看 🎉'];
+const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ez=x=>{x=cl(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;};
+const seg=(t,a,b)=>ez((t-a)/(b-a));
+const lerp=(a,b,k)=>a+(b-a)*k;
+let lastCh=-1;
+function gunAt(x,y){$('gun').setAttribute('transform',`translate(${x} ${y}) scale(.8)`);}
+function render(t){
+  t=cl(t,0,T_END);
+  let ch=CH.findIndex(c=>t>=c[0]&&t<c[1]);if(ch<0)ch=CH.length-1;
+  $('cover').style.opacity=t<3?1:cl(1-(t-3)/0.8);$('cover').style.display=t>=3.8?'none':'flex';
+  document.querySelectorAll('.st').forEach(e=>{const k=+e.dataset.k;e.classList.toggle('now',k===ch);e.classList.toggle('done',k<ch||ch===7);});
+  if(ch!==lastCh){$('cap').innerHTML=CAPS[ch];lastCh=ch;}
+  /* 1 撥瀏海 */
+  const h1=seg(t,5,7), h2=seg(t,7.2,9.2);
+  $('hand').setAttribute('opacity',t<5?0:t<9.2?1:cl(1-(t-9.2)/.6));
+  $('hand').setAttribute('transform',`translate(${lerp(140,-120,h1)+lerp(0,260,h2)} ${lerp(0,-150,h2)})`);
+  const up=seg(t,7.2,9.2);
+  $('bangs').setAttribute('transform',`translate(0 ${-70*up}) rotate(${-6*up} 410 240) translate(410 240) scale(1 ${1-.45*up}) translate(-410 -240)`);
+  /* 2 對準 */
+  const tg=t>=13&&t<38;$('target').setAttribute('opacity',tg?cl((t-13)/.5):0);
+  $('tring').setAttribute('r',30+6*Math.sin(t*6));
+  let gx=700,gy=77;
+  if(t>=14){gx=lerp(700,560,seg(t,14,15.5));gy=lerp(-40,77,seg(t,14,15.5));gy=t<15.5?gy:77;}
+  if(t<14){gy=lerp(77,-40,0)*0+(-40)+117*0;gx=700;gy=t<12.5?77:lerp(77,-40,seg(t,12.5,13.5));}
+  if(t>=14&&t<21){gx=lerp(700,600,seg(t,14,16));gy=lerp(-40,77,seg(t,14,16));}
+  /* 3 距離 */
+  if(t>=21&&t<31){const k1=seg(t,22,24),k2=seg(t,25.5,27.5);gx=lerp(600,700,k1);gx=lerp(gx,463,k2);gy=77;}
+  if(t>=31&&t<38){gx=463;gy=77;}
+  if(t>=38){gx=lerp(463,560,seg(t,38,39.5));gy=lerp(77,-60,seg(t,38,39.5));}
+  gunAt(gx,gy);
+  const rOn=t>=22&&t<31;$('ruler').setAttribute('opacity',rOn?cl(Math.min((t-22)/.4,(31-t)/.4)):0);
+  const nose=gx-26*.8-0;$('rline').setAttribute('x2',nose);
+  const mid=(410+nose)/2;$('finger').setAttribute('transform',`translate(${mid} 255)`);$('finger').setAttribute('opacity',t>=27.5?1:0);
+  $('rtag').setAttribute('transform',`translate(${mid} 255)`);
+  const ok=t>=27.5;$('rtext').textContent=t<24.5?'':ok?'剛好 ✓':'太遠 ✕';$('rtagB').setAttribute('fill',ok?'#2f8a4c':'#c8372d');$('rtag').setAttribute('opacity',t<24?0:1);
+  /* 4 按嗶 */
+  const pr=t>=32.5&&t<34;$('btn').setAttribute('r',pr?15:20);$('press').setAttribute('opacity',t>=32&&t<34?1:0);
+  $('beam').setAttribute('opacity',t>=33&&t<34.2?1:0);
+  $('beepB').setAttribute('opacity',t>=33.2&&t<36.5?1:0);
+  const lit=t>=34;
+  $('lcd').setAttribute('fill',lit&&t<48?'#b9f0a6':'#2a3a2e');$('lcdT').textContent=lit&&t<48?'36.8':'';$('lcdU').textContent=lit&&t<48?'°C':'';
+  /* 5 大數字 */
+  const zOn=t>=39&&t<48;$('zoom').setAttribute('opacity',zOn?cl(Math.min((t-39)/.6,(48-t)/.5)):0);
+  $('zSmall').setAttribute('opacity',t<41.5?1:lerp(1,.25,seg(t,41.5,42.5)));
+  $('zRing').setAttribute('opacity',t>=41.5?1:0);$('zRing').setAttribute('stroke-dasharray',`${lerp(0,560,seg(t,41.5,42.8))} 999`);
+  $('zSay').setAttribute('opacity',t>=43.5?1:0);
+  /* 6 記下來 */
+  const cOn=t>=49;$('card').setAttribute('opacity',cOn?cl((t-49)/.6):0);
+  const w=seg(t,50.5,53);$('cNum').textContent=t<51?'':t<52?'3':'36';
+  $('pencil').setAttribute('transform',`translate(${lerp(460,540,w)+lerp(0,80,seg(t,53.2,53.8))} ${lerp(600,620,w)+Math.sin(t*20)*(w>0&&w<1?6:0)})`);
+  $('okStamp').setAttribute('opacity',t>=54?1:0);$('okStamp').setAttribute('transform',`translate(620 700) rotate(-12) scale(${t>=54?lerp(1.6,1,seg(t,54,54.4)):1})`);
+  $('stars').setAttribute('opacity',t>=57?cl((t-57)/.5):0);
+  $('mouth').setAttribute('d',t>=57||t>=34&&t<37?'M365 450 Q410 500 455 450':'M370 455 Q410 488 450 455');
+  $('barF').style.width=(t/T_END*100)+'%';
+  return ch;
+}
+/* 音效（只有嗶聲與完成音，不念語音，老師講） */
+let AC;function ac(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();}catch(e){}return AC;}
+function tone(f,d,type='sine',g0=.08,at=0){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+at;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(g0,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.05);}
+const SFX=[[33,()=>{tone(2200,.12,'square',.07);tone(2200,.12,'square',.07,.18);}],[54,()=>{[523,659,784].forEach((f,i)=>tone(f,.25,'triangle',.08,i*.08));}],[57.2,()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.35,'triangle',.08,i*.1));}]];
+for(let i=1;i<=6;i++)SFX.push([CH[i][0]+.05,()=>tone(880,.15,'sine',.05)]);
+/* 播放器 */
+let t=0,playing=false,last=0,stopAt=null;
+function play(){if(t>=T_END-.05)t=0;playing=true;ac();if(AC&&AC.state==='suspended')AC.resume();last=performance.now();$('play').textContent='⏸ 暫停';
+  const ch=CH.findIndex(c=>t>=c[0]-.01&&t<c[1]);stopAt=$('autoC').checked&&ch>=1&&ch<=6?CH[ch][1]-.02:null;requestAnimationFrame(tick);}
+function pause(){playing=false;$('play').textContent='▶ 播放';}
+function tick(now){if(!playing)return;const dt=Math.min(.1,(now-last)/1000);last=now;const t0=t;t+=dt;
+  SFX.forEach(([at,f])=>{if(t0<at&&t>=at)f();});
+  if(stopAt!=null&&t>=stopAt){t=stopAt;render(t);pause();t=stopAt+.03;return;}
+  if(t>=T_END){t=T_END;render(t);pause();return;}
+  render(t);requestAnimationFrame(tick);}
+function jump(i){i=cl(i,0,CH.length-1);t=CH[i][0];render(t);if(i>0)play();}
+$('play').onclick=()=>playing?pause():play();
+$('next').onclick=()=>{const ch=render(t);jump(ch+1);};
+$('prev').onclick=()=>{const ch=render(t);jump(t-CH[ch][0]>1.5?ch:ch-1);};
+document.querySelectorAll('.st').forEach(e=>e.onclick=()=>jump(+e.dataset.k));
+$('bar').onclick=e=>{const r=$('bar').getBoundingClientRect();t=cl((e.clientX-r.left)/r.width)*T_END;render(t);};
+$('cover').onclick=()=>{t=3.9;render(t);play();};
+addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'||e.key==='PageDown'||e.key==='ArrowRight'){e.preventDefault();playing?pause():play();}if(e.key==='ArrowLeft'||e.key==='PageUp')$('prev').onclick();});
+render(0);
+window.__demo={render,T_END,CH,SFX,seek:x=>{t=x;return render(x);}};
+if(location.search.includes('rec'))document.body.classList.add('rec');
+})();
+</script>
+</body>
+</html>

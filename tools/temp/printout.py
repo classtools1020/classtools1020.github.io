@@ -51,12 +51,12 @@ body{margin:0;font-family:"Noto Sans CJK TC","Microsoft JhengHei",sans-serif;col
 .sec:first-of-type{margin-top:1mm}
 .sec .no{display:inline-flex;width:8.5mm;height:8.5mm;border-radius:50%;background:#c8372d;color:#fff;align-items:center;justify-content:center;font-size:11.5pt;flex:none}
 .grid{display:grid;gap:4mm}
-.cell{border:1.3px solid #e1d8c6;border-radius:3mm;padding:2.6mm;text-align:center;font-weight:900;font-size:13pt;break-inside:avoid;background:#fff}
-.cell img{width:100%;height:22mm;object-fit:cover;border-radius:2mm;display:block;margin-bottom:2mm}
+.cell{border:1.3px solid #e1d8c6;border-radius:3mm;padding:2mm;text-align:center;font-weight:900;font-size:13pt;break-inside:avoid;background:#fff}
+.cell img{width:100%;height:19mm;object-fit:cover;border-radius:2mm;display:block;margin-bottom:2mm}
 .cell img.ct{object-fit:contain;background:#f7f3ea}
-.cell .em{font-size:34pt;height:22mm;display:flex;align-items:center;justify-content:center;background:#f7f3ea;border-radius:2mm;margin-bottom:2mm}
-.opts{font-size:13pt;font-weight:700;line-height:2.1}
-.row{display:flex;gap:6mm;align-items:center;border:1.3px solid #e1d8c6;border-radius:3mm;padding:3mm 4mm;margin-bottom:3mm;break-inside:avoid;background:#fff}
+.cell .em{font-size:32pt;height:19mm;display:flex;align-items:center;justify-content:center;background:#f7f3ea;border-radius:2mm;margin-bottom:2mm}
+.opts{font-size:13pt;font-weight:700;line-height:1.9}
+.row{display:flex;gap:6mm;align-items:center;border:1.3px solid #e1d8c6;border-radius:3mm;padding:2mm 4mm;margin-bottom:2.2mm;break-inside:avoid;background:#fff}
 .write{display:inline-block;width:20mm;height:10mm;border:2px solid #1f2a37;border-radius:2mm;vertical-align:middle;margin:0 2mm;background:#fff}
 table.t{width:100%;border-collapse:separate;border-spacing:0;font-size:13pt;font-weight:700;border:1.3px solid #cfc5b1;border-radius:3mm;overflow:hidden}
 table.t th,table.t td{border-bottom:1.3px solid #e1d8c6;border-right:1.3px solid #e1d8c6;padding:1.5mm 2.5mm;text-align:center}
@@ -65,6 +65,11 @@ table.t th{background:#f3ece0;font-size:12pt}
 table.t td img{width:21mm;height:11.5mm;object-fit:cover;border-radius:1.5mm;display:block;margin:0 auto 1mm}
 .lcd{display:inline-block;background:#b9f0a6;border:2px solid #7d8b84;border-radius:2mm;padding:1mm 4mm;font-family:"DejaVu Sans Mono",monospace;font-weight:900;font-size:20pt}
 .tip{background:#fff6dc;border-left:4px solid #d99a22;border-radius:0 2mm 2mm 0;padding:2.4mm 4mm;font-size:11.5pt;font-weight:700;margin-top:3.5mm}
+.sec .lv{margin-left:auto;font-size:10pt;font-weight:900;color:#1f5fa8;background:#e8f0fa;border-radius:99px;padding:.6mm 3mm;letter-spacing:.05em}
+.chal{display:flex;align-items:center;flex-wrap:wrap;gap:1mm 2mm;margin-top:2.5mm;background:#fff3e4;border:1.3px solid #f0c48e;border-radius:2.5mm;padding:2mm 3.5mm;font-size:12.5pt;font-weight:700}
+.chal b{margin-right:1mm}
+.lv.o2{font-size:10pt;font-weight:900;color:#a8560f;background:#ffe2c0;border-radius:99px;padding:.6mm 3mm;margin-right:1mm}
+.goal .lg{margin-left:auto;font-size:10pt;color:#5b6673;font-weight:700}
 .end{margin-top:auto;display:flex;align-items:center;gap:5mm;border-top:1.5px dashed #d6ccb8;padding-top:3mm}
 .end .q{font-size:12pt;font-weight:900;margin-bottom:1mm}
 .end .opt{font-size:12.5pt;font-weight:700}
@@ -77,7 +82,7 @@ GOAL = re.sub(r'^.*第\s*\d+\s*節\s*', '', L['task'])
 def head(sub, goal=True):
     return (f'<div class="hd">{MASCOT}<div class="tt"><span class="kick">溫度特勤隊・第 {NUM} 節・{sub}</span><h1>{L["name"]}</h1></div>'
             f'<div class="idc">班級 <span class="box" style="margin-left:2mm"></span>甲<span class="box"></span>乙<br>姓名<span class="ln"></span><br>日期<span class="ln"></span></div></div>'
-            + (f'<div class="goal"><b>今天的任務</b>{GOAL}</div>' if goal else ''))
+            + (f'<div class="goal"><b>今天的任務</b>{GOAL}<span class="lg">🔵 勾一個　🟠 再勾「因為」</span></div>' if goal else ''))
 
 def foot(n):
     return f'<div class="pf"><span>溫度特勤隊 {code}</span><span>{n} / 2</span></div>'
@@ -113,7 +118,11 @@ def cells(items, cols, opts):
         out.append(f'<div class="cell">{pic}{it[0]}<div class="opts">{o}</div></div>')
     return ''.join(out) + '</div>'
 
-def sec(n, t): return f'<div class="sec"><span class="no">{n}</span>{t}</div>'
+def sec(n, t): return f'<div class="sec"><span class="no">{n}</span>{t}<span class="lv">🔵 基礎</span></div>'
+
+def ch(q, *opts):
+    o = ''.join(f'<span class="o"><span class="box"></span>{x}</span> ' for x in opts)
+    return f'<div class="chal"><span class="lv o2">🟠 挑戰</span><b>{q}</b>{o}</div>'
 
 def sheet():
     if code == 'T1':
@@ -122,6 +131,7 @@ def sheet():
         b += f'<tr><td>左手泡<b style="color:#c8372d">熱水</b></td><td><span class="box"></span>冰冰的 🥶 <span class="box"></span>熱熱的 🥵</td></tr>'
         b += f'<tr><td>右手泡<b style="color:#1f5fa8">冰水</b></td><td><span class="box"></span>冰冰的 🥶 <span class="box"></span>熱熱的 🥵</td></tr></table>'
         b += '<div class="tip">溫度計量中間的水：大約 <span class="box"></span>26 度　<span class="box"></span>60 度　→　手的感覺會 <span class="box"></span>騙人 <span class="box"></span>很準</div>'
+        b += ch('因為', '手先泡過熱水或冰水，感覺被帶走了', '中間的水自己變了')
         b += sec(2, '冷、溫、熱：每一張勾一個')
         b += cells([('冰塊', '🧊'), ('冰淇淋', '🍦'), ('洗澡水', 'bath.jpg'), ('溫開水', '🫖'), ('冒煙的熱湯', 'soup.jpg'), ('冰飲料', '🧋')], 3, ['冷', '溫', '熱'])
     elif code == 'T2':
@@ -131,22 +141,24 @@ def sheet():
         b += sec(2, '讀讀看：螢幕上的「大數字」是？')
         for v, o in (('36.5', ('36', '5', '365')), ('35.8', ('8', '35', '358')), ('37.1', ('1', '371', '37'))):
             b += f'<div class="row"><span class="lcd">{v}°C</span><div class="opts" style="font-size:16pt">' + ''.join(f'<span class="box"></span>{x}　' for x in o) + '</div></div>'
+        b += ch('大數字是', '小數點前面的數字', '小數點後面的數字')
         b += sec(3, '兩人一組：量額溫，寫下大數字')
-        b += '<table class="t"><tr><th style="width:30%">我幫誰量</th><th>螢幕數字</th><th>大數字</th></tr>' + ''.join('<tr><td style="height:15mm"></td><td></td><td></td></tr>' for _ in range(3)) + '</table>'
+        b += '<table class="t"><tr><th style="width:30%">我幫誰量</th><th>螢幕數字</th><th>大數字</th></tr>' + ''.join('<tr><td style="height:12mm"></td><td></td><td></td></tr>' for _ in range(3)) + '</table>'
         b += '<div class="tip">37.5 度以上 → 要告訴老師 🙋</div>'
     elif code == 'T3':
         b = head('學習單') + sec(1, '紅線怎麼動？')
-        b += cells([('放進熱水', 't-hot.jpg'), ('放進冰水', 't-ice.jpg')], 2, ['往上爬 ⬆️', '往下掉 ⬇️'])
+        b += cells([('放進熱水', 't-hot.jpg'), ('放進冰水', 't-ice.jpg')], 2, ['往上爬 ⬆️', '往下掉 ⬇️']).replace('<img ', '<img style="height:17mm" ')
+        b += ch('因為', '變熱，紅線會變長往上爬', '變熱，紅線會變短')
         b += sec(2, '紅線停在幾度？先找大數字，再往上數')
         b += cells([('', 'th/h_12.jpg'), ('', 'th/h_33.jpg'), ('', 'th/h_45.jpg'), ('', 'th/h_26.jpg')], 2, [])
         b = b.replace('<div class="opts"></div>', '<div class="opts">{O}</div>')
         for o in (('12', '22', '17'), ('23', '33', '38'), ('45', '40', '54'), ('26', '36', '21')):
             b = b.replace('{O}', ''.join(f'<span class="box"></span>{x} 度' for x in o), 1)
-        b = b.replace('<img src="' + I + 'th/', '<img style="height:15mm;object-fit:contain;background:#f7f3ea" src="' + I + 'th/')
+        b = b.replace('<img src="' + I + 'th/', '<img style="height:auto;width:100%;object-fit:contain;background:#f7f3ea;margin-bottom:1mm" src="' + I + 'th/')
         b += sec(3, '動手量：寫下紅線停的數字')
         b += '<table class="t"><tr><th>杯子</th><th>幾度</th><th>等紅線不動了？</th></tr>'
-        b += f'<tr><td><img src="{I}t-ice.jpg">冰水</td><td><span class="write"></span>度</td><td><span class="box"></span>有</td></tr>'
-        b += f'<tr><td><img src="{I}t-hot.jpg">溫水</td><td><span class="write"></span>度</td><td><span class="box"></span>有</td></tr></table>'
+        b += f'<tr><td>🧊 冰水</td><td><span class="write"></span>度</td><td><span class="box"></span>有</td></tr>'
+        b += f'<tr><td>♨️ 溫水</td><td><span class="write"></span>度</td><td><span class="box"></span>有</td></tr></table>'
     elif code == 'T4':
         b = head('記錄單') + sec(1, '三杯水：量完一杯，馬上寫一杯')
         b += '<table class="t"><tr><th>杯子</th><th>幾度</th><th>排第幾（1＝最冷）</th></tr>'
@@ -155,6 +167,7 @@ def sheet():
         b += '</table>'
         b += sec(2, '比一比：勾比較熱的那一個')
         b += '<div class="grid" style="grid-template-columns:repeat(3,1fr)">' + ''.join(f'<div class="cell" style="font-size:15pt"><span class="box"></span>{a} 度 　<span class="box"></span>{c} 度</div>' for a, c in ((15, 30), (8, 3), (26, 40))) + '</div>'
+        b += ch('數字越大', '越熱', '越冷')
         b += sec(3, '生活：洗澡水')
         b += cells([('安全的洗澡水大約', 'bath.jpg')], 1, ['40 度', '60 度']).replace('<img ', '<img style="height:24mm" ')
         b += '<div class="tip">⚠ 先開冷水，再開熱水；用手肘或溫度計試一試</div>'
@@ -162,10 +175,11 @@ def sheet():
         b = head('巡邏記錄單') + sec(1, '每一站：放好溫度計 → 數到 60 → 寫下數字')
         b += '<table class="t"><tr><th>地點</th><th>等 1 分鐘了？</th><th>幾度</th></tr>'
         for nm, im in (('① 教室', 'classroom.jpg'), ('② 大樹下', 'shade.jpg'), ('③ 太陽下', 'sun.jpg')):
-            b += f'<tr><td><img src="{I}{im}" style="width:30mm;height:17mm">{nm}</td><td><span class="box"></span>有</td><td><span class="write"></span>度</td></tr>'
+            b += f'<tr><td><img src="{I}{im}" style="width:26mm;height:14mm">{nm}</td><td><span class="box"></span>有</td><td><span class="write"></span>度</td></tr>'
         b += '</table>'
         b += sec(2, '比一比：哪裡最熱？')
         b += '<div class="cell" style="font-size:16pt"><span class="box"></span>教室　<span class="box"></span>大樹下　<span class="box"></span>太陽下</div>'
+        b += ch('因為', '太陽直接照到', '樹蔭擋住太陽')
         b += sec(3, '天氣好熱，我可以……（可以勾很多個）')
         b += cells([('待在樹蔭', 'shade.jpg'), ('多喝水', '💧'), ('戴帽子', '🧢')], 3, ['會做'])
         b += '<div class="tip">下雨天備案：教室、走廊、飲水機冰水</div>'
