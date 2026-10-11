@@ -246,7 +246,7 @@
   document.getElementById('fs').onclick=e=>{e.stopPropagation();const d=document.documentElement;(document.fullscreenElement?document.exitFullscreen():(d.requestFullscreen||d.webkitRequestFullscreen||(()=>{})).call(d));};
   stage.addEventListener('click',()=>next());
   addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}});
-  slides[0].classList.add('on');apply(0);ui();
+  slides[0].classList.add('on');apply(0);ui();if(location.hash==='#end')go(slides.length-1,true);
   window.__show={next,prev,go,get cur(){return cur;},get step(){return step;}};
 })();
 </script>
