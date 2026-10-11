@@ -46,7 +46,7 @@ body{margin:0;background:#e9e4da;font-family:"Noto Sans TC","Microsoft JhengHei"
 .card.np .op .pic{height:47mm;font-size:46pt}
 .foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:2mm;font-size:9pt;color:#7b8590;font-weight:700}
 .done{display:flex;align-items:center;gap:3mm;font-size:12.5pt;font-weight:900;color:#1f2a37}
-.stk{width:12mm;height:12mm;border:.6mm dashed #b8ae9c;border-radius:50%;display:inline-block}
+.done .o{display:inline-flex;align-items:center;gap:1.5mm;font-size:11.5pt;font-weight:800;white-space:nowrap}
 .key{border:.6mm solid #1f2a37;border-radius:3mm;padding:3mm 5mm;font-size:12pt;font-weight:700;line-height:1.85;margin-bottom:4mm}
 .key h3{margin:0 0 1mm;font-size:13.5pt}
 .key b{color:#c8372d}
@@ -114,7 +114,8 @@ def head(lv_cls, lv_txt, lv_sub, kicker, title, date='', who=True):
 HOW = f'<div class="how">✏️ 看照片，在對的答案 <span class="ex"><span class="bx" style="position:relative"><span style="position:absolute;left:.6mm;top:-2.6mm;font-size:15pt;color:#c8372d">✔</span></span></span> 打勾</div>'
 HOW2 = f'<div class="how">✏️ 每一題有兩步：先勾答案，再勾「因為」。在 <span class="ex"><span class="bx" style="position:relative"><span style="position:absolute;left:.6mm;top:-2.6mm;font-size:15pt;color:#c8372d">✔</span></span></span> 打勾</div>'
 def foot(code):
-    return f'<div class="foot"><div class="done">我做完了！貼一張貼紙 → <span class="stk"></span></div><div>{code}</div></div>'
+    return (f'<div class="foot"><div class="done">今天上課，我…… <span class="o"><span class="bx"></span>自己做到 😄</span>'
+            f'<span class="o"><span class="bx"></span>有人幫忙一下 🙂</span><span class="o"><span class="bx"></span>下次再加油 💪</span></div><div>{code}</div></div>')
 
 def page(inner): return f'<section class="page">{inner}</section>'
 def doc(title, pages, bar=''):

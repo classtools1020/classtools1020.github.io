@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>折射大破案</title>
+
+<style>
+  :root{--ink:#1f2a37;--soft:#5b6673;--paper:#f4efe6;--red:#c8372d;--teal:#1f7a8c;--green:#2f8a4c;--line:#d8cfbf;--blue:#1f5fa8;--sun:#f6b81c}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#22262b;overflow:hidden;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  #view{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{position:relative;width:1600px;height:900px;flex:none;background:var(--paper);overflow:hidden;transform-origin:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  #stage::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.2px) 0 0/6px 6px;pointer-events:none;z-index:0}
+  .slide{position:absolute;inset:0;padding:64px 86px;opacity:0;pointer-events:none;transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1);transform:translateX(80px);z-index:1}
+  .slide.on{opacity:1;pointer-events:auto;transform:none}
+  .slide.out{opacity:0;transform:translateX(-80px)}
+  .kick{font-size:25px;font-weight:800;color:var(--red);letter-spacing:.08em;position:relative}
+  h1{position:relative;margin:6px 0 0;font-size:100px;line-height:1.1;letter-spacing:.03em}
+  h2{margin:4px 0 0;font-size:56px;line-height:1.2;position:relative}
+  .hand{font-family:"標楷體","DFKai-SB","BiauKai","Kaiti TC","STKaiti",serif}
+  /* 滿版照片 + 慢慢推近 */
+  .bg{position:absolute;inset:0;overflow:hidden}
+  .bg img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 14s linear}
+  .on .bg img{transform:scale(1)}
+  .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,24,30,.78) 0%,rgba(20,24,30,.45) 38%,rgba(20,24,30,0) 62%)}
+  .light{color:#fff}.light .kick{color:#ffd77a}
+  .ph{position:absolute;background:#fff;padding:14px 14px 20px;box-shadow:0 14px 34px rgba(0,0,0,.25)}
+  .ph img{display:block;width:100%;height:100%;object-fit:cover}
+  .pola{position:absolute;background:#fff;padding:16px 16px 70px;box-shadow:0 16px 36px rgba(0,0,0,.28)}
+  .pola img{display:block;width:100%;height:100%;object-fit:cover}
+  .pola .cap{position:absolute;left:16px;right:16px;bottom:14px;text-align:center;font-size:31px;color:#333}
+  .tape{position:absolute;top:-18px;left:50%;width:130px;height:36px;margin-left:-65px;background:rgba(255,214,102,.8);transform:rotate(-4deg);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+  .band{position:absolute;left:0;right:0;bottom:0;background:var(--ink);color:#fff;font-size:40px;font-weight:800;padding:24px 86px;line-height:1.35;z-index:3}
+  .band b{color:#ffd77a}.band.warn{background:var(--red)}
+  .card{position:absolute;background:#fff;border:3px solid var(--line);border-radius:26px}
+  /* 出現動畫 */
+  [data-f]{opacity:0;transition:opacity .5s ease,transform .65s cubic-bezier(.2,.8,.25,1.15)}
+  [data-a=l]{transform:translateX(-140px)}[data-a=r]{transform:translateX(140px)}[data-a=u]{transform:translateY(90px)}
+  [data-a=pop]{transform:scale(.4)}[data-a=stamp]{transform:scale(2.6) rotate(-14deg)}
+  [data-a=p1]{transform:translateY(140px) rotate(8deg) scale(.8)}[data-a=p2]{transform:translateY(140px) rotate(-8deg) scale(.8)}[data-a=p3]{transform:translateY(140px) rotate(6deg) scale(.8)}
+  .show[data-f]{opacity:1;transform:none}
+  .show[data-a=stamp]{transform:rotate(-7deg)}
+  .show[data-a=p1]{transform:rotate(-4deg)}.show[data-a=p2]{transform:rotate(2.5deg)}.show[data-a=p3]{transform:rotate(-2deg)}
+  svg [data-f]{transform-box:fill-box;transform-origin:center}
+  .stamp{position:absolute;border:8px solid var(--red);color:var(--red);font-size:62px;font-weight:900;padding:4px 26px;border-radius:16px;background:rgba(255,255,255,.9);letter-spacing:.06em;z-index:4}
+  .stamp.b{border-color:var(--blue);color:var(--blue)}
+  /* 光線（畫出來） */
+  .ray{fill:none;stroke:var(--sun);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset 1.3s ease;filter:drop-shadow(0 0 6px rgba(255,190,40,.8))}
+  .ray.r2{stroke:#e5483a;filter:drop-shadow(0 0 5px rgba(229,72,58,.6))}.ray.b2{stroke:#2f7fe0;filter:drop-shadow(0 0 5px rgba(47,127,224,.6))}
+  .show .ray{stroke-dashoffset:0}
+  .draw{fill:none;stroke:#2a7fb8;stroke-width:5;stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset 1.4s ease}
+  .show .draw{stroke-dashoffset:0}
+  .glass{fill:#bfe6f5;fill-opacity:.85;stroke:#2a7fb8;stroke-width:4}
+  .dot{fill:#fff7c2;filter:drop-shadow(0 0 14px #ffcc33) drop-shadow(0 0 30px #ff9900)}
+  .show .dot{animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{50%{transform:scale(1.35)}}
+  .dot{transform-box:fill-box;transform-origin:center}
+  .lbl{font-size:30px;font-weight:900;fill:var(--ink)}
+  /* 預測選項 */
+  .opts{position:absolute;display:flex;gap:28px}
+  .op{width:320px;height:240px;background:#fff;border:4px solid var(--line);border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:44px;font-weight:900;transition:border-color .4s,opacity .4s,transform .4s,background .4s}
+  .op .big{font-size:106px;line-height:1}.op .sm{font-size:32px;height:106px;display:flex;align-items:center}
+  .op.ok{border-color:var(--green);background:#ecf7ee;transform:scale(1.06)}.op.no{opacity:.32}
+  .ask{position:absolute;font-size:34px;font-weight:800;color:var(--teal)}
+  /* 快問快答 */
+  .qa{position:absolute;left:86px;right:86px;height:170px;display:flex;align-items:center;gap:28px;background:#fff;border:3px solid var(--line);border-radius:24px;padding:0 28px}
+  .qa img{width:210px;height:130px;object-fit:cover;border-radius:12px;flex:none}
+  .qa .q{font-size:42px;font-weight:900;flex:1}
+  .qa .q small{display:block;font-size:24px;color:var(--soft);font-weight:700}
+  .qa .a{flex:none;font-size:44px;font-weight:900;color:#fff;border-radius:999px;padding:12px 34px}
+  .steps{position:absolute;display:flex;flex-direction:column;gap:24px}
+  .st{display:flex;align-items:center;gap:24px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:20px 30px;font-size:42px;font-weight:900;width:690px}
+  .st .no{flex:none;width:68px;height:68px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:36px}
+  .sum{position:absolute;left:86px;right:86px;display:flex;align-items:center;gap:28px;background:#fff;border-radius:24px;padding:24px 32px;border:3px solid var(--line);font-size:44px;font-weight:900}
+  .sum svg{width:76px;height:96px;flex:none}
+  .sum b{color:var(--red)}.sum i{font-style:normal;color:var(--blue)}
+  /* 控制列 */
+  #bar{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:12px;padding:10px;pointer-events:none}
+  #bar>*{pointer-events:auto}
+  .cb{font-family:inherit;font-weight:800;font-size:18px;border:none;border-radius:12px;padding:12px 18px;background:rgba(255,255,255,.92);color:var(--ink);cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.25);touch-action:manipulation;white-space:nowrap}
+  .cb.nx{background:#ffcf2e;font-size:22px;padding:14px 30px}
+  #pg{color:#fff;font-weight:800;font-size:16px;min-width:64px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+  #home{position:fixed;left:12px;top:12px;font-family:inherit;font-weight:800;font-size:16px;background:rgba(255,255,255,.92);color:var(--ink);text-decoration:none;padding:9px 14px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.25);z-index:9}
+  #hint{position:fixed;right:14px;top:14px;color:rgba(255,255,255,.7);font-size:14px;font-weight:700}
+  .dots{display:flex;gap:6px}.dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.4)}.dots i.on{background:#ffcf2e}
+  #rot{display:none;position:fixed;left:50%;top:64px;transform:translateX(-50%);background:rgba(255,255,255,.92);font-weight:800;font-size:15px;padding:8px 14px;border-radius:10px;z-index:9}
+  @media (max-width:760px),(max-height:520px){.dots,#fs,#hint{display:none!important}.cb{font-size:15px;padding:9px 12px}.cb.nx{font-size:17px;padding:10px 18px}#bar{gap:8px}}
+  @media (max-width:760px) and (orientation:portrait){#rot{display:block}}
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+<svg width="0" height="0" style="position:absolute"><defs><marker id="eye" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#f6b81c"/></marker></defs></svg>
+
+<!-- 1 封面 -->
+<section class="slide light">
+  <div class="bg"><img src="../../img/straw.jpg" alt=""></div><div class="shade"></div>
+  <div class="kick" data-f="0" data-a="l" style="margin-top:120px">乙班・自然統整・10/16</div>
+  <h1 data-f="0" data-a="l">折射大破案</h1>
+  <div data-f="0" data-a="l" style="font-size:40px;font-weight:800;margin-top:18px;position:relative">做過的三個案件，今天一次整理！</div>
+  <div data-f="0" data-a="u" style="font-size:26px;margin-top:90px;color:#e8e2d4;position:relative">點畫面開始 →</div>
+</section>
+
+<!-- 2 還記得嗎 -->
+<section class="slide">
+  <div class="kick">偵探回憶</div>
+  <h2>還記得嗎？我們破過這三個案件</h2>
+  <div class="pola" data-f="1" data-a="p1" data-s="pop" style="left:90px;top:220px;width:440px;height:470px"><span class="tape"></span><img src="../../img/straw.jpg" alt=""><div class="cap hand">吸管斷掉了？</div></div>
+  <div class="pola" data-f="2" data-a="p2" data-s="pop" style="left:580px;top:205px;width:440px;height:470px"><span class="tape"></span><img src="../../img/coin.jpg" alt=""><div class="cap hand">硬幣浮上來？</div></div>
+  <div class="pola" data-f="3" data-a="p3" data-s="pop" style="left:1070px;top:225px;width:440px;height:470px"><span class="tape"></span><img src="../../img/pool.jpg" alt=""><div class="cap hand">泳池變淺了？</div></div>
+  <div class="ask" data-f="4" data-a="u" style="left:90px;bottom:40px;font-size:36px">👉 請同學說說看：那時候看到了什麼？</div>
+</section>
+
+<!-- 3 案件一 -->
+<section class="slide">
+  <div class="kick">案件 1・先猜猜看</div>
+  <h2>吸管放進水杯，看起來？</h2>
+  <div class="opts" style="left:86px;top:290px">
+    <div class="op" id="o3a" data-f="1" data-a="u" data-s="pop"><span class="big">｜</span>A　直直的</div>
+    <div class="op" id="o3b" data-f="1" data-a="u"><span class="big">⟋</span>B　斷掉了</div>
+  </div>
+  <div class="ask" data-f="1" data-a="u" style="left:86px;top:580px">舉手投票：A 還是 B？</div>
+  <div class="ph" data-f="2" data-a="r" data-s="ok" data-ok="o3b" style="left:850px;top:200px;width:670px;height:470px"><img src="../../img/straw.jpg" alt=""></div>
+  <div class="stamp" data-f="2" data-a="stamp" style="left:1040px;top:600px">看起來斷了！</div>
+  <div class="band" data-f="3" data-a="u">吸管<b>沒有斷</b>！光從水裡出來，在水面<b>折一下</b>，眼睛就被騙了。</div>
+</section>
+
+<!-- 4 案件二 -->
+<section class="slide">
+  <div class="kick">案件 2・先猜猜看</div>
+  <h2>空碗裡看不到硬幣，倒水以後？</h2>
+  <div class="opts" style="left:86px;top:290px">
+    <div class="op" id="o4a" data-f="1" data-a="u" data-s="pop"><span class="big">🙈</span>A　還是看不到</div>
+    <div class="op" id="o4b" data-f="1" data-a="u"><span class="big">🪙</span>B　浮上來了</div>
+  </div>
+  <div class="ph" data-f="2" data-a="r" data-s="ok" data-ok="o4b" style="left:850px;top:200px;width:670px;height:470px"><img src="../../img/coin.jpg" alt=""></div>
+  <div class="stamp" data-f="2" data-a="stamp" style="left:1160px;top:600px">看到了！</div>
+  <div class="card" data-f="3" data-a="u" data-s="whoosh" style="left:86px;top:560px;width:720px;height:210px">
+    <svg viewBox="0 0 720 210" width="720" height="210">
+      <path d="M60 40 L60 180 L360 180 L360 40" fill="none" stroke="#8a8f96" stroke-width="5"/>
+      <rect x="62" y="90" width="296" height="88" fill="#bfe6f5" opacity=".8"/>
+      <ellipse cx="150" cy="172" rx="26" ry="7" fill="#d9a83a"/>
+      <path class="ray" pathLength="1" d="M150 168 L250 90 L640 30"/>
+      <text x="660" y="40" font-size="46">👀</text>
+      <text x="420" y="150" class="lbl" style="font-size:28px">光在水面 <tspan fill="#c8372d">折一下</tspan>，</text>
+      <text x="420" y="190" class="lbl" style="font-size:28px">剛好跑進眼睛</text>
+    </svg>
+  </div>
+</section>
+
+<!-- 5 案件三 -->
+<section class="slide">
+  <div class="kick">案件 3・先猜猜看</div>
+  <h2>從岸上看游泳池，池底看起來？</h2>
+  <div class="opts" style="left:86px;top:290px">
+    <div class="op" id="o5a" data-f="1" data-a="u" data-s="pop"><span class="big">⬆️</span>A　比較淺</div>
+    <div class="op" id="o5b" data-f="1" data-a="u"><span class="big">⬇️</span>B　比較深</div>
+  </div>
+  <div class="ph" data-f="2" data-a="r" data-s="ok" data-ok="o5a" style="left:850px;top:200px;width:670px;height:470px"><img src="../../img/pool.jpg" alt=""></div>
+  <div class="stamp" data-f="2" data-a="stamp" style="left:1160px;top:600px">看起來淺！</div>
+  <div class="band warn" data-f="3" data-a="u" data-s="warn">⚠ 池水比看起來還要深！一定要有大人在，不能自己下水</div>
+</section>
+
+<!-- 6 偵探守則 -->
+<section class="slide">
+  <div class="kick">偵探守則</div>
+  <h2>三個案件，同一個祕密</h2>
+  <div class="sum" data-f="1" data-a="l" data-s="pop" style="top:220px"><span style="font-size:64px">🔦</span><span>光平常走<b>直線</b></span></div>
+  <div class="sum" data-f="2" data-a="l" data-s="pop" style="top:410px"><span style="font-size:64px">💧</span><span>碰到水面，光會<b>折一下</b>，再繼續走直線</span></div>
+  <div class="sum" data-f="3" data-a="l" data-s="pop" style="top:600px"><span style="font-size:64px">👀</span><span>眼睛看到的位置<i>不一樣了</i>＝<b>折射</b></span></div>
+  <div class="stamp" data-f="4" data-a="stamp" data-s="ding" style="right:86px;top:60px">折射！</div>
+</section>
+
+<!-- 7 生活裡的折射 -->
+<section class="slide">
+  <div class="kick">快問快答</div>
+  <h2>生活裡，哪裡也有折射？</h2>
+  <div class="qa" data-f="1" data-a="l" data-s="pop" style="top:200px"><img src="../../img/aquarium.jpg" alt=""><div class="q">從旁邊看圓魚缸<small>金魚看起來？</small></div><div class="a" data-f="2" data-a="stamp" data-s="ok" style="background:var(--red)">變大</div></div>
+  <div class="qa" data-f="3" data-a="l" data-s="pop" style="top:400px"><img src="../../img/drop.jpg" alt=""><div class="q">一滴水滴在字上<small>字看起來？</small></div><div class="a" data-f="4" data-a="stamp" data-s="ok" style="background:var(--red)">變大</div></div>
+  <div class="qa" data-f="5" data-a="l" data-s="pop" style="top:600px"><img src="../../img/net.jpg" alt=""><div class="q">用網子撈水裡的魚<small>要往哪裡撈？</small></div><div class="a" data-f="6" data-a="stamp" data-s="ok" style="background:var(--blue)">再下面一點</div></div>
+</section>
+
+<!-- 8 動手做 -->
+<section class="slide">
+  <div class="kick">下一步・動手做</div>
+  <h2>做一個「水滴放大鏡」！</h2>
+  <div class="steps" style="left:86px;top:240px">
+    <div class="st" data-f="1" data-a="l" data-s="pop"><span class="no">1</span>透明片放在字上</div>
+    <div class="st" data-f="2" data-a="l" data-s="pop"><span class="no">2</span>用滴管滴一滴水</div>
+    <div class="st" data-f="3" data-a="l" data-s="pop"><span class="no">3</span>字變大了嗎？打勾</div>
+  </div>
+  <div class="ph" data-f="1" data-a="r" style="left:880px;top:220px;width:640px;height:480px"><img src="../../img/drop.jpg" alt=""></div>
+  <div class="band" data-f="4" data-a="u">做完水滴放大鏡，再畫<b>「我看到的光」</b>畫卡 🎨</div>
+</section>
+
+<!-- 9 破案 -->
+<section class="slide">
+  <div class="kick">偵探筆記</div>
+  <h2>破案！今天記住這一句</h2>
+  <div class="sum" data-f="1" data-a="l" data-s="pop" style="top:300px;font-size:58px;justify-content:center"><span>光碰到水，會<b>折一下</b></span></div>
+  <div class="sum" data-f="2" data-a="l" data-s="pop" style="top:500px;justify-content:center"><span>吸管「斷掉」、硬幣「浮上來」、泳池「變淺」<br>都是<b>折射</b>！</span></div>
+  <div class="stamp" data-f="3" data-a="stamp" data-s="fan" style="right:86px;top:60px">破案！</div>
+</section>
+</div></div>
+
+<a id="home" href="/light/">🗂️ 主選單</a>
+<div id="rot">📱 手機橫過來看，畫面比較大</div>
+<div id="hint">點畫面或按 → 也可以下一步</div>
+<div id="bar"><button class="cb" id="prev">‹ 上一步</button><div class="dots" id="dots"></div><span id="pg"></span><button class="cb nx" id="next">下一步 ›</button><button class="cb" id="snd">🔊</button><button class="cb" id="fs">⛶ 全螢幕</button></div>
+
+<script>
+(function(){
+  const stage=document.getElementById('stage'), slides=[...document.querySelectorAll('.slide')];
+  let cur=0, step=0;
+  function fit(){const r=innerHeight<520?56:72;const s=Math.min(innerWidth/1600,(innerHeight-r)/900);stage.style.transform=`scale(${s})`;stage.parentElement.style.paddingBottom=r+'px';}
+  addEventListener('resize',fit);fit();
+  let AC,muted=false,unl=false;
+  function ac(){if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();}if(AC.state!=='running')AC.resume();return AC;}
+  function unlock(){try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}try{ac();}catch(e){}if(unl)return;unl=true;
+    try{const n=4000,b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,t)=>[...t].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,16000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
+      const el=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/wav'})));el.loop=true;el.play().catch(()=>{unl=false;});}catch(e){}}
+  addEventListener('pointerdown',unlock,true);addEventListener('keydown',unlock,true);
+  function tone(f,d,type='sine',vol=.12,t0=0,f2){if(muted)return;try{const a=ac(),o=a.createOscillator(),g=a.createGain(),s=a.currentTime+t0;o.type=type;o.frequency.setValueAtTime(f,s);if(f2)o.frequency.exponentialRampToValueAtTime(f2,s+d);g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(vol,s+.015);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(g).connect(a.destination);o.start(s);o.stop(s+d+.05);}catch(e){}}
+  let NB;function noise(d,vol,f1,f2){if(muted)return;try{const a=ac();if(!NB){NB=a.createBuffer(1,a.sampleRate,a.sampleRate);const c=NB.getChannelData(0);for(let i=0;i<c.length;i++)c[i]=Math.random()*2-1;}const s=a.createBufferSource(),bp=a.createBiquadFilter(),g=a.createGain(),t=a.currentTime;s.buffer=NB;bp.type='bandpass';bp.Q.value=1.2;bp.frequency.setValueAtTime(f1,t);bp.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(bp).connect(g).connect(a.destination);s.start();s.stop(t+d+.05);}catch(e){}}
+  const SFX={page(){noise(.35,.12,600,2400);},whoosh(){noise(.6,.14,300,2200);tone(330,.6,'sine',.04,0,660);},pop(){tone(520,.12,'sine',.12,0,900);},
+    ding(){tone(1046,.4,'triangle',.1);tone(1568,.5,'sine',.06,.08);},ok(){[523,659,784,1046].forEach((f,i)=>tone(f,.32,'triangle',.11,i*.08));},
+    warn(){tone(440,.18,'square',.05);tone(440,.18,'square',.05,.25);},fan(){[523,659,784,659,784,1046].forEach((f,i)=>tone(f,.38,'triangle',.12,i*.14));}};
+  const maxStep=s=>Math.max(0,...[...s.querySelectorAll('[data-f]')].map(e=>+e.dataset.f));
+  function apply(k){const s=slides[cur];s.querySelectorAll('[data-f]').forEach(e=>e.classList.toggle('show',+e.dataset.f<=k));
+    s.querySelectorAll('.op').forEach(o=>o.classList.remove('ok','no'));
+    s.querySelectorAll('[data-ok]').forEach(e=>{if(+e.dataset.f<=k){const ok=document.getElementById(e.dataset.ok);s.querySelectorAll('.op').forEach(o=>o.classList.add(o===ok?'ok':'no'));}});}
+  function sound(k){const e=[...slides[cur].querySelectorAll('[data-f="'+k+'"][data-s]')][0];if(e&&SFX[e.dataset.s])SFX[e.dataset.s]();}
+  function go(i,full){if(i<0||i>=slides.length)return;const old=slides[cur];old.classList.remove('on');old.classList.add('out');setTimeout(()=>old.classList.remove('out'),650);
+    cur=i;const s=slides[cur];s.classList.add('on');step=full?maxStep(s):0;apply(step);ui();SFX.page();if(step===0)setTimeout(()=>sound(0),150);}
+  function next(){const s=slides[cur];if(step<maxStep(s)){step++;apply(step);sound(step);ui();}else go(cur+1);}
+  function prev(){go(cur-1,true);}
+  function ui(){document.getElementById('pg').textContent=(cur+1)+' / '+slides.length;document.querySelectorAll('#dots i').forEach((d,j)=>d.classList.toggle('on',j===cur));
+    document.getElementById('next').textContent=(cur===slides.length-1&&step>=maxStep(slides[cur]))?'結束 ✓':'下一步 ›';}
+  document.getElementById('dots').innerHTML=slides.map(()=>'<i></i>').join('');
+  document.getElementById('next').onclick=e=>{e.stopPropagation();next();};
+  document.getElementById('prev').onclick=e=>{e.stopPropagation();prev();};
+  document.getElementById('snd').onclick=e=>{e.stopPropagation();muted=!muted;e.target.textContent=muted?'🔇':'🔊';};
+  document.getElementById('fs').onclick=e=>{e.stopPropagation();const d=document.documentElement;(document.fullscreenElement?document.exitFullscreen():(d.requestFullscreen||d.webkitRequestFullscreen||(()=>{})).call(d));};
+  stage.addEventListener('click',()=>next());
+  addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}});
+  slides[0].classList.add('on');apply(0);ui();
+  window.__show={next,prev,go,get cur(){return cur;},get step(){return step;}};
+})();
+</script>
+</body>
+</html>
