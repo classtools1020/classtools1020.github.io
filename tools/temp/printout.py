@@ -16,7 +16,7 @@ NUM = int(code[1])
 CSS = """
 @page{size:A4;margin:0}
 *{box-sizing:border-box}
-body{margin:0;font-family:"標楷體","DFKai-SB","AR PL UKai TW","BiauKai","Kaiti TC",serif;font-synthesis:none;color:#1f2a37;font-size:13pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;font-family:"標楷體","DFKai-SB","AR PL UKai TW","BiauKai","Kaiti TC",serif;font-synthesis:none;color:#111;-webkit-text-stroke:.45px currentColor;font-size:13pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .pg{width:210mm;height:296mm;padding:11mm 12mm 10mm;page-break-after:always;position:relative;display:flex;flex-direction:column;overflow:hidden}
 .pg:last-child{page-break-after:auto}
 .hd{display:flex;align-items:center;gap:4mm;padding-bottom:3.5mm;border-bottom:2.5px solid #1f2a37}
@@ -26,7 +26,7 @@ body{margin:0;font-family:"標楷體","DFKai-SB","AR PL UKai TW","BiauKai","Kait
 .hd h1{margin:1.6mm 0 0;font-size:23pt;font-weight:900;letter-spacing:.04em;line-height:1.15}
 .idc{flex:none;border:1.5px solid #e1d8c6;background:#faf7f0;border-radius:3mm;padding:2.2mm 3.5mm;font-size:11pt;font-weight:700;line-height:2}
 .idc .ln{display:inline-block;border-bottom:1.3px solid #1f2a37;width:30mm;margin-left:1.5mm;height:5mm;vertical-align:-1mm}
-.goal{margin:3mm 0 2mm;display:flex;align-items:center;gap:3mm;font-size:12pt;font-weight:700;color:#3d4a57}
+.goal{margin:3mm 0 2mm;display:flex;align-items:center;gap:3mm;font-size:12pt;font-weight:700;color:#222}
 .goal b{flex:none;font-size:10pt;letter-spacing:.12em;color:#c8372d;border:1.5px solid #c8372d;border-radius:99px;padding:.3mm 3mm}
 .box{display:inline-block;width:15pt;height:15pt;border:2px solid #1f2a37;border-radius:3.5px;vertical-align:-3pt;margin:0 4pt 0 9pt;background:#fff}
 .hgrid{display:grid;grid-template-columns:1fr 1fr;gap:4.5mm 5mm;align-content:start}
@@ -43,10 +43,10 @@ body{margin:0;font-family:"標楷體","DFKai-SB","AR PL UKai TW","BiauKai","Kait
 .self{display:flex;flex-direction:column;justify-content:center;gap:2.5mm;background:#faf7f0;border-style:dashed}
 .self .q{font-size:12.5pt;font-weight:900}
 .self .opt{font-size:12.5pt;font-weight:700;line-height:1.9}
-.stamp{width:24mm;height:24mm;border:2px dashed #c9bfa9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9.5pt;color:#a99f88;font-weight:700;margin-left:auto}
+.stamp{width:24mm;height:24mm;border:2px dashed #c9bfa9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9.5pt;color:#555;font-weight:700;margin-left:auto}
 .key{display:flex;align-items:center;gap:4mm;background:#1f2a37;color:#fff;border-radius:3.5mm;padding:3.4mm 5mm;font-size:12.5pt;font-weight:700;line-height:1.6}
 .key b{flex:none;font-size:10pt;letter-spacing:.15em;color:#1f2a37;background:#ffd77a;border-radius:99px;padding:.6mm 3.2mm}
-.pf{display:flex;justify-content:space-between;font-size:8.5pt;color:#9a9384;font-weight:700;letter-spacing:.08em;margin-top:2.5mm}
+.pf{display:flex;justify-content:space-between;font-size:8.5pt;color:#555;font-weight:700;letter-spacing:.08em;margin-top:2.5mm}
 .sec{font-size:14pt;font-weight:900;margin:3.5mm 0 2.2mm;display:flex;align-items:center;gap:3mm}
 .sec:first-of-type{margin-top:1mm}
 .sec .no{display:inline-flex;width:8.5mm;height:8.5mm;border-radius:50%;background:#c8372d;color:#fff;align-items:center;justify-content:center;font-size:11.5pt;flex:none}
@@ -69,7 +69,7 @@ table.t td img{width:21mm;height:11.5mm;object-fit:cover;border-radius:1.5mm;dis
 .chal{display:flex;align-items:center;flex-wrap:wrap;gap:1mm 2mm;margin-top:2.5mm;background:#fff3e4;border:1.3px solid #f0c48e;border-radius:2.5mm;padding:2mm 3.5mm;font-size:12.5pt;font-weight:700}
 .chal b{margin-right:1mm}
 .lv.o2{font-size:10pt;font-weight:900;color:#a8560f;background:#ffe2c0;border-radius:99px;padding:.6mm 3mm;margin-right:1mm}
-.goal .lg{margin-left:auto;font-size:10pt;color:#5b6673;font-weight:700}
+.goal .lg{margin-left:auto;font-size:10pt;color:#333;font-weight:700}
 .end{margin-top:auto;display:flex;align-items:center;gap:5mm;border-top:1.5px dashed #d6ccb8;padding-top:3mm}
 .end .q{font-size:12pt;font-weight:900;margin-bottom:1mm}
 .end .opt{font-size:12.5pt;font-weight:700}
