@@ -16,7 +16,7 @@ NUM = int(code[1])
 CSS = """
 @page{size:A4;margin:0}
 *{box-sizing:border-box}
-body{margin:0;font-family:"Noto Sans CJK TC","Microsoft JhengHei",sans-serif;color:#1f2a37;font-size:13pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;font-family:"標楷體","DFKai-SB","AR PL UKai TW","BiauKai","Kaiti TC",serif;font-synthesis:none;color:#1f2a37;font-size:13pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .pg{width:210mm;height:296mm;padding:11mm 12mm 10mm;page-break-after:always;position:relative;display:flex;flex-direction:column;overflow:hidden}
 .pg:last-child{page-break-after:auto}
 .hd{display:flex;align-items:center;gap:4mm;padding-bottom:3.5mm;border-bottom:2.5px solid #1f2a37}

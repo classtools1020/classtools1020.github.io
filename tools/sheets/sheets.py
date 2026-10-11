@@ -12,7 +12,7 @@ P = lambda p: ROOT + p   # 圖片路徑
 CSS = """
 @page{size:A4;margin:0}
 *{box-sizing:border-box}
-body{margin:0;background:#e9e4da;font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;color:#1f2a37;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:#e9e4da;font-family:"標楷體","DFKai-SB","AR PL UKai TW","BiauKai","Kaiti TC",serif;font-synthesis:none;color:#1f2a37;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .page{width:210mm;height:297mm;margin:10mm auto;background:#fff;position:relative;overflow:hidden;padding:8mm 10mm 7mm;box-shadow:0 4px 18px rgba(0,0,0,.15);page-break-after:always;display:flex;flex-direction:column}
 .page:last-child{page-break-after:auto}
 .top{display:flex;align-items:stretch;gap:3mm;margin-bottom:3mm}
@@ -61,7 +61,8 @@ body{margin:0;background:#e9e4da;font-family:"Noto Sans TC","Microsoft JhengHei"
 .tb .bx{width:5mm;height:5mm}
 .drop{border:.8mm dashed #3ea4e8;border-radius:3mm;padding:3mm 4mm;margin-top:3mm;background:#f6fbff}
 .drop .t{font-size:13pt;font-weight:900}
-.drop .tiny{font-size:7pt;letter-spacing:.06em;line-height:1.6;color:#333}
+.drop .tiny{display:flex;justify-content:space-between;gap:2mm;margin-top:2mm}
+.drop .tw{flex:1;text-align:center;font-size:6.5pt;color:#111;border:.3mm dashed #9cc9ea;border-radius:2mm;padding:2.2mm 0;background:#fff}
 /* 畫卡 */
 .half{height:133mm;border:.6mm solid #1f2a37;border-radius:4mm;padding:4mm 5mm;display:flex;flex-direction:column;gap:2.5mm;margin-bottom:5mm}
 .half .head{display:flex;justify-content:space-between;align-items:center;font-size:17pt;font-weight:900}
@@ -187,13 +188,13 @@ HUNT = [(1, '紅紅的水果', tiny(1), ['🍎 蘋果', '🍅 番茄']), (2, '�
 def tbox(n, hint, pic, ch):
     c = ''.join(f'<label>{BX}{x}</label>' for x in ch)
     return f'<div class="tb"><div class="h">#{n}<span>提示：{hint}</span></div><div class="lensc">{pic}</div><div class="c"><label>{BX}找到了！</label><div style="font-size:10pt;color:#5b6673">它是：</div>{c}</div></div>'
-tiny_txt = '一滴圓圓的水，會讓字變大！　' * 3 + '<br>' + '光線特勤隊　' * 8
+tiny_txt = ''.join(f'<span class="tw">{w}</span>' for w in ['光', '水', '魚', '吸管', '硬幣', '泳池', '折一下', '放大'])
 treasure = page(head('g', '🔍', '尋寶', '放大鏡偵探', '放大鏡尋寶單', '10/16') +
   '<div class="how" style="justify-content:space-around"><span>① 拿放大鏡</span><span>② 找小小的東西</span><span>③ 找到了，在 ☐ 打勾</span></div>'
   '<div class="tgrid">' + ''.join(tbox(*h) for h in HUNT) + '</div>'
   '<div class="card two" style="margin-top:3mm"><div class="qh"><span class="no">★</span><span>放大鏡讓小東西怎麼了？</span></div>'
   f'<div class="row"><span class="pre">小東西看起來：</span>{chips(["變大", "變小"])}</div><div class="row"><span class="pre">因為放大鏡中間比較：</span>{chips(["厚", "薄"])}</div></div>'
-  f'<div class="drop"><div class="t">💧 水滴放大區：把透明片放在這裡，滴一滴水在小字上</div><div class="tiny">{tiny_txt}</div>'
+  f'<div class="drop"><div class="t">💧 水滴放大區：把透明片放在小字上，滴一滴水，看看字有沒有變大</div><div class="tiny">{tiny_txt}</div>'
   f'<div class="row" style="display:flex;gap:4mm;align-items:center;font-size:13pt;font-weight:900;margin-top:2mm">水滴下面的字變：{chips(["大", "小"])}</div></div>' +
   foot('10/16 自然・放大鏡偵探'))
 open(f'{OUT}/treasure.html', 'w').write(doc('放大鏡尋寶單', [treasure]))
@@ -227,7 +228,7 @@ DO = [('📄', '透明片放在字上'), ('💧', '滴一滴水'), ('👀', '看
 draw = page(head('g', '💧', '任務單', '光線特勤隊・乙班第 7 節', '💧 水滴放大鏡', '10/16') +
   '<div class="step"><span class="no">1</span>動手做（做到了就打勾）</div>'
   '<div class="opts three" style="margin-top:0">' + ''.join(f'<div class="op"><div class="pic" style="height:15mm;font-size:26pt">{e}</div><div class="lab">{BX}{l}</div></div>' for e, l in DO) + '</div>'
-  f'<div class="drop" style="margin-top:2.5mm"><div class="t">把透明片放在這裡，滴一滴水在小字上</div><div class="tiny">{tiny_txt}</div>'
+  f'<div class="drop" style="margin-top:2.5mm"><div class="t">把透明片放在小字上，滴一滴水，看看字有沒有變大</div><div class="tiny">{tiny_txt}</div>'
   f'<div class="row" style="display:flex;gap:4mm;align-items:center;font-size:13pt;font-weight:900;margin-top:2mm">水滴下面的字變：{chips(["大", "小"])}</div></div>'
   '<div class="low" style="grid-template-columns:1fr 1.15fr"><div><div class="step"><span class="no">2</span>畫下來：水滴下面的字</div>'
   '<div class="pola" style="margin-top:3mm"><span class="tape l"></span><span class="tape r"></span><div class="in" style="height:92mm">✏️ 畫在這裡</div><div class="cap">我的水滴放大鏡</div></div></div>'
