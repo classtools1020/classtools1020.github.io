@@ -222,18 +222,18 @@ DCSS = """
 .stamp small{font-size:8.5pt;font-weight:800}
 """
 CSS += DCSS
-SAW = [('light-refract/mv/drop.jpg', '水滴讓字變大'), ('light-refract/mv/magnifier.jpg', '放大鏡'), ('light-refract/mv/straw.jpg', '吸管像斷掉'),
-       ('light-refract/mv/coin.jpg', '硬幣浮上來'), ('light-refract/mv/aquarium.jpg', '圓魚缸'), ('light-refract/mv/laser.jpg', '光折一下')]
-HOWL = [(ray_svg(True), '光折一下、換方向'), (txt('光', 26), '東西變大'), ('<span style="display:inline-block;transform:rotate(180deg)">🌳</span>', '東西倒過來')]
-draw = page(head('g', '📋', '報告書', '光線特勤隊・任務報告', '🎨 我看到的光', '10/16') +
-  '<div class="step"><span class="no">1</span>今天我看到了什麼？（可以勾很多個）</div>'
-  '<div class="p6">' + ''.join(opt(img(p), l) for p, l in SAW) + '</div>'
-  '<div class="low"><div><div class="step"><span class="no">2</span>把它畫在拍立得裡（也可以貼）</div>'
-  '<div class="pola"><span class="tape l"></span><span class="tape r"></span><div class="in">✏️ 畫在這裡</div><div class="cap">我的光線照片</div></div></div>'
-  '<div style="display:flex;flex-direction:column"><div class="step"><span class="no">3</span>光怎麼了？</div><div class="how3">' +
-  ''.join(f'<div class="op"><div class="pic">{p}</div><div class="lab">{BX}{l}</div></div>' for p, l in HOWL) + '</div>'
-  '<div class="step"><span class="no">4</span>我的心情</div><div class="faces">' +
-  ''.join(f'<div class="face"><div class="e">{e}</div><div class="lab">{BX}{t}</div></div>' for e, t in [('😄', '開心'), ('😮', '好神奇'), ('🤔', '想再玩')]) +
-  '</div><div class="stamp">結案<small>特勤隊章</small></div></div></div>' + foot('10/16 自然・光線特勤隊'))
-open(f'{OUT}/draw.html', 'w').write(doc('我看到的光', [draw]))
+SAW = [('light-refract/mv/straw.jpg', '吸管看起來斷掉'), ('light-refract/mv/coin.jpg', '硬幣浮上來'), ('light-refract/mv/pool.jpg', '泳池看起來變淺'), ('light-refract/mv/drop.jpg', '水滴把字變大')]
+DO = [('📄', '透明片放在字上'), ('💧', '滴一滴水'), ('👀', '看水滴下面的字')]
+draw = page(head('g', '💧', '任務單', '光線特勤隊・乙班第 7 節', '💧 水滴放大鏡', '10/16') +
+  '<div class="step"><span class="no">1</span>動手做（做到了就打勾）</div>'
+  '<div class="opts three" style="margin-top:0">' + ''.join(f'<div class="op"><div class="pic" style="height:15mm;font-size:26pt">{e}</div><div class="lab">{BX}{l}</div></div>' for e, l in DO) + '</div>'
+  f'<div class="drop" style="margin-top:2.5mm"><div class="t">把透明片放在這裡，滴一滴水在小字上</div><div class="tiny">{tiny_txt}</div>'
+  f'<div class="row" style="display:flex;gap:4mm;align-items:center;font-size:13pt;font-weight:900;margin-top:2mm">水滴下面的字變：{chips(["大", "小"])}</div></div>'
+  '<div class="low" style="grid-template-columns:1fr 1.15fr"><div><div class="step"><span class="no">2</span>畫下來：水滴下面的字</div>'
+  '<div class="pola" style="margin-top:3mm"><span class="tape l"></span><span class="tape r"></span><div class="in" style="height:92mm">✏️ 畫在這裡</div><div class="cap">我的水滴放大鏡</div></div></div>'
+  '<div style="display:flex;flex-direction:column"><div class="step"><span class="no">3</span>我記得的折射（可以勾很多個）</div>'
+  '<div class="p6" style="grid-template-columns:1fr 1fr">' + ''.join(opt(img(p), l) for p, l in SAW).replace('class="pic"', 'class="pic" style="height:17mm"') + '</div>'
+  '<div class="step"><span class="no">4</span>光碰到水，會？</div><div class="opts" style="margin-top:0">' + f'<div class="op"><div class="pic" style="height:17mm">{ray_svg(True)}</div><div class="lab">{BX}折一下</div></div><div class="op"><div class="pic" style="height:17mm;font-size:26pt">🫥</div><div class="lab">{BX}不見了</div></div>' + '</div>' +
+  '</div></div>' + foot('10/16 自然・光線特勤隊'))
+open(f'{OUT}/draw.html', 'w').write(doc('水滴放大鏡任務單', [draw]))
 print('ok', OUT)
