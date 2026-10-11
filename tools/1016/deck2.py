@@ -116,8 +116,8 @@ toc, A0 = new(); bg(toc)
 T(toc, .7, .55, 9, .5, '光線特勤隊', 18, RED)
 T(toc, .7, .95, 11, 1.0, '10/16（五）自然', 46)
 CL = [('甲班', '第 5 節　13:10', '放大鏡偵探', GEN + 'treasure.jpg', ['MV〈折一下 Snap!〉', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答']),
-      ('乙班', '第 6 節　14:05', '光線特勤隊總複習', MV + 'train.jpg', ['MV〈折一下 Snap!〉', '光之環島列車', '折射環島搶答']),
-      ('乙班', '第 7 節　15:00', '生活裡的折射', GEN + 'drop-text.jpg', ['折射偵探守則', '四個生活案件', '水滴放大鏡', '我看到的光'])]
+      ('乙班', '第 6 節　14:05', '折射大破案', MV + 'straw.jpg', ['MV〈折一下 Snap!〉', '折射大破案', '折射環島搶答']),
+      ('乙班', '第 7 節　15:00', '水滴放大鏡', GEN + 'drop-text.jpg', ['水滴放大鏡任務單', '破案口號'])]
 toc_cards = []
 for i, (c, t, name, img, steps) in enumerate(CL):
     x = .7 + i * 4.1
@@ -248,19 +248,12 @@ for i, (ic, a, b_) in enumerate(lv):
 T(sl, 6.22, 5.85, 6.4, .5, '⚠ 放大鏡不對著太陽、不對著別人的眼睛', 18, RED)
 button(sl, 6.2, 6.45, 3.0, '📄  尋寶單', PDF + 'treasure.pdf?v=1008', h=.72, size=20)
 for g in lvs: A.add('click', [('fly', s.shape_id, {'dir': 'r', 'dur': 400}) for s in g])
-link_slide('甲班｜搶答', '折射環島', '紅隊、藍隊搶答，答對就把這一站變成你們隊的顏色！', CAP + 's_quiz.png', '▶  開始搶答', B + 'games/light-refract-quiz.html')
+link_slide('甲班｜搶答', '折射環島', '每一站請一位同學上台點答案，答對就插上一面金旗！', CAP + 's_quiz.png', '▶  開始搶答', B + 'games/light-refract-quiz.html')
 frame_slide('甲班｜小結', [['放大鏡中間', '厚', '，'], ['讓光', '換方向', '，'], ['東西看起來', '變大', '。']])
 
 # ======================= 乙班 第 6 節 =======================
-sB = cover('乙班', '第 6 節　14:05–14:50', '光線特勤隊總複習', MV + 'train.jpg', ['MV〈折一下 Snap!〉', '光之環島列車', '折射環島搶答'], '', rot=-2, goal='分辨反射和折射，說出光在水面折一下')
+sB = cover('乙班', '第 6 節　14:05–14:50', '折射大破案', MV + 'straw.jpg', ['MV〈折一下 Snap!〉', '折射大破案', '折射環島搶答'], '', rot=-2, goal='說出光碰到水會折一下＝折射')
 link_slide('乙班｜暖身', 'MV\n〈折一下 Snap!〉', '唱到 Snap，全班一起彈指！', CAP + 's_mv.png', '▶  播放 MV', B + 'light-refract/mv.html', (.21, .07, .21, .35))
-link_slide('乙班｜光與顏色', '光之環島列車', '從台北出發，每一站答一題光的問題。卡住可以按「看提示」。', CAP + 's_train.png', '▶  出發', B + 'games/taiwan-train.html')
-link_slide('乙班｜折射', '折射環島', '紅隊、藍隊搶答，答對就把這一站變成你們隊的顏色！', CAP + 's_quiz.png', '▶  開始搶答', B + 'games/light-refract-quiz.html')
-frame_slide('乙班｜小結', [['光走', '直線', '，'], ['碰到水面', '折一下', '，'], ['再繼續直直走。']])
-
-# ======================= 乙班 第 7 節 =======================
-sC = cover('乙班', '第 7 節　15:00–15:45', '生活裡的折射', GEN + 'drop-text.jpg', ['折射偵探守則', '四個生活案件', '水滴放大鏡', '我看到的光'], '透明片、滴管、一杯水、尋寶單、畫卡', goal='找出生活裡的折射，做一個水滴放大鏡')
-
 # 折射偵探守則：自己畫的光路圖
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '乙班｜折射偵探守則')
 T(sl, .7, 1.0, 12, .9, '為什麼眼睛會被騙？', 40)
@@ -362,6 +355,12 @@ bd = band(sl, '光走直線，碰到水面折一下——眼睛就被騙了！',
 for g in cols: A.add('click', [('fly', s.shape_id, {'dir': 'b', 'dur': 400}) for s in g])
 A.add('click', [('wipe', bd.shape_id, {'dur': 500, 'dir': 'u'})])
 
+link_slide('乙班｜折射', '折射環島', '每一站請一位同學上台點答案，答對就插上一面金旗！', CAP + 's_quiz.png', '▶  開始搶答', B + 'games/light-refract-quiz.html')
+frame_slide('乙班｜小結', [['光走', '直線', '，'], ['碰到水面', '折一下', '，'], ['再繼續直直走。']])
+
+# ======================= 乙班 第 7 節 =======================
+sC = cover('乙班', '第 7 節　15:00–15:20', '水滴放大鏡', GEN + 'drop-text.jpg', ['水滴放大鏡任務單', '破案口號'], '透明片、滴管、一杯水、水滴放大鏡任務單', goal='自己做水滴放大鏡，看見字變大')
+
 # 水滴放大鏡實作
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '乙班｜動手做')
 T(sl, .7, 1.0, 12, .8, '自己做一個水滴放大鏡', 38)
@@ -373,21 +372,12 @@ for i, (img, cap) in enumerate(STEPS):
     n = num(sl, x - .15, 1.8, i + 1, .7, RED, WHITE, 24)
     t = T(sl, x, 4.95, 3.8, .6, cap, 24, INK, align=PP_ALIGN.CENTER)
     grp.append(fr + [n, t])
-q = T(sl, .7, 5.75, 8.4, .6, '比一比：水滴和放大鏡，哪一個讓字變得比較大？', 20, TEAL)
-button(sl, 9.6, 5.7, 3.0, '📄  尋寶單', PDF + 'treasure.pdf?v=1008', h=.72, size=20)
+q = T(sl, .7, 5.75, 8.4, .6, '做到一步，就在任務單上打勾！', 20, TEAL)
+button(sl, 9.6, 5.7, 3.0, '📄  任務單', PDF + 'draw.pdf?v=1011b', h=.72, size=20)
 for g in grp: A.add('click', [('fade', s.shape_id, {'dur': 400}) for s in g])
 A.add('click', [('fade', q.shape_id, {'dur': 400})])
 
-# 我看到的光
-sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '乙班｜畫畫看')
-framed(sl, CAP + 'w_draw.png', 7.4, .8, 4.6, 6.4, 2.5, pad=.08, crop=(0, 0, 0, .5))
-T(sl, .7, 1.0, 6.4, .9, '我看到的光', 44)
-T(sl, .72, 1.95, 6.2, .6, '畫下今天最神奇的發現。', 22, SOFT, bold=False)
-for i, t_ in enumerate(['① 畫下來（也可以貼）', '② 勾一勾：今天最神奇的是？', '③ 勾一勾：我的心情']):
-    T(sl, .72, 2.85 + i * .85, 6.4, .7, t_, 26, INK)
-button(sl, .72, 5.6, 3.0, '📄  畫卡', PDF + 'draw.pdf?v=1008', h=.72, size=20)
-
-link_slide('乙班｜一起唱', 'MV\n再唱一次！', '光走直線，碰到水面——Snap! 折一下', CAP + 's_mv.png', '▶  播放 MV', B + 'light-refract/mv.html', (.21, .07, .21, .35))
+frame_slide('乙班｜破案口號', [['光碰到水，會', '折一下', '，'], ['圓圓的水滴讓字', '變大', '！']])
 
 # 下課
 sl, A = new(); full_photo(sl, MV + 'stage.jpg')
