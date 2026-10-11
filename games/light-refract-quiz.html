@@ -229,7 +229,7 @@ function drive(i,done){const L=legs[i],len=L.p.getTotalLength();SND.whistle();SN
     if(k<1)requestAnimationFrame(f);else{SND.bell();done&&done();}}
   requestAnimationFrame(f);}
 /* ===== 遊戲 ===== */
-const CLS=/[?&]mode=class/.test(location.search);if(CLS){document.body.classList.add("cls");}
+const CLS=!/[?&]mode=team/.test(location.search);if(CLS){document.body.classList.add("cls");}
 let idx=0,owner=Array(10).fill(null),team=null,tried=new Set(),locked=false;
 const NAME={r:"紅隊",b:"藍隊",all:"全班"};
 function setCity(){C.forEach((c,i)=>$("c"+i).setAttribute("class","city"+(owner[i]?" "+owner[i]:"")+(i===idx?" now":"")));}
