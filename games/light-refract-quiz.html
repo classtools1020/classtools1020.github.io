@@ -116,7 +116,7 @@
     <h1>折射環島<small>搶到、答對，這一站就變成你們隊的顏色</small></h1>
     <div class="tickets">
       <div class="ticket r" id="tkR"><div class="tn">紅隊<small>RED EXPRESS</small></div><div class="ts"><span id="sR">0</span><small>站</small></div></div>
-      <div class="ticket g" id="tkG"><div class="tn">全班<small>CLASS EXPRESS</small></div><div class="ts"><span id="sG">0</span><small>站</small></div></div>
+      <div class="ticket g" id="tkG"><div class="tn">金旗<small>GOLD EXPRESS</small></div><div class="ts"><span id="sG">0</span><small>站</small></div></div>
       <div class="ticket b" id="tkB"><div class="tn">藍隊<small>BLUE EXPRESS</small></div><div class="ts"><span id="sB">0</span><small>站</small></div></div>
     </div>
   </header>
@@ -245,7 +245,7 @@ function show(){
   $("opts").className="opts off";$("opts").querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b));
   $("bzR").disabled=$("bzB").disabled=false;$("buzz").style.display="";$("allBtn").style.display="";$("panel").className="panel";
   status("哪一隊先舉手？點那一隊。");
-  if(CLS){team=null;choose("all");status("全班一起想，請一位同學上來點答案");}
+  if(CLS){team=null;choose("all");status("請一位同學上來點答案");}
   $("hint").classList.remove("show");$("hint").innerHTML="💡 "+c.h;$("explain").classList.remove("show");$("go").classList.remove("show");
   setCity();
 }
@@ -257,7 +257,7 @@ function pick(b){if(locked||!team)return;const c=C[idx];
     if(team==="r"||team==="b"){owner[idx]=team;score();const tk=$(team==="r"?"tkR":"tkB");tk.classList.remove("bump");void tk.offsetWidth;tk.classList.add("bump");
       const t=team;setTimeout(()=>{SND.stamp();setCity();plant(idx,t);},350);}
     try{const r=b.getBoundingClientRect();FX.confetti(90,r.left+r.width/2,r.top);}catch(e){}
-    status(team==="all"?"全班答對！":NAME[team]+"拿下這一站！",team);
+    status(team==="all"?"答對了！":NAME[team]+"拿下這一站！",team);
     finish();}
   else if(CLS){b.classList.add("no");b.classList.add("used");b.onclick=null;SND.no();status("再想想看～看看提示 💡");$("hint").classList.add("show");}
   else{b.classList.add("no");b.classList.add("used");SND.no();tried.add(team);
@@ -277,13 +277,13 @@ $("allBtn").onclick=()=>choose("all");
 $("hintBtn").onclick=()=>{SND.tap();$("hint").classList.toggle("show");};
 addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(k==="a")choose("r");if(k==="l")choose("b");if(k==="1"||k==="2"){const b=$("opts").children[+k-1];b&&b.onclick&&pick(b);}});
 function finale(){const r=owner.filter(o=>o==="r").length,b=owner.filter(o=>o==="b").length;
-  if(CLS){const g=owner.filter(o=>o==="all").length;$("endT").textContent=`全班環島成功！插上 ${g} 面金旗`;$("endScore").innerHTML=$("tkG").outerHTML.replace(' id="tkG"','');$("postgrid").innerHTML=C.map((c,i)=>`<div class="pg ${owner[i]||""}"><img src="${TW+c.pc}.jpg" alt="">${c.n}</div>`).join("");$("end").classList.remove("hide");SND.fanfare();try{FX.confetti(220);FX.fireworks(2600);}catch(e){}return;}
+  if(CLS){const g=owner.filter(o=>o==="all").length;$("endT").textContent=`環島成功！插上 ${g} 面金旗`;$("endScore").innerHTML=$("tkG").outerHTML.replace(' id="tkG"','');$("postgrid").innerHTML=C.map((c,i)=>`<div class="pg ${owner[i]||""}"><img src="${TW+c.pc}.jpg" alt="">${c.n}</div>`).join("");$("end").classList.remove("hide");SND.fanfare();try{FX.confetti(220);FX.fireworks(2600);}catch(e){}return;}
   $("endT").textContent=r>b?"紅隊環島冠軍！":b>r?"藍隊環島冠軍！":"兩隊平手，都是冠軍！";
   $("endScore").innerHTML=$("tkR").outerHTML.replace(' id="tkR"','')+$("tkB").outerHTML.replace(' id="tkB"','');
   $("postgrid").innerHTML=C.map((c,i)=>`<div class="pg ${owner[i]||""}"><img src="${TW+c.pc}.jpg" alt="">${c.n}</div>`).join("");
   $("end").classList.remove("hide");SND.fanfare();try{FX.confetti(220);FX.fireworks(2600);}catch(e){}}
 $("routeTxt").innerHTML=C.map(c=>c.n.split("・").pop()).concat(["竹東"]).join("<i>—</i>");
-if(CLS){document.querySelector("#start p").innerHTML="小火車從竹東出發，繞台灣一圈。<br>每一站都是生活裡的折射——全班一起答對，就插上一面金旗！";document.querySelector("header h1 small").textContent="全班一起答，答對就插上金旗";}
+if(CLS){document.querySelector("#start p").innerHTML="小火車從竹東出發，繞台灣一圈。<br>每一站都是生活裡的折射——答對就插上一面金旗！";document.querySelector("header h1 small").textContent="答對就插上一面金旗";}
 $("startBtn").onclick=()=>{ac();SND.whistle();$("start").classList.add("hide");};
 $("againBtn").onclick=()=>{idx=0;owner=Array(10).fill(null);score();document.querySelectorAll(".flag").forEach(f=>f.remove());legs.forEach(l=>l.done.setAttribute("opacity",0));placeTrain(C[0],-30);$("end").classList.add("hide");show();};
 placeTrain(C[0],-30);show();
