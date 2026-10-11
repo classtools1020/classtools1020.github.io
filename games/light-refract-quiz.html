@@ -101,6 +101,9 @@
   .postgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:8px 0 24px}
   .pg{background:#fff;padding:5px 5px 6px;border-radius:3px;box-shadow:0 4px 10px rgba(60,45,20,.15);border-top:6px solid #bbb;font-weight:900;font-size:14px}
   .pg img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;margin-bottom:4px}
+.ticket.g{background:#b9861f}.city.all .dot{fill:#d99a22;stroke:#fff}.pg.all{border-top-color:#d99a22}
+  body.cls .ticket.r,body.cls .ticket.b,body.cls #buzz,body.cls #allBtn{display:none!important}
+  body:not(.cls) #tkG{display:none}
   .pg.r{border-top-color:var(--red)}.pg.b{border-top-color:var(--blue)}
   @media(max-width:600px){.postgrid{grid-template-columns:repeat(2,1fr)}.tickets{width:100%}.ticket{flex:1;min-width:0}}
 </style>
@@ -113,6 +116,7 @@
     <h1>折射環島<small>搶到、答對，這一站就變成你們隊的顏色</small></h1>
     <div class="tickets">
       <div class="ticket r" id="tkR"><div class="tn">紅隊<small>RED EXPRESS</small></div><div class="ts"><span id="sR">0</span><small>站</small></div></div>
+      <div class="ticket g" id="tkG"><div class="tn">全班<small>CLASS EXPRESS</small></div><div class="ts"><span id="sG">0</span><small>站</small></div></div>
       <div class="ticket b" id="tkB"><div class="tn">藍隊<small>BLUE EXPRESS</small></div><div class="ts"><span id="sB">0</span><small>站</small></div></div>
     </div>
   </header>
@@ -225,10 +229,11 @@ function drive(i,done){const L=legs[i],len=L.p.getTotalLength();SND.whistle();SN
     if(k<1)requestAnimationFrame(f);else{SND.bell();done&&done();}}
   requestAnimationFrame(f);}
 /* ===== 遊戲 ===== */
+const CLS=/[?&]mode=class/.test(location.search);if(CLS){document.body.classList.add("cls");}
 let idx=0,owner=Array(10).fill(null),team=null,tried=new Set(),locked=false;
 const NAME={r:"紅隊",b:"藍隊",all:"全班"};
 function setCity(){C.forEach((c,i)=>$("c"+i).setAttribute("class","city"+(owner[i]?" "+owner[i]:"")+(i===idx?" now":"")));}
-function score(){$("sR").textContent=owner.filter(o=>o==="r").length;$("sB").textContent=owner.filter(o=>o==="b").length;}
+function score(){$("sG").textContent=owner.filter(o=>o==="all").length;$("sR").textContent=owner.filter(o=>o==="r").length;$("sB").textContent=owner.filter(o=>o==="b").length;}
 function status(t,cls){$("status").className="status"+(cls?" "+cls:"");$("status").textContent=t;}
 function show(){
   const c=C[idx];locked=false;team=null;tried=new Set();
@@ -240,6 +245,7 @@ function show(){
   $("opts").className="opts off";$("opts").querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(b));
   $("bzR").disabled=$("bzB").disabled=false;$("buzz").style.display="";$("allBtn").style.display="";$("panel").className="panel";
   status("哪一隊先舉手？點那一隊。");
+  if(CLS){team=null;choose("all");status("全班一起想，請一位同學上來點答案");}
   $("hint").classList.remove("show");$("hint").innerHTML="💡 "+c.h;$("explain").classList.remove("show");$("go").classList.remove("show");
   setCity();
 }
@@ -247,18 +253,20 @@ function choose(t){if(locked||team)return;team=t;SND.buzz(t);$("panel").classNam
   status(NAME[t]+"作答中……",t);$("bzR").disabled=$("bzB").disabled=true;$("allBtn").style.display="none";}
 function pick(b){if(locked||!team)return;const c=C[idx];
   if(+b.dataset.i===c.a){locked=true;b.classList.add("ok");SND.ok();
+    if(team==="all"&&CLS){owner[idx]="all";score();setTimeout(()=>{SND.stamp();setCity();plant(idx,"all");},350);}
     if(team==="r"||team==="b"){owner[idx]=team;score();const tk=$(team==="r"?"tkR":"tkB");tk.classList.remove("bump");void tk.offsetWidth;tk.classList.add("bump");
       const t=team;setTimeout(()=>{SND.stamp();setCity();plant(idx,t);},350);}
     try{const r=b.getBoundingClientRect();FX.confetti(90,r.left+r.width/2,r.top);}catch(e){}
     status(team==="all"?"全班答對！":NAME[team]+"拿下這一站！",team);
     finish();}
+  else if(CLS){b.classList.add("no");b.classList.add("used");b.onclick=null;SND.no();status("再想想看～看看提示 💡");$("hint").classList.add("show");}
   else{b.classList.add("no");b.classList.add("used");SND.no();tried.add(team);
     const other=team==="r"?"b":team==="b"?"r":null;
     if(other&&!tried.has(other)){team=other;$("panel").className="panel "+other;status(`可惜！換${NAME[other]}答`,other);}
     else{locked=true;const right=[...$("opts").children].find(x=>+x.dataset.i===c.a);right.classList.add("ok");status("沒關係，答案在這裡");finish();}}
 }
 function plant(i,t){const c=C[i];const g=$("c"+i);const f=el("g",{class:"flag"},g);el("line",{x1:c.x,y1:c.y-10,x2:c.x,y2:c.y-42,stroke:"#2b2118","stroke-width":3},f);
-  el("path",{d:`M${c.x} ${c.y-42} L${c.x+24} ${c.y-34} L${c.x} ${c.y-26}Z`,fill:t==="r"?"#c8372d":"#1f5fa8",stroke:"#fff","stroke-width":1.5},f);}
+  el("path",{d:`M${c.x} ${c.y-42} L${c.x+24} ${c.y-34} L${c.x} ${c.y-26}Z`,fill:t==="r"?"#c8372d":t==="all"?"#d99a22":"#1f5fa8",stroke:"#fff","stroke-width":1.5},f);}
 function finish(){const c=C[idx];$("opts").querySelectorAll(".opt").forEach(b=>b.onclick=null);$("buzz").style.display="none";$("allBtn").style.display="none";
   $("explain").innerHTML=`<span class="term">${c.t}</span>${c.e}`;$("explain").classList.add("show");
   $("go").textContent=idx<9?`開往 ${C[idx+1].n} →`:"開回竹東（終點）→";$("go").classList.add("show");}
@@ -269,11 +277,13 @@ $("allBtn").onclick=()=>choose("all");
 $("hintBtn").onclick=()=>{SND.tap();$("hint").classList.toggle("show");};
 addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(k==="a")choose("r");if(k==="l")choose("b");if(k==="1"||k==="2"){const b=$("opts").children[+k-1];b&&b.onclick&&pick(b);}});
 function finale(){const r=owner.filter(o=>o==="r").length,b=owner.filter(o=>o==="b").length;
+  if(CLS){const g=owner.filter(o=>o==="all").length;$("endT").textContent=`全班環島成功！插上 ${g} 面金旗`;$("endScore").innerHTML=$("tkG").outerHTML.replace(' id="tkG"','');$("postgrid").innerHTML=C.map((c,i)=>`<div class="pg ${owner[i]||""}"><img src="${TW+c.pc}.jpg" alt="">${c.n}</div>`).join("");$("end").classList.remove("hide");SND.fanfare();try{FX.confetti(220);FX.fireworks(2600);}catch(e){}return;}
   $("endT").textContent=r>b?"紅隊環島冠軍！":b>r?"藍隊環島冠軍！":"兩隊平手，都是冠軍！";
   $("endScore").innerHTML=$("tkR").outerHTML.replace(' id="tkR"','')+$("tkB").outerHTML.replace(' id="tkB"','');
   $("postgrid").innerHTML=C.map((c,i)=>`<div class="pg ${owner[i]||""}"><img src="${TW+c.pc}.jpg" alt="">${c.n}</div>`).join("");
   $("end").classList.remove("hide");SND.fanfare();try{FX.confetti(220);FX.fireworks(2600);}catch(e){}}
 $("routeTxt").innerHTML=C.map(c=>c.n.split("・").pop()).concat(["竹東"]).join("<i>—</i>");
+if(CLS){document.querySelector("#start p").innerHTML="小火車從竹東出發，繞台灣一圈。<br>每一站都是生活裡的折射——全班一起答對，就插上一面金旗！";document.querySelector("header h1 small").textContent="全班一起答，答對就插上金旗";}
 $("startBtn").onclick=()=>{ac();SND.whistle();$("start").classList.add("hide");};
 $("againBtn").onclick=()=>{idx=0;owner=Array(10).fill(null);score();document.querySelectorAll(".flag").forEach(f=>f.remove());legs.forEach(l=>l.done.setAttribute("opacity",0));placeTrain(C[0],-30);$("end").classList.add("hide");show();};
 placeTrain(C[0],-30);show();
