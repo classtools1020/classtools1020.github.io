@@ -62,9 +62,11 @@ wr('d1021/index.html', steps_page('10/21 自然代課', '自然科代課', '10/2
   [('示範影片：額溫槍六步驟 <small>（每一步會自動暫停）</small>', 'demo.html'),
    ('額溫槍模擬器 <small>（全班一起走一次）</small>', 'forehead.html'),
    ('讀大數字練習', 'forehead.html#quiz'),
-   ('兩人一組，真的量 <small>（學習單）</small>', 'files/T2-print.pdf?v=1')],
+   ('兩人一組，真的量 <small>（六步驟照片卡）</small>', 'files/six-steps.pdf?v=1'),
+   ('學習單', 'files/T2-print.pdf?v=1')],
   '只讀小數點前面的大數字（36.5 讀「36」）。', U1021))
 cp('temp/demo.html', 'd1021/demo.html'); cp('temp/forehead.html', 'd1021/forehead.html'); cp('temp/files/T2-print.pdf', 'd1021/files/T2-print.pdf')
+import subprocess; subprocess.run([sys.executable, os.path.join(ROOT, 'tools/sub/six_card.py'), os.path.join(OUT, 'd1021/files/six-steps.pdf')], check=True)
 for f in ('demo.html', 'forehead.html'):
     p = os.path.join(OUT, 'd1021', f); c = clean(open(p, encoding='utf-8').read(), U1021); open(p, 'w', encoding='utf-8').write(c)
 wr('d1021/games/fx.js', fx(U1021))
