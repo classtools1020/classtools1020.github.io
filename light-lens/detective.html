@@ -593,7 +593,7 @@ function goMap(o){closeAllSoft();C.task=null;C.found=false;C.lens.show=false;C.l
   say(o.line,o.instr||'',o.auto?'':'tap',o.mood||'find');
   if(o.auto){later(700,go);return;}
   const at={x:(pinW.x-cam.x)*k,y:(pinW.y-cam.y)*k};
-  setTask({type:'tap',at,ring:Math.max(70,46*k),hit:(x,y)=>Math.hypot(x-at.x,y-at.y)<Math.max(100,62*k),hint2:`黃色圖釘上，有${dest.name}的照片。`,onTap:go});if(o.hint1){C.hint=1;updHint();}}
+  setTask({type:'tap',at,ring:Math.max(70,46*k),hit:(x,y)=>true,hint2:`黃色圖釘上，有${dest.name}的照片。`,onTap:go});if(o.hint1){C.hint=1;updHint();}}
 
 /* ================= 第一關：校園怪腳印事件 ================= */
 const poly=pts=>{const p=new Path2D();pts.forEach((q,i)=>i?p.lineTo(...q):p.moveTo(...q));p.closePath();return p;};
