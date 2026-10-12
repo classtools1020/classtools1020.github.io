@@ -579,17 +579,20 @@ function goMap(o){closeAllSoft();C.task=null;C.found=false;C.lens.show=false;C.l
   const me={fx:f[0],fy:f[1],path:[],face:to[0]>=f[0]?1:-1},ppl=npcs(8,[(f[0]+to[0])/2,(f[1]+to[1])/2]);
   const pinW={x:(to[0]+.5)*Tt,y:(to[1]+.5)*Tt-50};
   const fitC=(mid,pin,v,lo,hi,max)=>clamp(clamp(mid-v/2,pin+hi-v,pin-lo),0,max-v);
-  const aim=()=>({x:vw>=30*Tt?(30*Tt-vw)/2:fitC(((me.fx+to[0])/2+.5)*Tt,pinW.x,vw,130,130,30*Tt),y:fitC(((me.fy+to[1])/2+.5)*Tt,pinW.y,vh,150,110,49*Tt)});const cam=aim();let walking=false,arrived=false;
+  const aim=()=>({x:vw>=30*Tt?(30*Tt-vw)/2:fitC(((me.fx+to[0])/2+.5)*Tt,pinW.x,vw,130,130,30*Tt),y:fitC(((me.fy+to[1])/2+.5)*Tt,pinW.y,vh,150,110,49*Tt)});const cam=aim();let walking=false,arrived=false,held=false,push=0;
   C.cur={items:[],bg:'#33412f',map:true,label:'竹東國中・校園地圖',
     update(dt){ppl.forEach(n=>{if(!n.path.length){if((n.wait-=dt)<0){n.wait=1500+Math.random()*3500;const tx=Math.round(n.fx)+Math.round((Math.random()-.5)*6),ty=Math.round(n.fy)+Math.round((Math.random()-.5)*6);
         if(MAP.walk(tx,ty)){const p=MAP.bfs([Math.round(n.fx),Math.round(n.fy)],[tx,ty],8);if(p)n.path=p;}}}else stepP(n,dt,.0016);});
-      if(walking&&!arrived&&stepP(me,dt,G.reduce?.03:.007)){arrived=true;sfx('chime');C.mood='find';later(450,()=>fadeTo(()=>{C.at=o.to;o.onArrive();}));}
+      if(push>0&&push<1e8)push-=dt;if(walking&&!arrived&&(held||push>0)&&stepP(me,dt,G.reduce?.03:.007)){arrived=true;sfx('chime');C.mood='find';later(450,()=>fadeTo(()=>{C.at=o.to;o.onArrive();}));}
       const a=aim(),kk=G.reduce?1:Math.min(1,dt*.004);cam.x+=(a.x-cam.x)*kk;cam.y+=(a.y-cam.y)*kk;},
     dyn(c,t){c.save();c.scale(k,k);c.translate(-cam.x,-cam.y);c.drawImage(img,0,0,30*Tt,49*Tt);if(o.trail)drawTrail(c);
       const list=ppl.map(n=>({y:n.fy,d:()=>MAP.person(c,n.fx*Tt+Tt/2,n.fy*Tt+Tt/2-4,{outfit:'uniform',shirt:n.shirt,hair:n.hair,moving:n.path.length>0,face:n.face},t)}));
-      list.push({y:me.fy+.01,d:()=>{const b=walking&&!arrived&&!G.reduce?Math.abs(Math.sin(t/90))*4:0;c.save();c.translate(me.fx*Tt+Tt/2,me.fy*Tt+Tt/2+14-b);c.scale(me.face,1);drawAzhu(c,0,0,.25,walking?'find':C.mood,t,G.hat);c.restore();}});
+      list.push({y:me.fy+.01,d:()=>{const b=walking&&!arrived&&(held||push>0)&&!G.reduce?Math.abs(Math.sin(t/90))*4:0;c.save();c.translate(me.fx*Tt+Tt/2,me.fy*Tt+Tt/2+14-b);c.scale(me.face,1);drawAzhu(c,0,0,.25,(walking&&(held||push>0))?'find':C.mood,t,G.hat);c.restore();}});
       list.sort((a,b)=>a.y-b.y).forEach(q=>q.d());if(!arrived)drawPin(c,pinW.x,pinW.y,dest,t);c.restore();}};
-  base=null;const go=()=>{setTask(null);walking=true;me.path=path.slice();sfx('pop');$('#instr').textContent='出發！';};
+  base=null;const go=()=>{setTask(null);walking=true;me.path=path.slice();sfx('pop');$('#instr').textContent=o.auto?'出發！':'按住畫面，阿竹就一步一步走；放開就停';if(o.auto){push=1e9;return;}
+    const dn=e=>{if(!arrived)held=true;},up=e=>{if(held){held=false;push=420;}},key=e=>{if(/^(Arrow|Space| |Enter|w|a|s|d)/i.test(e.key)||e.key===' '){push=Math.max(push,280);e.preventDefault();}};
+    cv.addEventListener('pointerdown',dn);window.addEventListener('pointerup',up);window.addEventListener('keydown',key);
+    push=420;};
   say(o.line,o.instr||'',o.auto?'':'tap',o.mood||'find');
   if(o.auto){later(700,go);return;}
   const at={x:(pinW.x-cam.x)*k,y:(pinW.y-cam.y)*k};
