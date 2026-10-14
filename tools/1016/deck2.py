@@ -115,7 +115,7 @@ def full_photo(sl, path):
 toc, A0 = new(); bg(toc)
 T(toc, .7, .55, 9, .5, '光線特勤隊', 18, RED)
 T(toc, .7, .95, 11, 1.0, '10/16（五）自然', 46)
-CL = [('甲班', '第 5 節　13:10', '放大鏡偵探', GEN + 'treasure.jpg', ['MV＋影片：太陽聚光', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答'])]
+CL = [('甲班', '第 5 節　13:10', '放大鏡偵探', GEN + 'treasure.jpg', ['MV〈折一下 Snap!〉', '放大鏡偵探（簡報）', '放大鏡尋寶單', '折射環島搶答（挑戰）'])]
 toc_cards = []
 for i, (c, t, name, img, steps) in enumerate(CL):
     x = (13.333 - 3.8) / 2 + i * 4.1
@@ -200,36 +200,9 @@ def frame_slide(tag, lines):
 
 # ======================= 甲班 第 5 節 =======================
 sA = cover('甲班', '第 5 節　13:10–13:55', '放大鏡偵探', GEN + 'treasure.jpg',
-           ['MV〈折一下 Snap!〉', '影片：放大鏡對著太陽', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答'], '放大鏡、尋寶單', goal='說出放大鏡中間厚，讓東西看起來變大')
+           ['MV〈折一下 Snap!〉', '放大鏡偵探（簡報）', '放大鏡尋寶單', '折射環島搶答（挑戰）'], '放大鏡、尋寶單', goal='說出放大鏡中間厚，讓東西看起來變大')
 link_slide('甲班｜暖身', 'MV\n〈折一下 Snap!〉', '唱到 Snap，全班一起彈指！', CAP + 's_mv.png', '▶  播放 MV', B + 'light-refract/mv.html', (.21, .07, .21, .35))
-link_slide('甲班｜影片時間', '影片\n再看一次！', '放大鏡對著太陽，樹葉冒煙了！\n看完問：樹葉為什麼會冒煙？\n⚠ 放大鏡不能對著太陽、不能對著人', CAP + 'v_sun.jpg', '▶  播放影片', 'https://www.youtube.com/watch?v=t0Ueei9eS_U')
-# 透鏡快問：放大鏡中間厚（畫鏡片形狀）
-sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '甲班｜透鏡快問')
-T(sl, .7, 1.0, 12, 1.0, '放大鏡的鏡片，長什麼樣子？', 40)
-def lens_shape(cx, cy, thick):
-    # 用多邊形畫凸透鏡剖面
-    import math
-    pts = []
-    H, Wm, We = 1.7, (.85 if thick else .22), (.18 if thick else .75)
-    N = 24
-    for i in range(N + 1):
-        t = -1 + 2 * i / N; y = t * H
-        w = We + (Wm - We) * (1 - t * t)
-        pts.append((cx + w / 2, cy + y))
-    for i in range(N, -1, -1):
-        t = -1 + 2 * i / N; y = t * H
-        w = We + (Wm - We) * (1 - t * t)
-        pts.append((cx - w / 2, cy + y))
-    ff = sl.shapes.build_freeform(Inches(pts[0][0]), Inches(pts[0][1]))
-    ff.add_line_segments([(Inches(px), Inches(py)) for px, py in pts[1:]], close=True)
-    s = ff.convert_to_shape(); s.fill.solid(); s.fill.fore_color.rgb = rgb('BFE6F5'); s.line.color.rgb = rgb('2A7FB8'); s.line.width = Pt(3); s.shadow.inherit = False
-    return s
-cA = rect(sl, 4.0, 1.95, 5.3, 4.5, WHITE, LINEC, 2, MSO_SHAPE.ROUNDED_RECTANGLE, rad=.08); lA = lens_shape(6.65, 3.85, True)
-T(sl, 4.0, 5.75, 5.3, .6, '摸摸看：中間鼓鼓的、比較厚', 24, INK, align=PP_ALIGN.CENTER)
-ring, badge = check(sl, 4.0, 1.95, 5.3, 4.5)
-ans = band(sl, '放大鏡中間厚＝凸透鏡：讓光換方向，東西看起來變大', y=6.85, h=.65, size=22, fill=GREEN)
-A.add('click', [('fade', ring.shape_id, {'dur': 300}), ('zoom', badge.shape_id, {'dur': 400}), ('wipe', ans.shape_id, {'dur': 500, 'dir': 'u'})])
-link_slide('甲班｜放大鏡偵探', '放大鏡偵探', '先猜再揭曉：字變大？景色倒過來？第 7 頁有影片（點電視就播）。', CAP + 's_lensshow.png', '▶  打開簡報', PDF + 'show/')
+link_slide('甲班｜放大鏡偵探', '放大鏡偵探', '先看影片，再先猜後揭曉：字變大？景色倒過來？一直按「下一步」。', CAP + 's_lensshow.png', '▶  打開簡報', PDF + 'show/')
 # 放大鏡尋寶
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '甲班｜放大鏡尋寶')
 framed(sl, CAP + 'w_treasure.png', .9, .9, 4.5, 6.3, -2.5, pad=.08)
@@ -245,7 +218,7 @@ for i, (ic, a, b_) in enumerate(lv):
 T(sl, 6.22, 5.85, 6.4, .5, '⚠ 放大鏡不對著太陽、不對著別人的眼睛', 18, RED)
 button(sl, 6.2, 6.45, 3.0, '📄  尋寶單', PDF + 'treasure.pdf?v=1008', h=.72, size=20)
 for g in lvs: A.add('click', [('fly', s.shape_id, {'dir': 'r', 'dur': 400}) for s in g])
-link_slide('甲班｜搶答', '折射環島', '紅隊、藍隊搶答，答對就把這一站變成你們隊的顏色！', CAP + 's_quiz.png', '▶  開始搶答', B + 'games/light-refract-quiz.html')
+link_slide('甲班｜挑戰', '折射環島搶答', '紅隊、藍隊搶答，答對就把這一站變成你們隊的顏色！', CAP + 's_quiz.png', '▶  開始搶答', B + 'games/light-refract-quiz.html')
 frame_slide('甲班｜小結', [['放大鏡中間', '厚', '，'], ['讓光', '換方向', '，'], ['東西看起來', '變大', '。']])
 
 # 下課
