@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>凸透鏡大挑戰</title>
+<style>
+  :root{--ink:#1f2a37;--paper:#f4efe6;--red:#d8352a;--blue:#2361b8;--green:#2f8a4c;--gold:#ffcf2e}
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:#2b3240;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none}
+  button{font-family:inherit;cursor:pointer;touch-action:manipulation}
+  .top{display:flex;align-items:center;gap:12px;padding:12px 16px;flex-wrap:wrap}
+  .top a{color:#fff;text-decoration:none;font-weight:800;background:rgba(255,255,255,.14);border-radius:10px;padding:8px 12px}
+  .top h1{color:#fff;margin:0;font-size:clamp(22px,3vw,32px);letter-spacing:.05em}
+  .snd{margin-left:auto;border:none;border-radius:10px;padding:8px 12px;font-size:18px;background:rgba(255,255,255,.14);color:#fff}
+  .wrap{display:grid;grid-template-columns:200px 1fr 200px;gap:16px;padding:0 16px 20px;align-items:start}
+  .team{border-radius:20px;padding:16px;color:#fff;text-align:center;position:sticky;top:10px}
+  .team.r{background:var(--red)}.team.b{background:var(--blue)}
+  .team .n{font-size:26px;font-weight:900}
+  .team .s{font-size:64px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums}
+  .team.on{box-shadow:0 0 0 6px var(--gold)}
+  .team .turn{font-size:16px;font-weight:800;min-height:1.4em;color:#ffe680}
+  .board{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .tile{aspect-ratio:4/3;border:none;border-radius:18px;background:var(--paper);font-size:clamp(34px,5vw,62px);font-weight:900;color:var(--ink);box-shadow:0 6px 0 #c9bfae;transition:transform .15s}
+  .tile:hover{transform:translateY(-3px)}
+  .tile.done{background:#4a5263;color:#7d8596;box-shadow:none;font-size:clamp(18px,2vw,26px)}
+  .modal{position:fixed;inset:0;background:rgba(15,20,30,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:5}
+  .hide{display:none!important}
+  .card{background:var(--paper);border-radius:24px;width:min(960px,96vw);max-height:94vh;overflow:auto;padding:22px 26px;text-align:center;animation:pop .35s}
+  @keyframes pop{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+  .card .no{font-size:18px;font-weight:800;color:#8a8577}
+  .card .q{font-size:clamp(28px,3.6vw,46px);font-weight:900;margin:6px 0 12px;line-height:1.3}
+  .card img{max-width:100%;height:min(30vh,280px);object-fit:cover;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.2);background:#fff;padding:8px}
+  .opts{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:14px 0}
+  .opt{font-size:clamp(24px,3vw,36px);font-weight:900;border:4px solid #d8cfbf;background:#fff;border-radius:16px;padding:14px 26px;min-width:180px}
+  .opt.ok{border-color:var(--green);background:#e6f6ea}
+  .opt.no2{opacity:.35}
+  .ans{font-size:clamp(26px,3.2vw,40px);font-weight:900;color:var(--green);min-height:1.3em}
+  .ex{font-size:20px;font-weight:700;color:#5b6673;margin-top:4px}
+  .acts{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+  .acts button{border:none;border-radius:14px;font-size:22px;font-weight:900;padding:14px 22px;color:#fff}
+  .reveal{background:var(--ink)}.give.r{background:var(--red)}.give.b{background:var(--blue)}.skip{background:#8a8577}
+  .surprise .big{font-size:110px;line-height:1.1}
+  .pts{font-size:26px;font-weight:900;color:#c8372d;margin-top:6px}
+  canvas#cf{position:fixed;inset:0;pointer-events:none;z-index:9}
+  @media (max-width:900px){.wrap{grid-template-columns:1fr 1fr}.board{grid-column:1/3;order:3}.team{position:static}.team .s{font-size:44px}}
+</style>
+</head>
+<body>
+<div class="top"><a href="/light/">← 主選單</a><h1>🔍 凸透鏡大挑戰</h1><button class="snd" id="snd">🔊</button></div>
+<div class="wrap">
+  <div class="team r on" id="tR"><div class="n">🔴 紅隊</div><div class="s" id="sR">0</div><div class="turn" id="uR">輪到你們選</div></div>
+  <div class="board" id="board"></div>
+  <div class="team b" id="tB"><div class="n">🔵 藍隊</div><div class="s" id="sB">0</div><div class="turn" id="uB"></div></div>
+</div>
+<div class="modal hide" id="m"><div class="card" id="c"></div></div>
+<canvas id="cf"></canvas>
+<script>
+const I='../light-refract/mv/', L='../img/lesson/', R='../img/review/';
+const Q=[
+ {q:'放大鏡的鏡片，中間是？',img:I+'magnifier.jpg',o:['中間厚','中間薄'],a:0,ex:'放大鏡中間鼓鼓的，比較厚'},
+ {q:'中間厚的鏡片，叫什麼？',img:L+'convex-laser.jpg',o:['凸透鏡','凹透鏡'],a:0,ex:'「凸」這個字，中間突出來'},
+ {q:'用放大鏡看字，字會？',img:I+'drop.jpg',o:['變大','變小'],a:0,ex:'中間厚的鏡片讓字看起來變大'},
+ {q:'放大鏡可以對著太陽看嗎？',img:R+'sunfocus.jpg',o:['不可以','可以'],a:0,ex:'會傷眼睛，也會燒起來！'},
+ {q:'放大鏡把陽光聚成一點，那一點叫？',img:R+'sunfocus.jpg',o:['焦點','影子','鏡子'],a:0,ex:'光聚在一起的那一點＝焦點'},
+ {q:'焦點的地方摸起來？',img:R+'sunfocus.jpg',o:['很燙','很冰'],a:0,ex:'樹葉都冒煙了，很燙！'},
+ {q:'放大鏡把窗外投到白紙上，景色是？',img:R+'projflip.jpg',o:['倒過來','正的'],a:0,ex:'光走過焦點會交叉，上下交換'},
+ {q:'一滴水放在字上，字會？',img:I+'drop.jpg',o:['變大','變小'],a:0,ex:'一滴水圓圓鼓鼓＝小小的放大鏡'},
+ {q:'哪一個是凸透鏡？',img:I+'magnifier.jpg',o:['放大鏡','鏡子','窗戶玻璃'],a:0,ex:'放大鏡中間厚，是凸透鏡'},
+ {q:'阿公看報紙的老花眼鏡，是？',img:L+'glasses.jpg',o:['凸透鏡','凹透鏡'],a:0,ex:'老花眼鏡中間厚，讓字變大'},
+ {q:'從旁邊看圓魚缸，金魚看起來？',img:I+'aquarium.jpg',o:['變大','變小'],a:0,ex:'圓魚缸裝滿水，像放大鏡'},
+ {q:'光穿過凸透鏡，會怎樣？',img:L+'convex-laser.jpg',o:['聚在一起','散開'],a:0,ex:'中間厚，光聚起來'},
+ {q:'「凸」這個字，長什麼樣子？',img:null,o:['中間突出來','中間凹下去'],a:0,ex:'凸＝中間厚的鏡片'},
+ {q:'相機鏡頭是哪一種鏡片？',img:L+'camera.jpg',o:['凸透鏡','凹透鏡'],a:0,ex:'相機鏡頭把光聚起來，拍出照片'},
+ {q:'放大鏡可以對著同學的眼睛嗎？',img:null,o:['不可以','可以'],a:0,ex:'焦點很燙，會傷眼睛'},
+ {q:'放大鏡只會把東西變大嗎？',img:R+'projflip.jpg',o:['不是，拿遠會倒過來','是，只會變大'],a:0,ex:'拿遠一點，景色會倒過來'},
+];
+// 3 張驚喜卡混在裡面（16 題 + 4 驚喜 = 20 格）
+const SUR=[{e:'🎁',t:'禮物！這一隊 +20 分',f:t=>add(t,20)},{e:'🌈',t:'彩虹！兩隊都 +10 分',f:()=>{add(0,10);add(1,10);}},{e:'⭐',t:'幸運星！這一隊 +15 分',f:t=>add(t,15)},{e:'🔄',t:'交換！兩隊分數互換',f:()=>{const a=sc[0];sc[0]=sc[1];sc[1]=a;show();}}];
+let deck=[...Q.map((q,i)=>({k:'q',i})),...SUR.map((s,i)=>({k:'s',i}))];
+for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+const PTS=[10,10,15,15,20,20,25,25,10,15,20,25,10,15,20,25,10,15,20,25];
+let sc=[0,0],turn=0;const $=id=>document.getElementById(id);
+function show(){$('sR').textContent=sc[0];$('sB').textContent=sc[1];$('tR').classList.toggle('on',turn===0);$('tB').classList.toggle('on',turn===1);$('uR').textContent=turn===0?'輪到你們選':'';$('uB').textContent=turn===1?'輪到你們選':'';}
+function add(t,n){sc[t]+=n;show();}
+// 聲音
+let AC,muted=false;function ac(){AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume();return AC;}
+function tone(f,d,ty='triangle',v=.12,t0=0){if(muted)return;try{const a=ac(),o=a.createOscillator(),g=a.createGain(),s=a.currentTime+t0;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(v,s+.02);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(g).connect(a.destination);o.start(s);o.stop(s+d+.05);}catch(e){}}
+const S={open(){tone(520,.12,'sine',.1);tone(780,.15,'sine',.1,.08);},ok(){[523,659,784,1046].forEach((f,i)=>tone(f,.3,'triangle',.12,i*.08));},sur(){[784,988,1175,1568].forEach((f,i)=>tone(f,.25,'sine',.1,i*.07));},no(){tone(220,.3,'triangle',.1);}};
+$('snd').onclick=()=>{muted=!muted;$('snd').textContent=muted?'🔇':'🔊';};
+// 撒花
+const cf=$('cf'),cx=cf.getContext('2d');let P=[];
+function confetti(){for(let i=0;i<160;i++)P.push({x:innerWidth/2,y:innerHeight*.4,vx:(Math.random()-.5)*18,vy:-Math.random()*16-4,r:Math.random()*6+4,c:['#ff4d4d','#ffd84d','#4dc3ff','#5fd35f','#ff8fd1'][i%5],a:0,l:1});}
+(function loop(){requestAnimationFrame(loop);if(!P.length){cf.width=0;return;}cf.width=innerWidth;cf.height=innerHeight;P=P.filter(p=>p.l>0);P.forEach(p=>{p.vy+=.6;p.x+=p.vx;p.y+=p.vy;p.a+=.2;p.l-=.012;cx.save();cx.globalAlpha=p.l;cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.fillRect(-p.r,-p.r/2,p.r*2,p.r);cx.restore();});})();
+// 棋盤
+function board(){$('board').innerHTML=deck.map((d,i)=>`<button class="tile${d.done?' done':''}" data-i="${i}">${d.done?(d.win||'✓'):i+1}</button>`).join('');
+  document.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{const d=deck[+b.dataset.i];if(!d.done)open(+b.dataset.i);});}
+function close(){$('m').classList.add('hide');}
+function next(){turn=1-turn;show();board();close();if(deck.every(d=>d.done))end();}
+function open(i){const d=deck[i],c=$('c'),pts=PTS[i];S.open();$('m').classList.remove('hide');
+  if(d.k==='s'){const s=SUR[d.i];S.sur();confetti();c.className='card surprise';
+    c.innerHTML=`<div class="no">第 ${i+1} 格・驚喜卡</div><div class="big">${s.e}</div><div class="q">${s.t}</div><div class="acts"><button class="reveal" id="go">好耶！繼續 →</button></div>`;
+    $('go').onclick=()=>{s.f(turn);d.done=1;d.win=s.e;next();};return;}
+  const q=Q[d.i];c.className='card';
+  c.innerHTML=`<div class="no">第 ${i+1} 格・${pts} 分　｜　${turn?'🔵 藍隊':'🔴 紅隊'}回答</div><div class="q">${q.q}</div>${q.img?`<img src="${q.img}" alt="">`:''}
+   <div class="opts">${q.o.map((o,j)=>`<div class="opt" data-j="${j}">${o}</div>`).join('')}</div><div class="ans" id="ans"></div>
+   <div class="acts" id="acts"><button class="reveal" id="rv">👀 看答案</button></div>`;
+  $('rv').onclick=()=>{S.ok();c.querySelectorAll('.opt').forEach(o=>o.classList.add(+o.dataset.j===q.a?'ok':'no2'));$('ans').innerHTML=`✔ ${q.o[q.a]}<div class="ex">${q.ex}</div>`;
+    $('acts').innerHTML=`<button class="give r" id="gR">🔴 紅隊答對 +${pts}</button><button class="give b" id="gB">🔵 藍隊答對 +${pts}</button><button class="skip" id="gN">都沒答對</button>`;
+    $('gR').onclick=()=>{add(0,pts);confetti();S.ok();d.done=1;d.win='🔴';next();};
+    $('gB').onclick=()=>{add(1,pts);confetti();S.ok();d.done=1;d.win='🔵';next();};
+    $('gN').onclick=()=>{S.no();d.done=1;d.win='—';next();};};
+}
+function end(){const c=$('c');$('m').classList.remove('hide');confetti();setTimeout(confetti,600);[523,659,784,659,784,1046].forEach((f,i)=>tone(f,.4,'triangle',.12,i*.15));
+  const w=sc[0]===sc[1]?'兩隊一樣厲害！':(sc[0]>sc[1]?'🔴 紅隊獲勝！':'🔵 藍隊獲勝！');
+  c.className='card';c.innerHTML=`<div class="big" style="font-size:100px">🏆</div><div class="q">${w}</div><div class="q" style="font-size:34px">🔴 ${sc[0]} 分　：　🔵 ${sc[1]} 分</div><div class="acts"><button class="reveal" onclick="location.reload()">↺ 再玩一次</button></div>`;}
+show();board();
+</script>
+</body>
+</html>
