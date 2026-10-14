@@ -115,7 +115,7 @@ def full_photo(sl, path):
 toc, A0 = new(); bg(toc)
 T(toc, .7, .55, 9, .5, '光線特勤隊', 18, RED)
 T(toc, .7, .95, 11, 1.0, '10/16（五）自然', 46)
-CL = [('甲班', '第 5 節　13:10', '放大鏡偵探', GEN + 'treasure.jpg', ['MV〈折一下 Snap!〉', '透鏡快問＋放大鏡偵探（含影片）', '放大鏡尋寶', '折射環島搶答'])]
+CL = [('甲班', '第 5 節　13:10', '放大鏡偵探', GEN + 'treasure.jpg', ['MV＋影片：太陽聚光', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答'])]
 toc_cards = []
 for i, (c, t, name, img, steps) in enumerate(CL):
     x = (13.333 - 3.8) / 2 + i * 4.1
@@ -200,8 +200,9 @@ def frame_slide(tag, lines):
 
 # ======================= 甲班 第 5 節 =======================
 sA = cover('甲班', '第 5 節　13:10–13:55', '放大鏡偵探', GEN + 'treasure.jpg',
-           ['MV〈折一下 Snap!〉', '透鏡快問＋放大鏡偵探（含影片）', '放大鏡尋寶', '折射環島搶答'], '放大鏡、尋寶單', goal='說出放大鏡中間厚，讓東西看起來變大')
+           ['MV〈折一下 Snap!〉', '影片：放大鏡對著太陽', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答'], '放大鏡、尋寶單', goal='說出放大鏡中間厚，讓東西看起來變大')
 link_slide('甲班｜暖身', 'MV\n〈折一下 Snap!〉', '唱到 Snap，全班一起彈指！', CAP + 's_mv.png', '▶  播放 MV', B + 'light-refract/mv.html', (.21, .07, .21, .35))
+link_slide('甲班｜影片時間', '影片\n再看一次！', '放大鏡對著太陽，樹葉冒煙了！\n看完問：樹葉為什麼會冒煙？\n⚠ 放大鏡不能對著太陽、不能對著人', CAP + 'v_sun.jpg', '▶  播放影片', 'https://www.youtube.com/watch?v=t0Ueei9eS_U')
 # 透鏡快問：放大鏡中間厚（畫鏡片形狀）
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '甲班｜透鏡快問')
 T(sl, .7, 1.0, 12, 1.0, '放大鏡的鏡片，長什麼樣子？', 40)
@@ -228,7 +229,7 @@ T(sl, 4.0, 5.75, 5.3, .6, '摸摸看：中間鼓鼓的、比較厚', 24, INK, al
 ring, badge = check(sl, 4.0, 1.95, 5.3, 4.5)
 ans = band(sl, '放大鏡中間厚＝凸透鏡：讓光換方向，東西看起來變大', y=6.85, h=.65, size=22, fill=GREEN)
 A.add('click', [('fade', ring.shape_id, {'dur': 300}), ('zoom', badge.shape_id, {'dur': 400}), ('wipe', ans.shape_id, {'dur': 500, 'dir': 'u'})])
-link_slide('甲班｜放大鏡偵探', '放大鏡偵探', '裡面有 2 支影片（點電視畫面就播放），再先猜後揭曉：字變大？景色倒過來？一直按「下一步」就好。', CAP + 's_lensshow.png', '▶  打開簡報', PDF + 'show/')
+link_slide('甲班｜放大鏡偵探', '放大鏡偵探', '先猜再揭曉：字變大？景色倒過來？第 7 頁有影片（點電視就播）。', CAP + 's_lensshow.png', '▶  打開簡報', PDF + 'show/')
 # 放大鏡尋寶
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '甲班｜放大鏡尋寶')
 framed(sl, CAP + 'w_treasure.png', .9, .9, 4.5, 6.3, -2.5, pad=.08)

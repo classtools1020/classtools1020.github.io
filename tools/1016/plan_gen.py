@@ -8,5 +8,5 @@ def blk(t,prep,steps):
     for i,(x,m) in enumerate(steps): h+='<tr><td style="width:12mm;text-align:center">%d</td><td>%s</td></tr>'%(i+1,x)
     return h+'</table>'
 body='<body><h1 style="font-size:22pt">10/16（五）自然代課</h1>'+('<div style="font-size:12pt">%s</div>'%url if url else '')
-body+=blk("甲班　第5節 13:10–13:55","放大鏡、尋寶單",[("MV〈折一下 Snap!〉",5),("放大鏡偵探（簡報）",12),("放大鏡尋寶單",15),("折射環島搶答",10)])
+body+=blk("甲班　第5節 13:10–13:55","放大鏡、尋寶單",[("MV〈折一下 Snap!〉",5),("影片：放大鏡對著太陽",3),("放大鏡偵探（簡報，含影片）",12),("放大鏡尋寶單",15),("折射環島搶答",10)])
 open(sys.argv[2],"w",encoding="utf-8").write(head+body+'</body></html>')
