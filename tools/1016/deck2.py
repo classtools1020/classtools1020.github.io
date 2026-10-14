@@ -115,12 +115,10 @@ def full_photo(sl, path):
 toc, A0 = new(); bg(toc)
 T(toc, .7, .55, 9, .5, '光線特勤隊', 18, RED)
 T(toc, .7, .95, 11, 1.0, '10/16（五）自然', 46)
-CL = [('甲班', '第 5 節　13:10', '放大鏡偵探', GEN + 'treasure.jpg', ['MV〈折一下 Snap!〉', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答']),
-      ('乙班', '第 6 節　14:05', '折射大破案', MV + 'straw.jpg', ['MV〈折一下 Snap!〉', '折射大破案', '折射環島搶答']),
-      ('乙班', '第 7 節　15:00', '水滴放大鏡', GEN + 'drop-text.jpg', ['水滴放大鏡任務單', '破案口號'])]
+CL = [('甲班', '第 5 節　13:10', '放大鏡偵探', GEN + 'treasure.jpg', ['MV〈折一下 Snap!〉', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答'])]
 toc_cards = []
 for i, (c, t, name, img, steps) in enumerate(CL):
-    x = .7 + i * 4.1
+    x = (13.333 - 3.8) / 2 + i * 4.1
     rect(toc, x, 2.25, 3.8, 4.75, WHITE, LINEC, 1.5)
     pic_cover(toc, img, x + .15, 2.4, 3.5, 1.7)
     hd = T(toc, x + .2, 4.2, 3.4, .5, f'{c}　{t}', 16, RED); toc_cards.append(hd)
@@ -204,11 +202,11 @@ def frame_slide(tag, lines):
 sA = cover('甲班', '第 5 節　13:10–13:55', '放大鏡偵探', GEN + 'treasure.jpg',
            ['MV〈折一下 Snap!〉', '透鏡快問＋放大鏡偵探', '放大鏡尋寶', '折射環島搶答'], '放大鏡、尋寶單', goal='說出放大鏡中間厚，讓東西看起來變大')
 link_slide('甲班｜暖身', 'MV\n〈折一下 Snap!〉', '唱到 Snap，全班一起彈指！', CAP + 's_mv.png', '▶  播放 MV', B + 'light-refract/mv.html', (.21, .07, .21, .35))
-# 透鏡快問：中間厚 vs 中間薄（畫鏡片形狀）
+# 透鏡快問：放大鏡中間厚（畫鏡片形狀）
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '甲班｜透鏡快問')
 T(sl, .7, 1.0, 12, 1.0, '放大鏡的鏡片，長什麼樣子？', 40)
 def lens_shape(cx, cy, thick):
-    # 用多邊形畫凸／凹透鏡剖面
+    # 用多邊形畫凸透鏡剖面
     import math
     pts = []
     H, Wm, We = 1.7, (.85 if thick else .22), (.18 if thick else .75)
@@ -225,14 +223,12 @@ def lens_shape(cx, cy, thick):
     ff.add_line_segments([(Inches(px), Inches(py)) for px, py in pts[1:]], close=True)
     s = ff.convert_to_shape(); s.fill.solid(); s.fill.fore_color.rgb = rgb('BFE6F5'); s.line.color.rgb = rgb('2A7FB8'); s.line.width = Pt(3); s.shadow.inherit = False
     return s
-cA = rect(sl, 1.0, 2.2, 5.3, 4.6, WHITE, LINEC, 2, MSO_SHAPE.ROUNDED_RECTANGLE, rad=.08); lA = lens_shape(3.65, 4.2, True)
-T(sl, 1.0, 6.05, 5.3, .6, 'A　中間厚', 26, INK, align=PP_ALIGN.CENTER)
-cB = rect(sl, 7.0, 2.2, 5.3, 4.6, WHITE, LINEC, 2, MSO_SHAPE.ROUNDED_RECTANGLE, rad=.08); lB = lens_shape(9.65, 4.2, False)
-T(sl, 7.0, 6.05, 5.3, .6, 'B　中間薄', 26, INK, align=PP_ALIGN.CENTER)
-ring, badge = check(sl, 1.0, 2.2, 5.3, 4.6)
+cA = rect(sl, 4.0, 1.95, 5.3, 4.5, WHITE, LINEC, 2, MSO_SHAPE.ROUNDED_RECTANGLE, rad=.08); lA = lens_shape(6.65, 3.85, True)
+T(sl, 4.0, 5.75, 5.3, .6, '摸摸看：中間鼓鼓的、比較厚', 24, INK, align=PP_ALIGN.CENTER)
+ring, badge = check(sl, 4.0, 1.95, 5.3, 4.5)
 ans = band(sl, '放大鏡中間厚＝凸透鏡：讓光換方向，東西看起來變大', y=6.85, h=.65, size=22, fill=GREEN)
 A.add('click', [('fade', ring.shape_id, {'dur': 300}), ('zoom', badge.shape_id, {'dur': 400}), ('wipe', ans.shape_id, {'dur': 500, 'dir': 'u'})])
-link_slide('甲班｜放大鏡偵探', '放大鏡偵探', '還記得前兩節的實驗嗎？真實照片＋光線動畫，複習中間厚、中間薄、焦點、倒過來。一直按「下一步」就好。', CAP + 's_lensshow.png', '▶  打開簡報', PDF + 'show/')
+link_slide('甲班｜放大鏡偵探', '放大鏡偵探', '先猜再揭曉：字變大？景色倒過來？光聚到焦點？一直按「下一步」就好。', CAP + 's_lensshow.png', '▶  打開簡報', PDF + 'show/')
 # 放大鏡尋寶
 sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '甲班｜放大鏡尋寶')
 framed(sl, CAP + 'w_treasure.png', .9, .9, 4.5, 6.3, -2.5, pad=.08)
@@ -248,136 +244,8 @@ for i, (ic, a, b_) in enumerate(lv):
 T(sl, 6.22, 5.85, 6.4, .5, '⚠ 放大鏡不對著太陽、不對著別人的眼睛', 18, RED)
 button(sl, 6.2, 6.45, 3.0, '📄  尋寶單', PDF + 'treasure.pdf?v=1008', h=.72, size=20)
 for g in lvs: A.add('click', [('fly', s.shape_id, {'dir': 'r', 'dur': 400}) for s in g])
-link_slide('甲班｜搶答', '折射環島', '每一站請一位同學上台點答案，答對就插上一面金旗！', CAP + 's_quiz.png', '▶  開始搶答', B + 'games/light-refract-quiz.html')
+link_slide('甲班｜搶答', '折射環島', '紅隊、藍隊搶答，答對就把這一站變成你們隊的顏色！', CAP + 's_quiz.png', '▶  開始搶答', B + 'games/light-refract-quiz.html')
 frame_slide('甲班｜小結', [['放大鏡中間', '厚', '，'], ['讓光', '換方向', '，'], ['東西看起來', '變大', '。']])
-
-# ======================= 乙班 第 6 節 =======================
-sB = cover('乙班', '第 6 節　14:05–14:50', '折射大破案', MV + 'straw.jpg', ['MV〈折一下 Snap!〉', '折射大破案', '折射環島搶答'], '', rot=-2, goal='說出光碰到水會折一下＝折射')
-link_slide('乙班｜暖身', 'MV\n〈折一下 Snap!〉', '唱到 Snap，全班一起彈指！', CAP + 's_mv.png', '▶  播放 MV', B + 'light-refract/mv.html', (.21, .07, .21, .35))
-# 折射偵探守則：自己畫的光路圖
-sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '乙班｜折射偵探守則')
-T(sl, .7, 1.0, 12, .9, '為什麼眼睛會被騙？', 40)
-rect(sl, .7, 2.0, 7.0, 5.0, 'FBF8F2', LINEC, 1.5)
-water = rect(sl, .7, 4.35, 7.0, 2.65, 'CDE8F2')
-line(sl, .7, 4.35, 7.7, 4.35, TEAL, 3)
-T(sl, .85, 3.85, 1.2, .45, '空氣', 18, SOFT); T(sl, .85, 4.45, 1.2, .45, '水', 18, TEAL)
-def fish(cx, cy, fill, alpha=None, dash=False):
-    b = rect(sl, cx - .45, cy - .2, .9, .4, fill, None if not dash else RED, 2, MSO_SHAPE.OVAL, alpha=alpha)
-    t = rect(sl, cx + .38, cy - .2, .35, .4, fill, None if not dash else RED, 2, MSO_SHAPE.ISOSCELES_TRIANGLE, alpha=alpha); t.rotation = 90
-    if dash: b.line.dash_style = MSO_LINE_DASH_STYLE.DASH; t.line.dash_style = MSO_LINE_DASH_STYLE.DASH
-    return [b, t]
-realF = fish(5.6, 6.25, 'F28C28')
-lr = T(sl, 5.0, 6.5, 1.6, .4, '真的魚', 16, 'B85A00')
-Sx, Sy = 4.0, 4.35; Ex, Ey = 1.55, 2.55
-eye = rect(sl, Ex - .32, Ey - .22, .64, .44, WHITE, INK, 2.5, MSO_SHAPE.OVAL); pu = rect(sl, Ex - .1, Ey - .1, .2, .2, INK, shape=MSO_SHAPE.OVAL)
-le = T(sl, Ex - .6, Ey - .75, 1.4, .45, '眼睛', 16, INK)
-r1 = line(sl, 5.6, 6.25, Sx, Sy, GOLD, 7)
-kink = oval(sl, Sx - .3, Sy - .3, .6, .6, RED, 4)
-lk = T(sl, Sx + .3, Sy - .75, 2.2, .45, '折一下！', 20, RED)
-r2 = line(sl, Sx, Sy, Ex + .25, Ey + .18, GOLD, 7)
-tx, ty = Sx + (Sx - Ex) * .6, Sy + (Sy - Ey) * .6
-r3 = line(sl, Sx, Sy, tx, ty, RED, 3, MSO_LINE_DASH_STYLE.DASH)
-fakeF = fish(tx + .1, ty + .05, 'F28C28', alpha=35, dash=True)
-lf = T(sl, tx - .5, ty - .7, 2.4, .45, '看起來的魚', 16, RED)
-rules = [('光走直線', '一直往前走'), ('碰到水面，折一下', '換個方向，再繼續直直走'), ('眼睛以為光是直直來的', '所以東西看起來「跑位置」')]
-rs = []
-for i, (a, b_) in enumerate(rules):
-    y = 2.05 + i * 1.6
-    n = num(sl, 8.15, y + .1, i + 1, .62, RED, WHITE, 22)
-    t1 = T(sl, 8.95, y, 4.0, .6, a, 26, INK); t2 = T(sl, 8.97, y + .62, 4.0, .5, b_, 18, SOFT, bold=False)
-    rs.append([n, t1, t2])
-A.add('click', [('wipe', r1.shape_id, {'dur': 600, 'dir': 'u'})] + [('fly', s.shape_id, {'dir': 'r', 'dur': 400}) for s in rs[0]])
-A.add('click', [('zoom', kink.shape_id, {'dur': 400}), ('fade', lk.shape_id, {'dur': 400}), ('wipe', r2.shape_id, {'dur': 600, 'dir': 'l', 'delay': 300})] + [('fly', s.shape_id, {'dir': 'r', 'dur': 400}) for s in rs[1]])
-A.add('click', [('wipe', r3.shape_id, {'dur': 500, 'dir': 'r'})] + [('fade', s.shape_id, {'dur': 500}) for s in fakeF] + [('fade', lf.shape_id, {'dur': 400})] + [('fly', s.shape_id, {'dir': 'r', 'dur': 400}) for s in rs[2]])
-
-# 案件 1：吸管
-predict('乙班｜生活案件 1', '🧋 手搖飲的吸管', MV + 'straw.jpg', '從旁邊看，\n吸管真的斷掉了嗎？', ['斷掉了', '沒有斷，是直的'], 1)
-def d_straw(sl):
-    Y, PK = 'FFE14D', 'FF3F6E'
-    a = P2(800, 330); b = P2(1400, 330); s1 = line(sl, *a, *b, '2CE6FF', 6)
-    cx, cy = P2(1090, 330); o = oval(sl, cx - .8, cy - .55, 1.6, 1.1, PK, 5, MSO_LINE_DASH_STYLE.DASH)
-    a = P2(1090, 330); b = P2(870, 690); g = line(sl, *a, *b, Y, 6, MSO_LINE_DASH_STYLE.DASH)
-    x, y = P2(640, 610); t = L(sl, x - 1.3, y - .3, 2.6, .6, '真的吸管在這裡', 20, Y)
-    x, y = P2(1480, 300); w = L(sl, x - .2, y - .5, 1.8, .5, '水面', 20, '9FE3FF')
-    return [s1, w, o, g, t]
-reveal('案件 1｜證據', MV + 'straw.jpg', d_straw, '吸管沒有斷！光在水面折一下，眼睛就被騙了。', '拿出來看，吸管還是直的。')
-
-# 案件 2：游泳池
-predict('乙班｜生活案件 2', '🏊 學校游泳池', MV + 'pool.jpg', '游泳池看起來淺淺的，\n真的淺嗎？', ['真的很淺', '其實比較深'], 1)
-def d_pool(sl):
-    a = P2(330, 330); b = P2(330, 520); l1 = line(sl, *a, *b, 'FFE14D', 10)
-    x, y = P2(330, 285); t1 = L(sl, x - 1.3, y - .55, 2.2, .7, '看起來', 30, 'FFE14D')
-    a = P2(470, 330); b = P2(470, 760); l2 = line(sl, *a, *b, 'FF3F6E', 10)
-    x, y = P2(470, 285); t2 = L(sl, x - .1, y - .55, 1.8, .7, '真的', 30, 'FF8FA8')
-    return [l1, t1, l2, t2]
-reveal('案件 2｜證據', MV + 'pool.jpg', d_pool, '看起來淺，其實更深！', '下水前先看水深標示、大人在旁邊。')
-
-# 案件 3：撈魚
-predict('乙班｜生活案件 3', '🐟 竹東溪撈魚', MV + 'net.jpg', '看到水裡有魚，\n網子要往哪裡撈？', ['撈看到的地方', '再往深一點撈'], 1)
-def d_net(sl):
-    Y, PK = 'FFE14D', 'FF3F6E'
-    a = P2(0, 505); b = P2(1600, 505); s = line(sl, *a, *b, '9FE3FF', 3, MSO_LINE_DASH_STYLE.DASH)
-    fx, fy = P2(1160, 650); ax, ay = P2(1192, 585)
-    real = oval(sl, fx - .45, fy - .2, .9, .4, 'F28C28', 3, fill='F28C28')
-    fake = oval(sl, ax - .45, ay - .2, .9, .4, PK, 3, MSO_LINE_DASH_STYLE.DASH)
-    sx, sy = P2(1125, 505); ex, ey = P2(700, 0)
-    r1 = line(sl, fx, fy, sx, sy, Y, 6); r2 = line(sl, sx, sy, ex, ey, Y, 6)
-    k = oval(sl, sx - .25, sy - .25, .5, .5, PK, 4)
-    dx = line(sl, sx, sy, ax, ay, PK, 3, MSO_LINE_DASH_STYLE.DASH)
-    t1 = L(sl, fx + .55, fy - .3, 2.0, .6, '真的魚', 20, 'FFB46B'); t2 = L(sl, ax + .55, ay - .35, 2.4, .6, '看起來的魚', 20, 'FF8FA8')
-    return [s, real, t1, r1, k, r2, dx, fake, t2]
-reveal('案件 3｜證據', MV + 'net.jpg', d_net, '魚真正的位置，比看起來更深！', '光從水裡出來，在水面折一下。')
-
-# 案件 4：一滴水
-predict('乙班｜生活案件 4', '💧 下雨後的報紙', MV + 'drop.jpg', '一滴圓圓的水，\n下面的字會怎樣？', ['變大', '變小'], 0)
-def d_drop(sl):
-    cx, cy = P2(840, 440); o = oval(sl, cx - 2.2, cy - 1.25, 4.4, 2.5, 'FFE14D', 5)
-    x, y = P2(1300, 150); t = L(sl, x - 1.0, y - .3, 3.6, .6, '字變大了！', 26, 'FFE14D')
-    a = P2(1240, 180); b = P2(1040, 330); ar = line(sl, *a, *b, 'FFE14D', 5, arrow=True)
-    return [o, ar, t]
-reveal('案件 4｜證據', MV + 'drop.jpg', d_drop, '水滴中間厚，讓光換方向，字就變大了。', '水滴就是一個小小的放大鏡。')
-
-# 案件整理
-sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '乙班｜案件整理')
-T(sl, .7, 1.0, 12, .8, '四個案件，同一個原因', 38)
-CASES = [(MV + 'straw.jpg', '吸管', '看起來斷掉', '其實是直的'), (MV + 'pool.jpg', '游泳池', '看起來很淺', '其實比較深'),
-         (MV + 'net.jpg', '撈魚', '魚看起來比較高', '其實在更深的地方'), (MV + 'drop.jpg', '一滴水', '字看起來變大', '水滴讓光換方向')]
-cols = []
-for i, (img, n, a, b_) in enumerate(CASES):
-    x = .7 + i * 3.05
-    c = rect(sl, x, 1.95, 2.85, 4.25, WHITE, LINEC, 1.5)
-    p = pic_cover(sl, img, x + .12, 2.07, 2.61, 1.6)
-    t0 = T(sl, x + .15, 3.75, 2.6, .5, n, 22, INK)
-    t1 = T(sl, x + .15, 4.3, 2.6, .8, '看起來：' + a, 17, SOFT, bold=False)
-    t2 = T(sl, x + .15, 5.15, 2.6, .9, '其實：' + b_, 18, RED)
-    cols.append([c, p, t0, t1, t2])
-bd = band(sl, '光走直線，碰到水面折一下——眼睛就被騙了！', y=6.45, h=1.05, size=26, fill=INK)
-for g in cols: A.add('click', [('fly', s.shape_id, {'dir': 'b', 'dur': 400}) for s in g])
-A.add('click', [('wipe', bd.shape_id, {'dur': 500, 'dir': 'u'})])
-
-link_slide('乙班｜折射', '折射環島', '每一站請一位同學上台點答案，答對就插上一面金旗！', CAP + 's_quiz.png', '▶  開始搶答', B + 'games/light-refract-quiz.html')
-frame_slide('乙班｜小結', [['光走', '直線', '，'], ['碰到水面', '折一下', '，'], ['再繼續直直走。']])
-
-# ======================= 乙班 第 7 節 =======================
-sC = cover('乙班', '第 7 節　15:00–15:20', '水滴放大鏡', GEN + 'drop-text.jpg', ['水滴放大鏡任務單', '破案口號'], '透明片、滴管、一杯水、水滴放大鏡任務單', goal='自己做水滴放大鏡，看見字變大')
-
-# 水滴放大鏡實作
-sl, A = new(); bg(sl); toc_link(sl, toc); kicker(sl, '乙班｜動手做')
-T(sl, .7, 1.0, 12, .8, '自己做一個水滴放大鏡', 38)
-STEPS = [(GEN + 'sheet-on-paper.jpg', '透明片放在字上'), (GEN + 'dropper.jpg', '用滴管滴一滴水'), (GEN + 'drop-text.jpg', '看！字變大了')]
-grp = []
-for i, (img, cap) in enumerate(STEPS):
-    x = .7 + i * 4.1
-    fr = framed(sl, img, x, 2.0, 3.8, 2.75, [-1.5, 1, -1][i])
-    n = num(sl, x - .15, 1.8, i + 1, .7, RED, WHITE, 24)
-    t = T(sl, x, 4.95, 3.8, .6, cap, 24, INK, align=PP_ALIGN.CENTER)
-    grp.append(fr + [n, t])
-q = T(sl, .7, 5.75, 8.4, .6, '做到一步，就在任務單上打勾！', 20, TEAL)
-button(sl, 9.6, 5.7, 3.0, '📄  任務單', PDF + 'draw.pdf?v=1011b', h=.72, size=20)
-for g in grp: A.add('click', [('fade', s.shape_id, {'dur': 400}) for s in g])
-A.add('click', [('fade', q.shape_id, {'dur': 400})])
-
-frame_slide('乙班｜破案口號', [['光碰到水，會', '折一下', '，'], ['圓圓的水滴讓字', '變大', '！']])
 
 # 下課
 sl, A = new(); full_photo(sl, MV + 'stage.jpg')
@@ -386,7 +254,7 @@ t = T(sl, .8, 2.6, 11, 1.4, '下課囉！', 72, WHITE)
 s = T(sl, .85, 4.1, 11, .8, '今天的光線特勤隊，表現超棒。', 30, 'FFE9A8', bold=False)
 A.add('auto', [('zoom', t.shape_id, {'dur': 500}), ('fade', s.shape_id, {'dur': 500})])
 
-for h, target in zip(toc_cards, [sA, sB, sC]): h.click_action.target_slide = target
+for h, target in zip(toc_cards, [sA]): h.click_action.target_slide = target
 for k, (sl, A) in enumerate(slides):
     sl._element.append(etree.fromstring(TRANS[0]))
     if A.groups:
