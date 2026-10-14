@@ -105,11 +105,26 @@
   #vbox .row{display:flex;gap:14px;align-items:center}
   #vbox button,#vbox a{font:800 20px sans-serif;padding:12px 22px;border-radius:40px;border:0;cursor:pointer;text-decoration:none}
   #vbox button{background:#ffd23f;color:#1f2a37}#vbox a{background:#333;color:#fff}
+
+  .proj{filter:blur(22px);transition:opacity .6s ease,filter 2.4s ease .4s}
+  .proj.show{filter:blur(0)}
+  .beam{transition:opacity 1s ease}
 </style>
 </head>
 <body>
 <div id="view"><div id="stage">
 
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc4f2"/><stop offset="1" stop-color="#dff1fb"/></linearGradient>
+  <symbol id="scene" viewBox="0 0 380 400" preserveAspectRatio="none">
+    <rect width="380" height="270" fill="url(#skyG)"/>
+    <g fill="#fff" opacity=".95"><ellipse cx="300" cy="60" rx="46" ry="20"/><ellipse cx="268" cy="68" rx="30" ry="16"/><ellipse cx="80" cy="45" rx="34" ry="14"/></g>
+    <rect y="262" width="380" height="138" fill="#79c267"/><rect y="262" width="380" height="10" fill="#5fae4f"/>
+    <rect x="62" y="172" width="126" height="105" fill="#f3e4c4" stroke="#b9925a" stroke-width="3"/>
+    <polygon points="40,178 125,92 210,178" fill="#c8372d"/>
+    <rect x="110" y="215" width="32" height="62" fill="#8a5a2b"/><rect x="76" y="196" width="26" height="24" fill="#9fd3f5" stroke="#b9925a" stroke-width="3"/><rect x="150" y="196" width="26" height="24" fill="#9fd3f5" stroke="#b9925a" stroke-width="3"/>
+    <rect x="272" y="196" width="20" height="82" fill="#8a5a2b"/><circle cx="282" cy="170" r="52" fill="#3d9a4a"/><circle cx="258" cy="150" r="26" fill="#4fb35c"/>
+  </symbol></defs></svg>
 <!-- 1 封面 -->
 <section class="slide light">
   <div class="bg"><img src="img/kit.jpg" alt=""></div><div class="shade"></div>
@@ -214,6 +229,37 @@
       <text x="676" y="215" text-anchor="middle" font-size="58" transform="rotate(180 676 196)">🪴</text>
     </svg>
   </div>
+</section>
+
+<!-- 6b 動畫：放大鏡當投影機 -->
+<section class="slide">
+  <div class="kick">🎬 動畫・放大鏡當投影機</div>
+  <h2>窗外的房子，投到白紙上會怎樣？</h2>
+  <div data-f="0" style="position:absolute;left:90px;top:215px;width:420px;height:440px;background:#8a6a3a;padding:18px;box-sizing:border-box;border-radius:8px;box-shadow:0 14px 30px rgba(0,0,0,.25)">
+    <svg width="384" height="404" style="display:block"><use href="#scene"/></svg>
+    <div style="position:absolute;left:0;right:0;top:50%;height:10px;margin-top:-5px;background:#8a6a3a"></div><div style="position:absolute;top:0;bottom:0;left:50%;width:10px;margin-left:-5px;background:#8a6a3a"></div>
+  </div>
+  <div data-f="0" style="position:absolute;left:90px;top:672px;width:420px;text-align:center;font-size:32px;font-weight:800">🪟 窗外</div>
+  <div data-f="0" style="position:absolute;left:1000px;top:215px;width:480px;height:440px;background:#fff;box-shadow:0 16px 36px rgba(0,0,0,.22);padding:20px;box-sizing:border-box">
+    <div class="proj" data-f="3" style="width:440px;height:400px;border-radius:6px;overflow:hidden"><svg width="440" height="400" style="display:block;transform:rotate(180deg)"><use href="#scene"/></svg></div>
+  </div>
+  <div data-f="0" style="position:absolute;left:1000px;top:672px;width:480px;text-align:center;font-size:32px;font-weight:800">📄 白紙</div>
+  <svg data-f="0" style="position:absolute;left:0;top:0;width:1600px;height:900px;overflow:visible;pointer-events:none" viewBox="0 0 1600 900">
+    <polygon class="beam" data-f="2" points="510,240 510,650 740,500 740,420" fill="#ffe27a" fill-opacity=".35"/>
+    <polygon class="beam" data-f="2" points="740,420 740,500 1000,655 1000,220" fill="#ffe27a" fill-opacity=".35"/>
+    <path class="ray r2" data-f="2" pathLength="1" d="M234 334 L740 432 L1316 548"/>
+    <path class="ray" data-f="2" pathLength="1" d="M170 622 L740 488 L1392 262" style="stroke:#2f8a4c;filter:drop-shadow(0 0 5px rgba(47,138,76,.6));transition-delay:.35s"/>
+    <g data-f="1" data-a="pop" data-s="pop">
+      <line x1="800" y1="540" x2="880" y2="660" stroke="#3b2a1a" stroke-width="30" stroke-linecap="round"/>
+      <circle cx="740" cy="460" r="100" fill="#bfe6f5" fill-opacity=".55" stroke="#2b2f36" stroke-width="16"/>
+      <ellipse cx="705" cy="420" rx="28" ry="16" fill="#fff" opacity=".7" transform="rotate(-30 705 420)"/>
+    </g>
+  </svg>
+  <div data-f="1" data-a="u" style="position:absolute;left:640px;top:672px;width:200px;text-align:center;font-size:32px;font-weight:800">🔍 放大鏡</div>
+  <div data-f="4" data-a="pop" data-s="pop" style="position:absolute;left:250px;top:170px;font-size:28px;font-weight:900;color:#fff;background:#c8372d;padding:6px 16px;border-radius:30px">屋頂在上面 ⬆</div>
+  <div data-f="4" data-a="pop" style="position:absolute;left:1160px;top:668px;font-size:28px;font-weight:900;color:#fff;background:#c8372d;padding:6px 16px;border-radius:30px">屋頂跑到下面 ⬇</div>
+  <div class="stamp" data-f="4" data-a="stamp" data-s="ding" style="left:1210px;top:150px">倒過來！</div>
+  <div class="band" data-f="5" data-a="u">光碰到放大鏡<b>換方向</b>：上面的光跑到下面，景色就<b>倒過來</b>　📅 下週自己投投看！</div>
 </section>
 
 <!-- 8 快問快答 -->
