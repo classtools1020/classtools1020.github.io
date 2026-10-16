@@ -45,6 +45,30 @@
   .dist input{width:300px;height:40px;accent-color:#1f2a37}
   .pill{border-radius:999px;padding:4px 16px;color:#fff}
   .hidden{display:none!important}
+  #zoneDo,#qvis{padding-right:64px}
+  #m-do .steps{gap:9px}#m-do .st{font-size:28px;padding:8px 18px}#m-do .st .no{width:48px;height:48px;font-size:24px}
+  .ans.col{flex-direction:column;gap:12px}
+  .ab.w{width:auto;min-width:200px;height:86px;font-size:40px;padding:0 26px}
+  .ans.col .ab.w{width:100%;text-align:left}
+  .ans.row .ab.w{flex:1;min-width:0;font-size:27px;height:70px;padding:0 6px;white-space:nowrap}
+  .lv{display:flex;gap:10px;margin-bottom:6px}
+  .lvb{font-family:inherit;font-size:24px;font-weight:900;border:3px solid var(--line);background:#fff;color:var(--ink);border-radius:14px;padding:8px 16px;cursor:pointer}
+  .lvb.on{border-color:var(--ink);background:var(--ink);color:#fff}
+  .zone{position:relative;margin:18px 6px 6px;height:118px}
+  .zone .zb{position:absolute;left:0;right:0;top:34px;height:40px;border-radius:12px;overflow:hidden;display:flex;font-size:24px;font-weight:900;color:#fff}
+  .zone .zb .g{width:62.5%;background:#2f8a4c;display:flex;align-items:center;justify-content:center}
+  .zone .zb .r{flex:1;background:#c8372d;display:flex;align-items:center;justify-content:center}
+  .zone .tk{position:absolute;top:80px;transform:translateX(-50%);font-size:22px;font-weight:900;color:var(--soft)}
+  .zone .tk.k{color:var(--red)}
+  .zone .mk{position:absolute;top:-6px;transform:translateX(-50%);font-size:24px;font-weight:900;color:var(--ink);white-space:nowrap;transition:left .6s cubic-bezier(.3,.8,.3,1.2)}
+  .zone .mk:after{content:"";display:block;margin:0 auto;width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:16px solid var(--ink)}
+  .nl{position:relative;margin:18px 30px 6px;height:110px}
+  .nl .ln{position:absolute;left:0;right:0;top:48px;height:8px;background:var(--ink);border-radius:4px}
+  .nl .tk{position:absolute;top:30px;width:4px;height:44px;background:var(--ink);transform:translateX(-50%)}
+  .nl .tk.s{top:40px;height:24px;width:3px;background:#8a96a3}
+  .nl .lb{position:absolute;top:76px;transform:translateX(-50%);font-size:30px;font-weight:900}
+  .nl .mk{position:absolute;top:-4px;transform:translateX(-50%);font-size:26px;font-weight:900;color:var(--red);white-space:nowrap}
+  .rule{font-size:24px;font-weight:800;color:var(--soft);margin-top:8px;line-height:1.5}
   #bangs{transition:transform .9s cubic-bezier(.3,.8,.3,1.2);transform-origin:410px 240px}
   #bangs.up{transform:translateY(-70px) rotate(-6deg) scaleY(.55)}
   #hand{transition:transform .9s ease, opacity .5s;opacity:0}
@@ -63,7 +87,7 @@
   <a id="menu" href="/light/">🗂️ 主選單</a>
   <header>
     <div><div class="kick">溫度特勤隊</div><h1>額溫槍出動！</h1></div>
-    <div class="tabs"><button class="tab" data-m="do">🌡️ 一步一步量</button><button class="tab" data-m="quiz">🎯 讀數字</button></div>
+    <div class="tabs"><button class="tab" data-m="do">🌡️ 一步一步量</button><button class="tab" data-m="quiz">🎯 讀數字（三層次）</button></div>
   </header>
 
   <div id="scene">
@@ -122,22 +146,25 @@
         <button class="st" data-k="2"><span class="no">2</span>對準額頭中間<span class="ic">🎯</span></button>
         <button class="st" data-k="3"><span class="no">3</span>距離剛好（一根手指寬）<span class="ic">☝️</span></button>
         <button class="st" data-k="4"><span class="no">4</span>按一下，聽到「嗶」<span class="ic">🔔</span></button>
-        <button class="st" data-k="5"><span class="no">5</span>看數字：讀大數字<span class="ic">👀</span></button>
+        <button class="st" data-k="5"><span class="no">5</span>看數字：整個讀出來<span class="ic">👀</span></button>
         <button class="st" data-k="6"><span class="no">6</span>記下來<span class="ic">✏️</span></button>
       </div>
       <div class="msg" id="msg"></div>
-      <div class="ans hidden" id="ans"></div>
+      <div class="ans row hidden" id="ans"></div>
+      <div id="zoneDo" class="hidden"></div>
       <div id="recBox" class="hidden">
-        <table class="rec"><thead><tr><th>第幾次</th><th>螢幕</th><th>大數字</th></tr></thead><tbody id="recBody"></tbody></table>
+        <table class="rec"><thead><tr><th>第幾次</th><th>螢幕數字</th><th>正常嗎？</th></tr></thead><tbody id="recBody"></tbody></table>
         <button class="big y" id="again" style="margin-top:12px">🔁 再量一位同學</button>
       </div>
     </section>
     <section id="m-quiz" class="hidden">
-      <div class="msg" style="font-size:38px">額溫槍螢幕寫著——<br>大數字是多少？</div>
+      <div class="lv"><button class="lvb" data-l="1">🔵 看顏色</button><button class="lvb" data-l="2">🟠 讀出來</button><button class="lvb" data-l="3">⭐ 挑戰</button></div>
+      <div class="msg" id="qq" style="font-size:36px"></div>
+      <div id="qvis"></div>
       <div class="ans" id="qans"></div>
       <div class="msg" id="qmsg"></div>
       <button class="big y" id="qnext">下一題 ➡</button>
-      <div class="msg" style="font-size:26px;color:var(--soft)">小訣竅：<b>小數點前面</b>的數字就是大數字。<br>36.8 → 讀「36 度多」</div>
+      <div class="rule">🌡️ 小數點唸「點」：36.9 讀「三十六點九度」　｜　<b style="color:#c8372d">37.5 度以上＝發燒</b>，要告訴老師</div>
     </section>
   </div>
 </div></div>
@@ -157,8 +184,26 @@ function lcd(on,text,unit){$('lcd').setAttribute('fill',on?'#b9f0a6':'#2a3a2e');
 function setStep(k){step=k;document.querySelectorAll('#steps .st').forEach(b=>{const n=+b.dataset.k;b.classList.toggle('done',n<k);b.classList.toggle('now',n===k);b.disabled=n!==k;});}
 function hint(t){if(!t){$('hint').setAttribute('opacity',0);return;}$('hintT').textContent=t;$('hint').setAttribute('opacity',1);}
 function resetScene(){$('bangs').classList.remove('up');$('hand').classList.remove('on');$('target').setAttribute('opacity',0);$('ruler').setAttribute('opacity',0);$('gun').setAttribute('transform',GUN_HOME);$('gun').style.transform='';
-  lcd(false);$('beam').classList.remove('on');$('distBox').classList.add('hidden');$('ans').classList.add('hidden');hint('');$('msg').innerHTML='';}
-function newTemp(){const v=[35.8,36.0,36.2,36.4,36.5,36.6,36.7,36.8,36.9,37.0,37.1];temp=v[Math.floor(Math.random()*v.length)];}
+  lcd(false);$('zoneDo').classList.add('hidden');$('beam').classList.remove('on');$('distBox').classList.add('hidden');$('ans').classList.add('hidden');hint('');$('msg').innerHTML='';}
+function newTemp(){const v=[35.8,36.0,36.2,36.4,36.5,36.6,36.7,36.8,36.9,37.0,37.1,37.2,37.6,37.9];temp=v[Math.floor(Math.random()*v.length)];}
+/* 讀法：36.9 → 三十六點九度 */
+const D='零一二三四五六七八九';
+function zh(v){const [a,b]=v.toFixed(1).split('.');const n=+a;const t=Math.floor(n/10),u=n%10;return (t>1?D[t]:'')+(t?'十':'')+(u?D[u]:'')+'點'+D[+b]+'度';}
+function fever(v){return v>=37.5;}
+/* 溫度尺：35～39，綠色正常、紅色發燒（37.5 以上） */
+function zoneHTML(v,show){const pct=x=>((x-35)/4*100).toFixed(1)+'%';
+  return '<div class="zone"><div class="zb"><span class="g">✅ 正常</span><span class="r">🤒 發燒</span></div>'+
+   [35,36,37,38,39].map(x=>`<span class="tk" style="left:${pct(x)}">${x}</span>`).join('')+`<span class="tk k" style="left:${pct(37.5)}">37.5</span>`+
+   (show?`<span class="mk" style="left:${pct(Math.min(38.9,Math.max(35.1,v)))}">${v.toFixed(1)}</span>`:'')+'</div>';}
+/* 數線：36 —— 37，看 36.9 比較靠近誰 */
+function nlHTML(v,show){const lo=Math.floor(v),pct=x=>((x-lo)*100).toFixed(1)+'%';let h='<div class="nl"><div class="ln"></div>';
+  for(let i=0;i<=10;i++)h+=`<span class="tk${i%10?' s':''}" style="left:${i*10}%"></span>`;
+  h+=`<span class="lb" style="left:0">${lo}</span><span class="lb" style="left:100%">${lo+1}</span>`;
+  if(show)h+=`<span class="mk" style="left:${pct(v)}">▼${v.toFixed(1)}</span>`;return h+'</div>';}
+function textOpts(box,opts,right,onOk,onNo){box.innerHTML='';opts.forEach(t=>{const b=document.createElement('button');b.className='ab w';b.innerHTML=t;b.onclick=()=>{
+  if(t===right){b.classList.add('ok');[...box.children].forEach(x=>{if(x!==b)x.classList.add('no');});S('right');onOk();}else{b.classList.add('no');S('wrong');onNo();}};box.appendChild(b);});}
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+function wrongReads(v){const n=Math.floor(v),d=Math.round(v*10)%10;return [zh(v),(n>19?D[Math.floor(n/10)]:'')+'十'+(n%10?D[n%10]:'')+'度',D[Math.floor(n/10)]+'百'+D[n%10]+'十'+(d?D[d]:'')+'度'];}
 
 /* 槍的位置：x 越小越靠近額頭 */
 function gunAt(d){ // d 0..100：0 貼額頭，40 剛好，100 很遠
@@ -178,31 +223,40 @@ const ACT={
   4(){if(distState(+$('dist').value)!=='ok'){S('wrong');$('msg').innerHTML='距離還不對喔，先拉到「剛好」';return;}
     $('beam').classList.add('on');$('ruler').setAttribute('opacity',0);lcd(true,'- - -');S('blip');
     setTimeout(()=>{beep(2);$('beam').classList.remove('on');lcd(true,temp.toFixed(1),'°C');$('msg').innerHTML='嗶嗶！數字出來了 👀';setStep(5);hint('');},1200);},
-  5(){const big=Math.floor(temp);$('msg').innerHTML=`螢幕：<b>${temp.toFixed(1)}</b>　大數字是？`;
-    const opts=[big-1,big,big+1].sort(()=>Math.random()-.5);$('ans').innerHTML='';$('ans').classList.remove('hidden');
-    opts.forEach(v=>{const b=document.createElement('button');b.className='ab';b.textContent=v;b.onclick=()=>{
-      if(v===big){b.classList.add('ok');[...$('ans').children].forEach(x=>{if(x!==b)x.classList.add('no');});S('right');$('msg').innerHTML=`對！<b>${big}</b> 度多。小數點前面就是大數字`;setStep(6);try{FX.confetti(60);}catch(e){}}
-      else{b.classList.add('no');S('wrong');$('msg').innerHTML='再看一次：<b>小數點前面</b>是幾？';}};$('ans').appendChild(b);});},
+  5(){$('msg').innerHTML=`螢幕：<b>${temp.toFixed(1)}</b>　怎麼讀？`;$('ans').classList.remove('hidden');
+    textOpts($('ans'),shuf(wrongReads(temp)),zh(temp),()=>{const f=fever(temp);$('ans').classList.add('hidden');$('zoneDo').innerHTML=zoneHTML(temp,true);$('zoneDo').classList.remove('hidden');
+      $('msg').innerHTML=`對！讀「<b>${zh(temp)}</b>」<br>`+(f?'箭頭在<b>紅色</b>：🤒 發燒，要<b>告訴老師</b>':'箭頭在<b style="color:#2f8a4c">綠色</b>：✅ 正常');setStep(6);if(!f)try{FX.confetti(60);}catch(e){}},
+      ()=>{$('msg').innerHTML=`再看一次 <b>${temp.toFixed(1)}</b>：小數點唸「點」，點後面也要讀`;});},
   6(){count++;S('coin');$('recBox').classList.remove('hidden');$('ans').classList.add('hidden');
-    $('recBody').insertAdjacentHTML('beforeend',`<tr><td>${count}</td><td>${temp.toFixed(1)}</td><td style="color:#c8372d;font-size:36px">${Math.floor(temp)}</td></tr>`);
+    $('zoneDo').classList.add('hidden');
+    $('recBody').insertAdjacentHTML('beforeend',`<tr><td>${count}</td><td style="font-size:34px">${temp.toFixed(1)}</td><td style="color:${fever(temp)?'#c8372d':'#2f8a4c'}">${fever(temp)?'🤒 發燒':'✅ 正常'}</td></tr>`);
     $('msg').innerHTML='記好了！🎉 <b>六個步驟完成</b>';setStep(7);try{FX.stamp({text:'量好了'});}catch(e){}
-    if(temp>=37.5){$('msg').innerHTML+='<br>⚠ 37.5 度以上要<b>告訴老師</b>';}}
+    if(fever(temp)){$('msg').innerHTML+='<br>⚠ 37.5 度以上是發燒，要<b>告訴老師</b>';}}
 };
 document.querySelectorAll('#steps .st').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;if(k===step&&ACT[k])ACT[k]();});
 $('again').onclick=()=>{S('whoosh');newTemp();resetScene();setStep(1);$('msg').innerHTML='換下一位同學！從第 1 步開始';};
 
-/* 讀數字練習 */
-let qv=36.5;
-function newQ(){const pool=[35.6,35.9,36.1,36.3,36.5,36.7,36.8,36.9,37.0,37.2,37.4,36.0,35.8,37.1];qv=pool[Math.floor(Math.random()*pool.length)];
-  lcd(true,qv.toFixed(1),'°C');gunAt(110);$('gun').style.transform='';$('qmsg').innerHTML='';const big=Math.floor(qv);
-  const opts=[big-1,big,big+1,Math.round(qv*10)].filter((v,i,a)=>a.indexOf(v)===i).slice(0,3).sort(()=>Math.random()-.5);
-  $('qans').innerHTML='';opts.forEach(v=>{const b=document.createElement('button');b.className='ab';b.textContent=v;b.onclick=()=>{
-    if(v===big){b.classList.add('ok');S('right');$('qmsg').innerHTML=`答對！${qv.toFixed(1)} → <b>${big}</b> 度多`;try{FX.confetti(50);}catch(e){}}
-    else{b.classList.add('no');S('wrong');$('qmsg').innerHTML='看<b>小數點前面</b>就好喔';}};$('qans').appendChild(b);});}
+/* 讀數字練習：三個層次 */
+let qv=36.5,lvl=1,qn=0;
+const POOL=[35.8,36.1,36.3,36.5,36.7,36.8,36.9,37.0,37.2,37.4,37.5,37.7,37.9,38.2];
+function newQ(){qn++;let v;do{v=POOL[Math.floor(Math.random()*POOL.length)];}while(v===qv);qv=v;
+  lcd(true,qv.toFixed(1),'°C');gunAt(110);$('gun').style.transform='';$('qmsg').innerHTML='';$('qans').className='ans';
+  const f=fever(qv);
+  if(lvl===1){$('qq').innerHTML='箭頭在哪個顏色？<br>正常還是發燒？';$('qvis').innerHTML=zoneHTML(qv,true);
+    textOpts($('qans'),['✅ 正常','🤒 發燒'],f?'🤒 發燒':'✅ 正常',()=>{$('qmsg').innerHTML=f?'對！在<b>紅色</b>：發燒，要告訴老師':'對！在<b style="color:#2f8a4c">綠色</b>：正常';try{FX.confetti(40);}catch(e){}},()=>{$('qmsg').innerHTML='看箭頭指的<b>顏色</b>喔';});}
+  else if(lvl===2){$('qq').innerHTML='螢幕上的數字，怎麼讀？';$('qvis').innerHTML='';$('qans').className='ans col';
+    textOpts($('qans'),shuf(wrongReads(qv)),zh(qv),()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML=`對！「<b>${zh(qv)}</b>」——`+(f?'🤒 發燒':'✅ 正常');try{FX.confetti(40);}catch(e){}},()=>{$('qmsg').innerHTML='小數點唸「<b>點</b>」，點後面也要讀';});}
+  else if(qn%2){let d=Math.round(qv*10)%10;if(d===5){qv=+(qv+0.2).toFixed(1);lcd(true,qv.toFixed(1),'°C');d=7;}const lo=Math.floor(qv),near=d>5?lo+1:lo;
+    $('qq').innerHTML=`${qv.toFixed(1)} 比較靠近<br>${lo} 度還是 ${lo+1} 度？`;$('qvis').innerHTML=nlHTML(qv,false);
+    textOpts($('qans'),[lo+' 度',(lo+1)+' 度'],near+' 度',()=>{$('qvis').innerHTML=nlHTML(qv,true);$('qmsg').innerHTML=`對！${qv.toFixed(1)} 很靠近 <b>${near}</b> 度`;try{FX.confetti(40);}catch(e){}},()=>{$('qvis').innerHTML=nlHTML(qv,true);$('qmsg').innerHTML='看數線：箭頭離哪一個比較近？';});}
+  else{$('qq').innerHTML='37.5 度以上是發燒。<br>這是正常還是發燒？';$('qvis').innerHTML='';
+    textOpts($('qans'),['✅ 正常','🤒 發燒'],f?'🤒 發燒':'✅ 正常',()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML=`對！${qv.toFixed(1)} ${f?'比 37.5 大：發燒':'比 37.5 小：正常'}`;try{FX.confetti(40);}catch(e){}},()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML='和 <b>37.5</b> 比一比：比較大還是比較小？';});}}
+function setLv(l){lvl=l;document.querySelectorAll('.lvb').forEach(b=>b.classList.toggle('on',+b.dataset.l===l));newQ();}
+document.querySelectorAll('.lvb').forEach(b=>b.onclick=()=>{S('blip');setLv(+b.dataset.l);});
 $('qnext').onclick=()=>{S('whoosh');newQ();};
 
 function setMode(m){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.m===m));$('m-do').classList.toggle('hidden',m!=='do');$('m-quiz').classList.toggle('hidden',m!=='quiz');
-  resetScene();if(m==='do'){newTemp();setStep(1);$('recBox').classList.add('hidden');$('recBody').innerHTML='';count=0;$('msg').innerHTML='點 <b>1</b> 開始量體溫';}else{newQ();$('bangs').classList.add('up');}
+  resetScene();if(m==='do'){newTemp();setStep(1);$('recBox').classList.add('hidden');$('recBody').innerHTML='';count=0;$('msg').innerHTML='點 <b>1</b> 開始量體溫';}else{setLv(lvl);$('bangs').classList.add('up');}
   try{history.replaceState(null,'','#'+m);}catch(e){}}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{S('blip');setMode(b.dataset.m);});
 window.__fh={setMode,act:k=>ACT[k](),get step(){return step;}};

@@ -160,6 +160,41 @@ def render_slide(i, s, L):
         out.append(mascot(1250, 470, 200, 3, 'pop'))
         if s.get('band'):
             out.append(f'<div class="band"{ff(4,"u","ding")}>{s["band"]}</div>')
+    elif t == 'readfull':   # 整個讀出來：36.9 → 三十六 點 九 度
+        out.append(f'<div class="kick">{k}</div><h2>{s["title"]}</h2>')
+        a, b = s['val'].split('.')
+        out.append(f'<div class="lcd" style="left:86px;top:220px"><div class="scr" style="font-size:170px"><span class="bigp">{a}</span><span class="dec" style="opacity:1">.{b}</span><span class="u">°C</span></div></div>')
+        parts = s['parts']   # [(數字, 讀法, 顏色)]
+        x = 900
+        for j, (num, say, col) in enumerate(parts):
+            out.append(f'<div{ff(j+1,"u","pop")} style="position:absolute;left:{x}px;top:230px;width:190px;text-align:center"><div style="font-size:80px;font-weight:900;color:{col};font-family:Consolas,monospace">{num}</div><div style="font-size:56px;font-weight:900;color:{col}">{say}</div></div>')
+            x += 200
+        n = len(parts)
+        out.append(f'<div class="stamp"{ff(n+1,"stamp","stamp")} style="left:880px;top:470px;font-size:76px">{s["stamp"]}</div>')
+        out.append(f'<div class="ln"{ff(n+1,"l")} style="position:absolute;left:86px;top:600px;font-size:40px;font-weight:900">{s["l1"]}</div>')
+        out.append(mascot(1330, 560, 170, n + 1, 'pop'))
+        if s.get('band'):
+            out.append(f'<div class="band"{ff(n+2,"u","ding")}>{s["band"]}</div>')
+    elif t == 'zone':   # 溫度尺：35～39，37.5 以上發燒
+        out.append(f'<div class="kick">{k}</div><h2>{s["title"]}</h2>')
+        L0, R0 = 140, 1460
+        X = lambda v: L0 + (v - 35) / 4 * (R0 - L0)
+        gx = X(37.5)
+        out.append(f'<div style="position:absolute;left:{L0}px;top:420px;width:{gx-L0:.0f}px;height:90px;background:#2f8a4c;border-radius:20px 0 0 20px;color:#fff;font-size:44px;font-weight:900;display:flex;align-items:center;justify-content:center">✅ 正常</div>')
+        out.append(f'<div style="position:absolute;left:{gx:.0f}px;top:420px;width:{R0-gx:.0f}px;height:90px;background:#c8372d;border-radius:0 20px 20px 0;color:#fff;font-size:40px;font-weight:900;display:flex;align-items:center;justify-content:center">🤒 發燒</div>')
+        for v in (35, 36, 37, 38, 39):
+            out.append(f'<div style="position:absolute;left:{X(v):.0f}px;top:520px;transform:translateX(-50%);font-size:40px;font-weight:900;color:#5b6673">{v}</div>')
+        out.append(f'<div style="position:absolute;left:{gx:.0f}px;top:520px;transform:translateX(-50%);font-size:40px;font-weight:900;color:#c8372d">37.5</div>')
+        for j, (v, txt) in enumerate(s['pins']):
+            col = '#c8372d' if v >= 37.5 else '#1f2a37'
+            out.append(f'<div{ff(j+1,"pop","pop")} style="position:absolute;left:{X(v):.0f}px;top:{230 - (j % 2) * 0}px;transform:translateX(-50%);text-align:center">'
+                       f'<div style="background:#fff;border:4px solid {col};border-radius:20px;padding:8px 18px;font-size:30px;font-weight:900;white-space:nowrap"><span style="font-family:Consolas,monospace;font-size:52px;color:{col}">{v:.1f}</span><br>{txt}</div>'
+                       f'<div style="width:0;height:0;margin:0 auto;border-left:18px solid transparent;border-right:18px solid transparent;border-top:28px solid {col}"></div></div>')
+        lv = s.get('levels')
+        if lv:
+            out.append(f'<div{ff(len(s["pins"])+1,"u")} style="position:absolute;left:{L0}px;top:610px;display:flex;gap:18px;font-size:30px;font-weight:900">' + ''.join(f'<span style="background:#fff;border:3px solid #d8cfbf;border-radius:16px;padding:8px 16px">{x}</span>' for x in lv) + '</div>')
+        if s.get('band'):
+            out.append(f'<div class="band warn"{ff(len(s["pins"])+2,"u","ding")}>{s["band"]}</div>')
     elif t == 'table':
         out.append(f'<div class="kick">{k}</div><h2>{s["title"]}</h2>')
         out.append(f'<table class="rec" style="left:86px;top:{s.get("top",200)}px;width:{s.get("tw",900)}px">')

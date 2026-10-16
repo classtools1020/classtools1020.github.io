@@ -2,7 +2,7 @@
 import base64, os, sys, tempfile
 from playwright.sync_api import sync_playwright
 H = os.path.dirname(os.path.abspath(__file__))
-steps = ['撥開瀏海', '對準額頭中間', '距離一根手指', '按一下，聽到「嗶」', '讀大數字', '記下來']
+steps = ['撥開瀏海', '對準額頭中間', '距離一根手指', '按一下，聽到「嗶」', '整個讀出來', '記下來']
 cells = ''
 for i, t in enumerate(steps, 1):
     b = base64.b64encode(open(f'{H}/six/s{i}.jpg', 'rb').read()).decode()
@@ -18,7 +18,7 @@ h1{{margin:0 0 4mm;font-size:24pt;display:flex;align-items:center;gap:6mm}}h1 sm
 .n{{flex:none;width:9mm;height:9mm;border-radius:50%;background:#c8372d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14pt;-webkit-text-stroke:0}}
 .f{{margin-top:4mm;font-size:13pt;color:#333}}
 </style><h1>額溫槍六步驟 <small>照著做，一步一步來</small></h1><div class="g">{cells}</div>
-<div class="f">⚠ 額溫槍不對著眼睛　✔ 量完用酒精棉片擦一擦　🙋 數字 37.5 以上，告訴老師</div>'''
+<div class="f">⚠ 額溫槍不對著眼睛　✔ 量完用酒精棉片擦一擦　🙋 37.5 以上是發燒，告訴老師<br>👀 數字整個讀：36.5 讀「三十六點五度」（小數點唸「點」）</div>'''
 f = tempfile.mktemp(suffix='.html'); open(f, 'w', encoding='utf-8').write(html)
 with sync_playwright() as p:
     b = p.chromium.launch(); pg = b.new_page(); pg.goto('file://' + f)

@@ -8,7 +8,8 @@ import os, re, shutil, sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 REPO, ID = sys.argv[1], sys.argv[2]
 OUT = os.path.join(REPO, ID)
-SUBFX = os.path.join(REPO, 'f8f9fc3bd1', 'games', 'fx.js')   # 已去掉主選單、改回目錄的 fx.js
+SUBTPL = os.environ.get('SUBTPL', os.path.join(REPO, 'f8f9fc3bd1'))   # 10/16 代課包已刪：可用 git show 取出放到別處再指定
+SUBFX = os.path.join(SUBTPL, 'games', 'fx.js')   # 已去掉主選單、改回目錄的 fx.js
 HASH = "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0"
 U1021, U1028 = "2026-10-21T15:45:00+08:00", "2026-10-28T12:00:00+08:00"
 
@@ -43,7 +44,7 @@ def fx(until):
     assert 'classtools' not in s
     return s
 
-STYLE = open(os.path.join(REPO, 'f8f9fc3bd1', 'index.html'), encoding='utf-8').read()
+STYLE = open(os.path.join(SUBTPL, 'index.html'), encoding='utf-8').read()
 CSS = re.search(r'<style>(.*?)</style>', STYLE, re.S).group(1)
 CSS += '.date{display:flex;align-items:center;gap:14px;padding:16px;background:#fff;border:1px solid #e2ded6;border-radius:12px;margin-bottom:14px}.date .d{flex:none;width:76px;text-align:center;border-right:1px solid #eee;padding-right:14px}.date .d b{display:block;font-size:34px;line-height:1.05}.date .d span{font-size:14px;color:#888}.date .i{flex:1}.date .i b{font-size:19px}.date .i div{color:#666;font-size:15px;margin-top:2px}.date .go{flex:none;background:#222;color:#fff;border-radius:8px;padding:10px 18px;font-weight:700}.tip{color:#666;font-size:15px;margin:10px 4px 0}.back{display:inline-block;margin-bottom:10px;color:#1a4f8b;font-size:15px}'
 HEAD = '<!DOCTYPE html>\n<html lang="zh-Hant">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<meta name="robots" content="noindex,nofollow,noarchive">\n<title>@@T@@</title>\n<style>' + CSS + '</style>\n</head>\n<body>\n'
@@ -61,10 +62,10 @@ wr('d1021/index.html', steps_page('10/21 自然代課', '自然科代課', '10/2
   '額溫槍 2–3 支（先確認有電）、酒精棉片、學習單（列印）',
   [('示範影片：額溫槍六步驟 <small>（每一步會自動暫停）</small>', 'demo.html'),
    ('額溫槍模擬器 <small>（全班一起走一次）</small>', 'forehead.html'),
-   ('讀大數字練習', 'forehead.html#quiz'),
-   ('兩人一組，真的量 <small>（六步驟照片卡）</small>', 'files/six-steps.pdf?v=1'),
-   ('學習單', 'files/T2-print.pdf?v=1')],
-  '只讀小數點前面的大數字（36.5 讀「36」）。', U1021))
+   ('讀數字練習 <small>（🔵 看顏色 🟠 讀出來 ⭐ 挑戰，選一層）</small>', 'forehead.html#quiz'),
+   ('兩人一組，真的量 <small>（六步驟照片卡）</small>', 'files/six-steps.pdf?v=2'),
+   ('學習單', 'files/T2-print.pdf?v=2')],
+  '數字要整個讀：36.9 讀「三十六點九度」（小數點唸「點」）。37.5 以上＝發燒，請告訴老師。', U1021))
 cp('temp/demo.html', 'd1021/demo.html'); cp('temp/forehead.html', 'd1021/forehead.html'); cp('temp/files/T2-print.pdf', 'd1021/files/T2-print.pdf')
 import subprocess; subprocess.run([sys.executable, os.path.join(ROOT, 'tools/sub/six_card.py'), os.path.join(OUT, 'd1021/files/six-steps.pdf')], check=True)
 for f in ('demo.html', 'forehead.html'):
@@ -77,7 +78,7 @@ wr('d1028/index.html', steps_page('10/28 自然代課', '自然科代課', '10/2
   [('簡報：溫度計的紅線 <small>（點畫面下一步）</small>', 't3.html'),
    ('溫度計實驗室：看紅線', 'thermo.html#see'),
    ('考考你：一起數小格', 'thermo.html#quiz'),
-   ('每組動手量，寫學習單', 'files/T3-print.pdf?v=1')],
+   ('每組動手量，寫學習單', 'files/T3-print.pdf?v=2')],
   '溫度計是玻璃：輕輕拿、不甩、不咬。', U1028))
 for f in ('t3.html', 'thermo.html', 'show.css', 'show.js'): cp('temp/' + f, 'd1028/' + f)
 cp('temp/files/T3-print.pdf', 'd1028/files/T3-print.pdf')
