@@ -51,11 +51,19 @@ HEAD = '<!DOCTYPE html>\n<html lang="zh-Hant">\n<head>\n<meta charset="utf-8">\n
 
 def steps_page(title, kick, h1, sub, tag, tagcls, period, time_, prep, steps, tip, until):
     lis = ''.join('<li><a href="%s"%s>%s</a></li>\n      ' % (u, ' target="_blank" rel="noopener"' if u.endswith('.pdf') else '', t) for t, u in steps)
-    return (HEAD.replace('@@T@@', title) + CLOSED.replace('@@U@@', until) + '\n<div class="wrap">\n  <a class="back" href="../">← 回日期</a>\n'
+    gate = ('<div class="gate" id="gate"><div>請輸入通關碼</div><input id="code" inputmode="numeric" maxlength="4" autocomplete="off">'
+            '<button id="open">確定</button><div class="err" id="err"></div></div>\n')
+    js = ('<script>(function(){const $=id=>document.getElementById(id);const U=Date.parse("' + until + '"),H="' + HASH + '",K="sub_"+location.pathname;'
+          'function ok(){$("gate").classList.add("hide");$("main").classList.remove("hide");try{localStorage.setItem(K,String(U));}catch(e){}}'
+          'try{if(+localStorage.getItem(K)===U)ok();}catch(e){}'
+          'async function sha(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}'
+          'async function go(){if(await sha($("code").value.trim())===H)ok();else{$("err").textContent="通關碼不正確";$("code").select();}}'
+          '$("open").onclick=go;$("code").addEventListener("keydown",e=>{if(e.key==="Enter")go();});})();</script>\n')
+    return (HEAD.replace('@@T@@', title) + CLOSED.replace('@@U@@', until) + '\n' + gate + '<div class="wrap hide" id="main">\n'
       f'  <div class="hd"><small>{kick}</small><h1>{h1}</h1><p>{sub}</p></div>\n'
       f'  <div class="cls">\n    <div class="ch"><span class="tag {tagcls}">{tag}</span><b>{period}</b><span class="t">{time_}</span></div>\n'
       f'    <div class="prep">準備：{prep}</div>\n    <ol>\n      {lis}</ol>\n  </div>\n'
-      + (f'  <div class="tip">{tip}</div>\n' if tip else '') + '</div>\n</body>\n</html>\n')
+      + (f'  <div class="tip">{tip}</div>\n' if tip else '') + '</div>\n' + js + '</body>\n</html>\n')
 
 # ───────── 10/21 甲班第7節（20 分鐘）T2 ─────────
 wr('d1021/index.html', steps_page('10/21 自然代課', '自然科代課', '10/21（三）', '甲班第 7 節・20 分鐘', '甲班', 'a', '第 7 節', '15:00–15:20',
