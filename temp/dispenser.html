@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<title>飲水機偵探｜溫度特勤隊</title>
+<style>
+  :root{--ink:#1f2a37;--soft:#5b6673;--paper:#f4efe6;--red:#c8372d;--teal:#1f7a8c;--green:#2f8a4c;--line:#d8cfbf;--blue:#1f5fa8;--gold:#d99a22;--orange:#e07a1f}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#22262b;overflow:hidden;font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  #view{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{position:relative;width:1600px;height:900px;flex:none;background:var(--paper);overflow:hidden;transform-origin:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  #stage::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.2px) 0 0/6px 6px;pointer-events:none}
+  header{position:absolute;left:170px;top:0;height:96px;display:flex;align-items:center;gap:30px;right:200px}
+  .kick{font-size:22px;font-weight:800;color:var(--red);letter-spacing:.08em}
+  h1{margin:0;font-size:44px;letter-spacing:.04em}
+  .tabs{margin-left:auto;display:flex;gap:10px}
+  .tab{font-family:inherit;font-size:24px;font-weight:900;border:3px solid var(--ink);background:#fff;color:var(--ink);border-radius:999px;padding:10px 22px;cursor:pointer}
+  .tab.on{background:var(--ink);color:#fff}
+  #back,#menu{position:absolute;top:22px;z-index:20;font-family:inherit;font-weight:900;font-size:20px;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:9px 18px}
+  #back{left:22px}#menu{right:22px}
+  .hidden{display:none!important}
+  /* 調查 */
+  #scene{position:absolute;left:40px;top:110px;width:760px;height:770px}
+  #scene svg{width:760px;height:770px;overflow:visible}
+  .tap{cursor:pointer;transition:transform .2s}.tap:hover{transform:translateY(-4px)}
+  .tap.used .lbl{opacity:.55}
+  #panel{position:absolute;left:840px;top:116px;right:44px;bottom:28px;display:flex;flex-direction:column;gap:14px}
+  .card{background:#fff;border:3px solid var(--line);border-radius:22px;padding:12px 20px}
+  .q{font-size:30px;font-weight:900;line-height:1.35}
+  .q b{color:var(--red)}
+  .ans{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+  .ab{font-family:inherit;font-size:27px;font-weight:900;background:#fff;border:4px solid var(--line);border-radius:18px;padding:12px 22px;cursor:pointer;color:var(--ink);transition:transform .2s,border-color .2s,background .2s,opacity .2s}
+  .ab.ok{border-color:var(--green);background:#ecf7ee;transform:scale(1.05)}.ab.no{opacity:.3}
+  .msg{font-size:25px;font-weight:900;min-height:36px;line-height:1.4}
+  .msg b{color:var(--red)}
+  table.rec{width:100%;border-collapse:collapse;font-size:23px;font-weight:900}
+  table.rec td,table.rec th{border:2px solid var(--line);padding:5px 8px;text-align:center}
+  table.rec th{background:#efe7d8;font-size:20px}
+  .zone{position:relative;height:90px;margin:4px 4px 0}
+  .zone .zb{position:absolute;left:0;right:0;top:30px;height:38px;border-radius:12px;overflow:hidden;display:flex;font-size:21px;font-weight:900;color:#fff}
+  .zone .zb span{display:flex;align-items:center;justify-content:center}
+  .zone .tk{position:absolute;top:72px;transform:translateX(-50%);font-size:20px;font-weight:900;color:var(--soft)}
+  .zone .mk{position:absolute;top:-4px;transform:translateX(-50%);font-size:22px;font-weight:900;white-space:nowrap}
+  .zone .mk:after{content:"";display:block;margin:0 auto;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:15px solid currentColor}
+  .big{font-family:inherit;font-size:28px;font-weight:900;border:none;border-radius:18px;padding:12px 26px;cursor:pointer;background:var(--ink);color:#fff}
+  .big.y{background:#ffcf2e;color:var(--ink)}
+  .warnbox{background:#fff1ef;border-color:#f1b5ac;font-size:24px;font-weight:900;color:var(--red)}
+  /* 提醒卡 */
+  #m-card{position:absolute;left:40px;top:112px;right:40px;bottom:24px;display:flex;gap:34px}
+  #form{width:520px;display:flex;flex-direction:column;gap:14px}
+  .row{display:flex;align-items:center;gap:14px;font-size:28px;font-weight:900;background:#fff;border:3px solid var(--line);border-radius:18px;padding:12px 18px}
+  .row .ic{font-size:40px}
+  .row .nm{width:100px}
+  .step{display:flex;align-items:center;gap:8px;margin-left:auto}
+  .step button{font-family:inherit;width:56px;height:56px;border-radius:14px;border:3px solid var(--ink);background:#fff;font-size:32px;font-weight:900;cursor:pointer}
+  .step input{width:100px;height:56px;font-family:inherit;font-size:34px;font-weight:900;text-align:center;border:3px solid var(--line);border-radius:12px}
+  .row input.cls{flex:1;height:56px;font-family:inherit;font-size:28px;font-weight:900;border:3px solid var(--line);border-radius:12px;padding:0 12px}
+  #poster{flex:1;background:#fff;border-radius:18px;box-shadow:0 18px 40px rgba(0,0,0,.18);padding:30px 34px;display:flex;flex-direction:column;gap:16px}
+  #poster .pt{display:flex;align-items:center;gap:18px}
+  #poster .pt h2{margin:0;font-size:54px;letter-spacing:.06em}
+  #poster .pt small{display:block;font-size:22px;color:var(--soft);font-weight:800;letter-spacing:.1em}
+  .pr{display:flex;align-items:center;gap:20px;border-radius:20px;padding:16px 22px;color:#fff}
+  .pr .ic{font-size:62px;width:84px;text-align:center}
+  .pr .t{flex:1}
+  .pr .t b{display:block;font-size:40px}
+  .pr .t span{font-size:28px;font-weight:800}
+  .pr .v{font-size:64px;font-weight:900;font-family:Consolas,"Courier New",monospace;white-space:nowrap}
+  .pr .v small{font-size:28px}
+  #poster .ft{margin-top:auto;display:flex;justify-content:space-between;font-size:22px;font-weight:900;color:var(--soft)}
+  #rot{display:none;position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#fff;font-weight:800;padding:8px 14px;border-radius:10px;z-index:30}
+  @media (max-width:760px) and (orientation:portrait){#rot{display:block}}
+  @media print{
+    @page{size:A4 portrait;margin:10mm}
+    html,body{background:#fff;overflow:visible;height:auto}
+    #view{position:static;display:block}
+    #stage{transform:none!important;width:auto;height:auto;box-shadow:none;background:#fff}
+    #stage::before,header,#back,#menu,#m-do,#form,#rot,[id^=fx],canvas{display:none!important}
+    #m-card{position:static;display:block}
+    #poster{box-shadow:none;border:3px solid #1f2a37;height:272mm;gap:7mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    #poster .pt h2{font-size:42pt}#poster .pr{flex:1;padding:6mm 8mm}#poster .pr .ic{font-size:44pt}#poster .pr .t b{font-size:34pt}#poster .pr .t span{font-size:20pt}#poster .pr .v{font-size:52pt}#poster .ft{font-size:13pt}
+  }
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+  <a id="back" href="./">⬅ 返回</a>
+  <a id="menu" href="/light/">🗂️ 主選單</a>
+  <header>
+    <div><div class="kick">溫度特勤隊</div><h1>飲水機偵探</h1></div>
+    <div class="tabs"><button class="tab" data-m="do">🔍 調查</button><button class="tab" data-m="card">🪧 做提醒卡</button></div>
+  </header>
+
+  <section id="m-do">
+    <div id="scene">
+      <svg viewBox="0 0 760 770">
+        <defs>
+          <linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#c9d1d8"/><stop offset=".5" stop-color="#eef2f5"/><stop offset="1" stop-color="#b8c1c9"/></linearGradient>
+          <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eae4d8"/><stop offset="1" stop-color="#ddd5c6"/></linearGradient>
+        </defs>
+        <rect x="0" y="0" width="760" height="770" rx="26" fill="url(#wall)"/>
+        <rect x="0" y="640" width="760" height="130" fill="#cfc6b4"/>
+        <!-- 飲水機 -->
+        <rect x="70" y="40" width="420" height="620" rx="26" fill="url(#steel)" stroke="#8d98a3" stroke-width="5"/>
+        <rect x="100" y="70" width="360" height="90" rx="14" fill="#1f2a37"/>
+        <text x="280" y="128" text-anchor="middle" style="font-size:38px;font-weight:900;fill:#fff;letter-spacing:.2em">冰 ・ 溫 ・ 熱</text>
+        <rect x="100" y="190" width="360" height="300" rx="18" fill="#9aa5ae" opacity=".35"/>
+        <g class="tap" data-k="cold"><rect x="120" y="205" width="90" height="70" rx="14" fill="#2f74c9"/><rect x="153" y="275" width="24" height="40" fill="#7d8790"/><text class="lbl" x="165" y="252" text-anchor="middle" style="font-size:34px;font-weight:900;fill:#fff">冰</text></g>
+        <g class="tap" data-k="warm"><rect x="235" y="205" width="90" height="70" rx="14" fill="#e07a1f"/><rect x="268" y="275" width="24" height="40" fill="#7d8790"/><text class="lbl" x="280" y="252" text-anchor="middle" style="font-size:34px;font-weight:900;fill:#fff">溫</text></g>
+        <g class="tap" data-k="hot"><rect x="350" y="205" width="90" height="70" rx="14" fill="#c8372d"/><rect x="383" y="275" width="24" height="40" fill="#7d8790"/><text class="lbl" x="395" y="252" text-anchor="middle" style="font-size:34px;font-weight:900;fill:#fff">熱</text></g>
+        <rect x="100" y="470" width="360" height="22" rx="8" fill="#7d8790"/>
+        <!-- 水流 -->
+        <rect id="stream" x="0" y="315" width="10" height="0" rx="5" fill="#8fd0f5" opacity=".9"/>
+        <!-- 杯子 -->
+        <g id="cup" transform="translate(-200 0)">
+          <path d="M-46 360 L46 360 L38 468 L-38 468Z" fill="#fff" fill-opacity=".55" stroke="#7d8790" stroke-width="4"/>
+          <path id="water" d="M-42 468 L42 468 L38 468 L-38 468Z" fill="#8fd0f5" opacity=".75"/>
+        </g>
+        <text x="280" y="610" text-anchor="middle" style="font-size:26px;font-weight:900;fill:#5b6673">點一個水龍頭，量量看</text>
+        <!-- 溫度計（0～100） -->
+        <g id="th" transform="translate(600 70)">
+          <rect x="-34" y="-20" width="68" height="610" rx="34" fill="#fff" stroke="#1f2a37" stroke-width="5"/>
+          <rect x="-9" y="20" width="18" height="500" rx="9" fill="#f1ece2"/>
+          <rect id="mercury" x="-9" y="520" width="18" height="0" fill="#e2453a"/>
+          <circle cx="0" cy="545" r="30" fill="#e2453a" stroke="#1f2a37" stroke-width="5"/>
+          <g id="ticks"></g>
+          <g id="thMark" opacity="0"><rect x="40" y="0" width="96" height="46" rx="12" fill="#1f2a37"/><text id="thVal" x="88" y="32" text-anchor="middle" style="font-size:28px;font-weight:900;fill:#fff"></text></g>
+        </g>
+      </svg>
+    </div>
+    <div id="panel">
+      <div class="card"><div class="q" id="q"></div><div class="ans" id="ans"></div><div class="msg" id="msg"></div><div id="zone"></div></div>
+      <div class="hidden" id="hotwarn"></div>
+      <div class="card" style="padding:12px 16px"><table class="rec"><thead><tr><th>水龍頭</th><th>我猜</th><th>量到</th><th>判斷</th></tr></thead><tbody id="rec"></tbody></table></div>
+      <div style="display:flex;gap:12px"><button class="big y" id="next" disabled>下一個 ➡</button><button class="big" id="reset">🔁 重來</button></div>
+    </div>
+  </section>
+
+  <section id="m-card" class="hidden">
+    <div id="form">
+      <div class="q" style="font-size:30px">把我們<b>真的量到</b>的數字填進去</div>
+      <div class="row"><span class="ic">🧊</span><span class="nm">冰水</span><div class="step"><button data-t="cold" data-d="-1">－</button><input id="v_cold" type="number" value="10"><button data-t="cold" data-d="1">＋</button></div></div>
+      <div class="row"><span class="ic">🟠</span><span class="nm">溫水</span><div class="step"><button data-t="warm" data-d="-1">－</button><input id="v_warm" type="number" value="52"><button data-t="warm" data-d="1">＋</button></div></div>
+      <div class="row"><span class="ic">🔴</span><span class="nm">熱水</span><div class="step"><button data-t="hot" data-d="-1">－</button><input id="v_hot" type="number" value="95"><button data-t="hot" data-d="1">＋</button></div></div>
+      <div class="row"><span class="ic">✍️</span><input class="cls" id="v_by" value="甲班溫度特勤隊"></div>
+      <div class="row" style="font-size:22px;color:var(--soft)">👉 會自動判斷：40 以下不燙、超過 40 小心燙、60 以上很燙</div>
+      <button class="big y" id="print" style="font-size:32px;padding:16px">🖨️ 印出來，貼在飲水機旁</button>
+    </div>
+    <div id="poster"></div>
+  </section>
+</div></div>
+<div id="rot">📱 手機橫過來看，畫面比較大</div>
+
+<script src="../games/fx.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);const stage=$('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
+const S=n=>{try{FX.sound[n]();}catch(e){}};
+/* 判斷規則：40 以下溫和；41～59 小心燙；60 以上很燙（只能大人裝） */
+function level(v){return v<=40?{k:'ok',c:'#2f8a4c',t:'✅ 不燙'}:v<60?{k:'care',c:'#e07a1f',t:'⚠ 小心燙'}:{k:'hot',c:'#c8372d',t:'🔥 很燙'};}
+function zoneHTML(v){const pct=x=>(x/100*100).toFixed(1)+'%';const L=level(v);
+  return '<div class="zone"><div class="zb"><span style="width:40%;background:#2f8a4c">✅ 不燙</span><span style="width:20%;background:#e07a1f">⚠ 小心燙</span><span style="flex:1;background:#c8372d">🔥 很燙</span></div>'+
+    [0,20,40,60,80,100].map(x=>`<span class="tk" style="left:${pct(x)}">${x}</span>`).join('')+
+    `<span class="mk" style="left:${pct(Math.max(2,Math.min(98,v)))};color:${L.c}">${v} 度</span></div>`;}
+/* 溫度計刻度 0～100 */
+(function(){let h='';for(let v=0;v<=100;v+=5){const y=520-v*5;const big=v%10===0;h+=`<line x1="${big?-30:-22}" y1="${y}" x2="-12" y2="${y}" stroke="#1f2a37" stroke-width="${big?3:2}"/>`;if(big)h+=`<text x="${-36}" y="${y+8}" text-anchor="end" style="font-size:22px;font-weight:900;fill:#1f2a37">${v}</text>`;}$('ticks').innerHTML=h;})();
+function setMercury(v,anim){const m=$('mercury'),h=v*5;m.style.transition=anim?'all 1.6s cubic-bezier(.3,.8,.3,1)':'none';m.setAttribute('y',520-h);m.setAttribute('height',h);}
+const TAPS={cold:{nm:'冰水',ic:'🧊',x:165,v:10,c:'#2f74c9'},warm:{nm:'溫水',ic:'🟠',x:280,v:52,c:'#e07a1f'},hot:{nm:'熱水',ic:'🔴',x:395,v:95,c:'#c8372d'}};
+const ORDER=['cold','warm','hot'];let cur=null,done={},guess=null,phase='pick';
+function q(t){$('q').innerHTML=t;}
+function opts(list,right,onOk,onNo){const box=$('ans');box.innerHTML='';list.forEach(t=>{const b=document.createElement('button');b.className='ab';b.innerHTML=t;b.onclick=()=>{
+  if(right===null||t===right){b.classList.add('ok');[...box.children].forEach(x=>{if(x!==b)x.classList.add('no');x.disabled=true;});S(right===null?'blip':'right');onOk(t);}else{b.classList.add('no');S('wrong');onNo&&onNo();}};box.appendChild(b);});}
+function start(){q('先選一個水龍頭：<br>🧊 冰、🟠 溫、🔴 熱');$('ans').innerHTML='';$('msg').innerHTML='點左邊飲水機的水龍頭 👈';$('zone').innerHTML='';$('next').disabled=true;phase='pick';}
+function pour(k){const T=TAPS[k];cur=k;phase='guess';S('whoosh');
+  $('hotwarn').classList.toggle('hidden',k!=='hot');
+  const cup=$('cup');cup.style.transition='transform .7s';cup.setAttribute('transform',`translate(${T.x} 0)`);
+  const st=$('stream');setTimeout(()=>{st.setAttribute('x',T.x-5);st.setAttribute('height',150);st.setAttribute('fill',k==='hot'?'#f6b2a8':k==='warm'?'#f6d3a8':'#8fd0f5');},700);
+  setTimeout(()=>{$('water').setAttribute('d','M-40 395 L40 395 L38 468 L-38 468Z');},1000);
+  setTimeout(()=>{st.setAttribute('height',0);},1700);
+  setMercury(0,false);$('thMark').setAttribute('opacity',0);$('zone').innerHTML='';
+  q(`${T.ic} <b>${T.nm}</b>：先猜猜看——<br>和洗澡水（大約 40 度）比，會？`);$('msg').innerHTML=k==='hot'?'⚠ 真的量熱水時，<b>請老師來裝、老師來量</b>':'';
+  opts(['比較冷','差不多','比較燙'],null,t=>{guess=t;measure();});}
+function measure(){const T=TAPS[cur];phase='read';$('msg').innerHTML='溫度計放進去……等紅線不動 ⏱️';
+  setTimeout(()=>{setMercury(T.v,true);S('blip');},300);
+  setTimeout(()=>{$('thVal').textContent='？';$('thMark').setAttribute('transform',`translate(0 ${520-T.v*5-23})`);$('thMark').setAttribute('opacity',1);
+    q('紅線停在幾度？');const near=[T.v,T.v+10>100?T.v-20:T.v+10,T.v-10<0?T.v+20:T.v-10].sort(()=>Math.random()-.5);
+    opts(near.map(x=>x+' 度'),T.v+' 度',()=>{$('thVal').textContent=T.v+' 度';judge();},()=>{$('msg').innerHTML='先找最近<b>有數字的長線</b>，再往上數小格';});$('msg').innerHTML='';},2100);}
+function judge(){const T=TAPS[cur],L=level(T.v);phase='judge';$('zone').innerHTML=zoneHTML(T.v);
+  q(`${T.v} 度，要怎麼做？`);
+  const right=L.k==='ok'?'✅ 可以直接用':L.k==='care'?'⚠ 小心燙，先試一點點':'🔥 很燙，請大人裝';
+  opts(['✅ 可以直接用','⚠ 小心燙，先試一點點','🔥 很燙，請大人裝'],right,()=>{
+    const gOk=(guess==='比較冷'&&T.v<38)||(guess==='差不多'&&T.v>=38&&T.v<=42)||(guess==='比較燙'&&T.v>42);
+    $('msg').innerHTML=(gOk?'猜對了！':'跟猜的不一樣——<b>量了才知道</b>！')+(cur==='warm'&&T.v>40?'<br>「溫水」其實<b>比洗澡水還燙</b>！':'');
+    done[cur]=true;document.querySelector(`.tap[data-k="${cur}"]`).classList.add('used');
+    const tr=document.querySelector(`#rec tr[data-k="${cur}"]`);if(tr)tr.remove();
+    $('rec').insertAdjacentHTML('beforeend',`<tr data-k="${cur}"><td>${T.ic} ${T.nm}</td><td style="font-size:22px">${guess}</td><td>${T.v}</td><td style="color:${L.c};font-size:22px">${L.t}</td></tr>`);
+    const left=ORDER.filter(k=>!done[k]);$('next').disabled=false;$('next').textContent=left.length?'下一個 ➡':'🪧 做提醒卡 ➡';
+    if(!left.length)try{FX.confetti(80);}catch(e){}},()=>{$('msg').innerHTML='看溫度尺的<b>顏色</b>：箭頭在哪一區？';});}
+document.querySelectorAll('.tap').forEach(g=>g.onclick=()=>{if(phase==='pick'||phase==='judge')pour(g.dataset.k);});
+$('next').onclick=()=>{const left=ORDER.filter(k=>!done[k]);if(!left.length){setMode('card');return;}start();};
+$('reset').onclick=()=>{done={};$('rec').innerHTML='';document.querySelectorAll('.tap').forEach(t=>t.classList.remove('used'));setMercury(0,false);$('thMark').setAttribute('opacity',0);$('hotwarn').classList.add('hidden');$('cup').setAttribute('transform','translate(-200 0)');$('water').setAttribute('d','M-42 468 L42 468 L38 468 L-38 468Z');start();};
+
+/* 提醒卡 */
+function val(k){return Math.max(0,Math.min(100,parseInt($('v_'+k).value)||0));}
+function poster(){const row=(k)=>{const T=TAPS[k],v=val(k),L=level(v);
+  const say=L.k==='ok'?'不燙，可以直接用':L.k==='care'?'比洗澡水還熱，小心燙':'很燙！請大人裝，不要直接碰';
+  return `<div class="pr" style="background:${L.c}"><span class="ic">${T.ic}</span><div class="t"><b>${T.nm}</b><span>${say}</span></div><span class="v">${v}<small> 度</small></span></div>`;};
+  $('poster').innerHTML=`<div class="pt"><span style="font-size:70px">🚰</span><div><small>溫度特勤隊・調查報告</small><h2>飲水機溫度提醒</h2></div></div>`+
+    ORDER.map(row).join('')+`<div class="ft"><span>✍️ ${($('v_by').value||'').replace(/[<>&]/g,'')}</span><span>量的方法：溫度計放進杯子，等紅線不動再讀</span></div>`;}
+document.querySelectorAll('.step button').forEach(b=>b.onclick=()=>{const i=$('v_'+b.dataset.t);i.value=Math.max(0,Math.min(100,(parseInt(i.value)||0)+ +b.dataset.d));S('blip');poster();});
+['cold','warm','hot','by'].forEach(k=>$('v_'+k).addEventListener('input',poster));
+$('print').onclick=()=>{S('fanfare');setTimeout(()=>window.print(),200);};
+
+function setMode(m){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.m===m));$('m-do').classList.toggle('hidden',m!=='do');$('m-card').classList.toggle('hidden',m!=='card');
+  if(m==='card'){ORDER.forEach(k=>{if(done[k])$('v_'+k).value=TAPS[k].v;});poster();}
+  try{history.replaceState(null,'','#'+m);}catch(e){}}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{S('blip');setMode(b.dataset.m);});
+start();setMode(location.hash==='#card'?'card':'do');
+window.__dp={pour,setMode,get phase(){return phase;}};
+})();
+</script>
+</body>
+</html>

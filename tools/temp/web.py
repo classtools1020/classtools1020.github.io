@@ -195,6 +195,22 @@ def render_slide(i, s, L):
             out.append(f'<div{ff(len(s["pins"])+1,"u")} style="position:absolute;left:{L0}px;top:610px;display:flex;gap:18px;font-size:30px;font-weight:900">' + ''.join(f'<span style="background:#fff;border:3px solid #d8cfbf;border-radius:16px;padding:8px 16px">{x}</span>' for x in lv) + '</div>')
         if s.get('band'):
             out.append(f'<div class="band warn"{ff(len(s["pins"])+2,"u","ding")}>{s["band"]}</div>')
+    elif t == 'scale':   # 通用溫度尺：segs=[(起,迄,顏色,文字)], pins=[(數值,名稱)]
+        out.append(f'<div class="kick">{k}</div><h2>{s["title"]}</h2>')
+        lo, hi = s.get('lo', 0), s.get('hi', 100); L0, R0 = 140, 1460
+        X = lambda v: L0 + (v - lo) / (hi - lo) * (R0 - L0)
+        for j, (a, b_, col, txt) in enumerate(s['segs']):
+            rad = '20px 0 0 20px' if j == 0 else ('0 20px 20px 0' if j == len(s['segs']) - 1 else '0')
+            out.append(f'<div style="position:absolute;left:{X(a):.0f}px;top:430px;width:{X(b_)-X(a):.0f}px;height:90px;background:{col};border-radius:{rad};color:#fff;font-size:40px;font-weight:900;display:flex;align-items:center;justify-content:center">{txt}</div>')
+        for v in s.get('ticks', []):
+            out.append(f'<div style="position:absolute;left:{X(v):.0f}px;top:530px;transform:translateX(-50%);font-size:40px;font-weight:900;color:#5b6673">{v}</div>')
+        for j, (v, nm) in enumerate(s['pins']):
+            col = next((c for a, b_, c, _ in s['segs'] if a <= v < b_ or (v == hi and b_ == hi)), '#1f2a37')
+            out.append(f'<div{ff(j+1,"pop","pop")} style="position:absolute;left:{X(v):.0f}px;top:240px;transform:translateX(-50%);text-align:center">'
+                       f'<div style="background:#fff;border:4px solid {col};border-radius:20px;padding:8px 18px;font-size:30px;font-weight:900;white-space:nowrap">{nm}<br><span style="font-family:Consolas,monospace;font-size:52px;color:{col}">{v}</span> 度</div>'
+                       f'<div style="width:0;height:0;margin:0 auto;border-left:18px solid transparent;border-right:18px solid transparent;border-top:28px solid {col}"></div></div>')
+        if s.get('band'):
+            out.append(f'<div class="band{" warn" if s.get("warn") else ""}"{ff(len(s["pins"])+1,"u","ding")}>{s["band"]}</div>')
     elif t == 'table':
         out.append(f'<div class="kick">{k}</div><h2>{s["title"]}</h2>')
         out.append(f'<table class="rec" style="left:86px;top:{s.get("top",200)}px;width:{s.get("tw",900)}px">')

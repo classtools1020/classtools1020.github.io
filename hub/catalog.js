@@ -27,7 +27,7 @@
   var G = '單元入口';
   add('temp', G, 'temp-home', 'home', '溫度特勤隊首頁', '六節課、教具、列印一頁看完', '/temp/');
   G = '六節課';
-  var TL = ['手會騙人嗎？', '額溫槍出動！', '溫度計的紅線', '三杯水排排站', '校園溫度巡邏', '出勤大挑戰'];
+  var TL = ['手會騙人嗎？', '額溫槍出動！', '溫度計的紅線', '飲水機偵探：三種水', '校園溫度巡邏', '出勤大挑戰'];
   TL.forEach(function (name, i) {
     var n = i + 1, acts = [['PPT', OV('temp/files/T' + n + '-temp.pptx')], ['下載 PPT', '/temp/files/T' + n + '-temp.pptx']];
     acts.push(n < 6 ? ['講義＋學習單', '/temp/files/T' + n + '-print.pdf'] : ['檢核表', '/temp/files/T6-check.pdf']);
@@ -38,6 +38,7 @@
   add('temp', G, 'temp-news', 'slide', '溫度新聞台', '3D 溫溫隊長播報：校園哪裡最熱？', '/temp/news.html');
   add('temp', G, 'temp-demo', 'tool', '額溫槍六步驟・示範影片', '動畫示範，每一步自動暫停', '/temp/demo.html', [['下載影片', '/temp/files/T2-demo.mp4']]);
   add('temp', G, 'temp-forehead', 'tool', '額溫槍出動', '六步驟練習＋讀數字（三層次）', '/temp/forehead.html', [['讀數字考考你', '/temp/forehead.html#quiz']]);
+  add('temp', G, 'temp-dispenser', 'tool', '飲水機偵探', '猜、量、判斷會不會燙，做提醒卡', '/temp/dispenser.html', [['做提醒卡', '/temp/dispenser.html#card']]);
   add('temp', G, 'temp-thermo', 'tool', '溫度計實驗室', '看紅線、一起數、三杯水記錄', '/temp/thermo.html#see', [['考考你', '/temp/thermo.html#quiz'], ['三杯水排排站', '/temp/thermo.html#record']]);
   add('temp', G, 'temp-campus', 'tool', '溫度探險校園', '竹東國中地圖・巡邏記錄卡', '/temp/campus.html');
   add('temp', '遊戲', 'temp-quiz', 'game', '溫度環島搶答', '紅藍兩隊搶答佔站', '/games/temp-quiz.html');
@@ -103,6 +104,7 @@
   add('light', G, 'lens-home', 'home', '任務五首頁', '透鏡', '/light-lens/');
   add('light', G, 'lens-detective', 'game', '微小世界探險隊', '竹東校園地圖＋放大鏡找線索', '/light-lens/detective.html');
   add('light', G, 'lens-walk', 'tool', '牽手走沙灘', '3D 動畫：為什麼會聚焦', '/light-lens/walk.html');
+  add('light', G, 'lens-board', 'game', '凸透鏡大挑戰', '翻牌搶答：16 題＋4 張驚喜卡', '/games/lens-board.html');
   add('light', G, 'lens-lab', 'tool', '透鏡實驗室', '放大鏡只會把東西變大嗎？', '/light-lens/lab.html');
   add('light', G, 'lens-l1', 'ppt', '透鏡第 1 節 PPT', '走沙灘 7 步', OV('light-lens/files/L1-lens.pptx'), [['下載', '/light-lens/files/L1-lens.pptx']]);
   add('light', G, 'lens-ws', 'print', '透鏡第 1 節學習單', 'PDF・勾選式', '/light-lens/files/透鏡第1節_學習單.pdf', [['網頁版', '/light-lens/worksheet.html']]);

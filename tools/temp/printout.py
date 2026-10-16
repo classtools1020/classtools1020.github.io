@@ -173,17 +173,19 @@ def sheet():
         b += f'<tr><td>🧊 冰水</td><td><span class="write"></span>度</td><td><span class="box"></span>有</td></tr>'
         b += f'<tr><td>♨️ 溫水</td><td><span class="write"></span>度</td><td><span class="box"></span>有</td></tr></table>'
     elif code == 'T4':
-        b = head('記錄單') + sec(1, '三杯水：量完一杯，馬上寫一杯')
-        b += '<table class="t"><tr><th>杯子</th><th>幾度</th><th>排第幾（1＝最冷）</th></tr>'
-        for nm, im in (('🧊 冰水', 't-ice.jpg'), ('🚰 自來水', 'three-cups.jpg'), ('♨️ 溫水', 't-hot.jpg')):
-            b += f'<tr><td><img src="{I}{im}">{nm}</td><td><span class="write"></span>度</td><td><span class="box"></span>1 <span class="box"></span>2 <span class="box"></span>3</td></tr>'
+        b = head('記錄單') + sec(1, '先猜：飲水機的溫水，和洗澡水（大約 40 度）比？')
+        b += '<div class="cell" style="font-size:15pt;text-align:left"><span class="box"></span>🥶 比較冷　<span class="box"></span>🙂 差不多　<span class="box"></span>🥵 比較燙</div>'
+        b += sec(2, '飲水機偵探：量完一杯，馬上寫一杯')
+        b += '<table class="t"><tr><th>水</th><th>幾度</th><th>會不會燙？</th></tr>'
+        for nm, im, who in (('🧊 冰水', 't-ice.jpg', ''), ('🟠 溫水', 'dispenser.jpg', ''), ('🔴 熱水', 't-hot.jpg', '<div style="font-size:10pt;color:#c8372d">看老師量</div>')):
+            b += f'<tr><td><img src="{I}{im}">{nm}{who}</td><td><span class="write"></span>度</td><td style="font-size:12pt"><span class="box"></span>不燙 <span class="box"></span>小心燙 <span class="box"></span>很燙</td></tr>'
         b += '</table>'
-        b += sec(2, '比一比：勾比較熱的那一個')
-        b += '<div class="grid" style="grid-template-columns:repeat(3,1fr)">' + ''.join(f'<div class="cell" style="font-size:15pt"><span class="box"></span>{a} 度 　<span class="box"></span>{c} 度</div>' for a, c in ((15, 30), (8, 3), (26, 40))) + '</div>'
-        b += ch('數字越大', '越熱', '越冷')
-        b += sec(3, '生活：洗澡水')
-        b += cells([('安全的洗澡水大約', 'bath.jpg')], 1, ['40 度', '60 度']).replace('<img ', '<img style="height:24mm" ')
-        b += '<div class="tip">⚠ 先開冷水，再開熱水；用手肘或溫度計試一試</div>'
+        b += '<div class="tip">溫度尺：40 以下 ✅ 不燙　｜　超過 40 ⚠ 小心燙　｜　60 以上 🔥 很燙，請大人裝</div>'
+        b += ch('猜對了嗎？溫水其實', '比洗澡水冷', '比洗澡水燙')
+        b += sec(3, '從冷排到熱：寫 1、2、3（1＝最冷）')
+        b += '<div class="grid" style="grid-template-columns:repeat(3,1fr)">' + ''.join(f'<div class="cell" style="font-size:15pt">{x}　第 <span class="write" style="width:12mm"></span></div>' for x in ('🧊 冰水', '🟠 溫水', '🔴 熱水')) + '</div>'
+        b += sec(4, '生活：安全的洗澡水大約幾度？')
+        b += '<div class="cell" style="font-size:15pt;text-align:left">🛁 <span class="box"></span>40 度　<span class="box"></span>60 度　　→ 先放冷水，再加熱水，用手背試一試</div>'
     elif code == 'T5':
         b = head('巡邏記錄單') + sec(1, '每一站：放好溫度計 → 數到 60 → 寫下數字')
         b += '<table class="t"><tr><th>地點</th><th>等 1 分鐘了？</th><th>幾度</th></tr>'
