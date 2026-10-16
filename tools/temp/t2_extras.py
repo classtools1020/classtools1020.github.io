@@ -24,7 +24,7 @@ html_card = f'''<!doctype html><meta charset="utf-8"><style>@page{{size:A4;margi
 .c{{border:.5mm dashed #999;padding:4mm 4mm 3mm;display:flex;flex-direction:column;justify-content:space-between}}
 .t{{font-size:17pt;font-weight:900}}.r{{font-size:13pt;font-weight:700}}.r b{{color:#c8372d;font-size:15pt}}.s{{font-size:11pt;color:#333}}
 .h{{font-size:10pt;color:#555;margin-bottom:2mm}}</style>
-<div class="h">✂ 沿虛線剪下，用透明膠帶貼在額溫槍旁邊或桌上。（老師參考：2020/2/18 指揮中心校園量體溫說明，額溫 37.5 以上再用耳溫槍複測，耳溫 38 以上才判定發燒）</div>
+<div class="h">✂ 沿虛線剪下，貼在額溫槍旁邊。</div>
 <div class="g">{card * 8}</div>'''
 
 steps = ['1 撥瀏海', '2 對準中間', '3 一根手指', '4 按一下嗶', '5 整個讀出來', '6 記下來', '看溫度尺']
@@ -38,7 +38,7 @@ table{{width:100%;border-collapse:collapse;font-size:12pt}}th,td{{border:1.2px s
 <h1>額溫槍六步驟・提示紀錄表 <small>（老師用）　班級＿＿＿　日期＿＿＿＿＿　記錄者＿＿＿＿＿</small></h1>
 <div class="lg">每格寫一個字：<b>獨</b>自己做到　<b>口</b>口語提示　<b>示</b>示範後做到　<b>肢</b>肢體協助　<b>✕</b>沒做到　｜　「看溫度尺」格：寫 <b>綠</b> 或 <b>紅</b>，紅色有沒有告訴老師就打 ✔</div>
 <table><tr><th style="width:15%">學生</th>{th}<th style="width:11%">螢幕數字</th></tr>{rows}</table>
-<div class="f">讀數三層次：🔵 看溫度尺顏色　🟠 整個讀出來（36.9 讀「三十六點九度」）　⭐ 和 37.5 比。發燒用語依據：中央流行疫情指揮中心 2020/2/18 校園量體溫說明——額溫 37.5℃ 以上再用耳溫槍複測，耳溫 38℃ 以上才判定發燒。</div>'''
+<div class="f">讀數三層次：🔵 看溫度尺顏色　🟠 整個讀出來（36.9 讀「三十六點九度」）　⭐ 和 37.5 比</div>'''
 
 with sync_playwright() as p:
     b = p.chromium.launch(); pg = b.new_page()
