@@ -143,7 +143,7 @@
       <div class="q" style="font-size:30px">把我們<b>真的量到</b>的數字填進去</div>
       <div class="row"><span class="ic">🧊</span><span class="nm">冰水</span><div class="step"><button data-t="cold" data-d="-1">－</button><input id="v_cold" type="number" value="10"><button data-t="cold" data-d="1">＋</button></div></div>
       <div class="row"><span class="ic">🟠</span><span class="nm">溫水</span><div class="step"><button data-t="warm" data-d="-1">－</button><input id="v_warm" type="number" value="52"><button data-t="warm" data-d="1">＋</button></div></div>
-      <div class="row"><span class="ic">🔴</span><span class="nm">熱水</span><div class="step"><button data-t="hot" data-d="-1">－</button><input id="v_hot" type="number" value="95"><button data-t="hot" data-d="1">＋</button></div></div>
+      <div class="row"><span class="ic">🔴</span><span class="nm">熱水</span><div class="step"><button data-t="hot" data-d="-1">－</button><input id="v_hot" type="number" value="96"><button data-t="hot" data-d="1">＋</button></div></div>
       <div class="row"><span class="ic">✍️</span><input class="cls" id="v_by" value="甲班溫度特勤隊"></div>
       <div class="row" style="font-size:22px;color:var(--soft)">👉 會自動判斷：40 以下不燙、超過 40 小心燙、60 以上很燙</div>
       <button class="big y" id="print" style="font-size:32px;padding:16px">🖨️ 印出來，貼在飲水機旁</button>
@@ -166,9 +166,9 @@ function zoneHTML(v){const pct=x=>(x/100*100).toFixed(1)+'%';const L=level(v);
     [0,20,40,60,80,100].map(x=>`<span class="tk" style="left:${pct(x)}">${x}</span>`).join('')+
     `<span class="mk" style="left:${pct(Math.max(2,Math.min(98,v)))};color:${L.c}">${v} 度</span></div>`;}
 /* 溫度計刻度 0～100 */
-(function(){let h='';for(let v=0;v<=100;v+=5){const y=520-v*5;const big=v%10===0;h+=`<line x1="${big?-30:-22}" y1="${y}" x2="-12" y2="${y}" stroke="#1f2a37" stroke-width="${big?3:2}"/>`;if(big)h+=`<text x="${-36}" y="${y+8}" text-anchor="end" style="font-size:22px;font-weight:900;fill:#1f2a37">${v}</text>`;}$('ticks').innerHTML=h;})();
+(function(){let h='';for(let v=0;v<=100;v+=2){const y=520-v*5;const big=v%10===0;h+=`<line x1="${big?-30:-22}" y1="${y}" x2="-12" y2="${y}" stroke="#1f2a37" stroke-width="${big?3:2}"/>`;if(big)h+=`<text x="${-36}" y="${y+8}" text-anchor="end" style="font-size:22px;font-weight:900;fill:#1f2a37">${v}</text>`;}$('ticks').innerHTML=h;})();
 function setMercury(v,anim){const m=$('mercury'),h=v*5;m.style.transition=anim?'all 1.6s cubic-bezier(.3,.8,.3,1)':'none';m.setAttribute('y',520-h);m.setAttribute('height',h);}
-const TAPS={cold:{nm:'冰水',ic:'🧊',x:165,v:10,c:'#2f74c9'},warm:{nm:'溫水',ic:'🟠',x:280,v:52,c:'#e07a1f'},hot:{nm:'熱水',ic:'🔴',x:395,v:95,c:'#c8372d'}};
+const TAPS={cold:{nm:'冰水',ic:'🧊',x:165,v:10,c:'#2f74c9'},warm:{nm:'溫水',ic:'🟠',x:280,v:52,c:'#e07a1f'},hot:{nm:'熱水',ic:'🔴',x:395,v:96,c:'#c8372d'}};
 const ORDER=['cold','warm','hot'];let cur=null,done={},guess=null,phase='pick';
 function q(t){$('q').innerHTML=t;}
 function opts(list,right,onOk,onNo){const box=$('ans');box.innerHTML='';list.forEach(t=>{const b=document.createElement('button');b.className='ab';b.innerHTML=t;b.onclick=()=>{
@@ -187,7 +187,7 @@ function measure(){const T=TAPS[cur];phase='read';$('msg').innerHTML='溫度計�
   setTimeout(()=>{setMercury(T.v,true);S('blip');},300);
   setTimeout(()=>{$('thVal').textContent='？';$('thMark').setAttribute('transform',`translate(0 ${520-T.v*5-23})`);$('thMark').setAttribute('opacity',1);
     q('紅線停在幾度？');const near=[T.v,T.v+10>100?T.v-20:T.v+10,T.v-10<0?T.v+20:T.v-10].sort(()=>Math.random()-.5);
-    opts(near.map(x=>x+' 度'),T.v+' 度',()=>{$('thVal').textContent=T.v+' 度';judge();},()=>{$('msg').innerHTML='先找最近<b>有數字的長線</b>，再往上數小格';});$('msg').innerHTML='';},2100);}
+    opts(near.map(x=>x+' 度'),T.v+' 度',()=>{$('thVal').textContent=T.v+' 度';judge();},()=>{$('msg').innerHTML='先找最近<b>有數字的長線</b>，再往上數小格（一小格＝2 度）';});$('msg').innerHTML='';},2100);}
 function judge(){const T=TAPS[cur],L=level(T.v);phase='judge';$('zone').innerHTML=zoneHTML(T.v);
   q(`${T.v} 度，要怎麼做？`);
   const right=L.k==='ok'?'✅ 可以直接用':L.k==='care'?'⚠ 小心燙，先試一點點':'🔥 很燙，請大人裝';

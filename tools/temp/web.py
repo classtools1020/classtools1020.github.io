@@ -50,6 +50,9 @@ def render_slide(i, s, L):
         out.append(f'<div class="kick">{k or "今天的流程"}</div><h2>{s.get("title","今天要做這些事")}</h2><div class="flow">')
         for j, it in enumerate(s['items']):
             lab, href = it[0], it[1]
+            if href and 'games/checkin.html' in str(href):   # 開場／收尾：帶隊名，開演後回到這份簡報的第 3 頁
+                base, _, frag = str(href).partition('#')
+                href = f"{base}?team=溫度特勤隊&back={L['code'].lower()}.html%233" + ('#' + frag if frag else '')
             attr = f' data-href="{href}"' if href and not str(href).startswith('#') else (f' data-goto="{href[1:]}"' if href else '')
             go = '開啟 ↗' if href and not str(href).startswith('#') else ('跳到這頁 →' if href else '')
             out.append(f'<div class="fl"{attr}{ff(j+1 if s.get("anim") else 0,"l")}><span class="no">{j+1}</span>{lab}<span class="go">{go}</span></div>')

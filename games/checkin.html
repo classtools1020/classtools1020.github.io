@@ -6,7 +6,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#05101f">
-<title>開場儀式・心情地圖與調節站</title>
+<title>開場儀式・心情打卡與調節站</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@500;700;900&display=swap">
@@ -164,6 +164,8 @@
   .stretch{font-size:min(30vw,150px);line-height:1.1;margin:6px 0;filter:drop-shadow(0 10px 20px rgba(0,0,0,.5))}
   .count{font-family:var(--deco);font-size:min(14vw,64px);color:var(--gold3);text-shadow:0 0 24px rgba(201,161,74,.5)}
   .goal{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+  /* 投影（大螢幕）：全班從後面也看得清楚 */
+  @media(min-width:1400px){.wrap{max-width:1240px}.mood{width:178px;font-size:26px}.mood .duo,.mood .pf{width:132px!important;height:132px!important}.sub{font-size:26px}.chip{font-size:21px}.tool{width:240px;font-size:24px}.tool small{font-size:16px}.cue{font-size:48px}.note{font-size:18px}.rc{width:720px}.rc p{font-size:24px}.rc .opts button{font-size:22px}}
   @media(max-width:600px){.wrap{padding-right:64px!important}.moods{gap:8px}.mood{width:calc((100vw - 110px)/3)}#fxvoice,#fxbell{transform:scale(.8);opacity:.85}.bars{width:100%}.tool{width:calc((100vw - 120px)/2);padding:12px 6px}.tool small{font-size:11px}.meter{padding:22px 16px 26px;gap:8px}.quad h3{font-size:12px}.fc{font-size:13px}}
 </style>
 </head>
@@ -186,7 +188,7 @@
     <div class="act">Act I</div><h1 id="moodTitle">今天心情怎麼樣？</h1>
     <div class="sub" id="moodSub">點一張最像自己的臉，不用說話</div>
     <div class="moods" id="moods"></div>
-    <div class="bars" id="bars"></div>
+    <div class="bars" id="bars" style="visibility:hidden"></div><div class="quiet"><button class="chip" id="reveal">👀 老師：看全班心情</button></div>
     <div class="note" id="cmp"></div>
     <div class="ctrl" id="ctrl0"><button class="btn go big" id="toTools">下一步 ➡ 調節站</button></div>
   </section>
@@ -202,8 +204,8 @@
     </div>
     <div class="stage2" id="s_bubble"><div class="bubwrap"><div class="ring"></div><div class="bubble" id="bub"></div></div><div class="rounds" id="rounds"><i></i><i></i><i></i></div></div>
     <div class="stage2" id="s_box"><div class="boxwrap"><svg viewBox="-20 -20 340 340"><rect x="0" y="0" width="300" height="300" rx="14" fill="none" stroke="rgba(241,217,148,.45)" stroke-width="6"/>
-      <text x="150" y="-4" text-anchor="middle" fill="#f6e3a8" style="font:900 18px sans-serif">吸氣</text><text x="312" y="155" fill="#f6e3a8" style="font:900 18px sans-serif">停</text>
-      <text x="150" y="330" text-anchor="middle" fill="#f6e3a8" style="font:900 18px sans-serif">吐氣</text><text x="-14" y="155" text-anchor="end" fill="#f6e3a8" style="font:900 18px sans-serif">停</text>
+      <text x="-14" y="155" text-anchor="end" fill="#f6e3a8" style="font:900 22px sans-serif">吸氣 ⬆</text><text x="150" y="-6" text-anchor="middle" fill="#f6e3a8" style="font:900 22px sans-serif">停</text>
+      <text x="314" y="155" fill="#f6e3a8" style="font:900 22px sans-serif">⬇ 吐氣</text><text x="150" y="330" text-anchor="middle" fill="#f6e3a8" style="font:900 22px sans-serif">停</text>
       <circle id="boxDot" cx="0" cy="300" r="18" fill="#fff4cf" style="filter:drop-shadow(0 0 14px #f1d994)"/></svg></div></div>
     <div class="stage2" id="s_stretch"><div class="stretch" id="stEmoji">🙆</div></div>
     <div class="stage2" id="s_ground"><div class="stretch" id="grEmoji">👀</div></div>
@@ -258,8 +260,8 @@ const MOODS=[["😄","很好","m0"],["🙂","還可以","m1"],["😐","普通","
 const MCOL=["linear-gradient(160deg,#f2c230,#c9871a)","linear-gradient(160deg,#3fae6a,#1d6b3e)","linear-gradient(160deg,#7d8794,#4a525e)","linear-gradient(160deg,#3f7fd6,#1d3f86)","linear-gradient(160deg,#6b5bd6,#3a2d86)","linear-gradient(160deg,#3a3550,#1c1828)"];
 const RESP=[
   {h:"太好了！",p:"把好心情傳出去：轉頭跟旁邊的同學擊掌 ✋<br>有什麼好事嗎？（點一個就好）",o:["😴 睡飽了","🍱 吃到好吃的","👫 跟朋友在一起","🎮 有好消息","🤷 說不出來"],fx:"✨"},
-  {h:"不錯喔！",p:"穩穩的，帶著這個感覺上課 🌿",o:[],fx:"🌿"},
-  {h:"普通也很好",p:"我們一起讓今天變好一點點。",o:[],fx:"⭐"},
+  {h:"不錯喔！",p:"穩穩的，帶著這個感覺上課 🌿<br>再加一點能量：",o:["🙌 跟旁邊同學擊掌","💧 喝一口水","🎯 想一個今天的目標"],fx:"🌿"},
+  {h:"普通也很好",p:"我們一起讓今天變好一點點。<br>試試看：",o:["🙆 伸展一下","😊 對旁邊的人笑一下","💧 喝一口水"],fx:"⭐"},
   {h:"謝謝你說出來 💧",p:"累了沒關係，每個人都會累。<br>選一個方法幫自己：",o:["💧 喝一口水","🙆 伸展一下","🫧 泡泡呼吸","🙋 等一下跟老師說"],fx:"💧"},
   {h:"謝謝你告訴我們 💙",p:"心情不好沒有錯。<br>選一個方法幫自己：",o:["🫧 慢慢呼吸","✊ 握拳再放開","🪑 安靜坐一下","🙋 等一下跟老師說"],fx:"💙"},
   {h:"沒關係 🤫",p:"不想說也可以。你來上課，就很好了。",o:[],fx:"🤍"}];
@@ -299,7 +301,7 @@ drawMoods();
 function recommend(){return C[4]>0?"box":C[3]>C[0]?"stretch":"bubble";}
 $("toTools").onclick=()=>{tap();goto(1);showTools();};
 function showTools(){const rec=recommend();document.querySelectorAll(".tool").forEach(t=>t.classList.toggle("rec",t.dataset.t===rec));
-  $("toolSub").textContent=rec==="box"?"今天有人心情不太好：先用方塊呼吸，讓身體慢下來":rec==="stretch"?"今天比較多人有點累：伸展一下，把精神叫醒":"選一個，全班一起做";
+  $("toolSub").textContent=rec==="box"?"先讓身體慢下來，再開始上課":rec==="stretch"?"伸展一下，把精神叫醒":"選一個，全班一起做";
   $("tools").style.display="flex";document.querySelectorAll(".stage2").forEach(s=>s.classList.remove("on"));$("cue").textContent="";$("count").textContent="";$("toolBack").style.display="none";}
 let running=0;const wait=ms=>new Promise(r=>{const id=running;setTimeout(()=>r(id===running),ms);});
 async function runTool(t){running++;const my=running;$("tools").style.display="none";$("toolBack").style.display="";document.querySelectorAll(".stage2").forEach(s=>s.classList.toggle("on",s.id==="s_"+t));ac();
@@ -311,7 +313,7 @@ async function runTool(t){running++;const my=running;$("tools").style.display="n
       cue.textContent="停一下…… ✋";if(!await wait(2000))return;
       cue.textContent="慢慢吐氣…… 🫧";b.style.transition="transform 6s ease-in-out";b.style.transform="scale(1)";chimeDown();if(!await wait(6500))return;}
     b.style.transform="scale(1)";return done();}
-  if(t==="box"){const dot=$("boxDot");const P=[[0,300],[0,0],[300,0],[300,300],[0,300]],L=["吸氣……（往上）","停住……","吐氣……（往下）","停住……"];
+  if(t==="box"){const dot=$("boxDot");const P=[[0,300],[0,0],[300,0],[300,300],[0,300]],L=["吸氣……（往上走）","停住……（往右走）","吐氣……（往下走）","停住……（往左走）"];
     for(let r=0;r<3;r++)for(let s=0;s<4;s++){if(my!==running)return;cue.textContent=L[s];if(s===0)chimeUp();if(s===2)chimeDown();
       const [x0,y0]=P[s],[x1,y1]=P[s+1],t0=performance.now();
       await new Promise(res=>{(function f(n){if(my!==running)return res();const k=Math.min(1,(n-t0)/4000);dot.setAttribute("cx",x0+(x1-x0)*k);dot.setAttribute("cy",y0+(y1-y0)*k);cnt.textContent=Math.min(4,1+Math.floor(k*4));if(k<1)requestAnimationFrame(f);else res();})(t0);});}
@@ -328,13 +330,15 @@ $("skipTool").onclick=()=>{running++;tap();goto(2);};
 /* 第三幕：節目單＋今天的目標 */
 let flow=load("flow");if(flow&&Date.now()-flow.t>12*3600*1000)flow=null;
 const ICON=s=>/簡報/.test(s)?"🖥️":/影片|🎬/.test(s)?"🎬":/學習單|列印/.test(s)?"📝":/相機/.test(s)?"📷":/搶答|闖關|列車|遊戲|挑戰|大富翁/.test(s)?"🎮":/儀式|心情/.test(s)?"🧘":/實驗|魔法|舞臺|關卡|結案|偵探|量/.test(s)?"🔬":"⭐";
-const items=flow?flow.steps.filter(s=>!/儀式/.test(s.label)):[{label:"看簡報"},{label:"動手做"},{label:"玩遊戲"},{label:"學習單"}];
+const BACK=(()=>{const b=new URLSearchParams(location.search).get("back");return b&&/^[\w\-./#%]+$/.test(b)&&!/^\/\/|:/.test(b)?b:null;})();
+const items=flow?flow.steps.filter(s=>!/儀式/.test(s.label)):[];
+if(!flow){$("plan").style.display="none";$("planTitle").textContent="準備好了，開演！";$("planSub").textContent=BACK?"按「開演」回到今天的簡報":"按「開演」開始今天的課";}
 $("plan").innerHTML=items.slice(0,6).map((s,i)=>`<div class="pl"><b>NO.${i+1}</b><span>${ICON(s.label)}</span>${s.label.replace(/^[^一-龥A-Za-z0-9]+/,"").slice(0,14)}</div>`).join("");
 if(flow)$("planTitle").textContent=flow.title;
 const GOALS=["👂 專心聽","✋ 舉手發言","🤝 跟同學合作","🔬 自己動手做","✏️ 寫完學習單","💪 遇到困難不放棄"];
 function chips(host,list,key){$(host).innerHTML=list.map(g=>`<button class="chip">${g}</button>`).join("");$(host).querySelectorAll(".chip").forEach(b=>b.onclick=()=>{b.classList.add("on");tap();FX.emojiBurst(b.textContent.split(" ")[0],8,innerWidth/2,innerHeight*.6);const s=load(key+today)||{};s[b.textContent]=(s[b.textContent]||0)+1;save(key+today,s);});}
 chips("goal",GOALS,"selgoal-");
-$("goBtn").onclick=()=>{chimeOk();FX.confetti(60);setTimeout(()=>{if(flow){const i=(flow.i||0)+1;const nx=flow.steps[i];if(nx){flow.i=i;save("flow",flow);if(/gamma\.app|youtube\.com|view\.officeapps|\.(docx|pptx|pdf)(\?|#|$)/i.test(nx.url)){window.open(nx.url,"_blank");location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");}else location.href=nx.url;return;}}location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");},700);};
+$("goBtn").onclick=()=>{chimeOk();FX.confetti(60);setTimeout(()=>{if(!flow&&BACK){location.href=BACK;return;}if(flow){const i=(flow.i||0)+1;const nx=flow.steps[i];if(nx){flow.i=i;save("flow",flow);if(/gamma\.app|youtube\.com|view\.officeapps|\.(docx|pptx|pdf)(\?|#|$)/i.test(nx.url)){window.open(nx.url,"_blank");location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");}else location.href=nx.url;return;}}location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");},700);};
 /* 謝幕（#end）：心情地圖再一次 → 今天我做到了 → 謝謝 → 蓋章 */
 if(END){$("st0").textContent="第一幕・現在的心情";$("st1").textContent="第二幕・我做到了";$("st2").textContent="第三幕・謝幕";
   $("moodTitle").textContent="上完課，現在心情怎麼樣？";$("moodSub").textContent="點一張臉就好";
@@ -346,6 +350,7 @@ if(END){$("st0").textContent="第一幕・現在的心情";$("st1").textContent=
 /* 上方幕次可以直接點：跳到那一幕 */
 function jump(n){running++;tap();if(END){goto(n===-1?-1:n===0?0:3);return;}goto(n);if(n===1)showTools();}
 [["stg",-1],["st0",0],["st1",1],["st2",2]].forEach(([id,n])=>{const e=$(id);e.setAttribute("role","button");e.title="跳到這一幕";e.onclick=()=>jump(n);});
+$("reveal").onclick=()=>{const b=$("bars");const on=b.style.visibility!=="hidden";b.style.visibility=on?"hidden":"visible";$("reveal").textContent=on?"👀 老師：看全班心情":"🙈 收起來";tap();};
 $("finish").onclick=()=>{chimeOk();FX.stamp&&FX.stamp({text:"今天完成"});FX.confetti(80);setTimeout(()=>{if(FX.flowEnd)FX.flowEnd();},1200);};
 
 /* ===== 魔法：金色星塵＋圓形光圈轉場 ===== */

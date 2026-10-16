@@ -239,7 +239,7 @@ $('again').onclick=()=>{S('whoosh');newTemp();resetScene();setStep(1);$('msg').i
 /* 讀數字練習：三個層次 */
 let qv=36.5,lvl=1,qn=0;
 const POOL=[35.8,36.1,36.3,36.5,36.7,36.8,36.9,37.0,37.2,37.4,37.5,37.7,37.9,38.2];
-function newQ(){qn++;let v;do{v=POOL[Math.floor(Math.random()*POOL.length)];}while(v===qv);qv=v;
+function newQ(){qn++;let v;do{v=POOL[Math.floor(Math.random()*POOL.length)];}while(v===qv||(lvl===1&&v>=37.3&&v<=37.6));qv=v;
   lcd(true,qv.toFixed(1),'°C');gunAt(110);$('gun').style.transform='';$('qmsg').innerHTML='';$('qans').className='ans';
   const f=fever(qv);
   if(lvl===1){$('qq').innerHTML='箭頭在哪個顏色？<br>正常？還是要告訴老師？';$('qvis').innerHTML=zoneHTML(qv,true);
@@ -250,7 +250,7 @@ function newQ(){qn++;let v;do{v=POOL[Math.floor(Math.random()*POOL.length)];}whi
     $('qq').innerHTML=`${qv.toFixed(1)} 比較靠近<br>${lo} 度還是 ${lo+1} 度？`;$('qvis').innerHTML=nlHTML(qv,false);
     textOpts($('qans'),[lo+' 度',(lo+1)+' 度'],near+' 度',()=>{$('qvis').innerHTML=nlHTML(qv,true);$('qmsg').innerHTML=`對！${qv.toFixed(1)} 很靠近 <b>${near}</b> 度`;try{FX.confetti(40);}catch(e){}},()=>{$('qvis').innerHTML=nlHTML(qv,true);$('qmsg').innerHTML='看數線：箭頭離哪一個比較近？';});}
   else{$('qq').innerHTML='額溫 37.5 以上要告訴老師。<br>這個數字：正常？還是告訴老師？';$('qvis').innerHTML='';
-    textOpts($('qans'),['✅ 正常','🙋 告訴老師'],f?'🙋 告訴老師':'✅ 正常',()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML=`對！${qv.toFixed(1)} ${f?'比 37.5 大：要告訴老師':'比 37.5 小：正常'}`;try{FX.confetti(40);}catch(e){}},()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML='和 <b>37.5</b> 比一比：比較大還是比較小？';});}}
+    textOpts($('qans'),['✅ 正常','🙋 告訴老師'],f?'🙋 告訴老師':'✅ 正常',()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML=`對！${qv.toFixed(1)} ${qv===37.5?'就是 37.5（37.5 以上）：要告訴老師':f?'比 37.5 大：要告訴老師':'比 37.5 小：正常'}`;try{FX.confetti(40);}catch(e){}},()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML='和 <b>37.5</b> 比一比：比較大還是比較小？';});}}
 function setLv(l){lvl=l;document.querySelectorAll('.lvb').forEach(b=>b.classList.toggle('on',+b.dataset.l===l));newQ();}
 document.querySelectorAll('.lvb').forEach(b=>b.onclick=()=>{S('blip');setLv(+b.dataset.l);});
 $('qnext').onclick=()=>{S('whoosh');newQ();};

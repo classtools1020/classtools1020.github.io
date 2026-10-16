@@ -79,10 +79,12 @@ table.t td img{width:21mm;height:11.5mm;object-fit:cover;border-radius:1.5mm;dis
 MASCOT = re.search(r"MASCOT = '''(.*?)'''", open(os.path.join(HERE, 'web.py'), encoding='utf-8').read(), re.S).group(1).replace('class="mascot" style="{style}" {attrs}', '')
 GOAL = re.sub(r'^.*第\s*\d+\s*節\s*', '', L['task'])
 
+LEGEND = '🔵 基礎　🟠 進階　⭐ 挑戰' if code in ('T2', 'T4') else '🔵 勾一個　🟠 再勾「因為」'
+
 def head(sub, goal=True):
     return (f'<div class="hd">{MASCOT}<div class="tt"><span class="kick">溫度特勤隊・第 {NUM} 節・{sub}</span><h1>{L["name"]}</h1></div>'
             f'<div class="idc">班級 <span class="box" style="margin-left:2mm"></span>甲<span class="box"></span>乙<br>姓名<span class="ln"></span><br>日期<span class="ln"></span></div></div>'
-            + (f'<div class="goal"><b>今天的任務</b>{GOAL}<span class="lg">🔵 勾一個　🟠 再勾「因為」</span></div>' if goal else ''))
+            + (f'<div class="goal"><b>今天的任務</b>{GOAL}<span class="lg">{LEGEND}</span></div>' if goal else ''))
 
 def foot(n):
     return f'<div class="pf"><span>溫度特勤隊 {code}</span><span>{n} / 2</span></div>'
@@ -157,7 +159,7 @@ def sheet():
               f'<span class="o"><span class="box"></span>要</span> <span class="o"><span class="box"></span>不用</span></div>')
         b += sec2(4, '兩人一組：量額溫，抄下螢幕數字', B2)
         DIG = '<span class="write" style="width:9mm;margin:0 .6mm"></span>'
-        b += '<table class="t"><tr><th style="width:26%">我幫誰量</th><th>螢幕數字（照著抄）</th><th style="width:30%">看溫度尺</th></tr>' + ''.join(f'<tr><td style="height:13mm"></td><td>{DIG}{DIG}<b style="font-size:20pt">.</b>{DIG} 度</td><td><span class="box" style="margin-left:0"></span>正常 <span class="box"></span>告訴老師</td></tr>' for _ in range(2)) + '</table>'
+        b += '<table class="t"><tr><th style="width:26%">我幫誰量</th><th>螢幕數字（照著抄）</th><th style="width:30%">看溫度尺</th></tr>' + ''.join(f'<tr><td style="height:11mm"></td><td>{DIG}{DIG}<b style="font-size:20pt">.</b>{DIG} 度</td><td><span class="box" style="margin-left:0"></span>正常 <span class="box"></span>告訴老師</td></tr>' for _ in range(2)) + '</table>'
     elif code == 'T3':
         b = head('學習單') + sec(1, '紅線怎麼動？')
         b += cells([('放進熱水', 't-hot.jpg'), ('放進冰水', 't-ice.jpg')], 2, ['往上爬 ⬆️', '往下掉 ⬇️']).replace('<img ', '<img style="height:17mm" ')
