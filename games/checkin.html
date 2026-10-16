@@ -156,7 +156,7 @@
   .stretch{font-size:min(30vw,150px);line-height:1.1;margin:6px 0;filter:drop-shadow(0 10px 20px rgba(0,0,0,.5))}
   .count{font-family:var(--deco);font-size:min(14vw,64px);color:var(--gold3);text-shadow:0 0 24px rgba(201,161,74,.5)}
   .goal{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
-  @media(max-width:600px){.meter{padding:22px 16px 26px;gap:8px}.quad h3{font-size:12px}.fc{font-size:13px}}
+  @media(max-width:600px){.bars{width:calc(100% - 56px);margin-right:56px}.meter{padding:22px 16px 26px;gap:8px}.quad h3{font-size:12px}.fc{font-size:13px}}
 </style>
 </head>
 <body>
@@ -167,7 +167,7 @@
   <div class="steps"><span id="stg" class="on">序幕・打招呼</span><span id="st0">第一幕・心情</span><span id="st1">第二幕・調節站</span><span id="st2">第三幕・出發</span></div>
 
   <section class="page show" id="pg">
-    <div class="act">Prologue</div><h1>光線特勤隊，集合！</h1>
+    <div class="act">Prologue</div><h1 id="teamTitle">光線特勤隊，集合！</h1>
     <div class="sub">老師喊口令，大家接「集合！」，再選一個打招呼的方式</div>
     <div class="moods" id="greets"></div>
     <div class="note">每次上課都一樣：打招呼 → 心情 → 調節站 → 出發</div>
@@ -236,6 +236,9 @@ function shh(){const a=ac();if(!a)return;const n=Math.floor(a.sampleRate*.7),b=a
   const s=a.createBufferSource(),h=a.createBiquadFilter();h.type="highpass";h.frequency.value=2500;s.buffer=b;s.connect(h);h.connect(a.destination);s.start();}
 function sayW(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="zh-TW";u.rate=.9;speechSynthesis.speak(u);}catch(e){}}
 const END=location.hash==="#end";
+/* 依今天的課決定隊名：溫度課＝溫度特勤隊，其他＝光線特勤隊 */
+const TEAM=(()=>{const q=new URLSearchParams(location.search).get("team");if(q)return q;try{const f=JSON.parse(localStorage.getItem("flow")||"null");if(f&&Date.now()-f.t<12*3600*1000&&/溫度/.test(f.title))return "溫度特勤隊";}catch(e){}return "光線特勤隊";})();
+document.getElementById("teamTitle").textContent=TEAM+"，集合！";
 const today=new Date().toISOString().slice(0,10);
 function load(k){try{return JSON.parse(localStorage.getItem(k)||"null");}catch(e){return null;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -277,7 +280,7 @@ const GSND=[()=>[660,880].forEach((f,k)=>note(f,k*.12,.3)),()=>{note(1200,0,.12,
   ()=>[523,659].forEach((f,k)=>note(f,k*.16,.3,"sine")),()=>[784,988,1175].forEach((f,k)=>note(f,k*.1,.45,"sine",.1)),shh];
 $("greets").innerHTML=GREETS.map((g,i)=>`<div class="mood" data-i="${i}"><span>${face(g[0])}</span>${g[1]}</div>`).join("");
 $("greets").querySelectorAll(".mood").forEach(el=>el.onclick=()=>{el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");const gi=+el.dataset.i;GSND[gi]();setTimeout(()=>sayW(GREETS[gi][1]),300);FX.emojiBurst(GREETS[gi][0],10,innerWidth/2,innerHeight*.4);});
-$("callBtn").onclick=()=>{ac();if(FX.attention)FX.attention();else chimeOk();};
+$("callBtn").onclick=()=>{ac();if(FX.attention)FX.attention({call:TEAM+"！"});else chimeOk();};
 $("toMood").onclick=()=>{tap();goto(0);};
 drawMoods();
 /* 第二幕：調節站（依全班心情推薦一個） */
