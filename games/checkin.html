@@ -123,6 +123,14 @@
   .tally{display:flex;gap:10px;justify-content:center;margin-top:12px;font-family:var(--deco);font-size:20px;color:var(--gold3)}
   .tally span{display:flex;align-items:center;gap:6px;background:rgba(7,5,10,.55);border:1px solid rgba(201,161,74,.4);border-radius:999px;padding:4px 14px}
   .tally i{width:14px;height:14px;border-radius:50%;display:inline-block}
+  .mood .pf{width:min(20vw,96px);height:min(20vw,96px);border-radius:50%;object-fit:cover;object-position:50% 22%;display:block;border:3px solid rgba(246,227,168,.85);box-shadow:0 10px 18px rgba(0,0,0,.55);animation:alive 3.2s ease-in-out infinite}
+  .mood[data-i="0"] .pf{animation:joy 1.6s ease-in-out infinite}.mood[data-i="3"] .pf{animation:sleepy 4s ease-in-out infinite}.mood[data-i="4"] .pf{animation:alive 4.5s ease-in-out infinite}
+  .mood:nth-child(2) .pf{animation-delay:-.6s}.mood:nth-child(3) .pf{animation-delay:-1.2s}.mood:nth-child(6) .pf{animation-delay:-1.8s}
+  @keyframes alive{0%,100%{transform:scale(1) translateY(0)}50%{transform:scale(1.05) translateY(-3px)}}
+  @keyframes joy{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-7px) rotate(-3deg)}60%{transform:translateY(0) rotate(3deg)}}
+  @keyframes sleepy{0%,100%{transform:rotate(0)}50%{transform:rotate(-6deg) translateY(3px)}}
+  .mood:hover .pf{transform:scale(1.12)}
+  .rc .bigp{display:block;margin:0 auto 10px;width:130px;height:130px;border-radius:50%;object-fit:cover;object-position:50% 22%;border:4px solid rgba(255,255,255,.9);box-shadow:0 12px 26px rgba(0,0,0,.4);animation:alive 3s ease-in-out infinite}
   /* 回應卡 */
   .resp{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(5,3,8,.72);backdrop-filter:blur(4px)}
   .resp.on{display:flex;animation:rise .5s cubic-bezier(.2,.8,.2,1)}
@@ -156,22 +164,21 @@
 <a class="fixbtn home" href="/light/" onclick="if(history.length>1){history.back();return false;}">⬅ 返回</a>
 <a class="fixbtn menu" href="/light/">🗂️ 主選單</a>
 <div class="wrap">
-  <div class="steps"><span id="stg" class="on">序幕・打招呼</span><span id="st0">第一幕・心情地圖</span><span id="st1">第二幕・調節站</span><span id="st2">第三幕・出發</span></div>
+  <div class="steps"><span id="stg" class="on">序幕・打招呼</span><span id="st0">第一幕・心情</span><span id="st1">第二幕・調節站</span><span id="st2">第三幕・出發</span></div>
 
   <section class="page show" id="pg">
     <div class="act">Prologue</div><h1>光線特勤隊，集合！</h1>
     <div class="sub">老師喊口令，大家接「集合！」，再選一個打招呼的方式</div>
     <div class="moods" id="greets"></div>
-    <div class="note">每次上課都一樣：打招呼 → 心情地圖 → 調節站 → 出發</div>
-    <div class="ctrl"><button class="btn ghost" id="callBtn">🔔 播放集合口令</button><button class="btn go big" id="toMood">下一步 ➡ 心情地圖</button></div>
+    <div class="note">每次上課都一樣：打招呼 → 心情 → 調節站 → 出發</div>
+    <div class="ctrl"><button class="btn ghost" id="callBtn">🔔 播放集合口令</button><button class="btn go big" id="toMood">下一步 ➡ 心情打卡</button></div>
   </section>
 
   <section class="page" id="p0">
-    <div class="act">Act I</div><h1 id="moodTitle">現在的我，在哪一格？</h1>
-    <div class="sub" id="moodSub">一個人點一次，點一張最像自己的臉</div>
-    <div class="meter" id="meter"></div>
-    <div class="quiet"><button class="chip" id="shh">🤫 今天不想說</button></div>
-    <div class="tally" id="tally"></div>
+    <div class="act">Act I</div><h1 id="moodTitle">今天心情怎麼樣？</h1>
+    <div class="sub" id="moodSub">點一張最像自己的臉，不用說話</div>
+    <div class="moods" id="moods"></div>
+    <div class="bars" id="bars"></div>
     <div class="note" id="cmp"></div>
     <div class="ctrl" id="ctrl0"><button class="btn go big" id="toTools">下一步 ➡ 調節站</button></div>
   </section>
@@ -233,40 +240,36 @@ const today=new Date().toISOString().slice(0,10);
 function load(k){try{return JSON.parse(localStorage.getItem(k)||"null");}catch(e){return null;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 /* 會動的臉（Google Noto 動態表情，開源授權） */
-const CP={"🤩":"1f929","😄":"1f604","🥳":"1f973","😠":"1f620","😰":"1f630","😤":"1f624","😢":"1f622","😴":"1f634","🥱":"1f971","😌":"1f60c","🙂":"1f642","😊":"1f60a","🤫":"1f92b","👋":"1f44b","✋":"270b","👊":"1f44a","🫶":"1faf6"};
+const CP={"😐":"1f610","😟":"1f61f","🤩":"1f929","😄":"1f604","🥳":"1f973","😠":"1f620","😰":"1f630","😤":"1f624","😢":"1f622","😴":"1f634","🥱":"1f971","😌":"1f60c","🙂":"1f642","😊":"1f60a","🤫":"1f92b","👋":"1f44b","✋":"270b","👊":"1f44a","🫶":"1faf6"};
 const face=(e,cls)=>CP[e]?`<img class="${cls||"nf"}" alt="${e}" src="https://fonts.gstatic.com/s/e/notoemoji/latest/${CP[e]}/512.webp" onerror="this.outerHTML='<span class=em>${e}</span>'">`:`<span class="em">${e}</span>`;
-/* 心情地圖：精神（上高下低）× 感覺（左不舒服、右舒服） */
-const Q={
-  r:{nm:"紅色・很有力氣、不舒服",c:"linear-gradient(160deg,#e0483b,#951d1d)",dot:"#e0483b",fs:[["😠","生氣"],["😰","緊張"],["😤","煩躁"]]},
-  y:{nm:"黃色・很有精神、很舒服",c:"linear-gradient(160deg,#f2c230,#c9871a)",dot:"#f2c230",fs:[["🤩","興奮"],["😄","開心"],["🥳","期待"]]},
-  b:{nm:"藍色・沒力氣、不舒服",c:"linear-gradient(160deg,#3f7fd6,#1d3f86)",dot:"#3f7fd6",fs:[["😢","難過"],["😴","很累"],["🥱","無聊"]]},
-  g:{nm:"綠色・平靜、舒服",c:"linear-gradient(160deg,#3fae6a,#1d6b3e)",dot:"#3fae6a",fs:[["😌","平靜"],["🙂","還不錯"],["😊","放鬆"]]}};
-/* 每一區的回應：先接住感覺，再給一個可以做的事 */
-const RESP={
-  y:{h:"太棒了！",p:"把好心情傳出去：轉頭跟旁邊的同學擊掌 ✋<br>有什麼好事嗎？（點一個就好）",o:["😴 睡飽了","🍱 吃到好吃的","👫 跟朋友在一起","🎮 有好消息","🤷 說不出來"],snd:"y"},
-  g:{h:"穩穩的，很棒",p:"帶著這個平靜的感覺上課。<br>平靜的時候，最容易學會新東西 🌿",o:[],snd:"g"},
-  b:{h:"謝謝你說出來 💙",p:"累、難過、無聊都沒關係，每個人都會有。<br>選一個方法幫自己：",o:["💧 喝一口水","🙆 伸展一下","🫧 泡泡呼吸","🙋 等一下跟老師說"],snd:"b"},
-  r:{h:"這是很大的感覺 ❤️",p:"有這種感覺沒有錯。先讓身體慢下來：",o:["🫧 慢慢呼吸","✊ 握拳 5 秒再放開","🪑 安靜坐一下","🙋 等一下跟老師說"],snd:"r"},
-  q:{h:"沒關係 🤫",p:"不想說也可以。你來上課，就很好了。",o:[],snd:"q"}};
-const SND={y:()=>[523,659,784,1047].forEach((f,k)=>note(f,k*.09,.35)),g:()=>[587,784].forEach((f,k)=>note(f,k*.16,.5,"sine",.1)),
-  b:()=>[440,392].forEach((f,k)=>note(f,k*.3,.7,"sine",.09)),r:()=>{note(330,0,.9,"sine",.1,262);},q:shh};
-const KEY=(END?"sel2-":"sel1-")+today;
-let C=load(KEY)||{y:0,g:0,b:0,r:0,q:0};
-const C1=load("sel1-"+today)||{y:0,g:0,b:0,r:0,q:0};
-function tally(){$("tally").innerHTML=["y","g","b","r"].map(k=>`<span><i style="background:${Q[k].dot}"></i>${C[k]}</span>`).join("")+`<span>🤫 ${C.q}</span>`;["y","g","b","r"].forEach(k=>{const e=document.querySelector(`.quad.${k} h3 em`);if(e)e.textContent=C[k];});if(END)compare();}
-function drawMeter(){const quad=k=>`<div class="quad ${k}"><h3>${Q[k].nm}<em>0</em></h3><div class="fs">${Q[k].fs.map((f,i)=>`<div class="fc" data-q="${k}" data-i="${i}">${face(f[0])}${f[1]}</div>`).join("")}</div></div>`;
-  $("meter").innerHTML=`<span class="ax t">⬆ 很有精神</span><span class="ax b">⬇ 沒什麼力氣</span><span class="ax l">⬅ 不舒服</span><span class="ax r">舒服 ➡</span>`+quad("r")+quad("y")+quad("b")+quad("g");
-  $("meter").querySelectorAll(".fc").forEach(el=>el.onclick=()=>{const k=el.dataset.q,f=Q[k].fs[+el.dataset.i];el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");pick(k,f);});tally();}
-function pick(k,f){C[k]++;save(KEY,C);tally();SND[k]();setTimeout(()=>sayW(f?f[1]:"不想說"),300);if(k==="y")FX.confetti(50);else if(k==="g"&&f)FX.emojiBurst("🌿",8,innerWidth/2,innerHeight*.4);
-  const R=RESP[k];const bg=k==="q"?"linear-gradient(160deg,#3a3550,#1c1828)":Q[k].c;
-  $("rc").style.background=bg;
-  $("rc").innerHTML=`${f?face(f[0],"big"):face("🤫","big")}<h2>${R.h}</h2><p>${R.p}</p><div class="opts">${R.o.map(o=>`<button>${o}</button>`).join("")}</div><button class="ok" id="okBtn">好 ✓</button>`;
-  $("rc").querySelectorAll(".opts button").forEach(b=>b.onclick=()=>{b.classList.add("on");tap();const s=load("selpick-"+today)||{};s[b.textContent]=(s[b.textContent]||0)+1;save("selpick-"+today,s);if(k==="y")FX.emojiBurst(b.textContent.split(" ")[0],10,innerWidth/2,innerHeight*.45);});
+/* 心情：6 張真人表情臉（會動）＋每一種都有溫暖的回應 */
+const MOODS=[["😄","很好","m0"],["🙂","還可以","m1"],["😐","普通","m2"],["😴","有點累","m3"],["😟","不太好","m4"],["🤫","不想說","m5"]];
+const MCOL=["linear-gradient(160deg,#f2c230,#c9871a)","linear-gradient(160deg,#3fae6a,#1d6b3e)","linear-gradient(160deg,#7d8794,#4a525e)","linear-gradient(160deg,#3f7fd6,#1d3f86)","linear-gradient(160deg,#6b5bd6,#3a2d86)","linear-gradient(160deg,#3a3550,#1c1828)"];
+const RESP=[
+  {h:"太好了！",p:"把好心情傳出去：轉頭跟旁邊的同學擊掌 ✋<br>有什麼好事嗎？（點一個就好）",o:["😴 睡飽了","🍱 吃到好吃的","👫 跟朋友在一起","🎮 有好消息","🤷 說不出來"],fx:"✨"},
+  {h:"不錯喔！",p:"穩穩的，帶著這個感覺上課 🌿",o:[],fx:"🌿"},
+  {h:"普通也很好",p:"我們一起讓今天變好一點點。",o:[],fx:"⭐"},
+  {h:"謝謝你說出來 💧",p:"累了沒關係，每個人都會累。<br>選一個方法幫自己：",o:["💧 喝一口水","🙆 伸展一下","🫧 泡泡呼吸","🙋 等一下跟老師說"],fx:"💧"},
+  {h:"謝謝你告訴我們 💙",p:"心情不好沒有錯。<br>選一個方法幫自己：",o:["🫧 慢慢呼吸","✊ 握拳再放開","🪑 安靜坐一下","🙋 等一下跟老師說"],fx:"💙"},
+  {h:"沒關係 🤫",p:"不想說也可以。你來上課，就很好了。",o:[],fx:"🤍"}];
+const MSND=[()=>[523,659,784,1047].forEach((f,k)=>note(f,k*.09,.35)),()=>[587,784].forEach((f,k)=>note(f,k*.14,.4)),()=>note(440,0,.45,"sine"),
+  ()=>{note(520,0,1.1,"sine",.12,260);},()=>[392,330].forEach((f,k)=>note(f,k*.25,.5,"sine",.1)),shh];
+const pface=(m,cls)=>`<img class="${cls||"pf"}" alt="${m[1]}" src="img/mood/${m[2]}.jpg" data-fb="${CP[m[0]]?"https://fonts.gstatic.com/s/e/notoemoji/latest/"+CP[m[0]]+"/512.webp":""}" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.dataset.fb='';this.style.objectFit='contain';this.style.background='transparent';this.style.border='0'}">`;
+const KEY=(END?"mood2-":"mood-")+today;
+let C=load(KEY)||MOODS.map(()=>0);
+const C1=load("mood-"+today)||MOODS.map(()=>0);
+function drawBars(){const mx=Math.max(1,...C);$("bars").innerHTML=MOODS.map((m,i)=>`<div class="bar"><b>${C[i]||""}</b><i style="height:${C[i]/mx*100}%"></i><small>${m[0]}</small></div>`).join("");if(END)compare();}
+function drawMoods(){$("moods").innerHTML=MOODS.map((m,i)=>`<div class="mood" data-i="${i}">${pface(m)}${m[1]}</div>`).join("");
+  $("moods").querySelectorAll(".mood").forEach(el=>el.onclick=()=>{el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");pick(+el.dataset.i);});drawBars();}
+function pick(i){C[i]++;save(KEY,C);drawBars();MSND[i]();setTimeout(()=>sayW(MOODS[i][1]),300);const R=RESP[i];
+  if(i===0)FX.confetti(50);else FX.emojiBurst(R.fx,8,innerWidth/2,innerHeight*.4);
+  $("rc").style.background=MCOL[i];
+  $("rc").innerHTML=`${pface(MOODS[i],"bigp")}<h2>${R.h}</h2><p>${R.p}</p><div class="opts">${R.o.map(o=>`<button>${o}</button>`).join("")}</div><button class="ok" id="okBtn">好 ✓</button>`;
+  $("rc").querySelectorAll(".opts button").forEach(b=>b.onclick=()=>{b.classList.add("on");tap();const s=load("selpick-"+today)||{};s[b.textContent]=(s[b.textContent]||0)+1;save("selpick-"+today,s);FX.emojiBurst(b.textContent.split(" ")[0],8,innerWidth/2,innerHeight*.45);});
   $("okBtn").onclick=()=>{$("resp").classList.remove("on");tap();};
   $("resp").classList.add("on");}
-$("shh").onclick=()=>pick("q",null);
-function compare(){const s1=C1.y+C1.g+C1.b+C1.r,s2=C.y+C.g+C.b+C.r;if(!s1||!s2){$("cmp").textContent="";return;}
-  const d=(C.y+C.g)/s2-(C1.y+C1.g)/s1;$("cmp").textContent=d>0.05?"🌈 比上課前，更多人在黃色、綠色了！":d<-0.05?"今天有點累，沒關係，好好休息，下次見":"心情跟上課前差不多，穩穩的";}
+function compare(){const s1=C1.slice(0,5).reduce((p,q)=>p+q,0),s2=C.slice(0,5).reduce((p,q)=>p+q,0);const good=a=>a[0]+a[1];if(!s1||!s2){$("cmp").textContent="";return;}
+  const d=good(C)/s2-good(C1)/s1;$("cmp").textContent=d>0.05?"🌈 比上課前，更多人心情變好了！":d<-0.05?"今天有點累，沒關係，好好休息，下次見":"心情跟上課前差不多，穩穩的";}
 function goto(n){$("pg").classList.toggle("show",n===-1);[0,1,2,3].forEach(k=>$("p"+k).classList.toggle("show",k===n));$("stg").className=n>-1?"done":"on";[0,1,2].forEach(k=>{$("st"+k).className=k<n?"done":k===n?"on":"";});scrollTo(0,0);}
 /* 序幕：打招呼 */
 const GREETS=[["👋","揮手"],["✋","擊掌"],["👊","碰拳"],["🙂","點頭"],["🫶","比愛心"],["🤫","今天不用"]];
@@ -276,12 +279,12 @@ $("greets").innerHTML=GREETS.map((g,i)=>`<div class="mood" data-i="${i}"><span>$
 $("greets").querySelectorAll(".mood").forEach(el=>el.onclick=()=>{el.classList.remove("tap");void el.offsetWidth;el.classList.add("tap");const gi=+el.dataset.i;GSND[gi]();setTimeout(()=>sayW(GREETS[gi][1]),300);FX.emojiBurst(GREETS[gi][0],10,innerWidth/2,innerHeight*.4);});
 $("callBtn").onclick=()=>{ac();if(FX.attention)FX.attention();else chimeOk();};
 $("toMood").onclick=()=>{tap();goto(0);};
-drawMeter();
+drawMoods();
 /* 第二幕：調節站（依全班心情推薦一個） */
-function recommend(){const hi=C.r,low=C.b;return hi>=Math.max(1,low)?"box":low>Math.max(hi,0)?"stretch":"bubble";}
+function recommend(){return C[4]>0?"box":C[3]>C[0]?"stretch":"bubble";}
 $("toTools").onclick=()=>{tap();goto(1);showTools();};
 function showTools(){const rec=recommend();document.querySelectorAll(".tool").forEach(t=>t.classList.toggle("rec",t.dataset.t===rec));
-  $("toolSub").textContent=rec==="box"?"今天有人很有力氣、不舒服：先用方塊呼吸讓身體慢下來":rec==="stretch"?"今天有人沒什麼力氣：伸展一下，把精神叫醒":"選一個，全班一起做";
+  $("toolSub").textContent=rec==="box"?"今天有人心情不太好：先用方塊呼吸，讓身體慢下來":rec==="stretch"?"今天比較多人有點累：伸展一下，把精神叫醒":"選一個，全班一起做";
   $("tools").style.display="flex";document.querySelectorAll(".stage2").forEach(s=>s.classList.remove("on"));$("cue").textContent="";$("count").textContent="";$("toolBack").style.display="none";}
 let running=0;const wait=ms=>new Promise(r=>{const id=running;setTimeout(()=>r(id===running),ms);});
 async function runTool(t){running++;const my=running;$("tools").style.display="none";$("toolBack").style.display="";document.querySelectorAll(".stage2").forEach(s=>s.classList.toggle("on",s.id==="s_"+t));ac();
@@ -319,7 +322,7 @@ chips("goal",GOALS,"selgoal-");
 $("goBtn").onclick=()=>{chimeOk();FX.confetti(60);setTimeout(()=>{if(flow){const i=(flow.i||0)+1;const nx=flow.steps[i];if(nx){flow.i=i;save("flow",flow);if(/gamma\.app|youtube\.com|\.docx$/i.test(nx.url)){window.open(nx.url,"_blank");location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");}else location.href=nx.url;return;}}location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");},700);};
 /* 謝幕（#end）：心情地圖再一次 → 今天我做到了 → 謝謝 → 蓋章 */
 if(END){$("st0").textContent="第一幕・現在的心情";$("st1").textContent="第二幕・我做到了";$("st2").textContent="第三幕・謝幕";
-  $("moodTitle").textContent="上完課，現在的我在哪一格？";$("moodSub").textContent="一個人點一次";
+  $("moodTitle").textContent="上完課，現在心情怎麼樣？";$("moodSub").textContent="點一張臉就好";
   $("ctrl0").innerHTML='<button class="btn go big" id="toDid">下一步 ➡ 我做到了</button>';$("toDid").onclick=()=>{tap();goto(3);};
   $("toMood").textContent="下一步 ➡ 現在的心情";
   chips("did",["👂 我有專心聽","✋ 我有舉手","🤝 我有幫同學","🔬 我有動手做","✏️ 我寫完了","💪 我沒有放棄"],"seldid-");
