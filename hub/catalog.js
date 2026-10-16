@@ -11,7 +11,7 @@
       groups: ['3D 大冒險', '任務一・光走直線', '任務二・光的反射', '任務三・光與顏色', '任務四・光的折射', '任務五・透鏡', '中秋特別任務'] },
     { id: 'games', name: '遊戲搶答', icon: '🎲', note: '全班分隊、搶答、闖關', color: '#6f9e6a', byType: 'game' },
     { id: 'mv', name: 'MV 劇場', icon: '🎵', note: '上課一起唱', color: '#8a7fc0', byType: 'mv' },
-    { id: 'class', name: '開場與收心', icon: '🌿', note: '心情打卡、呼吸、謝幕', color: '#5f9ea0' },
+    { id: 'class', name: '開場與收心', icon: '🌿', note: '心情地圖、調節站、我做到了', color: '#5f9ea0' },
     { id: 'print', name: '列印與 PPT', icon: '🖨️', note: '講義、學習單、教案、投影片', color: '#7b8fa6', byType: ['print', 'ppt'] },
     { id: 'archive', name: '舊教材區', icon: '📦', note: '以前的教材與早期版本，網址都還能用', color: '#a08a6a' }
   ];
@@ -122,7 +122,7 @@
   add('mv', 'MV', 'mv-teen', 'mv', '光光在哪裡', '光單元主題曲', '/light-mv-teen.html');
 
   /* ===== 開場與收心 ===== */
-  add('class', '開場與收心', 'checkin', 'tool', '心情打卡・光之泡泡', '上課開場儀式', '/games/checkin.html', [['謝幕', '/games/checkin.html#end']]);
+  add('class', '開場與收心', 'checkin', 'tool', '心情地圖・調節站', '上課開場＋謝幕（#end）', '/games/checkin.html', [['謝幕', '/games/checkin.html#end']]);
   add('class', '開場與收心', 'breathe', 'tool', '光之呼吸站', '海浪聲・跟著呼吸', '/games/breathe.html');
 
   /* ===== 舊教材 ===== */

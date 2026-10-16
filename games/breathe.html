@@ -57,7 +57,7 @@
 </style>
 </head>
 <body>
-<a class="fixbtn l" id="backBtn" href="checkin.html">🧘 回心情打卡</a>
+<a class="fixbtn l" id="backBtn" href="checkin.html">🧘 回心情地圖</a>
 <a class="fixbtn r" href="/light/">🗂️ 主選單</a>
 <div class="wrap">
   <div class="picker">
@@ -158,7 +158,7 @@ function loop(now){if(!running)return;
   if(M.id==="jar"){const left=use3D()?B3D.jarLeft():st.sparks.filter(s=>!s.rest).length;$("cnt").textContent=left?`還有 ${left} 顆亮粉在飄`:"";$("cue").textContent=left>20?"慢慢吸…… 慢慢吐……":left?"快沉到底了……":"全部沉下來了 ✨";if(!left&&!st.done){st.done=true;setTimeout(finish,1200);}}
   draw(now);raf=requestAnimationFrame(loop);}
 function finish(){running=false;cancelAnimationFrame(raf);face("done","你做到了！");$("cue").textContent="很好，你做到了 ✨";$("cnt").textContent="";try{FX.confetti(40);if(!play("done",.9))FX.sound.coin();}catch(e){}
-  const bs=[["🔁 再一次","go",begin],["🫧 換一種","ghost",back]];if(/from=checkin/.test(location.search))bs.push(["➡ 回心情打卡","teal",()=>location.href="checkin.html"]);setCtrl(bs);loopIdle();}
+  const bs=[["🔁 再一次","go",begin],["🫧 換一種","ghost",back]];if(/from=checkin/.test(location.search))bs.push(["➡ 回心情地圖","teal",()=>location.href="checkin.html"]);setCtrl(bs);loopIdle();}
 /* ---------- 畫面 ---------- */
 const ease=x=>.5-.5*Math.cos(Math.PI*x);
 function breathLevel(){if(!running||!M.ph)return 0;const p=ease(st.p);return st.phase==="in"?p:st.phase==="out"?1-p:st.phase==="hold"?1:0;}
