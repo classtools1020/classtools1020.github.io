@@ -51,3 +51,4 @@ temp/img/dispenser.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/bPy
 temp/img/dispenser-measure.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/yCRY9M1wyTMlRKHjGs3f0/fyyP-mzkODv-aMzD5FNp0.jpg
 temp/img/dispenser-card.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/EPyjs5U11NkBvh9Olgx2j/W3LUnUcns303hTZ-PMhEn.jpg
 games/img/mood/grid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DenVoF7JUqxtEB1IRYh73/BumPTD_oN6xcKZTrjWH6A.jpg
+games/img/mood/ggrid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/OYTydAXW5cxlAmxg8GZxG/zoKArNRhWrswS7YJa37Hh.jpg
