@@ -97,17 +97,18 @@ h1{margin:0;font-size:42px;letter-spacing:.04em}
         <rect x="110" y="505" width="340" height="180" rx="20" fill="#b9f0a6" stroke="#7d8b84" stroke-width="5"/>
         <text id="zBig" x="250" y="640" text-anchor="middle" class="lcd" style="font-size:130px;font-weight:900;fill:#111">36</text>
         <text id="zSmall" x="370" y="640" text-anchor="middle" class="lcd" style="font-size:130px;font-weight:900;fill:#111">.8</text>
-        <ellipse id="zRing" cx="250" cy="598" rx="100" ry="80" fill="none" stroke="#c8372d" stroke-width="8"/>
-        <text x="600" y="580" text-anchor="middle" style="font-size:40px;font-weight:900;fill:#5b6673">大數字</text>
-        <text id="zSay" x="600" y="650" text-anchor="middle" style="font-size:58px;font-weight:900;fill:#c8372d">36 度多</text>
+        <ellipse id="zRing" cx="280" cy="598" rx="178" ry="84" fill="none" stroke="#c8372d" stroke-width="8"/>
+        <text x="612" y="545" text-anchor="middle" style="font-size:32px;font-weight:900;fill:#5b6673">整個讀出來</text>
+        <text id="zSay" x="612" y="612" text-anchor="middle" style="font-size:38px;font-weight:900;fill:#c8372d">三十六點八度</text>
+        <g id="zOk" opacity="0"><rect x="517" y="638" width="190" height="56" rx="28" fill="#2f8a4c"/><text x="612" y="678" text-anchor="middle" style="font-size:32px;font-weight:900;fill:#fff">✅ 正常</text></g>
       </g>
       <g id="card" opacity="0">
         <rect x="120" y="440" width="580" height="300" rx="26" fill="#fffdf6" stroke="#1f2a37" stroke-width="5"/>
         <text x="410" y="505" text-anchor="middle" style="font-size:40px;font-weight:900;fill:#1f2a37">量額溫記錄</text>
         <line x1="160" y1="530" x2="660" y2="530" stroke="#d8cfbf" stroke-width="4"/>
-        <text x="200" y="620" style="font-size:44px;font-weight:900;fill:#5b6673">大數字：</text>
-        <rect x="400" y="560" width="180" height="90" rx="14" fill="#fff" stroke="#1f2a37" stroke-width="5"/>
-        <text id="cNum" x="490" y="633" text-anchor="middle" style="font-size:64px;font-weight:900;fill:#1f5fa8"></text>
+        <text x="170" y="620" style="font-size:44px;font-weight:900;fill:#5b6673">體溫：</text>
+        <rect x="330" y="560" width="250" height="90" rx="14" fill="#fff" stroke="#1f2a37" stroke-width="5"/>
+        <text id="cNum" x="455" y="633" text-anchor="middle" style="font-size:64px;font-weight:900;fill:#1f5fa8"></text>
         <text x="600" y="633" style="font-size:44px;font-weight:900;fill:#5b6673">度</text>
         <g id="pencil"><rect x="-10" y="-90" width="20" height="90" rx="4" fill="#ffcf2e" stroke="#1f2a37" stroke-width="4" transform="rotate(30)"/><path d="M-10 0 L0 18 L10 0Z" fill="#f1c19a" stroke="#1f2a37" stroke-width="4" transform="rotate(30)"/></g>
         <g id="okStamp" opacity="0" transform="translate(620 700) rotate(-12)"><circle r="46" fill="none" stroke="#2f8a4c" stroke-width="7"/><text y="14" text-anchor="middle" style="font-size:40px;font-weight:900;fill:#2f8a4c">完成</text></g>
@@ -121,7 +122,7 @@ h1{margin:0;font-size:42px;letter-spacing:.04em}
     <div class="st" data-k="2"><span class="no">2</span>對準額頭中間<span class="ic">🎯</span></div>
     <div class="st" data-k="3"><span class="no">3</span>距離一根手指<span class="ic">☝️</span></div>
     <div class="st" data-k="4"><span class="no">4</span>按一下，聽到「嗶」<span class="ic">🔔</span></div>
-    <div class="st" data-k="5"><span class="no">5</span>讀大數字<span class="ic">👀</span></div>
+    <div class="st" data-k="5"><span class="no">5</span>整個讀出來<span class="ic">👀</span></div>
     <div class="st" data-k="6"><span class="no">6</span>記下來<span class="ic">✏️</span></div>
   </div>
   <div id="cap"></div>
@@ -138,7 +139,7 @@ function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.tra
 /* 時間軸（秒） */
 const CH=[[0,4],[4,12.5],[12.5,21],[21,31],[31,38],[38,48],[48,57],[57,61]];
 const T_END=61;
-const CAPS=['看一次，再自己做一次！','第 1 步：把<b>瀏海撥開</b>，露出額頭','第 2 步：對準<b>額頭中間</b>','第 3 步：離額頭<b>一根手指</b>那麼遠','第 4 步：<b>按一下</b>，聽到「嗶」','第 5 步：讀<b>小數點前面的大數字</b>','第 6 步：把大數字<b>記下來</b>','六個步驟完成！換你試試看 🎉'];
+const CAPS=['看一次，再自己做一次！','第 1 步：把<b>瀏海撥開</b>，露出額頭','第 2 步：對準<b>額頭中間</b>','第 3 步：離額頭<b>一根手指</b>那麼遠','第 4 步：<b>按一下</b>，聽到「嗶」','第 5 步：<b>整個數字</b>讀出來：三十六<b>點</b>八度','第 6 步：把數字<b>記下來</b>','六個步驟完成！換你試試看 🎉'];
 const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
 const ez=x=>{x=cl(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;};
 const seg=(t,a,b)=>ez((t-a)/(b-a));
@@ -180,15 +181,15 @@ function render(t){
   $('beepB').setAttribute('opacity',t>=33.2&&t<36.5?1:0);
   const lit=t>=34;
   $('lcd').setAttribute('fill',lit&&t<48?'#b9f0a6':'#2a3a2e');$('lcdT').textContent=lit&&t<48?'36.8':'';$('lcdU').textContent=lit&&t<48?'°C':'';
-  /* 5 大數字 */
+  /* 5 整個讀出來 */
   const zOn=t>=39&&t<48;$('zoom').setAttribute('opacity',zOn?cl(Math.min((t-39)/.6,(48-t)/.5)):0);
-  $('zSmall').setAttribute('opacity',t<41.5?1:lerp(1,.25,seg(t,41.5,42.5)));
+  $('zSmall').setAttribute('opacity',1);$('zOk').setAttribute('opacity',t>=45?1:0);
   $('zRing').setAttribute('opacity',t>=41.5?1:0);$('zRing').setAttribute('stroke-dasharray',`${lerp(0,560,seg(t,41.5,42.8))} 999`);
   $('zSay').setAttribute('opacity',t>=43.5?1:0);
   /* 6 記下來 */
   const cOn=t>=49;$('card').setAttribute('opacity',cOn?cl((t-49)/.6):0);
-  const w=seg(t,50.5,53);$('cNum').textContent=t<51?'':t<52?'3':'36';
-  $('pencil').setAttribute('transform',`translate(${lerp(460,540,w)+lerp(0,80,seg(t,53.2,53.8))} ${lerp(600,620,w)+Math.sin(t*20)*(w>0&&w<1?6:0)})`);
+  const w=seg(t,50.5,53);$('cNum').textContent=t<51?'':t<51.7?'3':t<52.4?'36':t<53?'36.':'36.8';
+  $('pencil').setAttribute('transform',`translate(${lerp(460,540,w)+lerp(0,140,seg(t,53.2,53.8))} ${lerp(600,620,w)+Math.sin(t*20)*(w>0&&w<1?6:0)})`);
   $('okStamp').setAttribute('opacity',t>=54?1:0);$('okStamp').setAttribute('transform',`translate(620 700) rotate(-12) scale(${t>=54?lerp(1.6,1,seg(t,54,54.4)):1})`);
   $('stars').setAttribute('opacity',t>=57?cl((t-57)/.5):0);
   $('mouth').setAttribute('d',t>=57||t>=34&&t<37?'M365 450 Q410 500 455 450':'M370 455 Q410 488 450 455');
@@ -222,6 +223,7 @@ addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'||e.key==='PageDow
 render(0);
 window.__demo={render,T_END,CH,SFX,seek:x=>{t=x;return render(x);}};
 if(location.search.includes('rec'))document.body.classList.add('rec');
+window.__demo={render};
 })();
 </script>
 </body>

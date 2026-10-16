@@ -243,7 +243,7 @@ const Q=(say,v,opts,why,hint,extra)=>Object.assign({say,v,opts,why,hint},extra||
 function readQ(place,v,photo,rec){
   const far=v+10>60?v-10:v+10,near=v+2<=60?v+2:v-2;
   return Q(`${place}的溫度計，紅線停在幾度？`,ph(photo)+thSVG(v),shuffle([O(String(v),`${v} 度`,'',1),O(String(far),`${far} 度`,'',0),O(String(near),`${near} 度`,'',0)]),
-    `紅線停在 ${v} 度！`,'先找最近的大數字，再往上數小格。',{rec,val:v});}
+    `紅線停在 ${v} 度！`,'先找最近有數字的長線，再往上數小格。',{rec,val:v});}
 const PATROL=[['room','教室','classroom'],['shade','大樹下','shade'],['sun','操場太陽下','sun']];
 function recHTML(){return `<div class="rec">${PATROL.map(([k,n,p])=>{const v=S.rec[k];return `<div class="it"><img src="${IMG[p]}" alt=""><b>${n}</b><span class="v ${v==null?'q':''}">${v==null?'？':v+'°'}</span><span class="bar"><i style="width:${v==null?0:Math.min(100,v/40*100)}%"></i></span></div>`;}).join('')}</div>`;}
 
@@ -251,7 +251,7 @@ function recHTML(){return `<div class="rec">${PATROL.map(([k,n,p])=>{const v=S.r
 const STA=[
  {id:'gate',place:'校門口',spot:[4,33],staff:'警衛伯伯',sicon:'👮',shirt:'#3e5a7a',period:'到校',time:'07:40',
   make:d=>{const m=modeOf(d.t);return {qs:[
-   Q(`早安！校門口的溫度計，紅線停在幾度？`,thSVG(d.t),shuffle([O(String(d.t),`${d.t} 度`,'',1),O(String(d.t+10),`${d.t+10} 度`,'',0),O(String(d.t-3),`${d.t-3} 度`,'',0)]),`今天 ${d.t} 度！`,'先找最近的大數字，再往上數小格。'),
+   Q(`早安！校門口的溫度計，紅線停在幾度？`,thSVG(d.t),shuffle([O(String(d.t),`${d.t} 度`,'',1),O(String(d.t+10),`${d.t+10} 度`,'',0),O(String(d.t-3),`${d.t-3} 度`,'',0)]),`今天 ${d.t} 度！`,'先找最近有數字的長線，再往上數小格。'),
    Q(`今天 ${d.t} 度，要穿什麼？`,thSVG(d.t,'sm'),[O('🧥','厚外套','18 度以下',m.k==='cold'),O('👕','短袖','帶薄外套',m.k==='comfy'),O('🩳','短袖短褲','28 度以上・戴帽子',m.k==='hot')],
      m.k==='cold'?'好冷，穿厚外套！':m.k==='hot'?'好熱，穿清涼、戴帽子！':'剛剛好，帶一件薄外套！',`${d.t} 度，身體覺得冷還是熱？`,{dress:true})],
    ch:Q('早上 18 度，中午 28 度，怎麼穿最聰明？',emo('🌅','➜','☀️'),shuffle([O('🧅','洋蔥式','短袖＋外套',1),O('👕','只穿短袖','',0)]),'洋蔥式！冷就穿、熱就脫。','早上涼涼的，中午會變熱唷。')};}},
@@ -276,10 +276,10 @@ const STA=[
    Q('哪一邊是熱水？',emo('🔴','🔵'),shuffle([O('🔴','紅色','',1),O('🔵','藍色','',0)]),'紅色是熱水，藍色是冷水！','紅色像火，是熱的。')],
    ch:Q('洗澡水大約幾度？',ph('bath'),shuffle([O('40','40 度','',1),O('5','5 度','',0)]),'洗澡水大約 40 度，溫溫的！','5 度像冰箱一樣冰唷。')})},
  {id:'nurse',place:'迎曦樓健康中心',spot:[11,42],staff:'護理師阿姨',sicon:'🩺',shirt:'#f08aa0',period:'健康檢查',time:'10:10',
-  make:d=>{const v=pick(['36.4','36.8','36.5','37.1']),big=v.split('.')[0],dec=v.split('.')[1];return {qs:[
+  make:d=>{const v=pick(['36.4','36.8','36.5','37.1']),D='零一二三四五六七八九',zh=x=>{const [a,b]=x.split('.');return D[+a[0]]+'十'+(+a[1]?D[+a[1]]:'')+'點'+D[+b]+'度';},n=v.split('.')[0];return {qs:[
    Q('額溫槍要對準哪裡？',ph('forehead'),shuffle([O('🙂','額頭','',1),O('🦶','腳底','',0)]),'對準額頭，按一下！','額溫槍，量的是「額」頭唷。'),
-   Q(`額溫槍顯示 ${v}，大數字是多少？`,lcd(v),shuffle([O(big,big,'度多',1),O(dec,dec,'',0),O(String(+big+2),String(+big+2),'',0)]),`小數點前面的 ${big}，就是 ${big} 度多！`,'只看小數點「前面」的大數字。')],
-   ch:Q('36.5 和 36.9，大數字都是幾？',lcd('36.5')+lcd('36.9'),shuffle([O('36','36','',1),O('5','5','',0),O('9','9','',0)]),'兩個都是 36 度多！','看小數點前面唷。')};}},
+   Q(`額溫槍顯示 ${v}，要怎麼讀？`,lcd(v),shuffle([O('🗣️',zh(v),'',1),O('🗣️',D[+n[0]]+'十'+D[+n[1]]+'度','',0),O('🗣️',D[+n[0]]+'百'+D[+n[1]]+'十'+D[+v.split('.')[1]]+'度','',0)]),`對！${v} 讀「${zh(v)}」`,'小數點唸「點」，點後面也要讀。')],
+   ch:Q('額溫 37.8 度，正常還是發燒？',lcd('37.8'),shuffle([O('🤒','發燒','要告訴老師',1),O('✅','正常','',0)]),'37.5 以上就是發燒，要告訴老師！','和 37.5 比一比，比較大唷。')};}},
  {id:'lab',place:'揚才樓自然教室',spot:[17,26],staff:'自然老師',sicon:'🔬',shirt:'#5aa877',period:'自然課',time:'11:05',
   make:d=>{const vs=shuffle([5,26,45]),abc=['A','B','C'],hot=abc[vs.indexOf(45)];return {qs:[
    Q('三杯水排排站！哪一杯最熱？',vs.map((v,i)=>thSVG(v,'sm',abc[i])).join(''),abc.map((a,i)=>O(a,`${a} 杯`,'',a===hot)),`${hot} 杯的紅線最高，最熱！`,'紅線越高，越熱。'),

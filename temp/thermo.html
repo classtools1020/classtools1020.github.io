@@ -127,7 +127,7 @@
         <div class="st" data-k="1"><span class="no">1</span>溫度計放進水裡</div>
         <div class="st" data-k="2"><span class="no">2</span>等紅線不動（數 1、2、3）</div>
         <div class="st" data-k="3"><span class="no">3</span>眼睛和紅線一樣高，平平看</div>
-        <div class="st" data-k="4"><span class="no">4</span>看紅線的頂端，讀大數字</div>
+        <div class="st" data-k="4"><span class="no">4</span>看紅線的頂端，讀出數字</div>
       </div>
       <div class="row" style="margin-top:22px">
         <button class="big y" id="readBtn" disabled>👀 讀讀看</button>
@@ -151,7 +151,7 @@
       </div>
       <div class="row" style="margin-top:22px;font-size:28px;font-weight:900">
         <span>⭐ 答對：<span id="score">0</span></span>
-        <span style="color:var(--soft)">小訣竅：先找<b style="color:var(--red)">最近的大數字</b>，再往上數小格</span>
+        <span style="color:var(--soft)">小訣竅：先找<b style="color:var(--red)">最近有數字的長線</b>，再往上數小格</span>
       </div>
     </section>
 
@@ -250,7 +250,7 @@ function setLens(on){lensOn=on;$('lens').classList.toggle('on',on);if(on){$('lsv
 function refreshLens(){if(lensOn){$('lsvg').innerHTML=$('therm').outerHTML.replace(/id="[^"]*"/g,'');}}
 const _setCol=setCol;setCol=function(t){_setCol(t);refreshLens();};
 
-/* ---------- 一起數：從最近的大數字往上數 ---------- */
+/* ---------- 一起數：從最近有數字的長線往上數 ---------- */
 function countUp(t,done){
   const g=$('count');g.innerHTML='';const base=Math.floor(t/10)*10;hiNum(base);
   let k=0;const step=()=>{

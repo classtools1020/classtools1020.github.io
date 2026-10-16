@@ -244,7 +244,7 @@ const Q=(say,v,opts,why,hint,extra)=>Object.assign({say,v,opts,why,hint},extra||
 function readQ(place,v,photo,rec){
   const far=v+10>60?v-10:v+10,near=v+2<=60?v+2:v-2;
   return Q(`${place}的溫度計，紅線停在幾度？`,ph(photo)+thSVG(v),shuffle([O(String(v),`${v} 度`,'',1),O(String(far),`${far} 度`,'',0),O(String(near),`${near} 度`,'',0)]),
-    `紅線停在 ${v} 度！`,'先找最近的大數字，再往上數小格。',{rec,val:v});}
+    `紅線停在 ${v} 度！`,'先找最近有數字的長線，再往上數小格。',{rec,val:v});}
 const PATROL=[['room','教室','classroom'],['shade','大樹下','shade'],['sun','操場太陽下','sun']];
 function recHTML(){return `<div class="rec">${PATROL.map(([k,n,p])=>{const v=S.rec[k];return `<div class="it"><img src="${IMG[p]}" alt=""><b>${n}</b><span class="v ${v==null?'q':''}">${v==null?'？':v+'°'}</span><span class="bar"><i style="width:${v==null?0:Math.min(100,v/40*100)}%"></i></span></div>`;}).join('')}</div>`;}
 
@@ -252,7 +252,7 @@ function recHTML(){return `<div class="rec">${PATROL.map(([k,n,p])=>{const v=S.r
 const STA=[
  {id:'gate',place:'校門口',spot:[4,33],staff:'警衛伯伯',sicon:'👮',shirt:'#3e5a7a',period:'到校',time:'07:40',
   make:d=>{const m=modeOf(d.t);return {qs:[
-   Q(`早安！校門口的溫度計，紅線停在幾度？`,thSVG(d.t),shuffle([O(String(d.t),`${d.t} 度`,'',1),O(String(d.t+10),`${d.t+10} 度`,'',0),O(String(d.t-3),`${d.t-3} 度`,'',0)]),`今天 ${d.t} 度！`,'先找最近的大數字，再往上數小格。'),
+   Q(`早安！校門口的溫度計，紅線停在幾度？`,thSVG(d.t),shuffle([O(String(d.t),`${d.t} 度`,'',1),O(String(d.t+10),`${d.t+10} 度`,'',0),O(String(d.t-3),`${d.t-3} 度`,'',0)]),`今天 ${d.t} 度！`,'先找最近有數字的長線，再往上數小格。'),
    Q(`今天 ${d.t} 度，要穿什麼？`,thSVG(d.t,'sm'),[O('🧥','厚外套','18 度以下',m.k==='cold'),O('👕','短袖','帶薄外套',m.k==='comfy'),O('🩳','短袖短褲','28 度以上・戴帽子',m.k==='hot')],
      m.k==='cold'?'好冷，穿厚外套！':m.k==='hot'?'好熱，穿清涼、戴帽子！':'剛剛好，帶一件薄外套！',`${d.t} 度，身體覺得冷還是熱？`,{dress:true})],
    ch:Q('早上 18 度，中午 28 度，怎麼穿最聰明？',emo('🌅','➜','☀️'),shuffle([O('🧅','洋蔥式','短袖＋外套',1),O('👕','只穿短袖','',0)]),'洋蔥式！冷就穿、熱就脫。','早上涼涼的，中午會變熱唷。')};}},

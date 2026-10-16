@@ -1,6 +1,6 @@
 """溫度計圖片產生器：畫一支紅色液體溫度計（每 1 度一小格、每 10 度標數字）。
 th(value, path, lo=0, hi=60, mark=None, count=False)
-  mark：要圈起來的大數字（例如 20）；count：從 mark 往上畫出 +1 +2 … 小箭頭
+  mark：要圈起來的有數字長線（例如 20）；count：從 mark 往上畫出 +1 +2 … 小箭頭
 """
 from PIL import Image, ImageDraw, ImageFont
 import os
