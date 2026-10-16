@@ -248,7 +248,7 @@ const secOf=id=>S.find(s=>s.id===id);
 const ls={get(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 let fav=ls.get('hub_fav',[]), recent=ls.get('hub_recent',[]);
 const itemsOf=sec=>{if(!sec.byType)return C.filter(i=>i.sec===sec.id);const t=[].concat(sec.byType);return C.filter(i=>t.includes(i.ty));};
-const ext=u=>!u.startsWith('/')||/\.(pdf|pptx|docx)$/i.test(u.split(/[?#]/)[0]);
+const ext=u=>{const v=u.replace(/^https:\/\/classtools1020\.github\.io(?=\/)/,'');return !v.startsWith('/')||/\.(pdf|pptx|docx)$/i.test(v.split(/[?#]/)[0])||/officeapps/.test(u);};
 const tgt=u=>ext(u)?' target="_blank" rel="noopener"':'';
 
 /* ===== 側邊選單 ===== */
@@ -260,6 +260,7 @@ function buildMenu(){
     if(s.groups){h+=`<div class="sub" data-sub="${s.id}">`+s.groups.map((g,i)=>`<button data-go="${s.id}/${i}">${esc(g)}</button>`).join('')+`</div>`;}
     if(s.id==='home')h+=`<button class="mi" data-go="schedule"><span class="ic">📆</span>全部課表</button><button class="mi" data-go="all"><span class="ic">📚</span>全部教材<span class="n">${C.length}</span></button><button class="mi" data-go="fav"><span class="ic">⭐</span>我的收藏<span class="n" id="favn">${fav.length}</span></button>`;
   });
+  h+=`<div class="sep"></div><a class="mi" href="/light/" style="--c:#42e0c8"><span class="ic">🗂️</span>上課主選單</a>`;
   h+=`<div class="sep"></div><a class="mi ext" href="${L.sports.u}" target="_blank" rel="noopener"><span class="ic">${L.sports.icon}</span>${L.sports.name}</a>`;
   $('#menu').innerHTML=h;
   $('#menu').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;location.hash='#/'+(b.dataset.go==='home'?'':b.dataset.go);closeNav();});
@@ -300,7 +301,7 @@ let di=Math.max(0,DATES.findIndex(d=>d>=TODAY)); if(DATES.length&&DATES[di]<TODA
 const fmtD=d=>{const [y,m,dd]=d.split('-');return `${+m}/${+dd}（週${WK[new Date(d+'T12:00:00+08:00').getDay()]}）`;};
 let seen=ls.get('seen-'+TODAY,{});
 function todayHTML(){
-  if(!LG)return `<div class="empty">課表讀不到，請重新整理。也可以先開 <a href="/light/" style="text-decoration:underline">舊主選單</a>。</div>`;
+  if(!LG)return `<div class="empty">課表讀不到，請重新整理。也可以先開 <a href="/light/" style="text-decoration:underline">🗂️ 主選單</a>。</div>`;
   const d=DATES[di], items=LG.SCHED.filter(x=>x.d===d);
   const lab=d===TODAY?'今天':d>TODAY?(DATES.findIndex(x=>x>=TODAY)===di?'下一堂':'之後'):'已上過';
   const noToday=d>TODAY&&!DATES.includes(TODAY)&&lab==='下一堂'?`<span class="nt">今天沒有自然課</span>`:'';

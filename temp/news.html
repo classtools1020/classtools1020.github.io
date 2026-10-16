@@ -195,7 +195,7 @@ html,body{margin:0;height:100%;background:#1b1f24;overflow:hidden;font-family:"N
 <script>
 (function(){
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const stage=$('#stage');function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
+const stage=$('#stage');function fit(){const s=Math.min(innerWidth/1600,(document.getElementById('view')||document.documentElement).clientHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
 /* 記者連線場景 */
 $$('.rep-s').forEach((sc,i)=>{const v=sc.dataset.v;
   sc.innerHTML=`<img class="rep" src="img/news/field.jpg" alt=""><div class="hd" style="left:640px;top:40px;font-size:34px;color:var(--red)">📡 記者連線 ${i+1}／3</div>
@@ -227,5 +227,6 @@ show();
 window.__news={go:(i,s=0)=>{si=i;st=s;show();},next,n:SC.length};
 })();
 </script>
+<script src="../games/fx.js"></script>
 </body>
 </html>

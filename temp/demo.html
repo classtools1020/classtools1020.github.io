@@ -167,7 +167,7 @@ h1{margin:0;font-size:42px;letter-spacing:.04em}
 <script>
 (function(){
 const $=id=>document.getElementById(id);const stage=$('stage');
-function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
+function fit(){const s=Math.min(innerWidth/1600,(document.getElementById('view')||document.documentElement).clientHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
 /* 時間軸（秒） */
 const CH=[[0,4],[4,12.5],[12.5,21],[21,31],[31,38],[38,48],[48,57],[57,61]];
 const T_END=61;
@@ -258,5 +258,6 @@ if(location.search.includes('rec'))document.body.classList.add('rec');
 window.__demo={render};
 })();
 </script>
+<script src="../games/fx.js"></script>
 </body>
 </html>

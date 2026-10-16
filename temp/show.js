@@ -4,7 +4,7 @@
   if(/[?&]cap=1/.test(location.search))document.documentElement.classList.add('cap');
   const stage=document.getElementById('stage'), slides=[...document.querySelectorAll('.slide')];
   let cur=0, step=0;
-  function fit(){if(document.documentElement.classList.contains('cap'))return;const r=innerHeight<520?56:72;const s=Math.min(innerWidth/1600,(innerHeight-r)/900);stage.style.transform=`scale(${s})`;stage.parentElement.style.paddingBottom=r+'px';}
+  function fit(){if(document.documentElement.classList.contains('cap'))return;const r=innerHeight<520?56:72;const s=Math.min(innerWidth/1600,((document.getElementById('view')||document.documentElement).clientHeight-r)/900);stage.style.transform=`scale(${s})`;stage.parentElement.style.paddingBottom=r+'px';}
   addEventListener('resize',fit);fit();
   let AC,muted=false,unl=false;
   function ac(){if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();}if(AC.state!=='running')AC.resume();return AC;}

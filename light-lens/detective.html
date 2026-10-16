@@ -794,3 +794,4 @@ const fontsOK=document.fonts&&document.fonts.ready?Promise.race([document.fonts.
 Promise.all([loadPH(),fontsOK]).then(()=>{MAPIMG=null;startL1();});
 window.__micro={G,C,start:[()=>startL1(),()=>startL2(),()=>startL3()],tapAt,L1:()=>L1,lensTo:(x,y)=>{C.lens.x=x;C.lens.y=y;C.moved=true;},LW,LH};
 </script>
+<script src="../games/fx.js"></script>

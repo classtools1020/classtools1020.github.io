@@ -103,5 +103,6 @@ function drawPhase(x,cx,cy,r,a){x.save();x.beginPath();x.arc(cx,cy,r,0,7);x.clip
   x.closePath();x.fill();x.restore();x.strokeStyle="#888";x.lineWidth=3;x.beginPath();x.arc(cx,cy,r,0,7);x.stroke();}
 moon.onload=()=>document.querySelectorAll("canvas[data-ph]").forEach(c=>drawPhase(c.getContext("2d"),120,120,110,+c.dataset.ph));
 </script>
+<script src="../games/fx.js"></script>
 </body>
 </html>

@@ -199,12 +199,16 @@
   /* ---------- 📍 今日流程自動串聯（主入口「開始這堂課」→ 每頁底部導覽列） ---------- */
   const HOME="https://classtools1020.github.io/light/";
   const norm=u=>{try{const a=new URL(u,location.href);return (a.origin+a.pathname).replace(/index\.html$/,"");}catch(e){return u;}};
+  /* 新分頁開：簡報檢視器、PDF、YouTube、Gamma、Word；其他網站內頁面同一分頁 */
+  const NEWTAB=u=>/gamma\.app|youtube\.com|view\.officeapps|\.docx(\?|#|$)|\.pptx(\?|#|$)|\.pdf(\?|#|$)/i.test(u);
+  /* 同一頁只換 #（例如 #do → #quiz）時，瀏覽器不會重新載入：自己重新整理，模式才會切換 */
+  const goURL=u=>{try{const t=new URL(u,location.href);if(t.origin===location.origin&&t.pathname===location.pathname&&t.search===location.search){location.href=t.href;location.reload();return;}}catch(e){}location.href=u;};
   FX.flowStart=(title,steps)=>{try{localStorage.setItem("flow",JSON.stringify({title,steps,i:0,t:Date.now()}));}catch(e){}
-    const u=steps[0].url;if(/gamma\.app|youtube\.com|\.docx$/i.test(u)){window.open(u,"_blank");}else{location.href=u;}};
+    const u=steps[0].url;if(NEWTAB(u)){window.open(u,"_blank");}else{goURL(u);}};
   FX.flowEnd=()=>{try{localStorage.removeItem("flow");}catch(e){}const b=document.getElementById("fxflow");if(b)b.remove();};
   function flowBar(){let f=null;try{f=JSON.parse(localStorage.getItem("flow")||"null");}catch(e){}if(!f||!f.steps||!f.steps.length)return;
     if(Date.now()-(f.t||0)>12*3600*1000){FX.flowEnd();return;}          // 超過 12 小時自動結束
-    const isExt=u=>/gamma\.app|youtube\.com|\.docx$/i.test(u);const here=norm(location.href);const full=u=>{try{const x=new URL(u,location.href);return norm(u)+x.hash;}catch(e){return u;}};let k=f.steps.findIndex(s=>full(s.url)===full(location.href));if(k<0)k=f.steps.findIndex(s=>norm(s.url)===here);if(k>=0&&!(f.steps[f.i]&&isExt(f.steps[f.i].url))){f.i=k;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}}
+    const isExt=NEWTAB;const here=norm(location.href);const full=u=>{try{const x=new URL(u,location.href);return norm(u)+x.hash;}catch(e){return u;}};let k=f.steps.findIndex(s=>full(s.url)===full(location.href));if(k<0)k=f.steps.findIndex(s=>norm(s.url)===here);if(k>=0&&!(f.steps[f.i]&&isExt(f.steps[f.i].url))){f.i=k;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}}
     const i=f.i,n=f.steps.length,cur=f.steps[i],nx=f.steps[i+1],pv=f.steps[i-1];
     let mini=false;try{mini=localStorage.getItem("flowMini")==="1";}catch(e){}
     const bar=document.createElement("div");bar.id="fxflow";
@@ -220,16 +224,18 @@
     if(mini)bar.className="mini";
     bar.innerHTML=`<button class="no" title="縮小／展開">📍 ${i+1}/${n}</button><span class="lb">${esc(f.title)}｜${esc(cur.label)}</span>`+
       (pv?`<button class="pv" style="${B}background:#9db8cf;color:#08131f;padding:10px 12px;font-size:15px">⬅</button>`:"")+
-      (nx?`<button class="nx" title="${esc(nx.label)}" style="${B}background:#ffc93c;color:#08131f;padding:10px 16px;font-size:16px">下一步 ➡</button>`:`<button class="nx" style="${B}background:#42e0c8;color:#08131f;padding:10px 14px;font-size:15px">🏁 上完了</button>`)+
+      (nx?`<button class="nx" title="${esc(nx.label)}" style="${B}background:#ffc93c;color:#08131f;padding:10px 16px;font-size:16px">下一個活動 ➡</button>`:`<button class="nx" style="${B}background:#42e0c8;color:#08131f;padding:10px 14px;font-size:15px">🏁 上完了</button>`)+
       `<button class="x" title="結束流程" style="${B}background:transparent;color:#9db8cf;padding:8px">✖</button>`;
     document.body.appendChild(bar);
-    const pad=()=>{const h=bar.classList.contains("mini")?0:bar.offsetHeight+8;document.body.style.paddingBottom=h?h+"px":"";};pad();
+    /* 讓出底部空間：一般頁面加 padding；全螢幕舞台頁（#view 固定）把舞台和簡報控制列往上移，不被流程列蓋住 */
+    const pad=()=>{const h=bar.classList.contains("mini")?0:bar.offsetHeight+8;document.body.style.paddingBottom=h?h+"px":"";
+      const v=document.getElementById("view");if(v&&getComputedStyle(v).position==="fixed"){v.style.bottom=h?h+"px":"";const sb=document.getElementById("bar");if(sb&&getComputedStyle(sb).position==="fixed")sb.style.bottom=h?h+"px":"";dispatchEvent(new Event("resize"));}};pad();
     const go=(j)=>{f.i=j;try{localStorage.setItem("flow",JSON.stringify(f));}catch(e){}const u=f.steps[j].url;FX.sound.jump();
-      if(/gamma\.app|youtube\.com|\.docx$/i.test(u)){window.open(u,"_blank");bar.remove();flowBar();}else{location.href=u;}};
+      if(NEWTAB(u)){window.open(u,"_blank");bar.remove();flowBar();}else{goURL(u);}};
     bar.querySelector(".no").onclick=()=>{bar.classList.toggle("mini");try{localStorage.setItem("flowMini",bar.classList.contains("mini")?"1":"0");}catch(e){}pad();};
     if(pv)bar.querySelector(".pv").onclick=()=>go(i-1);
     bar.querySelector(".nx").onclick=()=>{if(nx)go(i+1);else{FX.sound.clear();FX.confetti(160);FX.fireworks(2500);setTimeout(FX.flowEnd,2600);}};
-    bar.querySelector(".x").onclick=()=>{FX.flowEnd();document.body.style.paddingBottom="";};}
+    bar.querySelector(".x").onclick=()=>{FX.flowEnd();document.body.style.paddingBottom="";const v=document.getElementById("view");if(v){v.style.bottom="";const sb=document.getElementById("bar");if(sb)sb.style.bottom="";dispatchEvent(new Event("resize"));}};}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",flowBar);else flowBar();
 
   /* ---------- 🗂️ 每頁都有「回主選單」（頁面自己沒放時自動補上） ---------- */

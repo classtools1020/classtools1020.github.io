@@ -334,7 +334,7 @@ if(flow)$("planTitle").textContent=flow.title;
 const GOALS=["👂 專心聽","✋ 舉手發言","🤝 跟同學合作","🔬 自己動手做","✏️ 寫完學習單","💪 遇到困難不放棄"];
 function chips(host,list,key){$(host).innerHTML=list.map(g=>`<button class="chip">${g}</button>`).join("");$(host).querySelectorAll(".chip").forEach(b=>b.onclick=()=>{b.classList.add("on");tap();FX.emojiBurst(b.textContent.split(" ")[0],8,innerWidth/2,innerHeight*.6);const s=load(key+today)||{};s[b.textContent]=(s[b.textContent]||0)+1;save(key+today,s);});}
 chips("goal",GOALS,"selgoal-");
-$("goBtn").onclick=()=>{chimeOk();FX.confetti(60);setTimeout(()=>{if(flow){const i=(flow.i||0)+1;const nx=flow.steps[i];if(nx){flow.i=i;save("flow",flow);if(/gamma\.app|youtube\.com|\.docx$/i.test(nx.url)){window.open(nx.url,"_blank");location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");}else location.href=nx.url;return;}}location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");},700);};
+$("goBtn").onclick=()=>{chimeOk();FX.confetti(60);setTimeout(()=>{if(flow){const i=(flow.i||0)+1;const nx=flow.steps[i];if(nx){flow.i=i;save("flow",flow);if(/gamma\.app|youtube\.com|view\.officeapps|\.(docx|pptx|pdf)(\?|#|$)/i.test(nx.url)){window.open(nx.url,"_blank");location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");}else location.href=nx.url;return;}}location.href=(window.FX&&FX.homeURL?FX.homeURL():"/light/");},700);};
 /* 謝幕（#end）：心情地圖再一次 → 今天我做到了 → 謝謝 → 蓋章 */
 if(END){$("st0").textContent="第一幕・現在的心情";$("st1").textContent="第二幕・我做到了";$("st2").textContent="第三幕・謝幕";
   $("moodTitle").textContent="上完課，現在心情怎麼樣？";$("moodSub").textContent="點一張臉就好";

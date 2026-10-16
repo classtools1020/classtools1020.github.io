@@ -157,7 +157,7 @@
 <script>
 (function(){
 const $=id=>document.getElementById(id);const stage=$('stage');
-function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
+function fit(){const s=Math.min(innerWidth/1600,(document.getElementById('view')||document.documentElement).clientHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
 const S=n=>{try{FX.sound[n]();}catch(e){}};
 /* 判斷規則：40 以下溫和；41～59 小心燙；60 以上很燙（只能大人裝） */
 function level(v){return v<=40?{k:'ok',c:'#2f8a4c',t:'✅ 不燙'}:v<60?{k:'care',c:'#e07a1f',t:'⚠ 小心燙'}:{k:'hot',c:'#c8372d',t:'🔥 很燙'};}

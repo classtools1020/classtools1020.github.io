@@ -102,7 +102,7 @@
 <script>
 (function(){
 const $=id=>document.getElementById(id);const stage=$('stage');
-function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
+function fit(){const s=Math.min(innerWidth/1600,(document.getElementById('view')||document.documentElement).clientHeight/900);stage.style.transform=`scale(${s})`;}addEventListener('resize',fit);fit();
 const S=n=>{try{FX.sound[n]();}catch(e){}};
 let st=0;
 const say=h=>$('say').innerHTML=h;
