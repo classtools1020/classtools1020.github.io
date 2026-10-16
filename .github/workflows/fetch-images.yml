@@ -15,6 +15,7 @@ jobs:
           while read -r dest url; do
             [ -z "$dest" ] && continue
             case "$dest" in \#*) continue;; esac
+            [ -f "$dest" ] && continue   # 已經下載過（可能已裁切、壓縮）就不要覆蓋
             mkdir -p "$(dirname "$dest")"
             curl -fsSL --retry 3 -o "$dest" "$url" && echo "ok $dest"
           done < tools/fetch-list.txt

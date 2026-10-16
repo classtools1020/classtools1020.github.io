@@ -130,6 +130,13 @@
   @keyframes joy{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-7px) rotate(-3deg)}60%{transform:translateY(0) rotate(3deg)}}
   @keyframes sleepy{0%,100%{transform:rotate(0)}50%{transform:rotate(-6deg) translateY(3px)}}
   .mood:hover .pf{transform:scale(1.12)}
+  .duo{position:relative;display:block;width:min(20vw,96px);height:min(20vw,96px)}
+  .duo .pf{position:absolute;inset:0}
+  .duo .pf.g{animation:alive 3.2s ease-in-out infinite,swap 8s ease-in-out infinite}
+  .mood[data-i="0"] .duo .pf.g{animation:joy 1.6s ease-in-out infinite,swap 8s ease-in-out infinite}.mood[data-i="3"] .duo .pf.g{animation:sleepy 4s ease-in-out infinite,swap 8s ease-in-out infinite}
+  .mood:nth-child(2) .duo .pf.g{animation-delay:-.6s,-1.3s}.mood:nth-child(3) .duo .pf.g{animation-delay:-1.2s,-2.6s}.mood:nth-child(4) .duo .pf.g{animation-delay:0s,-3.9s}.mood:nth-child(5) .duo .pf.g{animation-delay:0s,-5.2s}.mood:nth-child(6) .duo .pf.g{animation-delay:-1.8s,-6.5s}
+  @keyframes swap{0%,40%{opacity:0}50%,90%{opacity:1}100%{opacity:0}}
+  .rc .pair{display:flex;justify-content:center;gap:14px;margin-bottom:10px}.rc .pair .bigp{margin:0}
   .rc .bigp{display:block;margin:0 auto 10px;width:130px;height:130px;border-radius:50%;object-fit:cover;object-position:50% 22%;border:4px solid rgba(255,255,255,.9);box-shadow:0 12px 26px rgba(0,0,0,.4);animation:alive 3s ease-in-out infinite}
   /* 回應卡 */
   .resp{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(5,3,8,.72);backdrop-filter:blur(4px)}
@@ -257,7 +264,11 @@ const RESP=[
   {h:"沒關係 🤫",p:"不想說也可以。你來上課，就很好了。",o:[],fx:"🤍"}];
 const MSND=[()=>[523,659,784,1047].forEach((f,k)=>note(f,k*.09,.35)),()=>[587,784].forEach((f,k)=>note(f,k*.14,.4)),()=>note(440,0,.45,"sine"),
   ()=>{note(520,0,1.1,"sine",.12,260);},()=>[392,330].forEach((f,k)=>note(f,k*.25,.5,"sine",.1)),shh];
-const pface=(m,cls)=>`<img class="${cls||"pf"}" alt="${m[1]}" src="img/mood/${m[2]}.jpg" data-fb="${CP[m[0]]?"https://fonts.gstatic.com/s/e/notoemoji/latest/"+CP[m[0]]+"/512.webp":""}" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.dataset.fb='';this.style.objectFit='contain';this.style.background='transparent';this.style.border='0'}">`;
+const FB=m=>CP[m[0]]?"https://fonts.gstatic.com/s/e/notoemoji/latest/"+CP[m[0]]+"/512.webp":"";
+const pimg=(src,m,cls)=>`<img class="${cls}" alt="${m[1]}" src="${src}" data-fb="${FB(m)}" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.dataset.fb='';this.style.objectFit='contain';this.style.background='transparent';this.style.border='0'}">`;
+/* 卡片：男生、女生兩張臉輪流淡入淡出；回應卡：兩張並排 */
+const pface=(m,cls)=>cls==="bigp"?`<div class="pair">${pimg("img/mood/"+m[2]+".jpg",m,"bigp")}${pimg("img/mood/g"+m[2].slice(1)+".jpg",m,"bigp")}</div>`
+  :`<span class="duo">${pimg("img/mood/"+m[2]+".jpg",m,"pf")}${pimg("img/mood/g"+m[2].slice(1)+".jpg",m,"pf g")}</span>`;
 const KEY=(END?"mood2-":"mood-")+today;
 let C=load(KEY)||MOODS.map(()=>0);
 const C1=load("mood-"+today)||MOODS.map(()=>0);

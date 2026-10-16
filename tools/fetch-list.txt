@@ -50,5 +50,5 @@ temp/img/shade-raw.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/54V
 temp/img/dispenser.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/bPy3Gxpv4dpxM9wffr1uD/y6XbHU3faTmmzBdYR606K.jpg
 temp/img/dispenser-measure.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/yCRY9M1wyTMlRKHjGs3f0/fyyP-mzkODv-aMzD5FNp0.jpg
 temp/img/dispenser-card.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/EPyjs5U11NkBvh9Olgx2j/W3LUnUcns303hTZ-PMhEn.jpg
-games/img/mood/grid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DenVoF7JUqxtEB1IRYh73/BumPTD_oN6xcKZTrjWH6A.jpg
-games/img/mood/ggrid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/OYTydAXW5cxlAmxg8GZxG/zoKArNRhWrswS7YJa37Hh.jpg
+# 已裁切成 m0–m5：games/img/mood/grid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DenVoF7JUqxtEB1IRYh73/BumPTD_oN6xcKZTrjWH6A.jpg
+# 已裁切成 g0–g5：games/img/mood/ggrid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/OYTydAXW5cxlAmxg8GZxG/zoKArNRhWrswS7YJa37Hh.jpg
