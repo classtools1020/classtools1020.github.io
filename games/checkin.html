@@ -41,6 +41,7 @@
   /* 幕次 */
   .steps{display:flex;gap:6px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
   .steps span{font-family:var(--serif);font-weight:700;font-size:14px;letter-spacing:.12em;padding:6px 14px;border:1px solid rgba(201,161,74,.35);color:var(--dim);border-radius:2px;background:rgba(7,5,10,.5)}
+  .steps span{cursor:pointer;transition:transform .15s}.steps span:hover{transform:translateY(-2px);border-color:rgba(241,217,148,.8)}
   .steps span.on{color:#07050a;background:var(--foil);background-size:200% 100%;border-color:transparent;animation:foil 5s linear infinite}
   .steps span.done{color:var(--gold3);border-color:rgba(241,217,148,.7)}
   @keyframes foil{from{background-position:0 0}to{background-position:200% 0}}
@@ -163,7 +164,7 @@
   .stretch{font-size:min(30vw,150px);line-height:1.1;margin:6px 0;filter:drop-shadow(0 10px 20px rgba(0,0,0,.5))}
   .count{font-family:var(--deco);font-size:min(14vw,64px);color:var(--gold3);text-shadow:0 0 24px rgba(201,161,74,.5)}
   .goal{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
-  @media(max-width:600px){.bars{width:calc(100% - 56px);margin-right:56px}.meter{padding:22px 16px 26px;gap:8px}.quad h3{font-size:12px}.fc{font-size:13px}}
+  @media(max-width:600px){.wrap{padding-right:64px!important}.moods{gap:8px}.mood{width:calc((100vw - 110px)/3)}#fxvoice,#fxbell{transform:scale(.8);opacity:.85}.bars{width:100%}.tool{width:calc((100vw - 120px)/2);padding:12px 6px}.tool small{font-size:11px}.meter{padding:22px 16px 26px;gap:8px}.quad h3{font-size:12px}.fc{font-size:13px}}
 </style>
 </head>
 <body>
@@ -342,6 +343,9 @@ if(END){$("st0").textContent="第一幕・現在的心情";$("st1").textContent=
   chips("did",["👂 我有專心聽","✋ 我有舉手","🤝 我有幫同學","🔬 我有動手做","✏️ 我寫完了","💪 我沒有放棄"],"seldid-");
   chips("thanks",["🙏 謝謝老師","🤝 謝謝同學","🙋 謝謝我自己"],"selthx-");
   goto(0);compare();}
+/* 上方幕次可以直接點：跳到那一幕 */
+function jump(n){running++;tap();if(END){goto(n===-1?-1:n===0?0:3);return;}goto(n);if(n===1)showTools();}
+[["stg",-1],["st0",0],["st1",1],["st2",2]].forEach(([id,n])=>{const e=$(id);e.setAttribute("role","button");e.title="跳到這一幕";e.onclick=()=>jump(n);});
 $("finish").onclick=()=>{chimeOk();FX.stamp&&FX.stamp({text:"今天完成"});FX.confetti(80);setTimeout(()=>{if(FX.flowEnd)FX.flowEnd();},1200);};
 
 /* ===== 魔法：金色星塵＋圓形光圈轉場 ===== */
