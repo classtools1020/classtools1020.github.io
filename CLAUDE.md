@@ -128,7 +128,7 @@
 - [ ] 選做：MV 裡加入光光偵探探險動作（老師有興趣，尚未開工）。
 - [ ] 10/12 上課前：老師用教室投影機先開「微小世界探險隊」（地圖＋照片版，約 5MB 照片），看載入與點按順不順；上完回報哪一關卡住或太快。
 - [ ] 週一 10/12 上完透鏡 L1 後，請老師回報有沒有講到「倒過來／貓眼」，據此調整 10/16 甲班複習。
-- [ ] 10/16 14:01：刪除 hccadaptive.com 代課包（sports-results/f8f9fc3bd1/）。
+- [x] 10/16 14:01：已刪除 hccadaptive.com 代課包（sports-results/f8f9fc3bd1/），10/16 14:02 完成；s/6e4deddfed/ 確認不存在。
 
 ## 本機預覽小技巧
 - 雲端容器連不到 github.io；在 repo 外建一個資料夾，用 symlink 放 `light-refract`、`games`、`light`，再 `python3 -m http.server` 預覽。
