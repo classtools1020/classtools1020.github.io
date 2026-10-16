@@ -37,6 +37,7 @@
   add('temp', G, 'temp-bowls', 'tool', '三碗水', '手會騙人？冷熱感覺實驗', '/temp/bowls.html');
   add('temp', G, 'temp-news', 'slide', '溫度新聞台', '3D 溫溫隊長播報：校園哪裡最熱？', '/temp/news.html');
   add('temp', G, 'temp-demo', 'tool', '額溫槍六步驟・示範影片', '動畫示範，每一步自動暫停', '/temp/demo.html', [['下載影片', '/temp/files/T2-demo.mp4']]);
+  add('temp', G, 'temp-mv', 'mv', 'MV：嗶一聲就知道', '額溫槍六步驟跟著唱', '/temp/mv.html');
   add('temp', G, 'temp-forehead', 'tool', '額溫槍出動', '六步驟練習＋讀數字（三層次）', '/temp/forehead.html', [['讀數字考考你', '/temp/forehead.html#quiz']]);
   add('temp', G, 'temp-dispenser', 'tool', '飲水機偵探', '猜、量、判斷會不會燙，做提醒卡', '/temp/dispenser.html', [['做提醒卡', '/temp/dispenser.html#card']]);
   add('temp', G, 'temp-thermo', 'tool', '溫度計實驗室', '看紅線、一起數、三杯水記錄', '/temp/thermo.html#see', [['考考你', '/temp/thermo.html#quiz'], ['三杯水排排站', '/temp/thermo.html#record']]);
@@ -118,6 +119,7 @@
   add('light', G, 'moon-script', 'teacher', '中秋逐格教案台詞', '老師用', '/moon/script.html');
 
   /* ===== MV ===== */
+  add('mv', 'MV', 'mv-beep', 'mv', '嗶一聲就知道', '額溫槍六步驟・逐字歌詞', '/temp/mv.html');
   add('mv', 'MV', 'mv-snap', 'mv', '折一下 Snap!', '光的折射・逐字歌詞', '/light-refract/mv.html');
   add('mv', 'MV', 'mv-teen', 'mv', '光光在哪裡', '光單元主題曲', '/light-mv-teen.html');
 

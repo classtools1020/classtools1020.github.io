@@ -47,7 +47,7 @@ def render_slide(i, s, L):
         out.append(f'<div{ff(0,"u")} style="font-size:28px;margin-top:80px;color:#e8e2d4;position:relative">{s.get("goal","")}</div>')
         out.append(mascot(1290, 520, 220, 1, 'pop', 'z-index:3'))
     elif t == 'flow':
-        out.append(f'<div class="kick">{k or "今天的流程"}</div><h2>{s.get("title","今天要做這些事")}</h2><div class="flow">')
+        out.append(f'<div class="kick">{k or "今天的流程"}</div><h2>{s.get("title","今天要做這些事")}</h2><div class="flow{" many" if len(s["items"]) > 9 else ""}">')
         for j, it in enumerate(s['items']):
             lab, href = it[0], it[1]
             if href and 'games/checkin.html' in str(href):   # 開場／收尾：帶隊名，開演後回到這份簡報的第 3 頁
