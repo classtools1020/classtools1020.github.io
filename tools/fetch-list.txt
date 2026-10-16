@@ -52,3 +52,5 @@ temp/img/dispenser-measure.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anyt
 temp/img/dispenser-card.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/EPyjs5U11NkBvh9Olgx2j/W3LUnUcns303hTZ-PMhEn.jpg
 # 已裁切成 m0–m5：games/img/mood/grid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/DenVoF7JUqxtEB1IRYh73/BumPTD_oN6xcKZTrjWH6A.jpg
 # 已裁切成 g0–g5：games/img/mood/ggrid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/OYTydAXW5cxlAmxg8GZxG/zoKArNRhWrswS7YJa37Hh.jpg
+temp/img/dispenser-measure2.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/k1Y8EAUopvqY5VU5bI3Y5/nOJu3Szed8dExIH1cOrSq.jpg
+temp/img/bath2.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/tSzFvl28o7YhxAHkLWpJq/asYaDiUnE3Bw6HDhoqbVW.jpg
