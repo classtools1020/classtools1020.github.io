@@ -141,23 +141,23 @@ def sheet():
         RULER = ('<div style="position:relative;flex:none;height:17mm;margin:1mm 6mm 2.5mm">'
                  '<div style="position:absolute;left:0;right:0;top:4.5mm;height:7mm;display:flex;border-radius:2mm;overflow:hidden;font-size:11pt;font-weight:900;color:#fff">'
                  '<div style="width:62.5%;background:#2f8a4c;display:flex;align-items:center;justify-content:center">✅ 正常</div>'
-                 '<div style="flex:1;background:#c8372d;display:flex;align-items:center;justify-content:center">🤒 發燒</div></div>'
+                 '<div style="flex:1;background:#c8372d;display:flex;align-items:center;justify-content:center">🙋 告訴老師</div></div>'
                  + ''.join(f'<span style="position:absolute;left:{(v-35)*25}%;top:12mm;transform:translateX(-50%);font-size:10pt;font-weight:900;color:#555">{v}</span>' for v in (35, 36, 37, 38, 39))
                  + '<span style="position:absolute;left:62.5%;top:0;transform:translateX(-50%);font-size:10pt;font-weight:900;color:#c8372d">37.5</span></div>')
         b = head('記錄單') + sec2(1, '量額溫六步驟：做到了就打勾', B1)
         steps = ['撥開瀏海 💇', '對準額頭中間 🎯', '距離一根手指 ☝️', '按一下，聽到嗶 🔔', '整個讀出來 👀', '記下來 ✏️']
         b += '<div class="grid" style="grid-template-columns:repeat(3,1fr)">' + ''.join(f'<div class="cell" style="text-align:left"><span class="box" style="margin-left:0"></span>{i+1}. {s}</div>' for i, s in enumerate(steps)) + '</div>'
-        b += sec2(2, '看溫度尺：正常還是發燒？（37.5 以上＝發燒，告訴老師 🙋）', B1) + RULER
-        b += '<div class="grid" style="grid-template-columns:repeat(3,1fr);gap:3mm">' + ''.join(f'<div class="cell"><span class="lcd" style="font-size:17pt">{v}°C</span><div class="opts" style="margin-top:1mm"><span class="box" style="margin-left:0"></span>✅ 正常　<span class="box"></span>🤒 發燒</div></div>' for v in ('36.4', '37.8', '36.9')) + '</div>'
+        b += sec2(2, '看溫度尺：正常？還是要告訴老師？（額溫 37.5 以上 🙋）', B1) + RULER
+        b += '<div class="grid" style="grid-template-columns:repeat(3,1fr);gap:3mm">' + ''.join(f'<div class="cell"><span class="lcd" style="font-size:17pt">{v}°C</span><div class="opts" style="margin-top:1mm;white-space:nowrap"><span class="box" style="margin-left:0"></span>正常 <span class="box" style="margin-left:5pt"></span>告訴老師</div></div>' for v in ('36.4', '37.8', '36.9')) + '</div>'
         b += sec2(3, '怎麼讀？勾正確的讀法（小數點唸「點」）', B2)
         for v, o in (('36.9', ('三十六度', '三十六點九度', '三百六十九度')), ('37.2', ('三十七點二度', '三百七十二度', '三十七度'))):
             b += f'<div class="row"><span class="lcd">{v}°C</span><div class="opts" style="font-size:14pt">' + ''.join(f'<span class="o"><span class="box"></span>{x}</span>　' for x in o) + '</div></div>'
-        b += (f'<div class="chal"><span class="lv" style="color:#7a5a00;background:#fff1b8;margin-right:1mm">⭐ 挑戰</span><b>36.9 比較靠近</b>'
-              f'<span class="o"><span class="box"></span>36 度</span> <span class="o"><span class="box"></span>37 度</span>　｜　<b>37.6 是</b>'
-              f'<span class="o"><span class="box"></span>正常</span> <span class="o"><span class="box"></span>發燒</span></div>')
+        b += (f'<div class="chal" style="font-size:11.5pt;flex-wrap:nowrap;white-space:nowrap"><span class="lv" style="color:#7a5a00;background:#fff1b8;margin-right:1mm">⭐ 挑戰</span><b>36.9 比較靠近</b>'
+              f'<span class="o"><span class="box"></span>36 度</span> <span class="o"><span class="box"></span>37 度</span> ｜ <b>37.6 要告訴老師嗎？</b>'
+              f'<span class="o"><span class="box"></span>要</span> <span class="o"><span class="box"></span>不用</span></div>')
         b += sec2(4, '兩人一組：量額溫，抄下螢幕數字', B2)
         DIG = '<span class="write" style="width:9mm;margin:0 .6mm"></span>'
-        b += '<table class="t"><tr><th style="width:26%">我幫誰量</th><th>螢幕數字（照著抄）</th><th style="width:30%">正常嗎？</th></tr>' + ''.join(f'<tr><td style="height:13mm"></td><td>{DIG}{DIG}<b style="font-size:20pt">.</b>{DIG} 度</td><td><span class="box" style="margin-left:0"></span>正常 <span class="box"></span>發燒</td></tr>' for _ in range(2)) + '</table>'
+        b += '<table class="t"><tr><th style="width:26%">我幫誰量</th><th>螢幕數字（照著抄）</th><th style="width:30%">看溫度尺</th></tr>' + ''.join(f'<tr><td style="height:13mm"></td><td>{DIG}{DIG}<b style="font-size:20pt">.</b>{DIG} 度</td><td><span class="box" style="margin-left:0"></span>正常 <span class="box"></span>告訴老師</td></tr>' for _ in range(2)) + '</table>'
     elif code == 'T3':
         b = head('學習單') + sec(1, '紅線怎麼動？')
         b += cells([('放進熱水', 't-hot.jpg'), ('放進冰水', 't-ice.jpg')], 2, ['往上爬 ⬆️', '往下掉 ⬇️']).replace('<img ', '<img style="height:17mm" ')

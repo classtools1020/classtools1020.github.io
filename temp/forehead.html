@@ -153,7 +153,7 @@
       <div class="ans row hidden" id="ans"></div>
       <div id="zoneDo" class="hidden"></div>
       <div id="recBox" class="hidden">
-        <table class="rec"><thead><tr><th>第幾次</th><th>螢幕數字</th><th>正常嗎？</th></tr></thead><tbody id="recBody"></tbody></table>
+        <table class="rec"><thead><tr><th>第幾次</th><th>螢幕數字</th><th>看溫度尺</th></tr></thead><tbody id="recBody"></tbody></table>
         <button class="big y" id="again" style="margin-top:12px">🔁 再量一位同學</button>
       </div>
     </section>
@@ -164,7 +164,7 @@
       <div class="ans" id="qans"></div>
       <div class="msg" id="qmsg"></div>
       <button class="big y" id="qnext">下一題 ➡</button>
-      <div class="rule">🌡️ 小數點唸「點」：36.9 讀「三十六點九度」　｜　<b style="color:#c8372d">37.5 度以上＝發燒</b>，要告訴老師</div>
+      <div class="rule">🌡️ 小數點唸「點」：36.9 讀「三十六點九度」　｜　<b style="color:#c8372d">額溫 37.5 以上：可能發燒，要告訴老師</b></div>
     </section>
   </div>
 </div></div>
@@ -190,9 +190,9 @@ function newTemp(){const v=[35.8,36.0,36.2,36.4,36.5,36.6,36.7,36.8,36.9,37.0,37
 const D='零一二三四五六七八九';
 function zh(v){const [a,b]=v.toFixed(1).split('.');const n=+a;const t=Math.floor(n/10),u=n%10;return (t>1?D[t]:'')+(t?'十':'')+(u?D[u]:'')+'點'+D[+b]+'度';}
 function fever(v){return v>=37.5;}
-/* 溫度尺：35～39，綠色正常、紅色發燒（37.5 以上） */
+/* 溫度尺：35～39，綠色正常、紅色告訴老師（額溫 37.5 以上；依 2020/2/18 指揮中心校園量體溫說明，再用耳溫槍複測） */
 function zoneHTML(v,show){const pct=x=>((x-35)/4*100).toFixed(1)+'%';
-  return '<div class="zone"><div class="zb"><span class="g">✅ 正常</span><span class="r">🤒 發燒</span></div>'+
+  return '<div class="zone"><div class="zb"><span class="g">✅ 正常</span><span class="r">🙋 告訴老師</span></div>'+
    [35,36,37,38,39].map(x=>`<span class="tk" style="left:${pct(x)}">${x}</span>`).join('')+`<span class="tk k" style="left:${pct(37.5)}">37.5</span>`+
    (show?`<span class="mk" style="left:${pct(Math.min(38.9,Math.max(35.1,v)))}">${v.toFixed(1)}</span>`:'')+'</div>';}
 /* 數線：36 —— 37，看 36.9 比較靠近誰 */
@@ -225,13 +225,13 @@ const ACT={
     setTimeout(()=>{beep(2);$('beam').classList.remove('on');lcd(true,temp.toFixed(1),'°C');$('msg').innerHTML='嗶嗶！數字出來了 👀';setStep(5);hint('');},1200);},
   5(){$('msg').innerHTML=`螢幕：<b>${temp.toFixed(1)}</b>　怎麼讀？`;$('ans').classList.remove('hidden');
     textOpts($('ans'),shuf(wrongReads(temp)),zh(temp),()=>{const f=fever(temp);$('ans').classList.add('hidden');$('zoneDo').innerHTML=zoneHTML(temp,true);$('zoneDo').classList.remove('hidden');
-      $('msg').innerHTML=`對！讀「<b>${zh(temp)}</b>」<br>`+(f?'箭頭在<b>紅色</b>：🤒 發燒，要<b>告訴老師</b>':'箭頭在<b style="color:#2f8a4c">綠色</b>：✅ 正常');setStep(6);if(!f)try{FX.confetti(60);}catch(e){}},
+      $('msg').innerHTML=`對！讀「<b>${zh(temp)}</b>」<br>`+(f?'箭頭在<b>紅色</b>：可能發燒，要<b>告訴老師</b> 🙋':'箭頭在<b style="color:#2f8a4c">綠色</b>：✅ 正常');setStep(6);if(!f)try{FX.confetti(60);}catch(e){}},
       ()=>{$('msg').innerHTML=`再看一次 <b>${temp.toFixed(1)}</b>：小數點唸「點」，點後面也要讀`;});},
   6(){count++;S('coin');$('recBox').classList.remove('hidden');$('ans').classList.add('hidden');
     $('zoneDo').classList.add('hidden');
-    $('recBody').insertAdjacentHTML('beforeend',`<tr><td>${count}</td><td style="font-size:34px">${temp.toFixed(1)}</td><td style="color:${fever(temp)?'#c8372d':'#2f8a4c'}">${fever(temp)?'🤒 發燒':'✅ 正常'}</td></tr>`);
+    $('recBody').insertAdjacentHTML('beforeend',`<tr><td>${count}</td><td style="font-size:34px">${temp.toFixed(1)}</td><td style="color:${fever(temp)?'#c8372d':'#2f8a4c'}">${fever(temp)?'🙋 告訴老師':'✅ 正常'}</td></tr>`);
     $('msg').innerHTML='記好了！🎉 <b>六個步驟完成</b>';setStep(7);try{FX.stamp({text:'量好了'});}catch(e){}
-    if(fever(temp)){$('msg').innerHTML+='<br>⚠ 37.5 度以上是發燒，要<b>告訴老師</b>';}}
+    if(fever(temp)){$('msg').innerHTML+='<br>⚠ 額溫 37.5 以上，可能發燒，要<b>告訴老師</b>';}}
 };
 document.querySelectorAll('#steps .st').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;if(k===step&&ACT[k])ACT[k]();});
 $('again').onclick=()=>{S('whoosh');newTemp();resetScene();setStep(1);$('msg').innerHTML='換下一位同學！從第 1 步開始';};
@@ -242,15 +242,15 @@ const POOL=[35.8,36.1,36.3,36.5,36.7,36.8,36.9,37.0,37.2,37.4,37.5,37.7,37.9,38.
 function newQ(){qn++;let v;do{v=POOL[Math.floor(Math.random()*POOL.length)];}while(v===qv);qv=v;
   lcd(true,qv.toFixed(1),'°C');gunAt(110);$('gun').style.transform='';$('qmsg').innerHTML='';$('qans').className='ans';
   const f=fever(qv);
-  if(lvl===1){$('qq').innerHTML='箭頭在哪個顏色？<br>正常還是發燒？';$('qvis').innerHTML=zoneHTML(qv,true);
-    textOpts($('qans'),['✅ 正常','🤒 發燒'],f?'🤒 發燒':'✅ 正常',()=>{$('qmsg').innerHTML=f?'對！在<b>紅色</b>：發燒，要告訴老師':'對！在<b style="color:#2f8a4c">綠色</b>：正常';try{FX.confetti(40);}catch(e){}},()=>{$('qmsg').innerHTML='看箭頭指的<b>顏色</b>喔';});}
+  if(lvl===1){$('qq').innerHTML='箭頭在哪個顏色？<br>正常？還是要告訴老師？';$('qvis').innerHTML=zoneHTML(qv,true);
+    textOpts($('qans'),['✅ 正常','🙋 告訴老師'],f?'🙋 告訴老師':'✅ 正常',()=>{$('qmsg').innerHTML=f?'對！在<b>紅色</b>：可能發燒，要告訴老師':'對！在<b style="color:#2f8a4c">綠色</b>：正常';try{FX.confetti(40);}catch(e){}},()=>{$('qmsg').innerHTML='看箭頭指的<b>顏色</b>喔';});}
   else if(lvl===2){$('qq').innerHTML='螢幕上的數字，怎麼讀？';$('qvis').innerHTML='';$('qans').className='ans col';
-    textOpts($('qans'),shuf(wrongReads(qv)),zh(qv),()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML=`對！「<b>${zh(qv)}</b>」——`+(f?'🤒 發燒':'✅ 正常');try{FX.confetti(40);}catch(e){}},()=>{$('qmsg').innerHTML='小數點唸「<b>點</b>」，點後面也要讀';});}
+    textOpts($('qans'),shuf(wrongReads(qv)),zh(qv),()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML=`對！「<b>${zh(qv)}</b>」——`+(f?'🙋 可能發燒，告訴老師':'✅ 正常');try{FX.confetti(40);}catch(e){}},()=>{$('qmsg').innerHTML='小數點唸「<b>點</b>」，點後面也要讀';});}
   else if(qn%2){let d=Math.round(qv*10)%10;if(d===5){qv=+(qv+0.2).toFixed(1);lcd(true,qv.toFixed(1),'°C');d=7;}const lo=Math.floor(qv),near=d>5?lo+1:lo;
     $('qq').innerHTML=`${qv.toFixed(1)} 比較靠近<br>${lo} 度還是 ${lo+1} 度？`;$('qvis').innerHTML=nlHTML(qv,false);
     textOpts($('qans'),[lo+' 度',(lo+1)+' 度'],near+' 度',()=>{$('qvis').innerHTML=nlHTML(qv,true);$('qmsg').innerHTML=`對！${qv.toFixed(1)} 很靠近 <b>${near}</b> 度`;try{FX.confetti(40);}catch(e){}},()=>{$('qvis').innerHTML=nlHTML(qv,true);$('qmsg').innerHTML='看數線：箭頭離哪一個比較近？';});}
-  else{$('qq').innerHTML='37.5 度以上是發燒。<br>這是正常還是發燒？';$('qvis').innerHTML='';
-    textOpts($('qans'),['✅ 正常','🤒 發燒'],f?'🤒 發燒':'✅ 正常',()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML=`對！${qv.toFixed(1)} ${f?'比 37.5 大：發燒':'比 37.5 小：正常'}`;try{FX.confetti(40);}catch(e){}},()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML='和 <b>37.5</b> 比一比：比較大還是比較小？';});}}
+  else{$('qq').innerHTML='額溫 37.5 以上要告訴老師。<br>這個數字：正常？還是告訴老師？';$('qvis').innerHTML='';
+    textOpts($('qans'),['✅ 正常','🙋 告訴老師'],f?'🙋 告訴老師':'✅ 正常',()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML=`對！${qv.toFixed(1)} ${f?'比 37.5 大：要告訴老師':'比 37.5 小：正常'}`;try{FX.confetti(40);}catch(e){}},()=>{$('qvis').innerHTML=zoneHTML(qv,true);$('qmsg').innerHTML='和 <b>37.5</b> 比一比：比較大還是比較小？';});}}
 function setLv(l){lvl=l;document.querySelectorAll('.lvb').forEach(b=>b.classList.toggle('on',+b.dataset.l===l));newQ();}
 document.querySelectorAll('.lvb').forEach(b=>b.onclick=()=>{S('blip');setLv(+b.dataset.l);});
 $('qnext').onclick=()=>{S('whoosh');newQ();};

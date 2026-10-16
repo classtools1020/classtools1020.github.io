@@ -59,14 +59,14 @@ def steps_page(title, kick, h1, sub, tag, tagcls, period, time_, prep, steps, ti
 
 # ───────── 10/21 甲班第7節（20 分鐘）T2 ─────────
 wr('d1021/index.html', steps_page('10/21 自然代課', '自然科代課', '10/21（三）', '甲班第 7 節・20 分鐘', '甲班', 'a', '第 7 節', '15:00–15:20',
-  '額溫槍 2–3 支（先確認有電）、酒精棉片、學習單（列印）',
+  '額溫槍 2–3 支（先確認有電）、酒精棉片、<a href="files/T2-print.pdf?v=3" target="_blank" rel="noopener">學習單</a>、<a href="files/T2-card.pdf?v=1" target="_blank" rel="noopener">溫度尺小卡</a>（剪下貼在額溫槍旁）、<a href="files/T2-record.pdf?v=1" target="_blank" rel="noopener">提示紀錄表</a>（選填）',
   [('示範影片：額溫槍六步驟 <small>（每一步會自動暫停）</small>', 'demo.html'),
    ('額溫槍模擬器 <small>（全班一起走一次）</small>', 'forehead.html'),
    ('讀數字練習 <small>（🔵 看顏色 🟠 讀出來 ⭐ 挑戰，選一層）</small>', 'forehead.html#quiz'),
-   ('兩人一組，真的量 <small>（六步驟照片卡）</small>', 'files/six-steps.pdf?v=2'),
-   ('學習單', 'files/T2-print.pdf?v=2')],
-  '數字要整個讀：36.9 讀「三十六點九度」（小數點唸「點」）。37.5 以上＝發燒，請告訴老師。', U1021))
-cp('temp/demo.html', 'd1021/demo.html'); cp('temp/forehead.html', 'd1021/forehead.html'); cp('temp/files/T2-print.pdf', 'd1021/files/T2-print.pdf')
+   ('兩人一組，真的量 <small>（六步驟照片卡）</small>', 'files/six-steps.pdf?v=3'),
+   ('學習單', 'files/T2-print.pdf?v=3')],
+  '數字要整個讀：36.9 讀「三十六點九度」（小數點唸「點」）。額溫 37.5 以上可能發燒，請讓學生告訴您（再用耳溫槍複測，耳溫 38 以上才算發燒）。', U1021))
+cp('temp/demo.html', 'd1021/demo.html'); cp('temp/forehead.html', 'd1021/forehead.html'); cp('temp/files/T2-print.pdf', 'd1021/files/T2-print.pdf'); cp('temp/files/T2-card.pdf', 'd1021/files/T2-card.pdf'); cp('temp/files/T2-record.pdf', 'd1021/files/T2-record.pdf')
 import subprocess; subprocess.run([sys.executable, os.path.join(ROOT, 'tools/sub/six_card.py'), os.path.join(OUT, 'd1021/files/six-steps.pdf')], check=True)
 for f in ('demo.html', 'forehead.html'):
     p = os.path.join(OUT, 'd1021', f); c = clean(open(p, encoding='utf-8').read(), U1021); open(p, 'w', encoding='utf-8').write(c)

@@ -175,13 +175,13 @@ def render_slide(i, s, L):
         out.append(mascot(1330, 560, 170, n + 1, 'pop'))
         if s.get('band'):
             out.append(f'<div class="band"{ff(n+2,"u","ding")}>{s["band"]}</div>')
-    elif t == 'zone':   # 溫度尺：35～39，37.5 以上發燒
+    elif t == 'zone':   # 溫度尺：35～39，額溫 37.5 以上告訴老師
         out.append(f'<div class="kick">{k}</div><h2>{s["title"]}</h2>')
         L0, R0 = 140, 1460
         X = lambda v: L0 + (v - 35) / 4 * (R0 - L0)
         gx = X(37.5)
         out.append(f'<div style="position:absolute;left:{L0}px;top:420px;width:{gx-L0:.0f}px;height:90px;background:#2f8a4c;border-radius:20px 0 0 20px;color:#fff;font-size:44px;font-weight:900;display:flex;align-items:center;justify-content:center">✅ 正常</div>')
-        out.append(f'<div style="position:absolute;left:{gx:.0f}px;top:420px;width:{R0-gx:.0f}px;height:90px;background:#c8372d;border-radius:0 20px 20px 0;color:#fff;font-size:40px;font-weight:900;display:flex;align-items:center;justify-content:center">🤒 發燒</div>')
+        out.append(f'<div style="position:absolute;left:{gx:.0f}px;top:420px;width:{R0-gx:.0f}px;height:90px;background:#c8372d;border-radius:0 20px 20px 0;color:#fff;font-size:40px;font-weight:900;display:flex;align-items:center;justify-content:center">🙋 告訴老師</div>')
         for v in (35, 36, 37, 38, 39):
             out.append(f'<div style="position:absolute;left:{X(v):.0f}px;top:520px;transform:translateX(-50%);font-size:40px;font-weight:900;color:#5b6673">{v}</div>')
         out.append(f'<div style="position:absolute;left:{gx:.0f}px;top:520px;transform:translateX(-50%);font-size:40px;font-weight:900;color:#c8372d">37.5</div>')
