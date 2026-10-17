@@ -155,8 +155,8 @@ def sheet():
         for v, o in (('36.9', ('三十六度', '三十六點九度', '三百六十九度')), ('37.2', ('三十七點二度', '三百七十二度', '三十七度'))):
             b += f'<div class="row"><span class="lcd">{v}°C</span><div class="opts" style="font-size:14pt">' + ''.join(f'<span class="o"><span class="box"></span>{x}</span>　' for x in o) + '</div></div>'
         b += (f'<div class="chal" style="font-size:11.5pt;flex-wrap:nowrap;white-space:nowrap"><span class="lv" style="color:#7a5a00;background:#fff1b8;margin-right:1mm">⭐ 挑戰</span><b>36.9 比較靠近</b>'
-              f'<span class="o"><span class="box"></span>36 度</span> <span class="o"><span class="box"></span>37 度</span> ｜ <b>37.6 要告訴老師嗎？</b>'
-              f'<span class="o"><span class="box"></span>要</span> <span class="o"><span class="box"></span>不用</span></div>')
+              f'<span class="o"><span class="box"></span>36 度</span> <span class="o"><span class="box"></span>37 度</span> ｜ <b>在家量到 37.6 告訴誰？</b>'
+              f'<span class="o"><span class="box"></span>家人</span> <span class="o"><span class="box"></span>不用說</span></div>')
         b += sec2(4, '兩人一組：量額溫，抄下螢幕數字', B2)
         DIG = '<span class="write" style="width:9mm;margin:0 .6mm"></span>'
         b += '<table class="t"><tr><th style="width:26%">我幫誰量</th><th>螢幕數字（照著抄）</th><th style="width:30%">看溫度尺</th></tr>' + ''.join(f'<tr><td style="height:11mm"></td><td>{DIG}{DIG}<b style="font-size:20pt">.</b>{DIG} 度</td><td><span class="box" style="margin-left:0"></span>正常 <span class="box"></span>告訴老師</td></tr>' for _ in range(2)) + '</table>'
