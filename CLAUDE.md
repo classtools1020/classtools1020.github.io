@@ -161,3 +161,4 @@
 ## 本機預覽小技巧
 - 雲端容器連不到 github.io；在 repo 外建一個資料夾，用 symlink 放 `light-refract`、`games`、`light`，再 `python3 -m http.server` 預覽。
 - Playwright 截圖 3D 頁要加 `--use-angle=swiftshader`；`window.__news3dDT=0.25` 可加速動畫驗證。
+- 10/17：10/21 代課頁（d5c069ac59/d1021）改四步：MV 跟著唱 → 額溫槍模擬器 → 兩人一組真的量＋寫學習單 → 讀數字挑戰。MV 複製進代課包（mv.html、mv/song.mp3、img/4 張、files/T2-mv.mp4，經 clean() 無 classtools）。老師問要不要改做 Wordwall：建議不用，讀數字挑戰就是同類遊戲且內容一致。
