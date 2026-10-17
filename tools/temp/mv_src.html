@@ -22,6 +22,17 @@ h1 em{font-family:"Bungee",sans-serif;font-style:normal;color:var(--g);font-size
 .wrap:fullscreen{max-width:none;border-radius:0;background:#000}
 #stage{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;overflow:hidden;font-weight:900}
 .L{position:absolute;inset:0}
+#fx{position:absolute;inset:0;background:radial-gradient(1200px 700px at 50% 0%,#17324a,#06090d 72%)}
+.floorw{position:absolute;left:-400px;right:-400px;top:440px;bottom:0;perspective:420px;overflow:hidden}
+.floor{position:absolute;left:0;right:0;bottom:0;height:1600px;transform-origin:50% 100%;transform:rotateX(72deg);
+  background-image:linear-gradient(rgba(63,216,255,.55) 3px,transparent 3px),linear-gradient(90deg,rgba(54,226,122,.45) 3px,transparent 3px);background-size:120px 120px;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 40%);mask-image:linear-gradient(180deg,transparent,#000 40%)}
+.sun{position:absolute;left:50%;top:300px;width:520px;height:260px;margin-left:-260px;border-radius:260px 260px 0 0;background:linear-gradient(180deg,#ffd94a,#ff4a5c 70%);opacity:.22;filter:blur(2px)}
+.eq{position:absolute;left:90px;right:90px;bottom:0;height:170px;display:flex;align-items:flex-end;gap:12px;opacity:.38}
+.eq i{flex:1;border-radius:10px 10px 0 0;background:linear-gradient(0deg,#36e27a,#3fd8ff 60%,#ff6fb5)}
+.pt{position:absolute;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 12px #3fd8ff}
+#wipe{position:absolute;top:-200px;bottom:-200px;width:1100px;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,#36e27a 18%,#3fd8ff 50%,#ffd94a 82%,transparent);opacity:0;pointer-events:none;z-index:4}
+#dancer{position:absolute;left:1390px;top:560px;width:170px;z-index:3;opacity:0;transform-origin:50% 100%}#dancer svg{width:100%;height:auto;display:block}
 .bg{position:absolute;inset:0;background:radial-gradient(1200px 700px at 30% 20%,#132538,#06090d 70%)}
 .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(63,216,255,.07) 2px,transparent 2px),linear-gradient(90deg,rgba(63,216,255,.07) 2px,transparent 2px);background-size:80px 80px}
 .ph{position:absolute;left:40px;top:118px;width:1000px;height:563px;border-radius:26px;overflow:hidden;box-shadow:0 0 0 5px #fff,0 26px 60px rgba(0,0,0,.6)}
@@ -102,7 +113,10 @@ body.rec .wrap{max-width:none;width:100vw;height:100vh;border-radius:0;box-shado
   <h1>嗶一聲就知道<em>BEEP! MV</em></h1>
   <div class="wrap" id="wrap">
     <div id="stage">
+      <div class="L" id="fx"><div class="sun" id="sun"></div><div class="floorw"><div class="floor" id="floor"></div></div><div id="pts"></div><div class="eq" id="eq"></div></div>
       <div class="L" id="scene"></div>
+      <div id="dancer"></div>
+      <div id="wipe"></div>
       <div class="flash" id="flash"></div>
       <div class="sec" id="sec">🎵 前奏</div>
       <div class="kara" id="kara"></div>
@@ -132,6 +146,7 @@ body.rec .wrap{max-width:none;width:100vw;height:100vh;border-radius:0;box-shado
 (function(){
 const LINES=/*DATA*/;
 const MASCOT=`/*MASCOT*/`;
+const EQ=/*EQ*/;
 const BEAT=60/125,B0=0.13,END=174.6;
 const $=id=>document.getElementById(id);
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
@@ -154,7 +169,7 @@ const SEGS=[];
 LINES.forEach((ln,i)=>{SEGS.push(Object.assign({kind:'line',i},ln));
   if(ln.n-ln.e>3)SEGS.push({kind:'inter',s:ln.e,e:ln.n,n:ln.n,sec:'🎶 間奏',vis:'INTER',prev:ln.vis,next:LINES[i+1]});});
 SEGS.unshift({kind:'intro',s:0,e:LINES[0].s,n:LINES[0].s,sec:'🎵 前奏',vis:'INTRO'});
-function segAt(t){let k=0;for(let i=0;i<SEGS.length;i++)if(t>=SEGS[i].s-.25)k=i;return k;}
+function segAt(t){let k=0;for(let i=0;i<SEGS.length;i++)if(t>=SEGS[i].s-.12)k=i;return k;}
 
 /* ---------- 卡拉 OK ---------- */
 function karaHTML(ln){let h='',ci=0;const toks=ln.ch;
@@ -200,10 +215,10 @@ SC.title={html:()=>`<div class="full"><div class="in" id="kbT"><img src="img/tea
   <div class="mascot" id="msc" style="left:1280px;top:330px">${MASCOT}</div>`,
   draw(sg,t,root){const lt=t-sg.s;kb($('kbT'),lt+8,14,1.15,1,.5,.4);popEl($('t1'),seg(t,findT(sg,'溫')-.1,findT(sg,'溫')+.4));const tc=findT(sg,'集');popEl($('t2'),seg(t,tc-.1,tc+.3),`scale(${1+.06*beatK(t)})`);
     $('msc').style.transform=`translateY(${-30*beatK(t)}px) rotate(${Math.sin(t*4)*6}deg)`;}};
-SC.title2={html:()=>`<div class="bg"></div><div class="grid"></div><div class="steps6">${STEPS.map((s,i)=>`<div class="st" data-i="${i}"><b>${i+1}</b>${s[1]} ${s[0]}</div>`).join('')}</div>
+SC.title2={html:()=>`<div class="steps6">${STEPS.map((s,i)=>`<div class="st" data-i="${i}"><b>${i+1}</b>${s[1]} ${s[0]}</div>`).join('')}</div>
   <div style="position:absolute;left:0;right:0;top:40px;text-align:center"><span class="neon" id="t3" style="--nc:#3fd8ff;font-size:76px">量體溫・六步驟</span></div>`,
   draw(sg,t,root){const lt=t-sg.s;popEl($('t3'),seg(lt,0,.4));root.querySelectorAll('.st').forEach((e,i)=>{popEl(e,seg(lt,.3+i*.5,.7+i*.5));});}};
-function stepScene(n,extra){return{html:()=>`<div class="bg"></div><div class="grid"></div>${photoHTML(PH['S'+n][0])}
+function stepScene(n,extra){return{html:()=>`${photoHTML(PH['S'+n][0])}
   <div class="side"><div class="num" id="nm">${n}</div><div class="word" id="wd">${STEPS[n-1][0]}</div><div class="hint" id="hn">${STEPS[n-1][1]}</div></div>`,
   draw(sg,t,root){const lt=t-sg.s;const p=PH['S'+n];kb(root.querySelector('.ph .in'),lt,3.6,1,1.22,p[1],p[2]);
     popEl($('nm'),seg(lt,-.1,.35),`scale(${1+.07*beatK(t)})`);popEl($('wd'),seg(lt,.35,.8));popEl($('hn'),seg(lt,.7,1.1));if(extra)extra(sg,t,root);}};}
@@ -215,19 +230,19 @@ SC.S3=stepScene(3,(sg,t,root)=>{const ov=root.querySelector('.ph .ov');if(!ov.in
 SC.S4=stepScene(4,(sg,t,root)=>{const ov=root.querySelector('.ph .ov');if(!ov.innerHTML)ov.innerHTML=`<div class="gunlcd" id="g1" style="left:356px;top:262px;width:118px;font-size:52px;line-height:60px">36.8</div><div id="rgs"></div>`;
   const tb=findT(sg,'按'),td=findT(sg,'數');$('g1').style.opacity=t>=td?1:0;popEl($('g1'),seg(t,td,td+.3),'skewY(-4deg)');
   $('rgs').innerHTML=[0,1,2].map(i=>{const k=seg(t,tb+i*.18,tb+i*.18+.9);return k>0&&k<1?`<div class="ring" style="left:415px;top:282px;width:${80+k*420}px;height:${80+k*420}px;opacity:${1-k}"></div>`:'';}).join('');});
-SC.S5={html:()=>`<div class="bg"></div><div class="grid"></div><div class="side" style="left:0;width:1600px;top:120px;height:600px">
+SC.S5={html:()=>`<div class="side" style="left:0;width:1600px;top:120px;height:600px">
   <div class="num" id="nm" style="width:170px;height:170px;font-size:120px">5</div><div class="lcd big" id="lc" style="padding:0 60px">36.9</div><div class="chars" id="cs"><span>三</span><span>十</span><span>六</span><span>點</span><span>九</span><span>度</span></div></div>`,
   draw(sg,t,root){const lt=t-sg.s;popEl($('nm'),seg(lt,-.1,.3));popEl($('lc'),seg(lt,.3,.7));const a=findT(sg,'從'),b=sg.e;root.querySelectorAll('#cs span').forEach((s,i)=>{const on=t>=a+(b-a)*i/6;s.className=on?'on':'';s.style.transform=on?`scale(${1+.15*(1-seg(t,a+(b-a)*i/6,a+(b-a)*i/6+.3))})`:'';});}};
-SC.S5b={html:()=>`<div class="bg"></div><div class="grid"></div><div class="side" style="left:0;width:1600px;top:110px;height:600px">
+SC.S5b={html:()=>`<div class="side" style="left:0;width:1600px;top:110px;height:600px">
   <div class="lcd" id="lc" style="font-size:110px;padding:0 50px">36.9</div><div class="chars" id="cs"></div><div class="hint" id="hn" style="font-size:44px">一個字都不能飛走！</div></div>`,
   draw(sg,t,root){const cs=$('cs');if(!cs.innerHTML)cs.innerHTML=sg.ch.slice(0,5).map(c=>`<span>${c[0]}</span>`).join('');
     cs.querySelectorAll('span').forEach((s,i)=>{const t0=sg.ch[i][1];const k=seg(t,t0-.05,t0+.25);s.className=t>=t0?'on':'';s.style.transform=`translateY(${(1-eo(k))*-140}px) rotate(${(1-k)*-20}deg)`;});
     popEl($('hn'),seg(t,findT(sg,'一字')-.1,findT(sg,'一字')+.3));}};
-SC.S6={html:()=>`<div class="bg"></div><div class="grid"></div><div class="side" style="left:0;width:1600px;top:110px;height:600px">
+SC.S6={html:()=>`<div class="side" style="left:0;width:1600px;top:110px;height:600px">
   <div class="num" id="nm" style="width:170px;height:170px;font-size:120px">6</div><div class="boxes" id="bx"><i></i><i></i><i class="dot">.</i><i></i><span style="font-size:90px;color:#fff;margin-left:8px">度</span></div><div class="hint" id="hn" style="font-size:44px">✏️ 寫進表格裡</div></div>`,
   draw(sg,t,root){const lt=t-sg.s;popEl($('nm'),seg(lt,-.1,.3));const a=findT(sg,'記'),b=sg.e-.4;const v=['3','6',null,'8'];
     root.querySelectorAll('#bx i').forEach((e,i)=>{if(v[i]==null)return;const ti=a+(b-a)*i/4;e.textContent=t>=ti?v[i]:'';e.style.transform=t>=ti?`scale(${1+.2*(1-seg(t,ti,ti+.3))})`:'';});popEl($('hn'),seg(t,findT(sg,'寫')-.1,findT(sg,'寫')+.3));}};
-function rulerScene(kind){return{html:()=>`<div class="bg"></div><div class="grid"></div>${rulerHTML(430)}<div class="stamp" id="sp" style="left:560px;top:64px;font-size:84px"></div>`,
+function rulerScene(kind){return{html:()=>`${rulerHTML(430)}<div class="stamp" id="sp" style="left:560px;top:64px;font-size:84px"></div>`,
   draw(sg,t,root){const lt=t-sg.s;let v=36.8,lab='',col='',tL=0;
     if(kind==='OK'){v=lerp(35.4,36.8,eo(seg(lt,0,1.2)));const tz=findT(sg,'正常');if(t>=tz){lab='✅ 正常';col='var(--g)';tL=tz;}}
     else if(kind==='TELL'){const t0=sg.s,tY=findT(sg,'以上');v=t<tY?lerp(36.8,37.5,eo(seg(t,t0,tY))):lerp(37.5,37.9,eo(seg(t,tY,tY+.6)));const tz=findT(sg,'告訴');if(t>=tz-.2){lab='🙋 告訴老師';col='var(--r)';tL=tz-.2;}}
@@ -237,26 +252,26 @@ function rulerScene(kind){return{html:()=>`<div class="bg"></div><div class="gri
     const sp=$('sp');if(sp.dataset.l!==lab){sp.dataset.l=lab;sp.textContent=lab;sp.style.color=col;}
     if(lab){popEl(sp,seg(t,tL,tL+.35),'rotate(-6deg)');sp.style.left=(800-sp.offsetWidth/2)+'px';}else sp.style.opacity=0;}};}
 SC.OK=rulerScene('OK');SC.TELL=rulerScene('TELL');SC.RULER=rulerScene('RULER');SC.RULER2=rulerScene('RULER2');
-SC.DOT={html:()=>`<div class="bg"></div><div class="grid"></div><div class="side" style="left:0;width:1600px;top:100px;height:620px">
+SC.DOT={html:()=>`<div class="side" style="left:0;width:1600px;top:100px;height:620px">
   <div style="display:flex;align-items:flex-end;font-family:Consolas,monospace;font-size:300px;line-height:1;color:#fff"><span>36</span><span id="dt" style="color:var(--y);text-shadow:0 0 40px var(--y)">.</span><span>8</span></div>
   <div class="tag" id="bb" style="position:relative;font-size:90px;padding:6px 50px">唸「點」！</div></div>`,
   draw(sg,t,root){const lt=t-sg.s;$('dt').style.transform=`scale(${1+.5*beatK(t)})`;const tz=findT(sg,'唸');popEl($('bb'),seg(t,tz-.1,tz+.35),'rotate(-4deg)');}};
-SC.DOT2={html:()=>`<div class="bg"></div><div class="grid"></div><div class="side" style="left:0;width:1600px;top:90px;height:640px">
+SC.DOT2={html:()=>`<div class="side" style="left:0;width:1600px;top:90px;height:640px">
   <div class="chars" id="cs"><span>三</span><span>十</span><span>六</span><span>點</span><span>八</span><span>度</span></div>
   <div id="wr" style="font-size:64px;color:#ff9aa5;text-decoration:line-through;text-decoration-thickness:8px">三十六度 ✗</div></div>`,
   draw(sg,t,root){const a=sg.s,b=sg.e;root.querySelectorAll('#cs span').forEach((s,i)=>{const ti=a+(b-a)*i/7;s.className=t>=ti?'on':'';});popEl($('wr'),seg(t,findT(sg,'都'),findT(sg,'都')+.4));}};
-SC.BEEP={html:()=>`<div class="bg"></div><div class="grid"></div><div id="rgs"></div><div class="side" style="left:0;width:1600px;top:100px;height:620px">
+SC.BEEP={html:()=>`<div id="rgs"></div><div class="side" style="left:0;width:1600px;top:100px;height:620px">
   <div class="neon eng" id="bp" style="--nc:#36e27a;font-size:190px">BEEP!</div><div class="lcd big" id="lc" style="padding:0 60px">36.8</div></div>`,
   draw(sg,t,root){const tb=sg.s;popEl($('bp'),seg(t,tb-.05,tb+.3),`scale(${1+.08*beatK(t)})`);popEl($('lc'),seg(t,findT(sg,'知')-.1,findT(sg,'知')+.3));
     $('flash').style.opacity=.55*(1-seg(t,tb,tb+.25))*(t>=tb?1:0);
     $('rgs').innerHTML=[0,1,2,3].map(i=>{const k=seg(t,tb+i*.22,tb+i*.22+1.1);return k>0&&k<1?`<div class="ring" style="left:800px;top:330px;width:${200+k*1300}px;height:${200+k*1300}px;opacity:${1-k}"></div>`:'';}).join('');}};
-SC.READ={html:()=>`<div class="bg"></div><div class="grid"></div><div class="side" style="left:0;width:1600px;top:90px;height:640px">
+SC.READ={html:()=>`<div class="side" style="left:0;width:1600px;top:90px;height:640px">
   <div class="lcd big" id="lc" style="padding:0 60px">36.8</div><div style="display:flex;align-items:center;gap:20px"><span id="mg" style="font-size:120px">📢</span><div class="chars" id="cs"><span>三</span><span>十</span><span>六</span><span>點</span><span>八</span><span>度</span></div></div></div>`,
   draw(sg,t,root){const a=findT(sg,'大聲'),b=sg.e;$('mg').style.transform=`scale(${1+.2*beatK(t)}) rotate(-10deg)`;root.querySelectorAll('#cs span').forEach((s,i)=>{const ti=a+(b-a)*i/6;s.className=t>=ti?'on':'';});}};
-function quick(n){return{html:()=>`<div class="bg"></div><div class="grid"></div><div class="steps6" style="top:110px">${STEPS.map((s,i)=>`<div class="st${i===n-1?' now':''}" data-i="${i}"><b>${i+1}</b>${s[1]} ${s[0]}</div>`).join('')}</div>`,
+function quick(n){return{html:()=>`<div class="steps6" style="top:110px">${STEPS.map((s,i)=>`<div class="st${i===n-1?' now':''}" data-i="${i}"><b>${i+1}</b>${s[1]} ${s[0]}</div>`).join('')}</div>`,
   draw(sg,t,root){const lt=t-sg.s;root.querySelectorAll('.st').forEach((e,i)=>{if(i<n-1){e.style.opacity=.55;e.style.transform='';}else if(i===n-1){e.style.opacity=1;e.style.transform=`scale(${1+.18*(1-eo(seg(lt,0,.35)))+.04*beatK(t)})`;}else{e.style.opacity=.25;e.style.transform='';}});}};}
 for(let n=1;n<=6;n++)SC['Q'+n]=quick(n);
-SC.INTER={html:sg=>`<div class="bg"></div><div class="grid"></div><div style="position:absolute;left:0;right:0;top:40px;text-align:center"><span class="neon" style="--nc:#ffd94a;font-size:66px">🎶 跟著音樂，複習六步驟</span></div>
+SC.INTER={html:sg=>`<div style="position:absolute;left:0;right:0;top:40px;text-align:center"><span class="neon" style="--nc:#ffd94a;font-size:66px">🎶 跟著音樂，複習六步驟</span></div>
   <div class="steps6" style="top:150px">${STEPS.map((s,i)=>`<div class="st" data-i="${i}"><b>${i+1}</b>${s[1]} ${s[0]}</div>`).join('')}</div>`,
   draw(sg,t,root){const lt=t-sg.s;const k=Math.floor((lt/BEAT)/4)%6;root.querySelectorAll('.st').forEach((e,i)=>{e.classList.toggle('now',i===k);e.style.transform=i===k?`scale(${1.04+.03*beatK(t)})`:'';});}};
 SC.END={html:()=>`<div class="full"><div class="in" id="kbE"><img src="img/team.jpg" alt=""></div><div class="shade"></div></div>
@@ -265,6 +280,26 @@ SC.END={html:()=>`<div class="full"><div class="in" id="kbE"><img src="img/team.
   draw(sg,t,root){const lt=t-sg.s;kb($('kbE'),lt,6,1,1.12,.5,.4);const tz=findT(sg,'任務');popEl($('sp'),seg(t,tz-.1,tz+.4),'rotate(-6deg)');
     $('msc').style.transform=`translateY(${-40*beatK(t)}px) rotate(${Math.sin(t*5)*8}deg)`;$('cf').style.opacity=t>=tz?1:0;drawConf($('cf'),t-tz);}};
 
+/* ---------- 動態背景：霓虹地板、等化器（真實音樂）、粒子、節拍鏡頭、轉場、吉祥物跳舞 ---------- */
+$('eq').innerHTML='<i></i>'.repeat(EQ.n);$('dancer').innerHTML=MASCOT;
+let pts='';for(let i=0;i<34;i++)pts+='<div class="pt"></div>';$('pts').innerHTML=pts;
+function eqAt(t){const f=t*EQ.fps,i=Math.max(0,Math.min(Math.floor(f),EQ.d.length/EQ.n-2)),r=clamp(f-i);const o=[];
+  for(let b=0;b<EQ.n;b++){const a=+EQ.d[i*EQ.n+b],c=+EQ.d[(i+1)*EQ.n+b];o.push((a+(c-a)*r)/9);}return o;}
+function drawFX(sg,t){
+  const B=(t-B0)/BEAT,bk=beatK(t),hot=/副歌|快問快答/.test(sg.sec||'');
+  $('floor').style.backgroundPosition=`0 ${(B*60)%120}px`;
+  const e=eqAt(t);$('eq').querySelectorAll('i').forEach((el,i)=>{const v=e[i];el.style.height=(6+v*160)+'px';});
+  const avg=e.reduce((a,b)=>a+b,0)/e.length;$('sun').style.opacity=.14+.22*avg;$('sun').style.transform=`scale(${1+.08*bk})`;
+  $('pts').querySelectorAll('.pt').forEach((p,i)=>{const sp=40+(i*37)%70,x=(i*173)%1600,y=900-((t*sp+i*97)%1000);p.style.transform=`translate(${x+Math.sin(t+i)*30}px,${y}px) scale(${.5+((i*7)%10)/10})`;p.style.opacity=.25+.5*avg;});
+  // 節拍鏡頭：每拍輕推、副歌加一點晃動
+  const sh=hot?Math.sin(B*7.3)*5*bk:0;$('scene').style.transform=`translate(${sh}px,${hot?Math.cos(B*5.1)*3*bk:0}px) scale(${1+(hot?.022:.01)*bk})`;
+  // 轉場：彩色斜切掃過
+  const w=seg(t,sg.s-.32,sg.s+.08);const wp=$('wipe');if(w>0&&w<1&&sg.kind!=='intro'){wp.style.opacity=1;wp.style.left=lerp(-1500,1900,eo(w))+'px';}else wp.style.opacity=0;
+  // 吉祥物跳舞（副歌、快問快答）
+  const dn=sg.vis==='BEEP'||sg.vis==='READ';const d=$('dancer');d.style.opacity=dn?1:0;
+  if(dn)d.style.transform=`translateY(${-46*bk}px) rotate(${Math.sin(B*Math.PI)*12}deg) scale(${1+.1*bk},${1-.06*bk})`;
+}
+
 /* ---------- 主繪製 ---------- */
 let curSeg=-1;
 function render(t){
@@ -272,7 +307,7 @@ function render(t){
   if(k!==curSeg){curSeg=k;const sc=SC[sg.vis]||SC.INTER;$('scene').innerHTML=sc.html(sg);$('sec').textContent=sg.sec;$('flash').style.opacity=0;karaKey=null;
     if(sg.kind==='line'){const sk=secKey(sg);document.querySelectorAll('#chips button').forEach(b=>b.classList.toggle('now',b.dataset.k===sk));}}
   (SC[sg.vis]||SC.INTER).draw(sg,t,$('scene'));
-  drawKara(sg,t);
+  drawKara(sg,t);drawFX(sg,t);
 }
 window.__mv={render,SEGS,END};
 
