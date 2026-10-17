@@ -54,3 +54,11 @@ temp/img/dispenser-card.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anythin
 # 已裁切成 g0–g5：games/img/mood/ggrid.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/OYTydAXW5cxlAmxg8GZxG/zoKArNRhWrswS7YJa37Hh.jpg
 # 已改存為 dispenser-measure.jpg：https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/k1Y8EAUopvqY5VU5bI3Y5/nOJu3Szed8dExIH1cOrSq.jpg
 # 已改存為 bath.jpg：https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/tSzFvl28o7YhxAHkLWpJq/asYaDiUnE3Bw6HDhoqbVW.jpg
+temp/img/mv-walk.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/xYEF06xtPiWnMLgJ9cTVW/ns3R8BLwnAI9-j0irMEaI.jpg
+temp/img/mv-beep.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/FuJPBRPYNMxCgT0SnPyPa/CR7iEmTgpQwh3uU555i10.jpg
+temp/img/mv-read.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/SZdeOnzCXAycq8cbYFREG/P3KLc87Pz9b55oXQWmL7m.jpg
+temp/img/mv-write.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/UHNOgvdFsE59kkmlJdATq/poXGk0Nb66uUCRoymsZ2t.jpg
+temp/img/mv-hand.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/hC406fVITRkGs33VSbCp9/bCAed_cRA1zRWFqXNneMU.jpg
+temp/img/mv-dance.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/ucdQqcFVTYt4On6p3LpiJ/WKQg_Ly7gVHrZtT2gbpX0.jpg
+temp/img/mv-ok.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/KwLtDABJd4GlQie8LUsrk/xd68-U7_7kAwM6Mot8zpj.jpg
+temp/img/mv-win.jpg https://cdn.gamma.app/tbnrkotu6wp8gav/design-anything/B5xS8c9NjZFDOPeojo0wZ/HZsWl4Ocncyez9mmbfH7v.jpg
