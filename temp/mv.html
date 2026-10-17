@@ -23,15 +23,11 @@ h1 em{font-family:"Bungee",sans-serif;font-style:normal;color:var(--g);font-size
 #stage{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;overflow:hidden;font-weight:900}
 .L{position:absolute;inset:0}
 #fx{position:absolute;inset:0;background:radial-gradient(1200px 700px at 50% 0%,#17324a,#06090d 72%)}
-.floorw{position:absolute;left:-400px;right:-400px;top:440px;bottom:0;perspective:420px;overflow:hidden}
-.floor{position:absolute;left:0;right:0;bottom:0;height:1600px;transform-origin:50% 100%;transform:rotateX(72deg);
-  background-image:linear-gradient(rgba(63,216,255,.55) 3px,transparent 3px),linear-gradient(90deg,rgba(54,226,122,.45) 3px,transparent 3px);background-size:120px 120px;
-  -webkit-mask-image:linear-gradient(180deg,transparent,#000 40%);mask-image:linear-gradient(180deg,transparent,#000 40%)}
-.sun{position:absolute;left:50%;top:300px;width:520px;height:260px;margin-left:-260px;border-radius:260px 260px 0 0;background:linear-gradient(180deg,#ffd94a,#ff4a5c 70%);opacity:.22;filter:blur(2px)}
+.sun{position:absolute;left:50%;top:300px;width:520px;height:260px;margin-left:-260px;border-radius:260px 260px 0 0;background:linear-gradient(180deg,#ffd94a,#ff4a5c 70%);opacity:.22}
 .eq{position:absolute;left:90px;right:90px;bottom:0;height:170px;display:flex;align-items:flex-end;gap:12px;opacity:.38}
 .eq i{flex:1;border-radius:10px 10px 0 0;background:linear-gradient(0deg,#36e27a,#3fd8ff 60%,#ff6fb5)}
 .pt{position:absolute;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 12px #3fd8ff}
-#fxbg{position:absolute;inset:0;overflow:hidden}#fxbg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s;filter:saturate(1.15) contrast(1.05)}
+#fxbg{position:absolute;inset:0;overflow:hidden}#fxbg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
 #fxbg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,9,13,.55),rgba(6,9,13,.82) 75%)}
 #wipe{position:absolute;top:-200px;bottom:-200px;width:1100px;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,#36e27a 18%,#3fd8ff 50%,#ffd94a 82%,transparent);opacity:0;pointer-events:none;z-index:4}
 #dancer{position:absolute;left:1390px;top:560px;width:170px;z-index:3;opacity:0;transform-origin:50% 100%}#dancer svg{width:100%;height:auto;display:block}
@@ -115,7 +111,7 @@ body.rec .wrap{max-width:none;width:100vw;height:100vh;border-radius:0;box-shado
   <h1>嗶一聲就知道<em>BEEP! MV</em></h1>
   <div class="wrap" id="wrap">
     <div id="stage">
-      <div class="L" id="fx"><div id="fxbg"><img id="fxbgi" alt=""></div><div class="sun" id="sun"></div><div class="floorw"><div class="floor" id="floor"></div></div><div id="pts"></div><div class="eq" id="eq"></div></div>
+      <div class="L" id="fx"><div id="fxbg"><img id="fxbgi" alt=""></div><div class="sun" id="sun"></div><svg id="floorsvg" viewBox="0 0 1600 900" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><g id="fv"></g><g id="fh"></g></svg><div id="pts"></div><div class="eq" id="eq"></div></div>
       <div class="L" id="scene"></div>
       <div id="dancer"></div>
       <div id="wipe"></div>
@@ -210,7 +206,7 @@ function drawKara(sg,t){const box=$('kara');
 /* ---------- 共用元件 ---------- */
 const STEPS=[['撥開瀏海','💇'],['對準額頭中間','🎯'],['距離一根手指','☝️'],['按一下 聽嗶','🔊'],['整個數字讀出來','🗣️'],['記下來','✏️']];
 const PH={S1:['bangs',.5,.4],S2:['forehead',.65,.22],S3:['forehead',.61,.22],S4:['gun',.41,.5]};
-function photoHTML(name){return `<div class="ph"><div class="in"><img src="img/${name}.jpg" alt=""><div class="ov" style="position:absolute;inset:0"></div></div></div>`;}
+function photoHTML(name){return `<div class="ph"><div class="in"><img src="mv/img/${name}.jpg" alt=""><div class="ov" style="position:absolute;inset:0"></div></div></div>`;}
 function kb(el,lt,dur,z0,z1,fx,fy){const k=eo(clamp(lt/dur));const z=lerp(z0,z1,k);el.style.transformOrigin=`${fx*100}% ${fy*100}%`;el.style.transform=`scale(${z})`;}
 function popEl(el,k,base){base=base||'';el.style.opacity=clamp(k*1.6);el.style.transform=`${base} scale(${Math.max(.001,back(k))})`;}
 function chT(sg,i){const c=sg.ch;return c[Math.min(i,c.length-1)][1];}
@@ -225,11 +221,11 @@ function drawConf(root,lt){root.querySelectorAll('.conf').forEach(c=>{const d=+c
 
 /* ---------- 場景 ---------- */
 const SC={};
-SC.INTRO={html:()=>`<div class="full"><div class="in" id="kbI"><img src="img/team.jpg" alt=""></div><div class="shade"></div></div>
+SC.INTRO={html:()=>`<div class="full"><div class="in" id="kbI"><img src="mv/img/team.jpg" alt=""></div><div class="shade"></div></div>
   <div style="position:absolute;left:0;right:0;top:250px;text-align:center"><div class="neon eng" id="i1" style="--nc:#36e27a;font-size:120px">BEEP!</div>
   <div class="neon" id="i2" style="--nc:#3fd8ff;font-size:96px;margin-top:10px">嗶一聲就知道</div></div>`,
   draw(sg,t,root){kb($('kbI'),t,12,1.15,1,.5,.4);popEl($('i1'),seg(t,1,1.6));popEl($('i2'),seg(t,2.2,2.8));}};
-SC.title={html:()=>`<div class="full"><div class="in" id="kbT"><img src="img/mv-walk.jpg" alt=""></div><div class="shade"></div></div>
+SC.title={html:()=>`<div class="full"><div class="in" id="kbT"><img src="mv/img/mv-walk.jpg" alt=""></div><div class="shade"></div></div>
   <div style="position:absolute;left:0;right:0;top:210px;text-align:center"><div class="neon" id="t1" style="--nc:#36e27a;font-size:150px">溫度特勤隊</div>
   <div class="neon eng" id="t2" style="--nc:#ffd94a;font-size:90px;margin-top:6px">集合！</div></div>
   <div class="mascot" id="msc" style="left:1280px;top:330px">${MASCOT}</div>`,
@@ -294,7 +290,7 @@ for(let n=1;n<=6;n++)SC['Q'+n]=quick(n);
 SC.INTER={html:sg=>`<div style="position:absolute;left:0;right:0;top:40px;text-align:center"><span class="neon" style="--nc:#ffd94a;font-size:66px">🎶 跟著音樂，複習六步驟</span></div>
   <div class="steps6" style="top:150px">${STEPS.map((s,i)=>`<div class="st" data-i="${i}"><b>${i+1}</b>${s[1]} ${s[0]}</div>`).join('')}</div>`,
   draw(sg,t,root){const lt=t-sg.s;const k=Math.floor((lt/BEAT)/4)%6;root.querySelectorAll('.st').forEach((e,i)=>{e.classList.toggle('now',i===k);e.style.transform=i===k?`scale(${1.04+.03*beatK(t)})`:'';});}};
-SC.END={html:()=>`<div class="full"><div class="in" id="kbE"><img src="img/mv-win.jpg" alt=""></div><div class="shade"></div></div>
+SC.END={html:()=>`<div class="full"><div class="in" id="kbE"><img src="mv/img/mv-win.jpg" alt=""></div><div class="shade"></div></div>
   <div class="stamp" id="sp" style="left:400px;top:220px;color:var(--y);font-size:130px">任務完成！</div>
   <div class="mascot" id="msc" style="left:1300px;top:420px">${MASCOT}</div><div id="cf">${confetti(60)}</div>`,
   draw(sg,t,root){const lt=t-sg.s;kb($('kbE'),lt,6,1,1.12,.5,.4);const tz=findT(sg,'任務');popEl($('sp'),seg(t,tz-.1,tz+.4),'rotate(-6deg)');
@@ -302,15 +298,16 @@ SC.END={html:()=>`<div class="full"><div class="in" id="kbE"><img src="img/mv-wi
 
 /* ---------- 動態背景：霓虹地板、等化器（真實音樂）、粒子、節拍鏡頭、轉場、吉祥物跳舞 ---------- */
 $('eq').innerHTML='<i></i>'.repeat(EQ.n);$('dancer').innerHTML=MASCOT;
-let pts='';for(let i=0;i<34;i++)pts+='<div class="pt"></div>';$('pts').innerHTML=pts;
+(function(){let v='';for(let x=-2400;x<=4000;x+=200)v+=`<line x1="${800+(x-800)*.06}" y1="470" x2="${x}" y2="900" stroke="#36e27a" stroke-opacity=".16" stroke-width="2"/>`;$('fv').innerHTML=v;let h='';for(let i=0;i<12;i++)h+='<line x1="0" x2="1600" stroke="#3fd8ff" stroke-width="2"/>';$('fh').innerHTML=h;})();
+let pts='';for(let i=0;i<20;i++)pts+='<div class="pt"></div>';$('pts').innerHTML=pts;
 function eqAt(t){const f=t*EQ.fps,i=Math.max(0,Math.min(Math.floor(f),EQ.d.length/EQ.n-2)),r=clamp(f-i);const o=[];
   for(let b=0;b<EQ.n;b++){const a=+EQ.d[i*EQ.n+b],c=+EQ.d[(i+1)*EQ.n+b];o.push((a+(c-a)*r)/9);}return o;}
 const BG={title2:'mv-walk',S5:'mv-read',S5b:'mv-read',S6:'mv-write',DOT:'mv-beep',DOT2:'mv-beep',BEEP:'mv-beep',READ:'mv-read',OK:'mv-ok',TELL:'mv-hand',RULER:'mv-ok',RULER2:'mv-hand',INTER:'mv-dance',Q1:'mv-dance',Q2:'mv-dance',Q3:'mv-dance',Q4:'mv-dance',Q5:'mv-dance',Q6:'mv-dance'};
-[...new Set(Object.values(BG).concat(['mv-walk','mv-win']))].forEach(n=>{const im=new Image();im.src='img/'+n+'.jpg';});
+if(REC)[...new Set(Object.values(BG).concat(['mv-walk','mv-win']))].forEach(n=>{const im=new Image();im.src='mv/img/'+n+'.jpg';});
 function drawFX(sg,t){
-  const bn=BG[sg.vis],bi=$('fxbgi');if(bn){const src='img/'+bn+'.jpg';if(bi.dataset.s!==src){bi.dataset.s=src;bi.src=src;}bi.style.opacity=1;const kz=1.04+.1*eo(seg(t,sg.s-.2,(sg.n||sg.e)+.2));bi.style.transform=`scale(${kz}) translateX(${(seg(t,sg.s,sg.n||sg.e)-.5)*-30}px)`;}else bi.style.opacity=0;
+  const bn=BG[sg.vis],bi=$('fxbgi');if(bn){const src='mv/img/'+bn+'.jpg';if(bi.dataset.s!==src){bi.dataset.s=src;bi.src=src;}bi.style.opacity=1;const kz=1.04+.1*eo(seg(t,sg.s-.2,(sg.n||sg.e)+.2));bi.style.transform=`scale(${kz}) translateX(${(seg(t,sg.s,sg.n||sg.e)-.5)*-30}px)`;}else bi.style.opacity=0;
   const B=(t-B0)/BEAT,bk=beatK(t),hot=/副歌|快問快答/.test(sg.sec||'');
-  $('floor').style.backgroundPosition=`0 ${(B*60)%120}px`;
+  const ph=((B*.5)%1+1)%1;$('fh').querySelectorAll('line').forEach((l,i)=>{const d=(i+ph)/12,y=470+430*Math.pow(d,2.2);l.setAttribute('y1',y);l.setAttribute('y2',y);l.setAttribute('opacity',(d*.32).toFixed(2));});
   const e=eqAt(t);$('eq').querySelectorAll('i').forEach((el,i)=>{const v=e[i];el.style.height=(6+v*160)+'px';});
   const avg=e.reduce((a,b)=>a+b,0)/e.length;$('sun').style.opacity=.14+.22*avg;$('sun').style.transform=`scale(${1+.08*bk})`;
   $('pts').querySelectorAll('.pt').forEach((p,i)=>{const sp=40+(i*37)%70,x=(i*173)%1600,y=900-((t*sp+i*97)%1000);p.style.transform=`translate(${x+Math.sin(t+i)*30}px,${y}px) scale(${.5+((i*7)%10)/10})`;p.style.opacity=.25+.5*avg;});
