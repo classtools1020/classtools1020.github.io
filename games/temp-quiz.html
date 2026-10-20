@@ -104,6 +104,7 @@
   .pg.r{border-top-color:var(--red)}.pg.b{border-top-color:var(--blue)}
   @media(max-width:600px){.postgrid{grid-template-columns:repeat(2,1fr)}.tickets{width:100%}.ticket{flex:1;min-width:0}}
 </style>
+<link rel="stylesheet" href="quiz-show.css">
 </head>
 <body>
 <a class="fixbtn home" href="/light/" onclick="if(history.length>1){history.back();return false;}">⬅ 返回</a>
@@ -278,5 +279,6 @@ $("startBtn").onclick=()=>{ac();SND.whistle();$("start").classList.add("hide");}
 $("againBtn").onclick=()=>{idx=0;owner=Array(10).fill(null);score();document.querySelectorAll(".flag").forEach(f=>f.remove());legs.forEach(l=>l.done.setAttribute("opacity",0));placeTrain(C[0],-30);$("end").classList.add("hide");show();};
 placeTrain(C[0],-30);show();
 </script>
+<script src="quiz-show.js"></script>
 </body>
 </html>
