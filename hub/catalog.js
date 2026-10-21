@@ -12,6 +12,7 @@
     { id: 'games', name: '遊戲搶答', icon: '🎲', note: '全班分隊、搶答、闖關', color: '#6f9e6a', byType: 'game' },
     { id: 'mv', name: 'MV 劇場', icon: '🎵', note: '上課一起唱', color: '#8a7fc0', byType: 'mv' },
     { id: 'class', name: '開場與收心', icon: '🌿', note: '心情打卡、調節站、我做到了', color: '#5f9ea0' },
+    { id: 'aac', name: '溝通板 AAC', icon: '💬', note: '無口語學生用：說話、上課、小幫手、數字', color: '#4f86a8' },
     { id: 'print', name: '列印與 PPT', icon: '🖨️', note: '講義、學習單、教案、投影片', color: '#7b8fa6', byType: ['print', 'ppt'] },
     { id: 'archive', name: '舊教材區', icon: '📦', note: '以前的教材與早期版本，網址都還能用', color: '#a08a6a' }
   ];
@@ -126,6 +127,10 @@
   /* ===== 開場與收心 ===== */
   add('class', '開場與收心', 'checkin', 'tool', '心情打卡・調節站', '上課開場＋謝幕（#end）', '/games/checkin.html', [['謝幕', '/games/checkin.html#end']]);
   add('class', '開場與收心', 'breathe', 'tool', '光之呼吸站', '海浪聲・跟著呼吸', '/games/breathe.html');
+
+  /* ===== 溝通板 AAC（頁面放在 classtools1020/classtools1020 repo） ===== */
+  add('aac', '溝通板', 'aac-board', 'tool', 'AAC 溝通板', '說話・上課・先再・冷靜一下・小幫手・數字', '/classtools1020/aac-board.html');
+  add('aac', '列印', 'aac-qr', 'print', '溝通板 QR 碼', '平板相機掃描就打開，可貼在教室', '/classtools1020/aac-img/qr.png');
 
   /* ===== 舊教材 ===== */
   G = '以前的教材';

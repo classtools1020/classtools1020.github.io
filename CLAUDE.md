@@ -59,6 +59,7 @@
 - `index.html`：左側選單（首頁／我的收藏／溫度特勤隊／光線特勤隊＋任務一～五子選單／遊戲／MV／開場與收心／列印與PPT／舊教材／適應體育↗）＋上方「⬅ 返回」與麵包屑＋卡片（縮圖、類型標籤、篩選、☆收藏、最近開過、搜尋）。水彩田園風（霧藍、原創山景＋小學校，不放卡通角色）。手機選單收成 ☰。舊布幕版大門留在 `gala.html`。
 - **新增教材只要在 `hub/catalog.js` 加一行 `add(...)`**，縮圖：`python3 tools/hub/thumbs.py http://localhost:埠 id`（網頁截圖，3D 頁太慢就拿現成圖裁成 640×360 放 `img/hub/{id}.jpg`）、PDF 用 `tools/hub/pdfthumbs.py`。本機預覽要用會送 charset=utf-8 的伺服器，否則舊頁面截到亂碼。
 - 老師不要邀約、不要自我介紹，只要「好找、好點、好回去」。
+- **溝通板 AAC**（10/21）：左側選單「💬 溝通板 AAC」（catalog `sec: 'aac'`）。頁面本身在 `classtools1020/classtools1020` repo 的 `aac-board.html`（網址 `/classtools1020/aac-board.html`，QR 碼 `/classtools1020/aac-img/qr.png`）。頁面不放學生姓名；名字、照片、使用紀錄只存在平板本機。
 
 ## 上課簡報（新版，紙張＋墨色風）
 - 產生程式在 `tools/lessons/`：`kit.py`（共用元件：封面、流程頁、預測卡→打勾、證據照片＋光路線、句型小結、學習單預覽）、`lesson_l1.py`（10/12 透鏡第1節 → `light-lens/files/L1-lens.pptx`）、`lesson_r3.py`（10/14 折射第3節 → `light-refract/files/R3-refraction.pptx`）。
