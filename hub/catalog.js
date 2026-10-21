@@ -105,6 +105,7 @@
   G = '任務五・透鏡';
   add('light', G, 'lens-home', 'home', '任務五首頁', '透鏡', '/light-lens/');
   add('light', G, 'lens-detective', 'game', '微小世界探險隊', '竹東校園地圖＋放大鏡找線索', '/light-lens/detective.html');
+  add('light', G, 'lens-magnifier', 'mv', '放大鏡偵探出動', '臺灣腔配音卡通動畫＋9 題語音問答', '/classtools1020/magnifier-detective.html', [['偵探問答', '/classtools1020/magnifier-detective.html#quiz']]);
   add('light', G, 'lens-walk', 'tool', '牽手走沙灘', '3D 動畫：為什麼會聚焦', '/light-lens/walk.html');
   add('light', G, 'lens-board', 'game', '凸透鏡大挑戰', '翻牌搶答：16 題＋4 張驚喜卡', '/games/lens-board.html');
   add('light', G, 'lens-lab', 'tool', '透鏡實驗室', '放大鏡只會把東西變大嗎？', '/light-lens/lab.html');
