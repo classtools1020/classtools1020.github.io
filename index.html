@@ -175,6 +175,15 @@ h3.g small{font-family:var(--sans);font-size:13px;color:var(--ink3);font-weight:
 .phh span{font-weight:900;color:#fff;background:var(--pc);border-radius:99px;padding:1px 10px;font-size:13px}
 .phh em{font-style:normal;color:var(--ink2);font-size:13.5px;font-weight:700}
 .stp .mt{font-size:12.5px;font-weight:800;color:var(--ink2);margin-top:auto}
+.plan{margin-top:12px;border-top:1px dashed var(--line);padding-top:6px}
+.plan summary{cursor:pointer;font-weight:900;color:var(--ink2);padding:6px 0}
+.plan .pl{display:flex;gap:10px;font-size:14px;font-weight:700;color:var(--ink2);line-height:1.65;padding:3px 0}
+.plan .pl b{flex:none;width:6.5em;color:var(--ink)}
+.plan .cd{font-style:normal;font-weight:900;color:var(--mist-d);margin-right:4px}
+.plan small{margin-left:6px}
+.evt{margin-top:8px;display:grid;font-size:13.5px}
+.evt div{display:grid;grid-template-columns:2em minmax(0,1.4fr) 4em minmax(0,2fr);gap:8px;padding:6px 0;border-top:1px solid var(--line);color:var(--ink2);font-weight:700}
+.evt div span:nth-child(3){color:#3f7f78;font-weight:900}
 .teach{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
 .teach b{color:var(--ink2);font-weight:900;margin-right:4px}
 .teach a{font-weight:800;text-decoration:none;border:1px dashed var(--line);border-radius:10px;padding:5px 10px;background:#fffdf7}
@@ -313,7 +322,7 @@ let di=Math.max(0,DATES.findIndex(d=>d>=TODAY)); if(DATES.length&&DATES[di]<TODA
 const fmtD=d=>{const [y,m,dd]=d.split('-');return `${+m}/${+dd}（週${WK[new Date(d+'T12:00:00+08:00').getDay()]}）`;};
 let seen=ls.get('seen-'+TODAY,{});
 /* 三段式：引起動機／發展活動／綜合活動（步驟第 3 欄是段落、第 4 欄分鐘、第 5 欄教學方式） */
-const PH={A:['引起動機','連結生活經驗、引起好奇、說明今天的任務','#c98a2b'],B:['發展活動','老師示範 → 一起做 → 自己做，提示逐步減少','#3f7f78'],C:['綜合活動','統整重點、評量、生活類化與預告','#7a68a8']};
+const PH={A:['引起動機','連結生活經驗、引起好奇、說明今天的任務','#c98a2b'],B:['發展活動','老師示範 → 一起做 → 自己做，提示逐步減少','#3f7f78'],C:['總結活動','統整重點、評量、生活類化與預告','#7a68a8']};
 function stpHTML(lk,st,i){const m=st[0].match(/^(\p{Extended_Pictographic}[️‍\p{Extended_Pictographic}]*|▶)\s*(.*)$/u)||[0,'📄',st[0]];const k=lk+'-'+i;
   const meta=st[3]?`<span class="mt">⏱ ${st[3]} 分${st[4]?'・'+esc(st[4]):''}</span>`:'';
   return `<a class="stp${seen[k]?' seen':''}" href="${esc(st[1])}"${tgt(st[1])} data-seen="${k}"><span class="no">${seen[k]?'✓':i+1}</span><span class="em">${m[1]}</span><span class="lb">${esc(m[2])}</span>${meta}</a>`;}
@@ -324,6 +333,14 @@ function stepsBlock(lk,Ls){
   h+=`<div class="tbar">${['A','B','C'].map(k=>`<span style="flex:${sum(k)};background:${PH[k][2]}"></span>`).join('')}</div>`;
   ['A','B','C'].forEach((k,pi)=>{const it=Ls.steps.map((st,i)=>[st,i]).filter(z=>z[0][2]===k);if(!it.length)return;
     h+=`<section class="ph" style="--pc:${PH[k][2]}"><div class="phh"><b>${'①②③'[pi]} ${PH[k][0]}</b><span>${sum(k)} 分</span><em>${PH[k][1]}</em></div><div class="steps">${it.map(z=>stpHTML(lk,z[0],z[1])).join('')}</div></section>`;});
+  if(Ls.std){const short=t=>esc(t.replace(/（跨階段調整）/,'').split(/[，。]/)[0]);
+    h+=`<details class="plan"><summary>📘 教案細節（賽課用）：學習重點・分層目標・每步評量</summary>
+    <div class="pl"><b>核心素養</b><span>${esc(Ls.std.core.split(' ')[0])}</span></div>
+    <div class="pl"><b>學習表現</b><span>${Ls.std.perf.map(c=>`<i class="cd" title="${esc(c[1])}">${esc(c[0])}</i>${short(c[1])}`).join('　')}</span></div>
+    <div class="pl"><b>學習內容</b><span>${Ls.std.cont.map(c=>`<i class="cd" title="${esc(c[1])}">${esc(c[0])}</i>${short(c[1])}`).join('　')}${Ls.std.cont.some(c=>/跨階段/.test(c[1]))?'<small>（Ⅱ 為跨階段向下調整）</small>':''}</span></div>
+    <div class="pl"><b>分層目標</b><span>A 層（重度／低口語）：${esc(Ls.diff.A)}<br>B 層（中度／高口語）：${esc(Ls.diff.B)}</span></div>
+    <div class="pl"><b>學生可以選</b><span>${esc(Ls.choice||'')}</span></div>
+    <div class="evt">${Ls.steps.map((st,i)=>`<div><span>${i+1}</span><span>${esc(st[0].replace(/^\S+\s/,''))}</span><span>${st[6]?esc(st[6]):''}</span><span>${esc(st[5]||'')}</span></div>`).join('')}</div></details>`;}
   if(Ls.teach&&Ls.teach.length)h+=`<div class="teach"><b>🧑‍🏫 老師用・列印・備案</b>${Ls.teach.map(t=>`<a href="${esc(t[1])}"${tgt(t[1])}>${esc(t[0])}</a>`).join('')}</div>`;
   return h;}
 function todayHTML(){
