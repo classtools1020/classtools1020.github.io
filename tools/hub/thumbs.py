@@ -23,7 +23,7 @@ async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch(args=['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required'])
         ctx = await b.new_context(viewport={'width': 1280, 'height': 720})
-        await ctx.add_init_script(f"try{{localStorage.setItem('ct_gate','{HASH}');sessionStorage.setItem('galaSeen','1')}}catch(e){{}}")
+        await ctx.add_init_script(f"try{{localStorage.setItem('ct_gate2','{HASH}');sessionStorage.setItem('galaSeen','1')}}catch(e){{}}")
         pg = await ctx.new_page()
         await pg.goto(BASE + '/hub/catalog.js')
         cat = await pg.evaluate("(async()=>{window.window=window;const s=document.createElement('script');s.src='/hub/catalog.js';document.head.appendChild(s);await new Promise(r=>s.onload=r);return CATALOG})()")

@@ -5,7 +5,7 @@ meta：每頁 [ {steps:n, href:[{x,y,w,h,url}], anim:[每一步的 data-a]} ]
 import asyncio, sys, json, os
 from playwright.async_api import async_playwright
 
-GATE = "localStorage.setItem('ct_gate','3b8618f72000bae051251bde92fb75d3e4017375abfe65d0f06dd647a36cd7b2')"
+GATE = "localStorage.setItem('ct_gate2','3b8618f72000bae051251bde92fb75d3e4017375abfe65d0f06dd647a36cd7b2')"
 
 async def main(url, out):
     os.makedirs(out, exist_ok=True)
