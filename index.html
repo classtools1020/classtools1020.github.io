@@ -333,11 +333,11 @@ function stepsBlock(lk,Ls){
   h+=`<div class="tbar">${['A','B','C'].map(k=>`<span style="flex:${sum(k)};background:${PH[k][2]}"></span>`).join('')}</div>`;
   ['A','B','C'].forEach((k,pi)=>{const it=Ls.steps.map((st,i)=>[st,i]).filter(z=>z[0][2]===k);if(!it.length)return;
     h+=`<section class="ph" style="--pc:${PH[k][2]}"><div class="phh"><b>${'①②③'[pi]} ${PH[k][0]}</b><span>${sum(k)} 分</span><em>${PH[k][1]}</em></div><div class="steps">${it.map(z=>stpHTML(lk,z[0],z[1])).join('')}</div></section>`;});
-  if(Ls.std){const short=t=>esc(t.replace(/（跨階段調整）/,'').split(/[，。]/)[0]);
+  if(Ls.std){const short=t=>esc(t.split(/[，。]/)[0]);
     h+=`<details class="plan"><summary>📘 教案細節（賽課用）：學習重點・分層目標・每步評量</summary>
     <div class="pl"><b>核心素養</b><span>${esc(Ls.std.core.split(' ')[0])}</span></div>
     <div class="pl"><b>學習表現</b><span>${Ls.std.perf.map(c=>`<i class="cd" title="${esc(c[1])}">${esc(c[0])}</i>${short(c[1])}`).join('　')}</span></div>
-    <div class="pl"><b>學習內容</b><span>${Ls.std.cont.map(c=>`<i class="cd" title="${esc(c[1])}">${esc(c[0])}</i>${short(c[1])}`).join('　')}${Ls.std.cont.some(c=>/跨階段/.test(c[1]))?'<small>（Ⅱ 為跨階段向下調整）</small>':''}</span></div>
+    ${Ls.std.cont.length?`<div class="pl"><b>學習內容</b><span>${Ls.std.cont.map(c=>`<i class="cd" title="${esc(c[1])}">${esc(c[0])}</i>${short(c[1])}`).join('　')}</span></div>`:''}
     <div class="pl"><b>分層目標</b><span>A 層（重度／低口語）：${esc(Ls.diff.A)}<br>B 層（中度／高口語）：${esc(Ls.diff.B)}</span></div>
     <div class="pl"><b>學生可以選</b><span>${esc(Ls.choice||'')}</span></div>
     <div class="evt">${Ls.steps.map((st,i)=>`<div><span>${i+1}</span><span>${esc(st[0].replace(/^\S+\s/,''))}</span><span>${st[6]?esc(st[6]):''}</span><span>${esc(st[5]||'')}</span></div>`).join('')}</div></details>`;}
