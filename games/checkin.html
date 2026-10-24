@@ -167,6 +167,22 @@
   /* 投影（大螢幕）：全班從後面也看得清楚 */
   @media(min-width:1400px){.wrap{max-width:1240px}.mood{width:178px;font-size:26px}.mood .duo,.mood .pf{width:132px!important;height:132px!important}.sub{font-size:26px}.chip{font-size:21px}.tool{width:240px;font-size:24px}.tool small{font-size:16px}.cue{font-size:48px}.note{font-size:18px}.rc{width:720px}.rc p{font-size:24px}.rc .opts button{font-size:22px}}
   @media(max-width:600px){.wrap{padding-right:64px!important}.moods{gap:8px}.mood{width:calc((100vw - 110px)/3)}#fxvoice,#fxbell{transform:scale(.8);opacity:.85}.bars{width:100%}.tool{width:calc((100vw - 120px)/2);padding:12px 6px}.tool small{font-size:11px}.meter{padding:22px 16px 26px;gap:8px}.quad h3{font-size:12px}.fc{font-size:13px}}
+
+/* 等聯絡簿音樂（#end 才出現） */
+#wm::before{content:"";position:fixed;inset:0;z-index:299;background:rgba(5,4,8,.78)}
+#wm .wmCard{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:300;text-align:center;padding:34px 46px;border-radius:22px;background:rgba(10,8,16,.97);border:2px solid #c9a14a;box-shadow:0 0 60px rgba(201,161,74,.35);color:#f6e3a8;font-weight:900}
+#wm .wmT{font-size:min(8vw,52px);letter-spacing:.08em}
+#wm .wmS{font-size:min(4.6vw,26px);margin-top:12px;color:#fff}
+#wm .wmR{display:flex;flex-direction:column;gap:8px;margin:18px auto 0;text-align:left;font-size:min(4.4vw,26px);color:#fff;width:max-content;max-width:86vw}
+#wm .wmR b{display:inline-flex;width:1.6em;height:1.6em;border-radius:50%;background:#c9a14a;color:#0d0a12;align-items:center;justify-content:center;margin-right:10px;font-size:.8em}
+#wm .wmBar{margin:20px auto 6px;width:min(70vw,640px);height:22px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;border:2px solid #c9a14a}
+#wm .wmBar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f6e3a8,#c9a14a);transition:width .5s linear}
+#wm .wmL{font-size:min(3.6vw,20px);color:#c9b98c}
+#wm .wmStar{margin-top:14px;font-size:min(4.2vw,24px);color:#f6e3a8}
+#wm .wmDone{font-size:min(7vw,44px);color:#fff}
+#wm .wmP{position:fixed;left:14px;bottom:14px;z-index:301;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+#wm .wmP iframe{width:240px;height:135px;border:0;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.6)}
+#wm .wmP button{font:900 16px sans-serif;padding:8px 16px;border-radius:999px;border:2px solid #c9a14a;background:#0d0a12;color:#f6e3a8;cursor:pointer}
 </style>
 </head>
 <body>
@@ -346,7 +362,30 @@ if(END){$("st0").textContent="第一幕・現在的心情";$("st1").textContent=
   $("toMood").textContent="下一步 ➡ 現在的心情";
   chips("did",["👂 我有專心聽","✋ 我有舉手","🤝 我有幫同學","🔬 我有動手做","✏️ 我寫完了","💪 我沒有放棄"],"seldid-");
   chips("thanks",["🙏 謝謝老師","🤝 謝謝同學","🙋 謝謝我自己"],"selthx-");
+  $("finish").insertAdjacentHTML("afterend",'<button class="btn big" id="wmBtn" style="margin-left:10px">🎵 等聯絡簿</button>');
+  $("wmBtn").onclick=()=>{tap();waitBook();};
   goto(0);compare();}
+
+/* 等聯絡簿：規則卡＋看得見的倒數（跟著歌曲進度）＋正向增強；歌用 YouTube 播，畫面只留小視窗 */
+function waitBook(){if($("wm"))return;const d=document.createElement("div");d.id="wm";
+  d.innerHTML='<div class="wmCard" id="wmCard"><div class="wmT">📒 老師簽聯絡簿中</div>'+
+    '<div class="wmR"><div><b>1</b>書包收好</div><div><b>2</b>坐在自己的位子上</div><div><b>3</b>聽歌，安靜等待</div><div><b>4</b>老師叫名字，才出來拿</div></div>'+
+    '<div class="wmBar"><i id="wmI"></i></div><div class="wmL" id="wmL">🎵 歌放完，就發聯絡簿</div>'+
+    '<div class="wmStar">🌟 坐得最好的人，第一個拿到聯絡簿</div></div>'+
+    '<div class="wmP"><div id="wmYT"></div><button id="wmX">■ 結束等待</button></div>';
+  document.body.appendChild(d);$("wmX").onclick=()=>{tap();try{wmP&&wmP.destroy();}catch(e){}clearInterval(wmT);d.remove();};
+  const fallback=()=>{$("wmYT").outerHTML='<iframe src="https://www.youtube-nocookie.com/embed/jxzkyet1tJU?autoplay=1&rel=0&modestbranding=1&playsinline=1" title="我喜歡這樣的我" allow="autoplay; encrypted-media"></iframe>';
+    let t=0;const T=210;wmT=setInterval(()=>{t++;$("wmI")&&($("wmI").style.width=Math.min(100,t/T*100)+"%");if(t>=T)wmDone();},1000);};
+  const make=()=>{try{wmP=new YT.Player("wmYT",{width:240,height:135,videoId:"jxzkyet1tJU",host:"https://www.youtube-nocookie.com",
+      playerVars:{autoplay:1,rel:0,modestbranding:1,playsinline:1},
+      events:{onReady:e=>{e.target.playVideo();wmT=setInterval(()=>{try{const du=wmP.getDuration(),cu=wmP.getCurrentTime();if(du>0){$("wmI").style.width=Math.min(100,cu/du*100)+"%";
+          const left=Math.max(0,Math.round(du-cu));$("wmL").textContent=`🎵 還有 ${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}，歌放完就發聯絡簿`;}}catch(e){}},500);},
+        onStateChange:e=>{if(e.data===0)wmDone();},onError:()=>{clearInterval(wmT);fallback();}}});}catch(e){fallback();}};
+  if(window.YT&&YT.Player)make();else{window.onYouTubeIframeAPIReady=make;const sc=document.createElement("script");sc.src="https://www.youtube.com/iframe_api";sc.onerror=fallback;document.head.appendChild(sc);
+    setTimeout(()=>{if(!(window.YT&&YT.Player)&&$("wmYT"))fallback();},6000);}}
+let wmP=null,wmT=null;
+function wmDone(){clearInterval(wmT);const c=$("wmCard");if(!c)return;$("wmI")&&($("wmI").style.width="100%");
+  c.innerHTML='<div class="wmDone">🎉 歌放完了！</div><div class="wmS">聽老師叫名字，出來拿聯絡簿</div><div class="wmStar">🌟 謝謝大家耐心等待</div>';try{chimeOk();}catch(e){}}
 /* 上方幕次可以直接點：跳到那一幕 */
 function jump(n){running++;tap();if(END){goto(n===-1?-1:n===0?0:3);return;}goto(n);if(n===1)showTools();}
 [["stg",-1],["st0",0],["st1",1],["st2",2]].forEach(([id,n])=>{const e=$(id);e.setAttribute("role","button");e.title="跳到這一幕";e.onclick=()=>jump(n);});
