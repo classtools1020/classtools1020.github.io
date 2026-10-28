@@ -128,6 +128,7 @@
   /* ===== 開場與收心 ===== */
   add('class', '開場與收心', 'checkin', 'tool', '心情打卡・調節站', '上課開場＋謝幕（#end）', '/games/checkin.html', [['謝幕', '/games/checkin.html#end']]);
   add('class', '開場與收心', 'breathe', 'tool', '光之呼吸站', '海浪聲・跟著呼吸', '/games/breathe.html');
+  add('class', '課堂工具', 'deck', 'tool', '課堂控制台 CLASS DECK', '作息表・計時器・先再・音量・抽籤・工作系統，一鍵切換上課情境', '/deck/');
 
   /* ===== 溝通板 AAC（頁面放在 classtools1020/classtools1020 repo） ===== */
   add('aac', '溝通板', 'aac-board', 'tool', 'AAC 溝通板', '說話・上課・先再・冷靜一下・小幫手・數字', '/classtools1020/aac-board.html');

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2ede3">
+<title>課堂控制台 CLASS DECK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0..1,0&icon_names=add,apps,arrow_back,arrow_downward,arrow_forward,arrow_upward,backpack,brightness_auto,calculate,campaign,casino,check,check_circle,checklist,chevron_left,chevron_right,cleaning_services,close,close_fullscreen,co_present,computer,contrast,cookie,dark_mode,delete,directions_walk,draw,edit_note,emoji_events,forum,front_hand,fullscreen,fullscreen_exit,graphic_eq,groups,headphones,hearing,inventory_2,keyboard,light_mode,list_alt,local_drink,menu_book,mic,mic_off,mood,motion_photos_off,music_note,open_in_full,pause,person_off,play_arrow,play_circle,record_voice_over,remove,restart_alt,restaurant,science,self_improvement,settings,shuffle,slideshow,sports_basketball,sports_esports,star,swap_vert,task_alt,text_increase,thermostat,timer,tune,undo,voice_over_off,volume_off,volume_up,wb_sunny,wc&display=block">
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+<a class="skip" href="#stage">跳到工具區</a>
+
+<header class="top">
+  <a class="ib back" href="/" aria-label="返回網站大門" title="返回網站大門"><span class="ms">arrow_back</span></a>
+  <div class="brand" aria-hidden="true"><span class="logo">CLASS<b>DECK</b></span><span class="sub">課堂控制台</span></div>
+  <div class="clock"><span class="ap" id="ap"></span><span class="tm-now" id="now">--:--</span><span class="dt" id="date"></span></div>
+  <nav class="scenes" id="scenes" aria-label="上課情境"></nav>
+  <div class="tb">
+    <button class="ib" id="bSound" aria-label="音效：開" title="音效"><span class="ms">volume_up</span></button>
+    <button class="ib" id="bTheme" aria-label="切換亮暗" title="亮／暗"><span class="ms">contrast</span></button>
+    <button class="ib" id="bSet" aria-label="設定" title="設定"><span class="ms">settings</span></button>
+    <button class="ib" id="bFull" aria-label="全螢幕" title="全螢幕（F）"><span class="ms">fullscreen</span></button>
+    <a class="ib" href="/light/" aria-label="上課主選單" title="上課主選單"><span class="ms">apps</span></a>
+  </div>
+</header>
+
+<main id="stage" class="stage" tabindex="-1" aria-label="工具區"></main>
+
+<nav class="dock" id="dock" aria-label="工具"></nav>
+
+<div id="sr" class="sr" aria-live="polite" aria-atomic="true"></div>
+<div id="fx" class="fxlayer" aria-hidden="true"></div>
+
+<dialog id="ed" aria-labelledby="edT">
+  <form method="dialog" class="dlg">
+    <header><h2 id="edT">設定</h2><button class="ib" value="x" aria-label="關閉"><span class="ms">close</span></button></header>
+    <div class="dlg-b" id="edB"></div>
+    <footer><button class="btn pri" value="ok"><span class="ms">check</span>完成</button></footer>
+  </form>
+</dialog>
+
+<dialog id="ip" aria-labelledby="ipT">
+  <form method="dialog" class="dlg wide">
+    <header><h2 id="ipT">選一張圖卡</h2><button class="ib" value="x" aria-label="關閉"><span class="ms">close</span></button></header>
+    <div class="dlg-b"><div class="ipg" id="ipG"></div></div>
+  </form>
+</dialog>
+
+<script src="deck.js"></script>
+</body>
+</html>
