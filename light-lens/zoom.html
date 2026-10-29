@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<script src="/gate.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>放大縮小偵探站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  :root{--ink:#1f2a37;--paper:#f4efe6;--card:#fffdf8;--soft:#5b6673;--line:#d8cfbf;--red:#c8372d;--teal:#1f7a8c;--gold:#d99a22;--cx:#d9602b;--cc:#2c6fb7}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;-webkit-tap-highlight-color:transparent}
+  .top{position:sticky;top:0;z-index:20;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:rgba(244,239,230,.96);border-bottom:2px solid var(--line)}
+  .top a.bk{font-weight:900;font-size:16px;text-decoration:none;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:7px 14px}
+  .top h1{font-size:clamp(20px,2.6vw,30px);margin:0 10px 0 4px;font-weight:900;letter-spacing:.04em}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tab{font:900 17px inherit;font-family:inherit;padding:9px 14px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+  .tab.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  main{max-width:1240px;margin:0 auto;padding:18px 18px 60px}
+  section{display:none}section.on{display:block;animation:in .3s}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}}
+  h2{font-size:clamp(28px,3.4vw,44px);margin:6px 0 4px;font-weight:900}
+  .sub{font-size:clamp(17px,1.8vw,22px);color:var(--soft);font-weight:700;margin:0 0 16px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}}
+  .card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 20px rgba(60,45,20,.08)}
+  .card h3{margin:0 0 10px;font-size:clamp(22px,2.4vw,30px);font-weight:900}
+  .ph{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;display:block;background:#ddd}
+  ol.steps{margin:6px 0 0;padding-left:0;list-style:none;counter-reset:s}
+  ol.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;font-size:clamp(19px,2vw,24px);font-weight:800;line-height:1.45;margin:10px 0}
+  ol.steps li::before{content:counter(s);flex:none;width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;margin-top:1px}
+  .warn{background:#fbe9e7;border-left:6px solid var(--red);border-radius:10px;padding:12px 16px;font-size:clamp(18px,1.9vw,22px);font-weight:800;line-height:1.6}
+  .warn b{color:var(--red)}
+  .tag{display:inline-block;border-radius:999px;padding:3px 12px;font-size:15px;font-weight:900;color:#fff;vertical-align:4px;margin-left:6px}
+  .tg-cx{background:var(--cx)}.tg-cc{background:var(--cc)}
+  .predict{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+  .pbtn{flex:1;min-width:200px;font-family:inherit;font-weight:900;font-size:clamp(19px,2vw,24px);padding:16px;border-radius:14px;border:3px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+  .pbtn.pick{border-color:var(--gold);background:#fff4d6}
+  .reveal{display:none;margin-top:12px;font-size:clamp(19px,2vw,24px);font-weight:900;line-height:1.6;background:#e8f4ea;border-radius:12px;padding:12px 16px;border-left:6px solid #2f8a4c}
+  .reveal.on{display:block;animation:in .3s}
+  .btn{font-family:inherit;font-weight:900;font-size:clamp(18px,1.9vw,22px);padding:12px 22px;border-radius:12px;border:none;background:var(--ink);color:#fff;cursor:pointer}
+  .btn.gold{background:var(--gold);color:#1f2a37}.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+  /* 分組輪換 */
+  .teams{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px}
+  .team{border-radius:20px;padding:18px;color:#fff;text-align:center}
+  .team.r{background:linear-gradient(135deg,#d9602b,#b8401b)}.team.b{background:linear-gradient(135deg,#2c6fb7,#1d4f86)}
+  .team .nm{font-size:clamp(24px,2.6vw,34px);font-weight:900}
+  .team .at{margin-top:8px;font-size:clamp(28px,3.4vw,46px);font-weight:900;background:rgba(255,255,255,.18);border-radius:14px;padding:10px}
+  .team .at small{display:block;font-size:.45em;opacity:.9;margin-top:2px}
+  .timer{margin:18px auto 6px;text-align:center}
+  .tnum{font-size:clamp(70px,11vw,150px);font-weight:900;font-variant-numeric:tabular-nums;line-height:1}
+  .tbar{height:16px;border-radius:99px;background:#e6dfd2;overflow:hidden;max-width:760px;margin:10px auto}
+  .tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#2f8a4c,#d99a22);transition:width 1s linear}
+  .tctl{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .swap{position:fixed;inset:0;z-index:50;background:rgba(31,42,55,.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:#fff;text-align:center}
+  .swap.on{display:flex;animation:in .3s}
+  .swap b{font-size:clamp(60px,10vw,130px);font-weight:900}
+  .swap span{font-size:clamp(22px,3vw,36px);font-weight:800}
+  /* 超小字答案 */
+  .cards6{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+  @media(max-width:820px){.cards6{grid-template-columns:repeat(2,1fr)}}
+  .tc{border:2px dashed var(--line);border-radius:14px;padding:12px;text-align:center;background:#fff;cursor:pointer;min-height:118px;display:flex;flex-direction:column;justify-content:center}
+  .tc .n{font-size:15px;font-weight:900;color:var(--soft)}
+  .tc .q{font-size:30px;font-weight:900;letter-spacing:.2em;color:#b9ae9a}
+  .tc .a{display:none;font-size:clamp(20px,2.2vw,26px);font-weight:900;color:#2f8a4c;line-height:1.35}
+  .tc.on .q{display:none}.tc.on .a{display:block}
+  .tc.on{border-style:solid;border-color:#2f8a4c;background:#eef8f0}
+  /* 光路圖 */
+  .ray svg{width:100%;height:auto;display:block;background:#0f1b2b;border-radius:14px}
+  .ray .cap{font-size:clamp(18px,1.9vw,22px);font-weight:900;margin-top:8px;line-height:1.5}
+  .beam{stroke-dasharray:900;stroke-dashoffset:900;animation:shoot 2.6s ease-out infinite}
+  @keyframes shoot{0%{stroke-dashoffset:900}55%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+  /* 比一比表 */
+  table.cmp{width:100%;border-collapse:separate;border-spacing:0;font-size:clamp(18px,1.9vw,23px);font-weight:800;background:#fff;border-radius:14px;overflow:hidden;border:2px solid var(--line)}
+  table.cmp th,table.cmp td{padding:12px 14px;border-bottom:2px solid #eee6d8;text-align:center}
+  table.cmp th{background:#efe8da}
+  table.cmp td:first-child{text-align:left;color:var(--soft)}
+  table.cmp tr:last-child td{border-bottom:0}
+  .quiz{margin-top:18px}
+  .qq{font-size:clamp(22px,2.4vw,30px);font-weight:900;margin:8px 0 12px}
+  .qo{display:flex;gap:12px;flex-wrap:wrap}
+  .qo button{flex:1;min-width:180px;font-family:inherit;font-weight:900;font-size:clamp(20px,2.1vw,26px);padding:16px;border-radius:14px;border:3px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+  .qo button.ok{border-color:#2f8a4c;background:#e3f3e6}.qo button.no{border-color:var(--red);background:#fbe9e7;animation:sh .35s}
+  @keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .qmeta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-weight:900;color:var(--soft);font-size:18px}
+  .dl{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .dl a{font-weight:900;font-size:18px;text-decoration:none;color:#fff;background:var(--teal);border-radius:12px;padding:12px 18px}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="bk" id="back" href="/light/">⬅ 返回</a>
+  <h1>🔍 放大縮小偵探站</h1>
+  <div class="tabs" id="tabs">
+    <button class="tab" data-s="fire">🔥 燒葉子任務</button>
+    <button class="tab" data-s="rotate">⏱️ 分組輪換</button>
+    <button class="tab" data-s="A">🔍 A站 放大</button>
+    <button class="tab" data-s="B">🔭 B站 縮小</button>
+    <button class="tab" data-s="cmp">⚖️ 比一比</button>
+  </div>
+</div>
+<main>
+
+<!-- 燒葉子 -->
+<section id="fire">
+  <h2>🔥 燒葉子任務：放大鏡能把陽光變成「火」嗎？</h2>
+  <p class="sub">乙班已經成功了！甲班今天也來挑戰。</p>
+  <div class="grid2">
+    <div class="card">
+      <img class="ph" src="img/sm/sunfocus.jpg" alt="放大鏡把陽光聚在葉子上">
+      <h3 style="margin-top:12px">任務步驟</h3>
+      <ol class="steps">
+        <li>到太陽照得到的水泥地，把乾葉子放在地上</li>
+        <li>放大鏡對著太陽，讓光照到葉子上</li>
+        <li>慢慢拿高、拿低，找到<b>最小最亮的光點</b></li>
+        <li>手不要動，數 1、2、3……等它冒煙！</li>
+      </ol>
+    </div>
+    <div class="card">
+      <div class="warn">⚠️ 安全規則<br>👀 <b>絕對不能</b>透過放大鏡看太陽<br>🙅 光點<b>不能</b>對著人、皮膚、衣服<br>🪣 旁邊放一桶水，結束後把葉子泡進水裡<br>🌿 不要在乾草地上做</div>
+      <h3 style="margin-top:16px">先猜猜看 🤔<span class="tag tg-cc">挑戰</span></h3>
+      <div style="font-size:clamp(19px,2vw,24px);font-weight:800">換成<b>近視眼鏡（凹透鏡）</b>，也能燒葉子嗎？</div>
+      <div class="predict" id="pf"><button class="pbtn" data-a="0">🔥 也可以</button><button class="pbtn" data-a="1">🙅 不行</button></div>
+      <button class="btn ghost" style="margin-top:12px" id="pfShow">🔎 試試看，再揭曉</button>
+      <div class="reveal" id="pfR">🙅 <b>不行！</b>凹透鏡中間薄，會把光<b>散開</b>，地上只有一圈大大、暗暗的光，沒有亮點，所以燒不起來。<br>🔥 放大鏡（凸透鏡）中間厚，把光<b>聚在一點</b>，所以很熱。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 分組輪換 -->
+<section id="rotate">
+  <h2>⏱️ 分兩組，輪流闖兩站</h2>
+  <p class="sub">時間到會響鈴，兩組交換。每一站都要寫記錄單。</p>
+  <div class="teams">
+    <div class="team r"><div class="nm">🟠 第一組</div><div class="at" id="atR">A站 🔍 放大<small>凸透鏡・看超小字</small></div></div>
+    <div class="team b"><div class="nm">🔵 第二組</div><div class="at" id="atB">B站 🔭 縮小<small>凹透鏡・東西變小</small></div></div>
+  </div>
+  <div class="timer"><div class="tnum" id="tnum">8:00</div><div class="tbar"><i id="tbar"></i></div>
+    <div class="tctl">
+      <button class="btn" id="tGo">▶ 開始</button><button class="btn ghost" id="tSwap">🔄 現在換站</button>
+      <button class="btn ghost" data-m="5">5 分</button><button class="btn ghost" data-m="8">8 分</button><button class="btn ghost" data-m="10">10 分</button>
+    </div></div>
+</section>
+
+<!-- A站 -->
+<section id="A">
+  <h2>🔍 A站：放大站 <span class="tag tg-cx">凸透鏡</span></h2>
+  <p class="sub">中間厚、邊緣薄的鏡片，會讓東西看起來<b>變大</b>。</p>
+  <div class="grid2">
+    <div class="card">
+      <img class="ph" src="img/sm/ladybug.jpg" alt="放大鏡看瓢蟲">
+      <h3 style="margin-top:12px">任務：讀出超小字</h3>
+      <ol class="steps">
+        <li>拿一張「超小字任務卡」</li>
+        <li>放大鏡先貼近卡片，再<b>慢慢拿遠</b></li>
+        <li>找到字<b>最大、最清楚</b>的位置</li>
+        <li>把字寫在記錄單上 ✏️</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>超小字答案（老師按一下才揭曉）</h3>
+      <div class="cards6" id="tcs"></div>
+      <div style="margin-top:12px;font-size:18px;font-weight:800;color:var(--soft)">🔵 1～2 號字最大　🟠 3～4 號比較小　⭐ 5～6 號超級小</div>
+    </div>
+  </div>
+</section>
+
+<!-- B站 -->
+<section id="B">
+  <h2>🔭 B站：縮小站 <span class="tag tg-cc">凹透鏡</span></h2>
+  <p class="sub">中間薄、邊緣厚的鏡片，會讓東西看起來<b>變小</b>。近視眼鏡就是凹透鏡！</p>
+  <div class="grid2">
+    <div class="card">
+      <h3>任務：三個小實驗</h3>
+      <ol class="steps">
+        <li><b>看字：</b>用凹透鏡看同一張超小字卡 → 字變大？還是變小？</li>
+        <li><b>看教室：</b>拿遠一點看黑板或窗外 → 看到的東西變多？還是變少？</li>
+        <li><b>照光：</b>對著窗外陽光（或手電筒）照白紙 → 有沒有亮亮的小點？</li>
+      </ol>
+      <div class="warn" style="margin-top:10px">👀 不能透過鏡片看太陽；別人的眼鏡要先問過、輕輕拿</div>
+    </div>
+    <div class="card">
+      <div class="grid2" style="gap:10px">
+        <div><img class="ph" src="img/sm/glasses.jpg" alt="近視眼鏡"><div style="font-weight:900;font-size:19px;margin-top:6px">👓 近視眼鏡：讓遠方看清楚</div></div>
+        <div><img class="ph" src="img/sm/peepview.jpg" alt="門上貓眼看出去"><div style="font-weight:900;font-size:19px;margin-top:6px">🚪 門上的貓眼：人小小的，看到整條走廊</div></div>
+      </div>
+      <h3 style="margin-top:14px">B站的答案（做完再揭曉）</h3>
+      <button class="btn ghost" id="bShow">🔎 揭曉</button>
+      <div class="reveal" id="bR">① 字<b>變小</b>　② 看到的範圍<b>變大、變多</b><br>③ 只有一圈大大暗暗的光，<b>沒有亮點</b>：凹透鏡把光<b>散開</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 比一比 -->
+<section id="cmp">
+  <h2>⚖️ 比一比：凸透鏡 vs 凹透鏡</h2>
+  <div class="grid2">
+    <div class="card ray"><h3>🔍 凸透鏡（放大鏡）</h3>
+      <svg viewBox="0 0 600 300" aria-label="凸透鏡把光聚在一點">
+        <path d="M300 40 Q345 150 300 260 Q255 150 300 40Z" fill="rgba(160,210,255,.35)" stroke="#9fd0ff" stroke-width="3"/>
+        <g stroke="#ffd46b" stroke-width="5" fill="none" stroke-linecap="round">
+          <path class="beam" d="M20 90 L300 90 L460 150 L560 187"/>
+          <path class="beam" d="M20 150 L300 150 L460 150 L560 150" style="animation-delay:.15s"/>
+          <path class="beam" d="M20 210 L300 210 L460 150 L560 113" style="animation-delay:.3s"/>
+        </g>
+        <circle cx="460" cy="150" r="12" fill="#fff6c8"><animate attributeName="r" values="8;16;8" dur="1.2s" repeatCount="indefinite"/></circle>
+        <text x="460" y="200" fill="#fff" font-size="24" font-weight="900" text-anchor="middle">亮點（很熱）</text>
+      </svg>
+      <div class="cap">中間<b>厚</b> → 光<b>聚起來</b> → 東西<b>變大</b>、可以燒葉子</div></div>
+    <div class="card ray"><h3>🔭 凹透鏡（近視眼鏡）</h3>
+      <svg viewBox="0 0 600 300" aria-label="凹透鏡把光散開">
+        <path d="M282 40 L318 40 Q290 150 318 260 L282 260 Q310 150 282 40Z" fill="rgba(160,210,255,.35)" stroke="#9fd0ff" stroke-width="3"/>
+        <g stroke="#ffd46b" stroke-width="5" fill="none" stroke-linecap="round">
+          <path class="beam" d="M20 90 L300 90 L560 20"/>
+          <path class="beam" d="M20 150 L300 150 L560 150" style="animation-delay:.15s"/>
+          <path class="beam" d="M20 210 L300 210 L560 280" style="animation-delay:.3s"/>
+        </g>
+        <text x="450" y="200" fill="#fff" font-size="24" font-weight="900" text-anchor="middle">光散開（不熱）</text>
+      </svg>
+      <div class="cap">中間<b>薄</b> → 光<b>散開</b> → 東西<b>變小</b>、看到的範圍變大</div></div>
+  </div>
+  <table class="cmp" style="margin-top:18px">
+    <tr><th></th><th>🔍 凸透鏡</th><th>🔭 凹透鏡</th></tr>
+    <tr><td>鏡片長怎樣</td><td>中間厚</td><td>中間薄</td></tr>
+    <tr><td>光會怎樣</td><td>聚起來</td><td>散開</td></tr>
+    <tr><td>看東西</td><td>變大</td><td>變小</td></tr>
+    <tr><td>能燒葉子嗎</td><td>🔥 可以</td><td>🙅 不行</td></tr>
+    <tr><td>生活中</td><td>放大鏡、老花眼鏡</td><td>近視眼鏡、門上的貓眼</td></tr>
+  </table>
+  <div class="card quiz">
+    <h3>⚡ 快問快答</h3>
+    <div class="qq" id="qq"></div><div class="qo" id="qo"></div>
+    <div class="qmeta"><span id="qn"></span><button class="btn gold" id="qNext" style="display:none">下一題 ➜</button></div>
+  </div>
+  <div class="dl"><a href="files/zoom-cards.pdf" target="_blank" rel="noopener">🖨️ 超小字任務卡（列印）</a><a href="files/zoom-sheet.pdf" target="_blank" rel="noopener">🖨️ 偵探記錄單（列印）</a></div>
+</section>
+
+<div class="swap" id="swap"><b>🔄 換站！</b><span>🟠 第一組 → <em id="sw1"></em>　🔵 第二組 → <em id="sw2"></em></span><button class="btn gold" id="swOk">好，開始 ▶</button></div>
+</main>
+<script src="../games/fx.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const P=new URLSearchParams(location.search);if(P.get('back'))$('back').href=P.get('back');
+let AC=null;const ac=()=>{if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC;};
+function tone(f,d,t0=0,v=.12,type='triangle'){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.05);}
+const ok=()=>[523,659,784,1047].forEach((f,i)=>tone(f,.3,i*.08)),no=()=>{tone(392,.15);tone(330,.25,.13);},bell=()=>{[1319,1760,1319].forEach((f,i)=>tone(f,.8,i*.4,.1,'sine'));};
+document.querySelectorAll('ol.steps li').forEach(li=>{li.innerHTML='<span>'+li.innerHTML+'</span>';});
+/* 分頁 */
+const secs=[...document.querySelectorAll('main>section')];
+function show(id){if(!document.getElementById(id))id='fire';secs.forEach(s=>s.classList.toggle('on',s.id===id));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.s===id));if(location.hash!=='#'+id)history.replaceState(null,'','#'+id);scrollTo(0,0);}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(t.dataset.s));
+addEventListener('hashchange',()=>show(location.hash.slice(1)));show(location.hash.slice(1)||'fire');
+/* 燒葉子預測 */
+$('pf').querySelectorAll('.pbtn').forEach(b=>b.onclick=()=>{$('pf').querySelectorAll('.pbtn').forEach(x=>x.classList.remove('pick'));b.classList.add('pick');tone(880,.08);});
+$('pfShow').onclick=()=>{$('pfR').classList.add('on');ok();try{FX.confetti(60);}catch(e){}};
+$('bShow').onclick=()=>{$('bR').classList.add('on');ok();};
+/* 超小字答案 */
+const TC=[['1 🔵','光走直線'],['2 🔵','放大鏡'],['3 🟠','中間厚的凸透鏡'],['4 🟠','36.8 度'],['5 ⭐','凹透鏡讓東西變小'],['6 ⭐','溫度特勤隊出動']];
+$('tcs').innerHTML=TC.map(([n,a])=>`<div class="tc"><div class="n">第 ${n} 號卡</div><div class="q">？？？</div><div class="a">${a}</div></div>`).join('');
+$('tcs').querySelectorAll('.tc').forEach(c=>c.onclick=()=>{c.classList.toggle('on');if(c.classList.contains('on'))ok();});
+/* 分組輪換計時 */
+let LEN=480,left=LEN,iv=null,round=0;
+const ST=[['A站 🔍 放大','凸透鏡・看超小字'],['B站 🔭 縮小','凹透鏡・東西變小']];
+function paint(){const m=Math.floor(left/60),s=left%60;$('tnum').textContent=`${m}:${String(s).padStart(2,'0')}`;$('tbar').style.width=(left/LEN*100)+'%';
+  const r=ST[round%2],b=ST[(round+1)%2];$('atR').innerHTML=`${r[0]}<small>${r[1]}</small>`;$('atB').innerHTML=`${b[0]}<small>${b[1]}</small>`;}
+function stop(){clearInterval(iv);iv=null;$('tGo').textContent='▶ 開始';}
+function start(){if(iv){stop();return;}ac();$('tGo').textContent='⏸ 暫停';iv=setInterval(()=>{left--;if(left===60)tone(988,.25);paint();if(left<=0){stop();swap();}},1000);}
+function swap(){bell();round++;left=LEN;paint();const r=ST[round%2],b=ST[(round+1)%2];$('sw1').textContent=r[0];$('sw2').textContent=b[0];$('swap').classList.add('on');}
+$('tGo').onclick=start;$('tSwap').onclick=()=>{stop();swap();};
+$('swOk').onclick=()=>{$('swap').classList.remove('on');start();};
+document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{stop();LEN=+b.dataset.m*60;left=LEN;paint();tone(700,.08);});
+paint();
+/* 快問快答 */
+const Q=[['中間厚、邊緣薄的鏡片是？',['凸透鏡','凹透鏡'],0],['放大鏡是哪一種？',['凸透鏡','凹透鏡'],0],['用凹透鏡看字，字會？',['變小','變大'],0],
+  ['哪一個可以把陽光聚成一個亮點？',['凸透鏡','凹透鏡'],0],['近視眼鏡的鏡片是？',['凹透鏡','凸透鏡'],0],['門上的貓眼，讓我們看到？',['門外更大的範圍','門外一個小點'],0],
+  ['燒葉子時，可以透過放大鏡看太陽嗎？',['絕對不行','可以看一下'],0]];
+let qi=0,score=0;
+function q(){const [t,o,a]=Q[qi];$('qq').textContent=`${qi+1}. ${t}`;$('qNext').style.display='none';$('qn').textContent=`第 ${qi+1} / ${Q.length} 題　答對 ${score} 題`;
+  const ord=o.map((x,i)=>({x,i})).sort(()=>Math.random()-.5);
+  $('qo').innerHTML=ord.map(v=>`<button data-i="${v.i}">${v.x}</button>`).join('');let done=false;
+  $('qo').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(done)return;if(+b.dataset.i===a){done=true;b.classList.add('ok');ok();score++;try{const r=b.getBoundingClientRect();FX.confetti(50,r.left+r.width/2,r.top);}catch(e){}
+      $('qn').textContent=`第 ${qi+1} / ${Q.length} 題　答對 ${score} 題`;$('qNext').style.display='';$('qNext').textContent=qi<Q.length-1?'下一題 ➜':'🎉 全部完成！再玩一次';}
+    else{b.classList.add('no');no();}});}
+$('qNext').onclick=()=>{qi=qi<Q.length-1?qi+1:0;if(qi===0)score=0;q();};q();
+})();
+</script>
+</body>
+</html>
