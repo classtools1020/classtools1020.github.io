@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <script src="/gate.js"></script>
-<title>凸透鏡大挑戰</title>
+<title>凸透鏡・凹透鏡大挑戰</title>
 <style>
   :root{--ink:#1f2a37;--paper:#f4efe6;--red:#d8352a;--blue:#2361b8;--green:#2f8a4c;--gold:#ffcf2e}
   *{box-sizing:border-box}
@@ -49,7 +49,7 @@
 </style>
 </head>
 <body>
-<div class="top"><a href="/light/">← 主選單</a><h1>🔍 凸透鏡大挑戰</h1><button class="snd" id="snd">🔊</button></div>
+<div class="top"><a href="/light/">← 主選單</a><h1>🔍 凸透鏡・凹透鏡大挑戰</h1><button class="snd" id="snd">🔊</button></div>
 <div class="wrap">
   <div class="team r on" id="tR"><div class="n">🔴 紅隊</div><div class="s" id="sR">0</div><div class="turn" id="uR">輪到你們選</div></div>
   <div class="board" id="board"></div>
@@ -76,8 +76,16 @@ const Q=[
  {q:'相機鏡頭是哪一種鏡片？',img:L+'camera.jpg',o:['凸透鏡','凹透鏡'],a:0,ex:'相機鏡頭把光聚起來，拍出照片'},
  {q:'放大鏡可以對著同學的眼睛嗎？',img:null,o:['不可以','可以'],a:0,ex:'焦點很燙，會傷眼睛'},
  {q:'放大鏡只會把東西變大嗎？',img:R+'projflip.jpg',o:['不是，拿遠會倒過來','是，只會變大'],a:0,ex:'拿遠一點，景色會倒過來'},
+ {q:'中間薄、邊緣厚的鏡片，叫什麼？',img:null,o:['凹透鏡','凸透鏡'],a:0,ex:'「凹」這個字，中間凹下去'},
+ {q:'用凹透鏡看字，字會？',img:null,o:['變小','變大'],a:0,ex:'凹透鏡讓東西看起來變小'},
+ {q:'近視眼鏡是哪一種鏡片？',img:L+'glasses.jpg',o:['凹透鏡','凸透鏡'],a:0,ex:'近視眼鏡中間薄，是凹透鏡'},
+ {q:'光穿過凹透鏡，會怎樣？',img:null,o:['散開','聚在一起'],a:0,ex:'中間薄，把光散開'},
+ {q:'凹透鏡可以把陽光聚成一點、燒葉子嗎？',img:R+'sunfocus.jpg',o:['不行','可以'],a:0,ex:'凹透鏡把光散開，沒有亮點，燒不起來'},
+ {q:'門上的貓眼，讓我們看到？',img:null,o:['整條走廊（看得更廣）','只看到一個小點'],a:0,ex:'貓眼用凹透鏡，東西變小、看得更廣'},
+ {q:'「凹」這個字，長什麼樣子？',img:null,o:['中間凹下去','中間突出來'],a:0,ex:'凹＝中間薄的鏡片'},
+ {q:'哪一個可以燒葉子？',img:R+'sunfocus.jpg',o:['放大鏡（凸透鏡）','近視眼鏡（凹透鏡）'],a:0,ex:'凸透鏡把光聚起來，很燙'},
 ];
-// 3 張驚喜卡混在裡面（16 題 + 4 驚喜 = 20 格）
+// 驚喜卡混在裡面（24 題 + 4 驚喜 = 28 格）
 const SUR=[{e:'🎁',t:'禮物！這一隊 +20 分',f:t=>add(t,20)},{e:'🌈',t:'彩虹！兩隊都 +10 分',f:()=>{add(0,10);add(1,10);}},{e:'⭐',t:'幸運星！這一隊 +15 分',f:t=>add(t,15)},{e:'🔄',t:'交換！兩隊分數互換',f:()=>{const a=sc[0];sc[0]=sc[1];sc[1]=a;show();}}];
 let deck=[...Q.map((q,i)=>({k:'q',i})),...SUR.map((s,i)=>({k:'s',i}))];
 for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
